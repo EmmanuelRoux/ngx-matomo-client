@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs');
+const semver = require("semver");
+const {DEFAULT_REGISTRY} = require("./constants");
 
 function checkNpmToken() {
   if (!process.env.NPM_TOKEN) {
@@ -20,4 +22,14 @@ function writePkgJson(dir, pkg) {
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
 }
 
-module.exports = {checkNpmToken, readPkgJson, writePkgJson};
+function getChannel(channel) {
+  return (channel ? (semver.validRange(channel) ? `release-${channel}` : channel) : 'latest');
+}
+
+function getRegistry(pkgDir) {
+  const pkg = readPkgJson(pkgDir);
+
+  return (pkg.publishConfig || {}).registry || DEFAULT_REGISTRY;
+}
+
+module.exports = {checkNpmToken, readPkgJson, writePkgJson, getChannel, getRegistry};

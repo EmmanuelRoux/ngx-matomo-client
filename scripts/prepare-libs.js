@@ -1,15 +1,16 @@
 // #!/usr/bin/env node
-const {version} = require('../package.json');
 const fs = require('fs');
 const path = require('path');
 const {DIST_DIR, SOURCES_DIR} = require('./constants');
 const {readPkgJson, writePkgJson} = require('./utils');
+const [version] = process.argv.slice(2);
 
 function updatePkgVersion(pkgDir) {
   const pkg = readPkgJson(pkgDir)
 
   pkg.version = version;
 
+  console.log('Write version %s to package.json in %s', version, pkgDir);
   writePkgJson(pkgDir, pkg);
 }
 
@@ -22,8 +23,13 @@ function updateLibVersion(libName) {
 }
 
 function copyReadmeTo(libName) {
-  fs.copyFileSync('README.md', path.resolve(DIST_DIR, libName, 'README.md'));
+  const target = path.resolve(DIST_DIR, libName, 'README.md');
+
+  console.log('Copy root README.md to tracker package at %s', target);
+  fs.copyFileSync('README.md', target);
 }
+
+console.log('Preparing version %s of libraries', version);
 
 // Copy README to main library
 copyReadmeTo('tracker');

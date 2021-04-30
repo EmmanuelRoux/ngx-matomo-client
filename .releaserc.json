@@ -25,8 +25,9 @@
       "@semantic-release/exec",
       {
         "verifyConditionsCmd": "node ./scripts/verify-libs.js",
-        "prepareCmd": "node ./scripts/prepare-libs.js",
-        "publishCmd": "node ./scripts/publish-libs.js"
+        "prepareCmd": "node ./scripts/prepare-libs.js ${nextRelease.version}",
+        "addChannelCmd": "node ./scripts/add-channel.js ${nextRelease.version} ${nextRelease.channel}",
+        "publishCmd": "node ./scripts/publish-libs.js ${nextRelease.version} ${nextRelease.channel}"
       }
     ],
     "@semantic-release/github",
