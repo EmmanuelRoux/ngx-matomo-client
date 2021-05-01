@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.0...v1.0.1) (2021-05-01)
+
+
+### Bug Fixes
+
+* **packaging:** add npm package metadata ([64e7074](https://github.com/EmmanuelRoux/ngx-matomo/commit/64e70748c601aef2023429df7adfc790aef50543))
+
 # 1.0.0 (2021-05-01)
 
 
