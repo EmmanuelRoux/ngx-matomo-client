@@ -84,7 +84,7 @@ describe('MatomoRouter', () => {
 
   it('should track page view without page title', fakeAsync(() => {
     // Given
-    const service = instantiate({usePageTitle: false}, {enableLinkTracking: false});
+    const service = instantiate({trackPageTitle: false}, {enableLinkTracking: false});
     const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
 
     // Referrer url should be called only AFTER trackPageView

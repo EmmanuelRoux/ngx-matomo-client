@@ -477,14 +477,16 @@ interface MatomoRouterConfiguration {
   prependBaseHref?: boolean;
 
   /**
-   * Set whether to include page title when tracking views.
-   * Set it to false to disable this behavior.
+   * Set whether to detect page title when tracking views.
    * By default, page title is automatically detected from DOM document title.
+   * Note that if set to `false`, Matomo is likely to still use the initial
+   * document title for all tracked page views.
+   *
    *
    * Optional
    * Default: true
    */
-  usePageTitle?: boolean;
+  trackPageTitle?: boolean;
 
   /**
    * Set a delay after navigation event before page view is tracked.

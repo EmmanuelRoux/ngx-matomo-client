@@ -64,7 +64,7 @@ export class MatomoRouter {
   }
 
   private getPageTitleAndUrl(event: NavigationEnd): Observable<{ pageTitle: string | undefined, pageUrl: string }> {
-    const title$ = this.config.usePageTitle
+    const title$ = this.config.trackPageTitle
       ? this.pageTitleProvider.getCurrentPageTitle(event)
       : of(undefined);
     const url$ = this.pageUrlProvider.getCurrentPageUrl(event);

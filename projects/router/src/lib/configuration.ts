@@ -17,9 +17,12 @@ export interface MatomoRouterConfiguration {
   /**
    * Set whether the page title should be set when tracking page views
    *
+   * Note that if set to `false`, Matomo is likely to still use the initial document title for all
+   * tracked page views.
+   *
    * Optional, default is `true`
    */
-  usePageTitle?: boolean;
+  trackPageTitle?: boolean;
 
   /**
    * Set a delay after navigation event, before the page view is tracked. This is useful to let a
@@ -43,7 +46,7 @@ export interface MatomoRouterConfiguration {
 
 export const DEFAULT_ROUTER_CONFIGURATION: Required<MatomoRouterConfiguration> = {
   prependBaseHref: true,
-  usePageTitle: true,
+  trackPageTitle: true,
   delay: 0,
   exclude: [],
 };
