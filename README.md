@@ -354,6 +354,9 @@ export class ExampleComponent {
 }
 ```
 
+Please note that some features (such as `setEcommerceView`) must be called **before**
+`trackPageView`, so be careful when using router adapter!
+
 ## Launch demo app
 
 1. Clone this repository
