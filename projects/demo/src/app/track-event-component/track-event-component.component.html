@@ -1,0 +1,45 @@
+<mat-form-field>
+  <mat-label>Matomo category</mat-label>
+  <input matInput [(ngModel)]="category" required>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Matomo action</mat-label>
+  <input matInput [(ngModel)]="action" required>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Matomo event name</mat-label>
+  <input matInput [(ngModel)]="name">
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Matomo event value (optional)</mat-label>
+  <input matInput type="number" [(ngModel)]="value">
+</mat-form-field>
+
+<button type="button" mat-flat-button color="primary" (click)="doTrack()">
+  Click here to track
+</button>
+
+<pre>
+@Component({{'{'}}
+  selector: 'app-track-event-component',
+  templateUrl: './track-event-component.component.html',
+  styleUrls: ['./track-event-component.component.scss'],
+})
+export class TrackEventComponentComponent {{'{'}}
+
+  category = '';
+  action = '';
+  name = '';
+  value?: number;
+
+  constructor(private readonly tracker: MatomoTracker) {{'{'}} }
+
+  doTrack() {{'{'}}
+    this.tracker.trackEvent(this.category, this.action, this.name, this.value);
+  }
+
+}
+</pre>

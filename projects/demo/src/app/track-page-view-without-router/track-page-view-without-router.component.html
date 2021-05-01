@@ -1,0 +1,23 @@
+<p>
+  <mat-icon inline>info</mat-icon>
+  This page view has been tracked!
+</p>
+
+<pre>
+@Component({{ '{' }}
+  selector: 'app-track-page-view-without-router',
+  template: '...',
+})
+export class TrackPageViewWithoutRouterComponent implements OnInit {{ '{' }}
+
+  constructor(private readonly tracker: MatomoTracker) {{ '{' }} }
+
+  ngOnInit() {{ '{' }}
+    this.tracker.trackPageView();
+
+    // With custom page title
+    this.tracker.trackPageView('My page title');
+  }
+
+}
+</pre>

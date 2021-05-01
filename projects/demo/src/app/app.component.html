@@ -1,0 +1,50 @@
+<h1 fxLayout="row" fxLayoutAlign="space-between center">
+  <a routerLink="/">Ngx-matomo demo</a>
+</h1>
+
+<div *ngIf="invalid">
+  Modifiez la configuration puis relancez l'application.
+
+  <pre>
+  // app.module.ts
+  NgxMatomoTrackerModule.forRoot({{'{'}}
+    siteId: 'YOUR_MATOMO_SITE_ID_HERE',
+    trackerUrl: 'YOUR_MATOMO_URL_HERE',
+  })</pre>
+</div>
+
+<ng-container *ngIf="!invalid">
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link
+       routerLink="/without-router"
+       routerLinkActive="active"
+       #rla1="routerLinkActive"
+       [active]="rla1.isActive">
+      Track page view (without router)
+    </a>
+    <a mat-tab-link
+       routerLink="/simple-click"
+       routerLinkActive="active"
+       #rla2="routerLinkActive"
+       [active]="rla2.isActive">
+      Track simple click event
+    </a>
+    <a mat-tab-link
+       routerLink="/event-from-template"
+       routerLinkActive="active"
+       #rla3="routerLinkActive"
+       [active]="rla3.isActive">
+      Track any event (from template)
+    </a>
+    <a mat-tab-link
+       routerLink="/event-from-component"
+       routerLinkActive="active"
+       #rla4="routerLinkActive"
+       [active]="rla4.isActive">
+      Track any event (from component)
+    </a>
+  </nav>
+
+  <router-outlet></router-outlet>
+
+</ng-container>

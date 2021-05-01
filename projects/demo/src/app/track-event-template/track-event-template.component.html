@@ -1,0 +1,62 @@
+<section fxLayout="row" fxLayoutGap="20px">
+
+  <div>
+    <h3>Simple events</h3>
+    <mat-form-field>
+      <mat-label>Focus or blur this input to trigger event</mat-label>
+      <input type="text"
+             matInput
+             [matomoTracker]="['focus', 'blur']"
+             [matomoCategory]="category"
+             [matomoAction]="action"
+             [matomoName]="name"
+             [matomoValue]="value">
+    </mat-form-field>
+  </div>
+
+  <pre>
+  &lt;mat-form-field&gt;
+    &lt;mat-label&gt;Focus or blur this input to trigger event&lt;/mat-label&gt;
+    &lt;input type=&quot;text&quot;
+           matInput
+           [matomoTracker]=&quot;['focus', 'blur']&quot;
+           [matomoCategory]=&quot;category&quot;
+           [matomoAction]=&quot;action&quot;
+           [matomoName]=&quot;name&quot;
+           [matomoValue]=&quot;value&quot;&gt;
+  &lt;/mat-form-field&gt;
+  </pre>
+</section>
+
+<section fxLayout="row" fxLayoutGap="20px">
+  <div>
+    <h3>Advanced events</h3>
+    <mat-form-field>
+      <mat-label>Change value and blur this input to trigger event</mat-label>
+      <input type="text"
+             matInput
+             matomoTracker
+             #tracker="matomo"
+             [matomoCategory]="category"
+             [matomoAction]="action"
+             [matomoName]="name"
+             [matomoValue]="value"
+             (change)="tracker.trackEvent()">
+    </mat-form-field>
+  </div>
+
+  <pre>
+  &lt;mat-form-field&gt;
+    &lt;mat-label&gt;Change value and blur this input to trigger event&lt;/mat-label&gt;
+    &lt;input type=&quot;text&quot;
+           matInput
+           matomoTracker
+           #tracker=&quot;matomo&quot;
+           [matomoCategory]=&quot;category&quot;
+           [matomoAction]=&quot;action&quot;
+           [matomoName]=&quot;name&quot;
+           [matomoValue]=&quot;value&quot;
+           (change)=&quot;tracker.trackEvent()&quot;&gt;
+  &lt;/mat-form-field&gt;
+  </pre>
+</section>

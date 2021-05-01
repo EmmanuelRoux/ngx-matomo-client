@@ -1,0 +1,89 @@
+version: 2
+jobs:
+  install:
+    working_directory: ~/ngx-matomo
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - run: echo ${CIRCLE_BRANCH}
+      - restore_cache:
+          keys:
+            - ngx-matomo-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          key: ngx-matomo-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  build-libs:
+    working_directory: ~/ngx-matomo
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - attach_workspace:
+          at: .
+      - run: npm run build:prod:tracker
+      - run: npm run build:prod:router
+      - store_artifacts:
+          path: dist-prod
+          name: dist-prod
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist-prod
+  lint:
+    working_directory: ~/ngx-matomo
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - attach_workspace:
+          at: .
+      - run: npm run lint
+  test:
+    working_directory: ~/ngx-matomo
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - attach_workspace:
+          at: .
+      # tracker build is required for testing router, both lib builds are required to test demo app
+      - run: npm run build:tracker
+      - run: npm run build:router
+      - run: npm run test:ci
+      - store_test_results:
+          path: test-reports
+  publish-libs:
+    working_directory: ~/ngx-matomo
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - attach_workspace:
+          at: .
+      - run: npm run semantic-release:ci
+      - store_artifacts:
+          path: dist-prod
+          name: dist-prod
+workflows:
+  version: 2
+  build_test_publish:
+    jobs:
+      - install
+      - build-libs:
+          requires:
+            - install
+      - lint:
+          requires:
+            - install
+      - test:
+          requires:
+            - install
+      - publish-libs:
+          requires:
+            - build-libs
+            - lint
+            - test

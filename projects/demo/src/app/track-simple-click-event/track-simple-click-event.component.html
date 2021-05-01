@@ -1,0 +1,61 @@
+<mat-form-field>
+  <mat-label>Matomo category</mat-label>
+  <input matInput [(ngModel)]="category" required>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Matomo action</mat-label>
+  <input matInput [(ngModel)]="action" required>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Matomo event name</mat-label>
+  <input matInput [(ngModel)]="name">
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Matomo event value (optional)</mat-label>
+  <input matInput type="number" [(ngModel)]="value">
+</mat-form-field>
+
+<button mat-flat-button
+        color="primary"
+        type="button"
+        [matomoClickCategory]="category"
+        [matomoClickAction]="action"
+        [matomoClickName]="name"
+        [matomoClickValue]="value">
+  Click here to track event
+</button>
+
+<pre>
+&lt;mat-form-field&gt;
+  &lt;mat-label&gt;Matomo category&lt;/mat-label&gt;
+  &lt;input matInput [(ngModel)]=&quot;category&quot;&gt;
+&lt;/mat-form-field&gt;
+
+&lt;mat-form-field&gt;
+  &lt;mat-label&gt;Matomo action&lt;/mat-label&gt;
+  &lt;input matInput [(ngModel)]=&quot;action&quot;&gt;
+&lt;/mat-form-field&gt;
+
+&lt;mat-form-field&gt;
+  &lt;mat-label&gt;Matomo event name&lt;/mat-label&gt;
+  &lt;input matInput [(ngModel)]=&quot;name&quot;&gt;
+&lt;/mat-form-field&gt;
+
+&lt;mat-form-field&gt;
+  &lt;mat-label&gt;Matomo event value (optional)&lt;/mat-label&gt;
+  &lt;input matInput type=&quot;number&quot; [(ngModel)]=&quot;value&quot;&gt;
+&lt;/mat-form-field&gt;
+
+&lt;button mat-flat-button
+        color=&quot;primary&quot;
+        type=&quot;button&quot;
+        [matomoClickCategory]=&quot;category&quot;
+        [matomoClickAction]=&quot;action&quot;
+        [matomoClickName]=&quot;name&quot;
+        [matomoClickValue]=&quot;value&quot;&gt;
+  Click here to track event
+&lt;/button&gt;
+</pre>
