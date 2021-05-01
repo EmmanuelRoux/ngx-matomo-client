@@ -1,6 +1,14 @@
 {
   "name": "@ngx-matomo/tracker",
   "version": "0.0.0",
+  "author": "Emmanuel Roux (https://github.com/EmmanuelRoux)",
+  "description": "Matomo (fka. Piwik) client for Angular applications",
+  "keywords": [
+    "matomo",
+    "piwik",
+    "angular",
+    "analytics"
+  ],
   "peerDependencies": {
     "@angular/common": "^11.2.10",
     "@angular/core": "^11.2.10"
@@ -13,6 +21,11 @@
     "url": "https://github.com/EmmanuelRoux/ngx-matomo.git",
     "directory": "projects/tracker"
   },
+  "bugs": {
+    "url": "https://github.com/EmmanuelRoux/ngx-matomo/issues"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/EmmanuelRoux/ngx-matomo#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"

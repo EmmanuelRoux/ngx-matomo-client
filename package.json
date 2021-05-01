@@ -1,6 +1,14 @@
 {
   "name": "ngx-matomo",
   "version": "1.0.0",
+  "author": "Emmanuel Roux (https://github.com/EmmanuelRoux)",
+  "description": "Matomo (fka. Piwik) client for Angular applications",
+  "keywords": [
+    "matomo",
+    "piwik",
+    "angular",
+    "analytics"
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -66,5 +74,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/EmmanuelRoux/ngx-matomo.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/EmmanuelRoux/ngx-matomo/issues"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/EmmanuelRoux/ngx-matomo#readme"
 }
