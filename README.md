@@ -7,6 +7,8 @@ Matomo (fka. Piwik) client for Angular applications.
 [![CircleCI](https://img.shields.io/circleci/build/github/EmmanuelRoux/ngx-matomo/main.svg?logo=circleci&logoColor=fff&label=CircleCI)](https://circleci.com/gh/EmmanuelRoux/ngx-matomo)
 [![MIT license](https://img.shields.io/badge/License-MIT-limegreen.svg)](https://opensource.org/licenses/MIT)
 
+<!-- toc -->
+
 * [Dependencies](#dependencies)
 * [Installation](#installation)
 * [Setup](#setup)
@@ -26,6 +28,8 @@ Matomo (fka. Piwik) client for Angular applications.
 * [Configuration reference](#configuration-reference)
   + [NgxMatomoTrackerModule](#ngxmatomotrackermodule)
   + [NgxMatomoRouterModule](#ngxmatomoroutermodule)
+
+<!-- tocstop -->
 
 ## Dependencies
 

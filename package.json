@@ -24,7 +24,8 @@
     "lint": "ng lint",
     "semantic-release": "semantic-release",
     "semantic-release:prepare-ci": "chmod +x -R ./scripts/",
-    "semantic-release:ci": "npm run semantic-release:prepare-ci && npm run semantic-release"
+    "semantic-release:ci": "npm run semantic-release:prepare-ci && npm run semantic-release",
+    "update:toc": "markdown-toc README.md -i --maxdepth=3"
   },
   "dependencies": {
     "@angular/animations": "~11.2.9",
@@ -60,6 +61,7 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "karma-junit-reporter": "^2.0.1",
+    "markdown-toc": "^1.2.0",
     "nerf-dart": "^1.0.0",
     "ng-packagr": "^11.0.0",
     "ngx-spec": "^2.1.4",
