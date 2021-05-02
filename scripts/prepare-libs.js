@@ -2,13 +2,21 @@
 const fs = require('fs');
 const path = require('path');
 const {LIBRARIES, DIST_DIR, SOURCES_DIR} = require('./constants');
-const {readPkgJson, writePkgJson} = require('./utils');
+const {readPkgJson, writePkgJson, getPkgName} = require('./utils');
 const [version] = process.argv.slice(2);
 
 function updatePkgVersion(pkgDir) {
   const pkg = readPkgJson(pkgDir)
 
   pkg.version = version;
+
+  LIBRARIES.forEach(libName => {
+    const pkgName = getPkgName(libName);
+
+    if (pkg.peerDependencies && pkg.peerDependencies[pkgName]) {
+      pkg.peerDependencies[pkgName] = version;
+    }
+  });
 
   console.log('Write version %s to package.json in %s', version, pkgDir);
   writePkgJson(pkgDir, pkg);
