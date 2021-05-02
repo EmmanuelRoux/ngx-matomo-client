@@ -1,3 +1,10 @@
+## [1.0.3-beta.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.2...v1.0.3-beta.1) (2021-05-02)
+
+
+### Bug Fixes
+
+* **packaging:** fix peer dependency ([2c727c4](https://github.com/EmmanuelRoux/ngx-matomo/commit/2c727c4a60ad4072a9e21e0d7fd8364c1df03293))
+
 ## [1.0.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.1...v1.0.2) (2021-05-02)
 
 
