@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.1...v1.0.2) (2021-05-02)
+
+
+### Bug Fixes
+
+* **demo:** translate text into english ([17ba193](https://github.com/EmmanuelRoux/ngx-matomo/commit/17ba193a6c1f396aa133f86fe633ad64da403c46))
+
 ## [1.0.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.0...v1.0.1) (2021-05-01)
 
 
