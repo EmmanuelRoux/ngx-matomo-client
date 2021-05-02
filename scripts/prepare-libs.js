@@ -1,7 +1,7 @@
 // #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const {DIST_DIR, SOURCES_DIR} = require('./constants');
+const {LIBRARIES, DIST_DIR, SOURCES_DIR} = require('./constants');
 const {readPkgJson, writePkgJson} = require('./utils');
 const [version] = process.argv.slice(2);
 
@@ -35,5 +35,4 @@ console.log('Preparing version %s of libraries', version);
 copyReadmeTo('tracker');
 
 // Update package.json version number
-updateLibVersion('tracker');
-updateLibVersion('router');
+LIBRARIES.forEach(updateLibVersion);

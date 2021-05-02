@@ -1,5 +1,5 @@
 const path = require("path");
-const {DIST_DIR} = require("./constants");
+const {LIBRARIES, DIST_DIR} = require("./constants");
 const {readPkgJson, getRegistry, getChannel} = require("./utils");
 const [version, channel] = process.argv.slice(2);
 
@@ -22,5 +22,5 @@ function addDistTag(libName) {
   console.log(`Added ${pkg.name}@${version} to dist-tag @${distTag} on ${registry}`);
 }
 
-addDistTag('tracker');
-addDistTag('router');
+// Add dist tag
+LIBRARIES.forEach(addDistTag);

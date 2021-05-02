@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const nerfDart = require('nerf-dart');
 const {exec} = require('child_process');
-const {DIST_DIR} = require('./constants');
+const {LIBRARIES, DIST_DIR} = require('./constants');
 const {checkNpmToken, readPkgJson, getChannel, getRegistry} = require('./utils');
 
 const [version, channel] = process.argv.slice(2);
@@ -42,5 +42,5 @@ function publishLib(libName) {
   console.log(`Published ${pkg.name}@${version} to dist-tag @${distTag} on ${registry}`);
 }
 
-publishLib('tracker');
-publishLib('router');
+// Publish all libraries
+LIBRARIES.forEach(publishLib);
