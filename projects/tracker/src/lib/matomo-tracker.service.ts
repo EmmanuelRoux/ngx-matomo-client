@@ -417,6 +417,8 @@ export abstract class MatomoTracker {
    * By default Matomo uses the browser DOM Timing API to accurately determine the time it takes to generate and download
    * the page. You may overwrite this value with this function.
    *
+   * <b>This feature has been deprecated since Matomo 4. Any call will be ignored with Matomo 4.</b>
+   *
    * @param generationTime Time, in milliseconds, of the page generation.
    */
   setGenerationTimeMs(generationTime: number): void {
