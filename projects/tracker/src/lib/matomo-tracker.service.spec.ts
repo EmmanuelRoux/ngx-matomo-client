@@ -379,6 +379,10 @@ describe('MatomoTracker', () => {
     ['application/test'],
   ));
 
+  it('should disable sendBeacon', expectSimpleMethod('disableAlwaysUseSendBeacon', []));
+
+  it('should enable sendBeacon', expectSimpleMethod('alwaysUseSendBeacon', []));
+
   function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>>(getter: G,
                                                                          mockInstance: Partial<MatomoInstance>,
                                                                          expected: T): Promise<void> {
