@@ -844,6 +844,14 @@ export class MatomoTracker {
     this.push(['setRequestMethod', method]);
   }
 
+  disableAlwaysUseSendBeacon(): void {
+    this.push(['disableAlwaysUseSendBeacon']);
+  }
+
+  alwaysUseSendBeacon(): void {
+    this.push(['alwaysUseSendBeacon']);
+  }
+
   /**
    * Sets a function that will process the request content.<br />
    * The function will be called once the request (query parameters string) has been prepared, and before the request content is sent.
