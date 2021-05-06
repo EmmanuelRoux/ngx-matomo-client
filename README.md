@@ -1,6 +1,6 @@
 # Ngx-Matomo
 
-Matomo (fka. Piwik) client for Angular 9-12 applications
+Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or 4 and Angular 9-12.
 
 [![Angular 12](https://img.shields.io/badge/Angular-12-limegreen.svg?logo=angular)](https://angular.io/)
 [![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
@@ -32,9 +32,9 @@ Matomo (fka. Piwik) client for Angular 9-12 applications
 
 ## Dependencies
 
-| NgxMatomo | Angular               |
-| --------- | --------------------- |
-| latest    | 9.x, 10.x, 11.x, 12.x |
+| NgxMatomo | Angular     | Matomo        |
+| --------- | ----------- | ------------- |
+| latest    | 9.x to 12.x | Matomo 3 or 4 |
 
 ## Installation
 
@@ -346,9 +346,9 @@ tests...
 To do so just set the `disabled` switch:
 
 ```typescript
-import {NgModule} from '@angular/core';
-import {NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
-import {environment} from './environment';
+import { NgModule } from '@angular/core';
+import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { environment } from './environment';
 
 @NgModule({
   imports: [
@@ -360,8 +360,7 @@ import {environment} from './environment';
   ],
   // ...
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 ## Launch demo app
@@ -398,7 +397,6 @@ Available options :
 
 ```typescript
 interface MatomoConfiguration {
-
   /**
    * If set to `true` then all tracking operations become no-op
    * Note that in this case, all getter methods will return rejected Promises
@@ -457,7 +455,7 @@ interface MatomoConfiguration {
    * Optional
    * Default: true
    */
-  enableLinkTracking?: boolean,
+  enableLinkTracking?: boolean;
 
   /**
    * Download Matomo tracking code from another source
