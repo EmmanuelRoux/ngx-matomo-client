@@ -1,6 +1,6 @@
 # Ngx-Matomo
 
-Matomo (fka. Piwik) client for Angular 9+ applications.
+Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or 4 and Angular 9+.
 
 [![Angular 11](https://img.shields.io/badge/Angular-11-limegreen.svg?logo=angular)](https://angular.io/)
 [![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
@@ -31,9 +31,9 @@ Matomo (fka. Piwik) client for Angular 9+ applications.
 
 ## Dependencies
 
-| NgxMatomo | Angular            |
-| --------- | ------------------ |
-| latest    | 9.x, 10.x, 11.x    |
+| NgxMatomo | Angular            | Matomo server              |
+| --------- | ------------------ | -------------------------- |
+| latest    | 9.x / 10.x / 11.x  | Matomo 3 / Matomo 4        |
 
 ## Installation
 
