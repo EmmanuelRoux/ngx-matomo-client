@@ -21,6 +21,16 @@ function trimTrailingUndefinedElements<T>(array: T[]): T[] {
   return trimmed;
 }
 
+export interface MatomoECommerceItem {
+  productSKU: string;
+  productName?: string;
+  productCategory?: string;
+  price?: number;
+  quantity?: number;
+}
+
+export type MatomoECommerceItemView = Required<Pick<MatomoECommerceItem, 'productSKU' | 'productName' | 'productCategory' | 'price'>>;
+
 export interface MatomoInstance {
 
   getMatomoUrl(): string;
@@ -53,6 +63,8 @@ export interface MatomoInstance {
   getCustomVariable(index: number, scope: string): string;
 
   getCustomDimension(customDimensionId: number): string;
+
+  getEcommerceItems(): MatomoECommerceItem[];
 
   hasCookies(): boolean;
 
@@ -689,8 +701,21 @@ export abstract class MatomoTracker {
    * @param productCategory Category of the viewed product.
    * @param price Price of the viewed product.
    */
-  setEcommerceView(productSKU: string, productName: string, productCategory: string, price: number): void {
-    this.push(['setEcommerceView', productSKU, productName, productCategory, price]);
+  setEcommerceView(productSKU: string, productName: string, productCategory: string, price: number): void;
+
+  /**
+   * Sets the current page view as a product or category page view.<br />
+   * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
+   *
+   */
+  setEcommerceView(product: MatomoECommerceItemView): void;
+
+  setEcommerceView(productOrSKU: string | MatomoECommerceItemView, productName?: string, productCategory?: string, price?: number): void {
+    if (typeof productOrSKU === 'string') {
+      this.push(['setEcommerceView', productOrSKU, productName, productCategory, price]);
+    } else {
+      this.push(['setEcommerceView', productOrSKU.productSKU, productOrSKU.productName, productOrSKU.productCategory, productOrSKU.price]);
+    }
   }
 
   /**
@@ -703,8 +728,56 @@ export abstract class MatomoTracker {
    * @param [price] Optional price of the product to add.
    * @param [quantity] Optional quantity of the product to add.
    */
-  addEcommerceItem(productSKU: string, productName?: string, productCategory?: string, price?: number, quantity?: number): void {
-    this.push(['addEcommerceItem', productSKU, productName, productCategory, price, quantity]);
+  addEcommerceItem(productSKU: string, productName?: string, productCategory?: string, price?: number, quantity?: number): void;
+
+  /**
+   * Adds a product into the eCommerce order.<br />
+   * Must be called for each product in the order.
+   *
+   */
+  addEcommerceItem(product: MatomoECommerceItem): void;
+  addEcommerceItem(productOrSKU: string | MatomoECommerceItem,
+                   productName?: string,
+                   productCategory?: string,
+                   price?: number,
+                   quantity?: number): void {
+    if (typeof productOrSKU === 'string') {
+      this.push(['addEcommerceItem', productOrSKU, productName, productCategory, price, quantity]);
+    } else {
+      this.push(['addEcommerceItem',
+        productOrSKU.productSKU, productOrSKU.productName,
+        productOrSKU.productCategory, productOrSKU.price, productOrSKU.quantity]);
+    }
+  }
+
+  /**
+   * Remove the specified product from the untracked ecommerce order
+   *
+   * @param productSKU SKU of the product to remove.
+   */
+  removeEcommerceItem(productSKU: string): void {
+    this.push(['removeEcommerceItem', productSKU]);
+  }
+
+  /**
+   * Remove all products in the untracked ecommerce order
+   *
+   * Note: This is done automatically after {@link #trackEcommerceOrder trackEcommerceOrder()} is called
+   */
+  clearEcommerceCart(): void {
+    this.push(['clearEcommerceCart']);
+  }
+
+  /**
+   * Return all ecommerce items currently in the untracked ecommerce order
+   * <p/>
+   * The returned array will be a copy, so changing it won't affect the ecommerce order.
+   * To affect what gets tracked, use the {@link #addEcommerceItem addEcommerceItem()}, {@link #removeEcommerceItem removeEcommerceItem()},
+   * {@link #clearEcommerceCart clearEcommerceCart()} methods.
+   * Use this method to see what will be tracked before you track an order or cart update.
+   */
+  getEcommerceItems(): Promise<MatomoECommerceItem[]> {
+    return this.get('getEcommerceItems');
   }
 
   /**
