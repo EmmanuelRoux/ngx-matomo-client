@@ -962,6 +962,20 @@ export abstract class MatomoTracker {
     this.push(['setRequestContentType', contentType]);
   }
 
+  /**
+   * Send a ping request
+   * <p>
+   * Ping requests do not track new actions.
+   * If they are sent within the standard visit length, they will update the existing visit time.
+   * If sent after the standard visit length, ping requests will be ignored. See also
+   * {@link #enableHeartBeatTimer enableHeartBeatTimer()}.
+   *
+   * @see enableHeartBeatTimer
+   */
+  ping(): void {
+    this.push(['ping']);
+  }
+
   /** Asynchronously call provided method name on matomo tracker instance */
   protected get<G extends Getters<MatomoInstance>>(getter: G): Promise<ReturnType<MatomoInstance[G]>> {
     return this.pushFn(matomo => matomo[getter]() as ReturnType<MatomoInstance[G]>);
