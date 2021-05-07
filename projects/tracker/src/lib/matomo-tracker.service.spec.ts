@@ -1,5 +1,5 @@
 import {MatomoHolder} from './holder';
-import {MatomoInstance, MatomoTracker} from './matomo-tracker.service';
+import {MatomoECommerceItem, MatomoInstance, MatomoTracker} from './matomo-tracker.service';
 import {Getters, Methods} from './types';
 
 declare var window: MatomoHolder;
@@ -289,15 +289,49 @@ describe('MatomoTracker', () => {
     [true],
   ));
 
-  it('should set ecommerce view', expectSimpleMethod(
-    'setEcommerceView',
-    ['sku', 'name', 'cat', 42],
+  it('should set ecommerce view', expectPush(
+    tracker => {
+      tracker.setEcommerceView('sku1', 'name1', 'cat1', 42);
+      tracker.setEcommerceView({productSKU: 'sku2', productName: 'name2', productCategory: 'cat2', price: 42});
+    },
+    [
+      ['setEcommerceView', 'sku1', 'name1', 'cat1', 42],
+      ['setEcommerceView', 'sku2', 'name2', 'cat2', 42],
+    ],
   ));
 
-  it('should add ecommerce item', expectSimpleMethod(
-    'addEcommerceItem',
-    ['sku', 'name', 'cat', 42, 100],
+  it('should add ecommerce item', expectPush(
+    tracker => {
+      tracker.addEcommerceItem('sku1', 'name1', 'cat1', 42, 100);
+      tracker.addEcommerceItem({productSKU: 'sku2', productName: 'name2', productCategory: 'cat2', price: 42, quantity: 100});
+    },
+    [
+      ['addEcommerceItem', 'sku1', 'name1', 'cat1', 42, 100],
+      ['addEcommerceItem', 'sku2', 'name2', 'cat2', 42, 100],
+    ],
   ));
+
+  it('should remove ecommerce item', expectSimpleMethod(
+    'removeEcommerceItem',
+    ['sku'],
+  ));
+
+  it('should clear ecommerce cart', expectSimpleMethod(
+    'clearEcommerceCart',
+    [],
+  ));
+
+  it('should get ecommerce items', done => {
+    expectGetter<unknown[], 'getEcommerceItems'>(
+      'getEcommerceItems',
+      {
+        getEcommerceItems(): MatomoECommerceItem[] {
+          return [{productSKU: 'test'}];
+        },
+      },
+      [{productSKU: 'test'}],
+    ).then(done);
+  });
 
   it('should track ecommerce cart update', expectSimpleMethod(
     'trackEcommerceCartUpdate',
