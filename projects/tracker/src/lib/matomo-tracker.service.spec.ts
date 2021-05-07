@@ -426,6 +426,10 @@ describe('MatomoTracker', () => {
 
   it('should send ping request', expectSimpleMethod('ping', []));
 
+  it('should disable queue request', expectSimpleMethod('disableQueueRequest', []));
+
+  it('should set requestQueueInterval', expectSimpleMethod('setRequestQueueInterval', [4200]));
+
   function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>>(getter: G,
                                                                          mockInstance: Partial<MatomoInstance>,
                                                                          expected: T): Promise<void> {
