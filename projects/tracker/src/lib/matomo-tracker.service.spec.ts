@@ -32,10 +32,12 @@ describe('MatomoTracker', () => {
     };
   }
 
-  function expectSimpleMethod<M extends Methods<MatomoTracker>>(method: M, args: Parameters<MatomoTracker[M]>): () => void {
+  function expectSimpleMethod<M extends Methods<MatomoTracker>>(method: M,
+                                                                args: Parameters<MatomoTracker[M]>,
+                                                                expectedArgs: unknown[] = args): () => void {
     return expectPush(
       t => (t[method] as any)(...args),
-      [[method, ...args]],
+      [[method, ...expectedArgs]],
     );
   }
 
@@ -119,9 +121,15 @@ describe('MatomoTracker', () => {
     [42],
   ));
 
-  it('should enable link tracking', expectSimpleMethod(
+  it('should enable link tracking with pseudo-handler', expectSimpleMethod(
     'enableLinkTracking',
     [true],
+  ));
+
+  it('should enable link tracking with standard click handler', expectSimpleMethod(
+    'enableLinkTracking',
+    [],
+    [false],
   ));
 
   it('should enable cross domain linking', expectSimpleMethod(

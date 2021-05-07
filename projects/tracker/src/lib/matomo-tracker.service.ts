@@ -220,14 +220,14 @@ export abstract class MatomoTracker {
   /**
    * Installs link tracking on all applicable link elements.
    *
-   * @param enable Set the enable parameter to true to use pseudo click-handler (treat middle click and open contextmenu as
+   * @param usePseudoClickHandler Set to `true` to use pseudo click-handler (treat middle click and open contextmenu as
    * left click).<br />
    * A right click (or any click that opens the context menu) on a link will be tracked as clicked even if "Open in new tab"
    * is not selected.<br />
    * If "false" (default), nothing will be tracked on open context menu or middle click.
    */
-  enableLinkTracking(enable: boolean): void {
-    this.push(['enableLinkTracking', enable]);
+  enableLinkTracking(usePseudoClickHandler = false): void {
+    this.push(['enableLinkTracking', usePseudoClickHandler]);
   }
 
   /**
