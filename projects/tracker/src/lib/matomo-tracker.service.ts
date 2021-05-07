@@ -593,7 +593,7 @@ export class MatomoTracker {
    * - "page" means the custom variable applies to the current page view.
    * - "visit" means the custom variable applies to the current visitor.
    */
-  setCustomVariable(index: number, name: string, value: string, scope: 'page' | 'visit'): void {
+  setCustomVariable(index: number, name: string, value: string, scope: 'page' | 'visit' | 'event'): void {
     this.push(['setCustomVariable', index, name, value, scope]);
   }
 
@@ -603,7 +603,7 @@ export class MatomoTracker {
    * @param index Index of the custom variable to delete.
    * @param scope Scope of the custom variable to delete.
    */
-  deleteCustomVariable(index: number, scope: string): void {
+  deleteCustomVariable(index: number, scope: 'page' | 'visit' | 'event'): void {
     this.push(['deleteCustomVariable', index, scope]);
   }
 
@@ -612,7 +612,7 @@ export class MatomoTracker {
    *
    * @param scope Scope of the custom variables to delete.
    */
-  deleteCustomVariables(scope: string): void {
+  deleteCustomVariables(scope: 'page' | 'visit' | 'event'): void {
     this.push(['deleteCustomVariables', scope]);
   }
 
@@ -623,7 +623,7 @@ export class MatomoTracker {
    * @param scope Scope of the custom variable to retrieve.
    * @returns Promise for the value of custom variable.
    */
-  getCustomVariable(index: number, scope: string): Promise<string> {
+  getCustomVariable(index: number, scope: 'page' | 'visit' | 'event'): Promise<string> {
     return this.pushFn(matomo => matomo.getCustomVariable(index, scope));
   }
 
