@@ -424,6 +424,8 @@ describe('MatomoTracker', () => {
 
   it('should enable sendBeacon', expectSimpleMethod('alwaysUseSendBeacon', []));
 
+  it('should send ping request', expectSimpleMethod('ping', []));
+
   function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>>(getter: G,
                                                                          mockInstance: Partial<MatomoInstance>,
                                                                          expected: T): Promise<void> {
