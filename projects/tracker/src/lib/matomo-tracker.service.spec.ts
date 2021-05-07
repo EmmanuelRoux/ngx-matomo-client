@@ -115,8 +115,8 @@ describe('MatomoTracker', () => {
   ));
 
   it('should enable link tracking', expectSimpleMethod(
-    'enableHeartBeatTimer',
-    [42],
+    'enableLinkTracking',
+    [true],
   ));
 
   it('should enable cross domain linking', expectSimpleMethod(
