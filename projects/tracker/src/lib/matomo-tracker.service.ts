@@ -963,6 +963,28 @@ export abstract class MatomoTracker {
   }
 
   /**
+   * Disable the feature which groups together multiple tracking requests and send them as a bulk POST request.
+   * <p/>
+   * Disabling this feature is useful when you want to be able to replay all logs:
+   * one must use disableQueueRequest to disable this behaviour to later be able to replay logged
+   * Matomo logs (otherwise a subset of the requests wouldn't be able to be replayed).
+   */
+  disableQueueRequest(): void {
+    this.push(['disableQueueRequest']);
+  }
+
+  /**
+   * Defines after how many ms a queued requests will be executed after the request was queued initially
+   * <p/>
+   * The higher the value the more tracking requests can be send together at once
+   *
+   * @param interval Interval in milliseconds, must be at least 1000, defaults to 2500
+   */
+  setRequestQueueInterval(interval: number): void {
+    this.push(['setRequestQueueInterval', interval]);
+  }
+
+  /**
    * Send a ping request
    * <p>
    * Ping requests do not track new actions.
