@@ -268,12 +268,12 @@ describe('MatomoTracker', () => {
 
   it('should delete custom variable', expectSimpleMethod(
     'deleteCustomVariable',
-    [1, 'scope'],
+    [1, 'page'],
   ));
 
   it('should delete custom variables', expectSimpleMethod(
     'deleteCustomVariables',
-    ['scope'],
+    ['page'],
   ));
 
   it('should store custom variables in cookie', expectSimpleMethod(
@@ -610,9 +610,9 @@ describe('MatomoTracker', () => {
     }) as any);
 
     // When
-    tracker.getCustomVariable(0, 'test').then(url => {
+    tracker.getCustomVariable(0, 'page').then(url => {
       // Then
-      expect(url).toEqual('0|test');
+      expect(url).toEqual('0|page');
     }).then(done);
   });
 
