@@ -67,6 +67,8 @@ export interface MatomoInstance {
 
   hasCookies(): boolean;
 
+  getCrossDomainLinkingUrlParameter(): string;
+
 }
 
 @Injectable({providedIn: 'root'})
@@ -246,6 +248,15 @@ export class MatomoTracker {
    */
   setCrossDomainLinkingTimeout(timeout: number): void {
     this.push(['setCrossDomainLinkingTimeout', timeout]);
+  }
+
+  /**
+   * Get the query parameter to append to links to handle cross domain linking.
+   *
+   * Use this to add cross domain support for links that are added to the DOM dynamically
+   */
+  getCrossDomainLinkingUrlParameter(): Promise<string> {
+    return this.get('getCrossDomainLinkingUrlParameter');
   }
 
   /**

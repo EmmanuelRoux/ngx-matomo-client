@@ -129,6 +129,18 @@ describe('MatomoTracker', () => {
     [42],
   ));
 
+  it('should get cross domain linking url parameter', (done) => {
+    expectGetter(
+      'getCrossDomainLinkingUrlParameter',
+      {
+        getCrossDomainLinkingUrlParameter(): string {
+          return 'foo=bar';
+        },
+      },
+      'foo=bar',
+    ).then(done);
+  });
+
   it('should set document title', expectSimpleMethod(
     'setDocumentTitle',
     ['test'],
