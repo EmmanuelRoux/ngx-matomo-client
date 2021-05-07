@@ -248,7 +248,7 @@ export abstract class MatomoTracker {
    * By default, the two visits across domains will be linked together when the link is clicked and the page is loaded within
    * a 180 seconds timeout window.
    *
-   * @param timeout Timeout, in seconds, between two actions across two domanes before creating a new visit.
+   * @param timeout Timeout, in seconds, between two actions across two domains before creating a new visit.
    */
   setCrossDomainLinkingTimeout(timeout: number): void {
     this.push(['setCrossDomainLinkingTimeout', timeout]);
@@ -273,7 +273,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets array of hostnames or domains to be treated as local.<br />
+   * Set array of hostnames or domains to be treated as local.<br />
    * For wildcard subdomains, you can use: `setDomains('.example.com')`; or `setDomains('*.example.com');`.<br />
    * You can also specify a path along a domain: `setDomains('*.example.com/subsite1');`.
    *
@@ -353,7 +353,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets classes to be treated as downloads (in addition to piwik_download).
+   * Set classes to be treated as downloads (in addition to piwik_download).
    *
    * @param classes Class, or list of classes to be treated as downloads.
    */
@@ -362,7 +362,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets list of file extensions to be recognized as downloads.<br />
+   * Set list of file extensions to be recognized as downloads.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions to be recognized as downloads.
@@ -372,7 +372,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets additional file extensions to be recognized as downloads.<br />
+   * Set additional file extensions to be recognized as downloads.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions to be recognized as downloads.
@@ -382,7 +382,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets file extensions to be removed from the list of download file extensions.<br />
+   * Set file extensions to be removed from the list of download file extensions.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions not to be recognized as downloads.
@@ -392,7 +392,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets classes to be ignored if present in link (in addition to piwik_ignore).
+   * Set classes to be ignored if present in link (in addition to piwik_ignore).
    *
    * @param classes Class, or list of classes to be ignored if present in link.
    */
@@ -571,7 +571,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a User ID to this user (such as an email address or a username).
+   * Set a User ID to this user (such as an email address or a username).
    *
    * @param userId User ID to set for the current visitor.
    */
@@ -580,7 +580,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Resets the User ID which also generates a new Visitor ID.
+   * Reset the User ID which also generates a new Visitor ID.
    *
    */
   resetUserId(): void {
@@ -588,7 +588,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a custom variable.
+   * Set a custom variable.
    *
    * @param index Index, the number from 1 to 5 where this custom variable name is stored for the current page view.
    * @param name Name, the name of the variable, for example: Category, Sub-category, UserType.
@@ -643,7 +643,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a custom dimension.<br />
+   * Set a custom dimension.<br />
    * (requires Matomo 2.15.1 + Custom Dimensions plugin)
    *
    * @param customDimensionId ID of the custom dimension to set.
@@ -675,7 +675,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets campaign name parameter(s).
+   * Set campaign name parameter(s).
    *
    * @param name Name of the campaign
    */
@@ -684,7 +684,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets campaign keyword parameter(s).
+   * Set campaign keyword parameter(s).
    *
    * @param keyword Keyword parameter(s) of the campaign.
    */
@@ -704,7 +704,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the current page view as a product or category page view.<br />
+   * Set the current page view as a product or category page view.<br />
    * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
    *
    * @param productSKU SKU of the viewed product.
@@ -715,7 +715,7 @@ export abstract class MatomoTracker {
   setEcommerceView(productSKU: string, productName: string, productCategory: string, price: number): void;
 
   /**
-   * Sets the current page view as a product or category page view.<br />
+   * Set the current page view as a product or category page view.<br />
    * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
    *
    */
@@ -793,7 +793,7 @@ export abstract class MatomoTracker {
 
   /**
    * Tracks a shopping cart.<br />
-   * Call this javascript function every time a user is adding, updating or deleting a product from the cart.
+   * Call this function every time a user is adding, updating or deleting a product from the cart.
    *
    * @param grandTotal Grand total of the shopping cart.
    */
@@ -841,7 +841,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the tracking cookie name prefix.<br />
+   * Set the tracking cookie name prefix.<br />
    * Default prefix is 'pk'.
    *
    * @param prefix Prefix for the tracking cookie names.
@@ -851,7 +851,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the domain of the tracking cookies.<br />
+   * Set the domain of the tracking cookies.<br />
    * Default is the document domain.<br />
    * If your website can be visited at both www.example.com and example.com, you would use: `'.example.com'` or `'*.example.com'`.
    *
@@ -862,7 +862,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the path of the tracking cookies.<br />
+   * Set the path of the tracking cookies.<br />
    * Default is '/'.
    *
    * @param path Path of the tracking cookies.
@@ -883,7 +883,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the visitor cookie timeout.<br />
+   * Set the visitor cookie timeout.<br />
    * Default is 13 months.
    *
    * @param timeout Timeout, in seconds, for the visitor cookie timeout.
@@ -893,7 +893,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the referral cookie timeout.<br />
+   * Set the referral cookie timeout.<br />
    * Default is 6 months.
    *
    * @param timeout Timeout, in seconds, for the referral cookie timeout.
@@ -903,7 +903,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the session cookie timeout.<br />
+   * Set the session cookie timeout.<br />
    * Default is 30 minutes.
    *
    * @param timeout Timeout, in seconds, for the session cookie timeout.
@@ -923,7 +923,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the request method to either "GET" or "POST". (The default is "GET".)<br />
+   * Set the request method to either "GET" or "POST". (The default is "GET".)<br />
    * To use the POST request method, either:<br />
    * 1) the Matomo host is the same as the tracked website host (Matomo installed in the same domain as your tracked website), or<br />
    * 2) if Matomo is not installed on the same host as your website, you need to enable CORS (Cross domain requests).
@@ -943,7 +943,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a function that will process the request content.<br />
+   * Set a function that will process the request content.<br />
    * The function will be called once the request (query parameters string) has been prepared, and before the request content is sent.
    *
    * @param callback Function that will process the request content.
@@ -953,7 +953,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets request Content-Type header value.<br />
+   * Set request Content-Type header value.<br />
    * Applicable when "POST" request method is used via setRequestMethod.
    *
    * @param contentType Value for Content-Type HTTP header.
