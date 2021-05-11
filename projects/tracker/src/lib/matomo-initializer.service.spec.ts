@@ -70,6 +70,20 @@ describe('MatomoInitializerService', () => {
     expect(window._paq).toEqual([['trackPageView'], ['enableLinkTracking']]);
   });
 
+  it('should set Do Not Track setting if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.MANUAL,
+      acceptDoNotTrack: true,
+    });
+
+    // When
+    service.init();
+
+    // Then
+    expect(window._paq).toEqual([['setDoNotTrack', true]]);
+  });
+
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
     const mockContainer = jasmine.createSpyObj<HTMLElement>('FakeContainer', ['insertBefore']);
     const mockExistingScript = jasmine.createSpyObj<HTMLScriptElement>('FakeExistingScript', [], {
