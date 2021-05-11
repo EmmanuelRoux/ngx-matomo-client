@@ -403,6 +403,11 @@ describe('MatomoTracker', () => {
     [true],
   ));
 
+  it('should set cookie "same-site"', expectSimpleMethod(
+    'setCookieSameSite',
+    ['Strict'],
+  ));
+
   it('should set visitor id', expectSimpleMethod(
     'setVisitorId',
     ['0000000000000000'],
