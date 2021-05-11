@@ -127,6 +127,11 @@ describe('MatomoTracker', () => {
     [false],
   ));
 
+  it('should disable performance tracking', expectSimpleMethod(
+    'disablePerformanceTracking',
+    [],
+  ));
+
   it('should enable cross domain linking', expectSimpleMethod(
     'enableCrossDomainLinking',
     [],
