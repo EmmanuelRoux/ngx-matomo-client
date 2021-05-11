@@ -30,6 +30,7 @@ export interface MatomoECommerceItem {
 
 export type MatomoECommerceItemView = Required<Pick<MatomoECommerceItem, 'productSKU' | 'productName' | 'productCategory' | 'price'>>;
 
+/** Matomo's internal tracker instance */
 export interface MatomoInstance {
 
   getMatomoUrl(): string;
@@ -199,6 +200,20 @@ export class MatomoTracker {
    */
   logAllContentBlocksOnPage(): void {
     this.push(['logAllContentBlocksOnPage']);
+  }
+
+  /**
+   * Send a ping request
+   * <p>
+   * Ping requests do not track new actions.
+   * If they are sent within the standard visit length, they will update the existing visit time.
+   * If sent after the standard visit length, ping requests will be ignored.
+   * See also {@link #enableHeartBeatTimer enableHeartBeatTimer()}.
+   *
+   * @see enableHeartBeatTimer
+   */
+  ping(): void {
+    this.push(['ping']);
   }
 
   /**
@@ -926,14 +941,6 @@ export class MatomoTracker {
     this.push(['setRequestMethod', method]);
   }
 
-  disableAlwaysUseSendBeacon(): void {
-    this.push(['disableAlwaysUseSendBeacon']);
-  }
-
-  alwaysUseSendBeacon(): void {
-    this.push(['alwaysUseSendBeacon']);
-  }
-
   /**
    * Set a function that will process the request content.<br />
    * The function will be called once the request (query parameters string) has been prepared, and before the request content is sent.
@@ -976,18 +983,14 @@ export class MatomoTracker {
     this.push(['setRequestQueueInterval', interval]);
   }
 
-  /**
-   * Send a ping request
-   * <p>
-   * Ping requests do not track new actions.
-   * If they are sent within the standard visit length, they will update the existing visit time.
-   * If sent after the standard visit length, ping requests will be ignored. See also
-   * {@link #enableHeartBeatTimer enableHeartBeatTimer()}.
-   *
-   * @see enableHeartBeatTimer
-   */
-  ping(): void {
-    this.push(['ping']);
+  /** Disable sending tracking tracking requests using `navigator.sendBeacon` which is enabled by default */
+  disableAlwaysUseSendBeacon(): void {
+    this.push(['disableAlwaysUseSendBeacon']);
+  }
+
+  /** Enable sending tracking tracking requests using `navigator.sendBeacon` (enabled by default) */
+  alwaysUseSendBeacon(): void {
+    this.push(['alwaysUseSendBeacon']);
   }
 
   /** Asynchronously call provided method name on matomo tracker instance */
