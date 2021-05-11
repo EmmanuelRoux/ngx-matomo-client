@@ -403,6 +403,11 @@ describe('MatomoTracker', () => {
     [true],
   ));
 
+  it('should set visitor id', expectSimpleMethod(
+    'setVisitorId',
+    ['0000000000000000'],
+  ));
+
   it('should set visitor cookie timeout', expectSimpleMethod(
     'setVisitorCookieTimeout',
     [42],
