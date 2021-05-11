@@ -1,7 +1,7 @@
-import {TestBed} from '@angular/core/testing';
-import {Title} from '@angular/platform-browser';
-import {NavigationEnd} from '@angular/router';
-import {MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider} from './page-title-providers';
+import { TestBed } from '@angular/core/testing';
+import { Title } from '@angular/platform-browser';
+import { NavigationEnd } from '@angular/router';
+import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
 
 describe('PageTitleProvider', () => {
   let titleService: Title;
@@ -24,5 +24,4 @@ describe('PageTitleProvider', () => {
       expect(title).toEqual('My custom title');
     });
   });
-
 });

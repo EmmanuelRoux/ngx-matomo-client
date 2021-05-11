@@ -1,17 +1,19 @@
-import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {TestBed} from '@angular/core/testing';
-import {RouterTestingModule} from '@angular/router/testing';
-import {NgxMatomoRouterModule} from '@ngx-matomo/router';
-import {MatomoConfiguration, NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
-import {AppComponent} from './app.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NgxMatomoRouterModule } from '@ngx-matomo/router';
+import { MatomoConfiguration, NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        NgxMatomoTrackerModule.forRoot({trackerUrl: '', siteId: ''} as MatomoConfiguration),
+        NgxMatomoTrackerModule.forRoot({
+          trackerUrl: '',
+          siteId: '',
+        } as MatomoConfiguration),
         NgxMatomoRouterModule,
       ],
       declarations: [AppComponent],
@@ -24,5 +26,4 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
-
 });

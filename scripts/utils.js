@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
-const semver = require("semver");
-const {DEFAULT_REGISTRY} = require("./constants");
+const semver = require('semver');
+const { DEFAULT_REGISTRY } = require('./constants');
 
 function checkNpmToken() {
   if (!process.env.NPM_TOKEN) {
@@ -13,7 +13,7 @@ function checkNpmToken() {
 function readPkgJson(dir) {
   const pkgPath = path.resolve(dir, 'package.json');
 
-  return JSON.parse(fs.readFileSync(pkgPath))
+  return JSON.parse(fs.readFileSync(pkgPath));
 }
 
 function writePkgJson(dir, pkg) {
@@ -23,7 +23,7 @@ function writePkgJson(dir, pkg) {
 }
 
 function getChannel(channel) {
-  return (channel ? (semver.validRange(channel) ? `release-${channel}` : channel) : 'latest');
+  return channel ? (semver.validRange(channel) ? `release-${channel}` : channel) : 'latest';
 }
 
 function getRegistry(pkgDir) {
@@ -36,4 +36,11 @@ function getPkgName(libName) {
   return `@ngx-matomo/${libName}`;
 }
 
-module.exports = {checkNpmToken, readPkgJson, writePkgJson, getChannel, getRegistry, getPkgName};
+module.exports = {
+  checkNpmToken,
+  readPkgJson,
+  writePkgJson,
+  getChannel,
+  getRegistry,
+  getPkgName,
+};

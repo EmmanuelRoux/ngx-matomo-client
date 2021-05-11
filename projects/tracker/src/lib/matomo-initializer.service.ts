@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   AutoMatomoConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
@@ -9,7 +9,7 @@ import {
   MatomoTrackerConfiguration,
   MultiTrackersConfiguration,
 } from './configuration';
-import {MatomoHolder} from './holder';
+import { MatomoHolder } from './holder';
 
 declare var window: MatomoHolder;
 
@@ -17,14 +17,16 @@ function isManualConfiguration(config: MatomoConfiguration): config is ManualMat
   return config.mode === MatomoInitializationMode.MANUAL;
 }
 
-function isMultiTrackerConfiguration(config: AutoMatomoConfiguration): config is MultiTrackersConfiguration {
+function isMultiTrackerConfiguration(
+  config: AutoMatomoConfiguration
+): config is MultiTrackersConfiguration {
   return Array.isArray(config.trackers);
 }
 
 function getTrackersConfiguration(config: AutoMatomoConfiguration): MatomoTrackerConfiguration[] {
   return isMultiTrackerConfiguration(config)
     ? config.trackers
-    : [{trackerUrl: config.trackerUrl, siteId: config.siteId}];
+    : [{ trackerUrl: config.trackerUrl, siteId: config.siteId }];
 }
 
 function coerceSiteId(siteId: number | string): string {
@@ -38,9 +40,11 @@ function appendTrailingSlash(str: string): string {
 const TRACKER_SUFFIX = 'matomo.php';
 const DEFAULT_SCRIPT_SUFFIX = 'matomo.js';
 
-export function createMatomoInitializer(config: InternalMatomoConfiguration): MatomoInitializerService {
+export function createMatomoInitializer(
+  config: InternalMatomoConfiguration
+): MatomoInitializerService {
   return config.disabled
-    ? new NoopMatomoInitializer() as MatomoInitializerService
+    ? (new NoopMatomoInitializer() as MatomoInitializerService)
     : new MatomoInitializerService(config);
 }
 
@@ -49,7 +53,6 @@ export class NoopMatomoInitializer implements Pick<MatomoInitializerService, 'in
     // No-op
   }
 }
-
 @Injectable({
   providedIn: 'root',
   useFactory: createMatomoInitializer,
@@ -76,7 +79,7 @@ export class MatomoInitializerService {
     }
 
     if (!isManualConfiguration(this.config)) {
-      const {scriptUrl: customScriptUrl} = this.config;
+      const { scriptUrl: customScriptUrl } = this.config;
       const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(this.config);
       const mainTrackerUrl = appendTrailingSlash(mainTracker.trackerUrl);
       const mainTrackerSiteId = coerceSiteId(mainTracker.siteId);
@@ -84,8 +87,12 @@ export class MatomoInitializerService {
       _paq.push(['setTrackerUrl', mainTrackerUrl + TRACKER_SUFFIX]);
       _paq.push(['setSiteId', mainTrackerSiteId]);
 
-      additionalTrackers.forEach(({trackerUrl, siteId}) =>
-        _paq.push(['addTracker', appendTrailingSlash(trackerUrl) + TRACKER_SUFFIX, coerceSiteId(siteId)]),
+      additionalTrackers.forEach(({ trackerUrl, siteId }) =>
+        _paq.push([
+          'addTracker',
+          appendTrailingSlash(trackerUrl) + TRACKER_SUFFIX,
+          coerceSiteId(siteId),
+        ])
       );
 
       const d = window.document;
@@ -99,5 +106,4 @@ export class MatomoInitializerService {
       (s.parentNode as Node).insertBefore(g, s); // Parent node has at least one script tag: ourself :-)
     }
   }
-
 }

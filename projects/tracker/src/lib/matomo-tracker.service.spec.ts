@@ -1,14 +1,18 @@
-import {InternalMatomoConfiguration} from './configuration';
-import {MatomoHolder} from './holder';
-import {createMatomoTracker, MatomoECommerceItem, MatomoInstance, MatomoTracker} from './matomo-tracker.service';
-import {Getters, Methods} from './types';
+import { InternalMatomoConfiguration } from './configuration';
+import { MatomoHolder } from './holder';
+import {
+  createMatomoTracker,
+  MatomoECommerceItem,
+  MatomoInstance,
+  MatomoTracker,
+} from './matomo-tracker.service';
+import { Getters, Methods } from './types';
 
 declare var window: MatomoHolder;
 
 describe('MatomoTracker', () => {
-
   function createTracker(disabled = false): MatomoTracker {
-    return createMatomoTracker({disabled} as InternalMatomoConfiguration);
+    return createMatomoTracker({ disabled } as InternalMatomoConfiguration);
   }
 
   beforeEach(() => {
@@ -32,122 +36,101 @@ describe('MatomoTracker', () => {
     };
   }
 
-  function expectSimpleMethod<M extends Methods<MatomoTracker>>(method: M,
-                                                                args: Parameters<MatomoTracker[M]>,
-                                                                expectedArgs: unknown[] = args): () => void {
-    return expectPush(
-      t => (t[method] as any)(...args),
-      [[method, ...expectedArgs]],
-    );
+  function expectSimpleMethod<M extends Methods<MatomoTracker>>(
+    method: M,
+    args: Parameters<MatomoTracker[M]>,
+    expectedArgs: unknown[] = args
+  ): () => void {
+    return expectPush(t => (t[method] as any)(...args), [[method, ...expectedArgs]]);
   }
 
-  it('should track page view', expectSimpleMethod(
-    'trackPageView',
-    [],
-  ));
+  it('should track page view', expectSimpleMethod('trackPageView', []));
 
-  it('should track page view with custom title', expectSimpleMethod(
-    'trackPageView',
-    ['custom title'],
-  ));
+  it(
+    'should track page view with custom title',
+    expectSimpleMethod('trackPageView', ['custom title'])
+  );
 
-  it('should track event', expectSimpleMethod(
-    'trackEvent',
-    ['myCategory', 'myAction', 'myName', 42],
-  ));
+  it(
+    'should track event',
+    expectSimpleMethod('trackEvent', ['myCategory', 'myAction', 'myName', 42])
+  );
 
-  it('should track event without name/value', expectSimpleMethod(
-    'trackEvent',
-    ['myCategory', 'myAction'],
-  ));
+  it(
+    'should track event without name/value',
+    expectSimpleMethod('trackEvent', ['myCategory', 'myAction'])
+  );
 
-  it('should track site search', expectSimpleMethod(
-    'trackSiteSearch',
-    ['myKeyword', 'myCategory', 0],
-  ));
+  it(
+    'should track site search',
+    expectSimpleMethod('trackSiteSearch', ['myKeyword', 'myCategory', 0])
+  );
 
-  it('should track goal', expectSimpleMethod(
-    'trackGoal',
-    [1, 2],
-  ));
+  it('should track goal', expectSimpleMethod('trackGoal', [1, 2]));
 
-  it('should track link', expectSimpleMethod(
-    'trackLink',
-    ['http://myUrl', 'link'],
-  ));
+  it('should track link', expectSimpleMethod('trackLink', ['http://myUrl', 'link']));
 
-  it('should track download', expectSimpleMethod(
-    'trackLink',
-    ['http://myUrl', 'download'],
-  ));
+  it('should track download', expectSimpleMethod('trackLink', ['http://myUrl', 'download']));
 
-  it('should track content impressions', expectSimpleMethod(
-    'trackAllContentImpressions',
-    [],
-  ));
+  it('should track content impressions', expectSimpleMethod('trackAllContentImpressions', []));
 
-  it('should track visible content impressions', expectSimpleMethod(
-    'trackVisibleContentImpressions',
-    [true, 42],
-  ));
+  it(
+    'should track visible content impressions',
+    expectSimpleMethod('trackVisibleContentImpressions', [true, 42])
+  );
 
-  it('should track content impressions within node', expectSimpleMethod(
-    'trackContentImpressionsWithinNode',
-    [document.createElement('div')],
-  ));
+  it(
+    'should track content impressions within node',
+    expectSimpleMethod('trackContentImpressionsWithinNode', [document.createElement('div')])
+  );
 
-  it('should track content interaction with node', expectSimpleMethod(
-    'trackContentInteractionNode',
-    [document.createElement('div'), 'test'],
-  ));
+  it(
+    'should track content interaction with node',
+    expectSimpleMethod('trackContentInteractionNode', [document.createElement('div'), 'test'])
+  );
 
-  it('should track content impression', expectSimpleMethod(
-    'trackContentImpression',
-    ['myContentName', 'myPiece', 'myTarget'],
-  ));
+  it(
+    'should track content impression',
+    expectSimpleMethod('trackContentImpression', ['myContentName', 'myPiece', 'myTarget'])
+  );
 
-  it('should track content interaction', expectSimpleMethod(
-    'trackContentInteraction',
-    ['myInteraction', 'myContentName', 'myPiece', 'myTarget'],
-  ));
+  it(
+    'should track content interaction',
+    expectSimpleMethod('trackContentInteraction', [
+      'myInteraction',
+      'myContentName',
+      'myPiece',
+      'myTarget',
+    ])
+  );
 
-  it('should log all content blocks on page (for debugging purpose)', expectSimpleMethod(
-    'logAllContentBlocksOnPage',
-    [],
-  ));
+  it(
+    'should log all content blocks on page (for debugging purpose)',
+    expectSimpleMethod('logAllContentBlocksOnPage', [])
+  );
 
-  it('should enable heartbeat timer', expectSimpleMethod(
-    'enableHeartBeatTimer',
-    [42],
-  ));
+  it('should enable heartbeat timer', expectSimpleMethod('enableHeartBeatTimer', [42]));
 
-  it('should enable link tracking with pseudo-handler', expectSimpleMethod(
-    'enableLinkTracking',
-    [true],
-  ));
+  it(
+    'should enable link tracking with pseudo-handler',
+    expectSimpleMethod('enableLinkTracking', [true])
+  );
 
-  it('should enable link tracking with standard click handler', expectSimpleMethod(
-    'enableLinkTracking',
-    [],
-    [false],
-  ));
+  it(
+    'should enable link tracking with standard click handler',
+    expectSimpleMethod('enableLinkTracking', [], [false])
+  );
 
-  it('should disable performance tracking', expectSimpleMethod(
-    'disablePerformanceTracking',
-    [],
-  ));
+  it('should disable performance tracking', expectSimpleMethod('disablePerformanceTracking', []));
 
-  it('should enable cross domain linking', expectSimpleMethod(
-    'enableCrossDomainLinking',
-    [],
-  ));
+  it('should enable cross domain linking', expectSimpleMethod('enableCrossDomainLinking', []));
 
-  it('should set cross domain linking timeout', expectSimpleMethod(
-    'setCrossDomainLinkingTimeout',
-    [42],
-  ));
+  it(
+    'should set cross domain linking timeout',
+    expectSimpleMethod('setCrossDomainLinkingTimeout', [42])
+  );
 
-  it('should get cross domain linking url parameter', (done) => {
+  it('should get cross domain linking url parameter', done => {
     expectGetter(
       'getCrossDomainLinkingUrlParameter',
       {
@@ -155,298 +138,180 @@ describe('MatomoTracker', () => {
           return 'foo=bar';
         },
       },
-      'foo=bar',
+      'foo=bar'
     ).then(done);
   });
 
-  it('should set document title', expectSimpleMethod(
-    'setDocumentTitle',
-    ['test'],
-  ));
+  it('should set document title', expectSimpleMethod('setDocumentTitle', ['test']));
 
-  it('should set domains', expectSimpleMethod(
-    'setDomains',
-    [['domain1', 'domain2']],
-  ));
+  it('should set domains', expectSimpleMethod('setDomains', [['domain1', 'domain2']]));
 
-  it('should set custom url', expectSimpleMethod(
-    'setCustomUrl',
-    ['http://url'],
-  ));
+  it('should set custom url', expectSimpleMethod('setCustomUrl', ['http://url']));
 
-  it('should set referrer url', expectSimpleMethod(
-    'setReferrerUrl',
-    ['http://url'],
-  ));
+  it('should set referrer url', expectSimpleMethod('setReferrerUrl', ['http://url']));
 
-  it('should set site id', expectSimpleMethod(
-    'setSiteId',
-    [100],
-  ));
+  it('should set site id', expectSimpleMethod('setSiteId', [100]));
 
-  it('should set api url', expectSimpleMethod(
-    'setApiUrl',
-    ['http://url'],
-  ));
+  it('should set api url', expectSimpleMethod('setApiUrl', ['http://url']));
 
-  it('should set tracker url', expectSimpleMethod(
-    'setTrackerUrl',
-    ['http://url'],
-  ));
+  it('should set tracker url', expectSimpleMethod('setTrackerUrl', ['http://url']));
 
-  it('should set download classes', expectSimpleMethod(
-    'setDownloadClasses',
-    ['myClass'],
-  ));
+  it('should set download classes', expectSimpleMethod('setDownloadClasses', ['myClass']));
 
-  it('should set download extensions', expectSimpleMethod(
-    'setDownloadExtensions',
-    ['docx'],
-  ));
+  it('should set download extensions', expectSimpleMethod('setDownloadExtensions', ['docx']));
 
-  it('should add download extensions', expectSimpleMethod(
-    'addDownloadExtensions',
-    ['docx'],
-  ));
+  it('should add download extensions', expectSimpleMethod('addDownloadExtensions', ['docx']));
 
-  it('should remove download extensions', expectSimpleMethod(
-    'removeDownloadExtensions',
-    ['docx'],
-  ));
+  it('should remove download extensions', expectSimpleMethod('removeDownloadExtensions', ['docx']));
 
-  it('should set ignored classes', expectSimpleMethod(
-    'setIgnoreClasses',
-    ['myClass'],
-  ));
+  it('should set ignored classes', expectSimpleMethod('setIgnoreClasses', ['myClass']));
 
-  it('should set link classes', expectSimpleMethod(
-    'setLinkClasses',
-    ['myClass'],
-  ));
+  it('should set link classes', expectSimpleMethod('setLinkClasses', ['myClass']));
 
-  it('should set link tracking timer', expectSimpleMethod(
-    'setLinkTrackingTimer',
-    [42],
-  ));
+  it('should set link tracking timer', expectSimpleMethod('setLinkTrackingTimer', [42]));
 
-  it('should set discard hashtag', expectSimpleMethod(
-    'discardHashTag',
-    [true],
-  ));
+  it('should set discard hashtag', expectSimpleMethod('discardHashTag', [true]));
 
-  it('should set generation time', expectSimpleMethod(
-    'setGenerationTimeMs',
-    [42],
-  ));
+  it('should set generation time', expectSimpleMethod('setGenerationTimeMs', [42]));
 
-  it('should append to tracking url', expectSimpleMethod(
-    'appendToTrackingUrl',
-    ['?toAppend'],
-  ));
+  it('should append to tracking url', expectSimpleMethod('appendToTrackingUrl', ['?toAppend']));
 
-  it('should set "DoNotTrack"', expectSimpleMethod(
-    'setDoNotTrack',
-    [true],
-  ));
+  it('should set "DoNotTrack"', expectSimpleMethod('setDoNotTrack', [true]));
 
-  it('should kill frame', expectSimpleMethod(
-    'killFrame',
-    [],
-  ));
+  it('should kill frame', expectSimpleMethod('killFrame', []));
 
-  it('should redirect file', expectSimpleMethod(
-    'redirectFile',
-    ['http://url'],
-  ));
+  it('should redirect file', expectSimpleMethod('redirectFile', ['http://url']));
 
-  it('should set heart beat timer', expectSimpleMethod(
-    'setHeartBeatTimer',
-    [42, 42],
-  ));
+  it('should set heart beat timer', expectSimpleMethod('setHeartBeatTimer', [42, 42]));
 
-  it('should set user id', expectSimpleMethod(
-    'setUserId',
-    ['foo'],
-  ));
+  it('should set user id', expectSimpleMethod('setUserId', ['foo']));
 
-  it('should reset user id', expectSimpleMethod(
-    'resetUserId',
-    [],
-  ));
+  it('should reset user id', expectSimpleMethod('resetUserId', []));
 
-  it('should set custom variable', expectSimpleMethod(
-    'setCustomVariable',
-    [1, 'name', 'value', 'page'],
-  ));
+  it(
+    'should set custom variable',
+    expectSimpleMethod('setCustomVariable', [1, 'name', 'value', 'page'])
+  );
 
-  it('should delete custom variable', expectSimpleMethod(
-    'deleteCustomVariable',
-    [1, 'page'],
-  ));
+  it('should delete custom variable', expectSimpleMethod('deleteCustomVariable', [1, 'page']));
 
-  it('should delete custom variables', expectSimpleMethod(
-    'deleteCustomVariables',
-    ['page'],
-  ));
+  it('should delete custom variables', expectSimpleMethod('deleteCustomVariables', ['page']));
 
-  it('should store custom variables in cookie', expectSimpleMethod(
-    'storeCustomVariablesInCookie',
-    [],
-  ));
+  it(
+    'should store custom variables in cookie',
+    expectSimpleMethod('storeCustomVariablesInCookie', [])
+  );
 
-  it('should set custom dimension', expectSimpleMethod(
-    'setCustomDimension',
-    [1, 'value'],
-  ));
+  it('should set custom dimension', expectSimpleMethod('setCustomDimension', [1, 'value']));
 
-  it('should delete custom dimension', expectSimpleMethod(
-    'deleteCustomDimension',
-    [1],
-  ));
+  it('should delete custom dimension', expectSimpleMethod('deleteCustomDimension', [1]));
 
-  it('should set campaign name key', expectSimpleMethod(
-    'setCampaignNameKey',
-    ['test'],
-  ));
+  it('should set campaign name key', expectSimpleMethod('setCampaignNameKey', ['test']));
 
-  it('should set campaign keyword key', expectSimpleMethod(
-    'setCampaignKeywordKey',
-    ['test'],
-  ));
+  it('should set campaign keyword key', expectSimpleMethod('setCampaignKeywordKey', ['test']));
 
-  it('should set conversion attribution first referrer', expectSimpleMethod(
-    'setConversionAttributionFirstReferrer',
-    [true],
-  ));
+  it(
+    'should set conversion attribution first referrer',
+    expectSimpleMethod('setConversionAttributionFirstReferrer', [true])
+  );
 
-  it('should set ecommerce view', expectPush(
-    tracker => {
-      tracker.setEcommerceView('sku1', 'name1', 'cat1', 42);
-      tracker.setEcommerceView({productSKU: 'sku2', productName: 'name2', productCategory: 'cat2', price: 42});
-    },
-    [
-      ['setEcommerceView', 'sku1', 'name1', 'cat1', 42],
-      ['setEcommerceView', 'sku2', 'name2', 'cat2', 42],
-    ],
-  ));
+  it(
+    'should set ecommerce view',
+    expectPush(
+      tracker => {
+        tracker.setEcommerceView('sku1', 'name1', 'cat1', 42);
+        tracker.setEcommerceView({
+          productSKU: 'sku2',
+          productName: 'name2',
+          productCategory: 'cat2',
+          price: 42,
+        });
+      },
+      [
+        ['setEcommerceView', 'sku1', 'name1', 'cat1', 42],
+        ['setEcommerceView', 'sku2', 'name2', 'cat2', 42],
+      ]
+    )
+  );
 
-  it('should add ecommerce item', expectPush(
-    tracker => {
-      tracker.addEcommerceItem('sku1', 'name1', 'cat1', 42, 100);
-      tracker.addEcommerceItem({productSKU: 'sku2', productName: 'name2', productCategory: 'cat2', price: 42, quantity: 100});
-    },
-    [
-      ['addEcommerceItem', 'sku1', 'name1', 'cat1', 42, 100],
-      ['addEcommerceItem', 'sku2', 'name2', 'cat2', 42, 100],
-    ],
-  ));
+  it(
+    'should add ecommerce item',
+    expectPush(
+      tracker => {
+        tracker.addEcommerceItem('sku1', 'name1', 'cat1', 42, 100);
+        tracker.addEcommerceItem({
+          productSKU: 'sku2',
+          productName: 'name2',
+          productCategory: 'cat2',
+          price: 42,
+          quantity: 100,
+        });
+      },
+      [
+        ['addEcommerceItem', 'sku1', 'name1', 'cat1', 42, 100],
+        ['addEcommerceItem', 'sku2', 'name2', 'cat2', 42, 100],
+      ]
+    )
+  );
 
-  it('should remove ecommerce item', expectSimpleMethod(
-    'removeEcommerceItem',
-    ['sku'],
-  ));
+  it('should remove ecommerce item', expectSimpleMethod('removeEcommerceItem', ['sku']));
 
-  it('should clear ecommerce cart', expectSimpleMethod(
-    'clearEcommerceCart',
-    [],
-  ));
+  it('should clear ecommerce cart', expectSimpleMethod('clearEcommerceCart', []));
 
   it('should get ecommerce items', done => {
     expectGetter<unknown[], 'getEcommerceItems'>(
       'getEcommerceItems',
       {
         getEcommerceItems(): MatomoECommerceItem[] {
-          return [{productSKU: 'test'}];
+          return [{ productSKU: 'test' }];
         },
       },
-      [{productSKU: 'test'}],
+      [{ productSKU: 'test' }]
     ).then(done);
   });
 
-  it('should track ecommerce cart update', expectSimpleMethod(
-    'trackEcommerceCartUpdate',
-    [999],
-  ));
+  it('should track ecommerce cart update', expectSimpleMethod('trackEcommerceCartUpdate', [999]));
 
-  it('should track ecommerce order', expectSimpleMethod(
-    'trackEcommerceOrder',
-    ['orderId', 999],
-  ));
+  it('should track ecommerce order', expectSimpleMethod('trackEcommerceOrder', ['orderId', 999]));
 
-  it('should disable cookies', expectSimpleMethod(
-    'disableCookies',
-    [],
-  ));
+  it('should disable cookies', expectSimpleMethod('disableCookies', []));
 
-  it('should delete cookies', expectSimpleMethod(
-    'deleteCookies',
-    [],
-  ));
+  it('should delete cookies', expectSimpleMethod('deleteCookies', []));
 
-  it('should set cookie name prefix', expectSimpleMethod(
-    'setCookieNamePrefix',
-    ['prefix'],
-  ));
+  it('should set cookie name prefix', expectSimpleMethod('setCookieNamePrefix', ['prefix']));
 
-  it('should set cookie domain', expectSimpleMethod(
-    'setCookieDomain',
-    ['example'],
-  ));
+  it('should set cookie domain', expectSimpleMethod('setCookieDomain', ['example']));
 
-  it('should set cookie path', expectSimpleMethod(
-    'setCookiePath',
-    ['/example'],
-  ));
+  it('should set cookie path', expectSimpleMethod('setCookiePath', ['/example']));
 
-  it('should set secure cookie', expectSimpleMethod(
-    'setSecureCookie',
-    [true],
-  ));
+  it('should set secure cookie', expectSimpleMethod('setSecureCookie', [true]));
 
-  it('should set cookie "same-site"', expectSimpleMethod(
-    'setCookieSameSite',
-    ['Strict'],
-  ));
+  it('should set cookie "same-site"', expectSimpleMethod('setCookieSameSite', ['Strict']));
 
-  it('should set visitor id', expectSimpleMethod(
-    'setVisitorId',
-    ['0000000000000000'],
-  ));
+  it('should set visitor id', expectSimpleMethod('setVisitorId', ['0000000000000000']));
 
-  it('should set visitor cookie timeout', expectSimpleMethod(
-    'setVisitorCookieTimeout',
-    [42],
-  ));
+  it('should set visitor cookie timeout', expectSimpleMethod('setVisitorCookieTimeout', [42]));
 
-  it('should set referral cookie timeout', expectSimpleMethod(
-    'setReferralCookieTimeout',
-    [42],
-  ));
+  it('should set referral cookie timeout', expectSimpleMethod('setReferralCookieTimeout', [42]));
 
-  it('should set session cookie timeout', expectSimpleMethod(
-    'setSessionCookieTimeout',
-    [42],
-  ));
+  it('should set session cookie timeout', expectSimpleMethod('setSessionCookieTimeout', [42]));
 
-  it('should add element click listener', expectSimpleMethod(
-    'addListener',
-    [document.createElement('div')],
-  ));
+  it(
+    'should add element click listener',
+    expectSimpleMethod('addListener', [document.createElement('div')])
+  );
 
-  it('should set request method', expectSimpleMethod(
-    'setRequestMethod',
-    ['method'],
-  ));
+  it('should set request method', expectSimpleMethod('setRequestMethod', ['method']));
 
-  it('should set custom request processing', expectSimpleMethod(
-    'setCustomRequestProcessing',
-    [() => null],
-  ));
+  it(
+    'should set custom request processing',
+    expectSimpleMethod('setCustomRequestProcessing', [() => null])
+  );
 
-  it('should set request content type', expectSimpleMethod(
-    'setRequestContentType',
-    ['application/test'],
-  ));
+  it(
+    'should set request content type',
+    expectSimpleMethod('setRequestContentType', ['application/test'])
+  );
 
   it('should disable sendBeacon', expectSimpleMethod('disableAlwaysUseSendBeacon', []));
 
@@ -458,9 +323,11 @@ describe('MatomoTracker', () => {
 
   it('should set requestQueueInterval', expectSimpleMethod('setRequestQueueInterval', [4200]));
 
-  function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>>(getter: G,
-                                                                         mockInstance: Partial<MatomoInstance>,
-                                                                         expected: T): Promise<void> {
+  function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>>(
+    getter: G,
+    mockInstance: Partial<MatomoInstance>,
+    expected: T
+  ): Promise<void> {
     // Given
     const tracker = createTracker();
 
@@ -483,7 +350,7 @@ describe('MatomoTracker', () => {
           return 'http://fakeUrl';
         },
       },
-      'http://fakeUrl',
+      'http://fakeUrl'
     ).then(done);
   });
 
@@ -495,7 +362,7 @@ describe('MatomoTracker', () => {
           return 'http://fakeUrl';
         },
       },
-      'http://fakeUrl',
+      'http://fakeUrl'
     ).then(done);
   });
 
@@ -507,7 +374,7 @@ describe('MatomoTracker', () => {
           return 42;
         },
       },
-      42,
+      42
     ).then(done);
   });
 
@@ -519,7 +386,7 @@ describe('MatomoTracker', () => {
           return 'foo';
         },
       },
-      'foo',
+      'foo'
     ).then(done);
   });
 
@@ -531,7 +398,7 @@ describe('MatomoTracker', () => {
           return ['foo'];
         },
       },
-      ['foo'] as unknown[],
+      ['foo'] as unknown[]
     ).then(done);
   });
 
@@ -543,7 +410,7 @@ describe('MatomoTracker', () => {
           return ['foo'];
         },
       },
-      ['foo'],
+      ['foo']
     ).then(done);
   });
 
@@ -555,7 +422,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test',
+      'test'
     ).then(done);
   });
 
@@ -567,7 +434,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test',
+      'test'
     ).then(done);
   });
 
@@ -579,7 +446,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test',
+      'test'
     ).then(done);
   });
 
@@ -591,7 +458,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test',
+      'test'
     ).then(done);
   });
 
@@ -603,7 +470,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test',
+      'test'
     ).then(done);
   });
 
@@ -615,7 +482,7 @@ describe('MatomoTracker', () => {
           return true;
         },
       },
-      true,
+      true
     ).then(done);
   });
 
@@ -633,10 +500,13 @@ describe('MatomoTracker', () => {
     }) as any);
 
     // When
-    tracker.getCustomVariable(0, 'page').then(url => {
-      // Then
-      expect(url).toEqual('0|page');
-    }).then(done);
+    tracker
+      .getCustomVariable(0, 'page')
+      .then(url => {
+        // Then
+        expect(url).toEqual('0|page');
+      })
+      .then(done);
   });
 
   it('should get custom variable', done => {
@@ -653,10 +523,13 @@ describe('MatomoTracker', () => {
     }) as any);
 
     // When
-    tracker.getCustomDimension(42).then(url => {
-      // Then
-      expect(url).toEqual('dim-42');
-    }).then(done);
+    tracker
+      .getCustomDimension(42)
+      .then(url => {
+        // Then
+        expect(url).toEqual('dim-42');
+      })
+      .then(done);
   });
 
   it('should ignore calls when disabled', () => {
@@ -674,12 +547,12 @@ describe('MatomoTracker', () => {
     const tracker = createTracker(true);
 
     // Then
-    tracker.getCustomDimension(0)
+    tracker
+      .getCustomDimension(0)
       .then(() => fail('rejected promise expected'))
       .catch(() => {
         expect().nothing();
         done();
       });
   });
-
 });

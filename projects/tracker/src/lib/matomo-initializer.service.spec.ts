@@ -1,18 +1,24 @@
-import {TestBed} from '@angular/core/testing';
-import {InternalMatomoConfiguration, MATOMO_CONFIGURATION, MatomoConfiguration, MatomoInitializationMode} from './configuration';
-import {MatomoHolder} from './holder';
-import {MatomoInitializerService} from './matomo-initializer.service';
+import { TestBed } from '@angular/core/testing';
+import {
+  InternalMatomoConfiguration,
+  MATOMO_CONFIGURATION,
+  MatomoConfiguration,
+  MatomoInitializationMode,
+} from './configuration';
+import { MatomoHolder } from './holder';
+import { MatomoInitializerService } from './matomo-initializer.service';
 
 declare var window: MatomoHolder;
 
 describe('MatomoInitializerService', () => {
-
   function instantiate(config: MatomoConfiguration): MatomoInitializerService {
     TestBed.configureTestingModule({
-      providers: [{
-        provide: MATOMO_CONFIGURATION,
-        useValue: config,
-      }],
+      providers: [
+        {
+          provide: MATOMO_CONFIGURATION,
+          useValue: config,
+        },
+      ],
     });
 
     return TestBed.inject(MatomoInitializerService);
@@ -91,12 +97,14 @@ describe('MatomoInitializerService', () => {
       parentElement: mockContainer,
     });
 
-    mockContainer.insertBefore.and.callFake((script) => {
+    mockContainer.insertBefore.and.callFake(script => {
       cb(script as unknown as HTMLScriptElement);
       return script;
     });
 
-    spyOn(window.document, 'getElementsByTagName').and.returnValue([mockExistingScript] as unknown as HTMLCollectionOf<Element>);
+    spyOn(window.document, 'getElementsByTagName').and.returnValue([
+      mockExistingScript,
+    ] as unknown as HTMLCollectionOf<Element>);
   }
 
   function expectInjectedScript(script: HTMLScriptElement | undefined, expectedUrl: string): void {
@@ -115,7 +123,7 @@ describe('MatomoInitializerService', () => {
       trackerUrl: 'http://fakeTrackerUrl',
     });
 
-    setUpScriptInjection(script => injectedScript = script);
+    setUpScriptInjection(script => (injectedScript = script));
 
     // When
     service.init();
@@ -136,7 +144,7 @@ describe('MatomoInitializerService', () => {
       trackerUrl: 'http://fakeTrackerUrl',
     });
 
-    setUpScriptInjection(script => injectedScript = script);
+    setUpScriptInjection(script => (injectedScript = script));
 
     // When
     service.init();
@@ -158,7 +166,7 @@ describe('MatomoInitializerService', () => {
       scriptUrl: 'http://myCustomScriptUrl',
     });
 
-    setUpScriptInjection(script => injectedScript = script);
+    setUpScriptInjection(script => (injectedScript = script));
 
     // When
     service.init();
@@ -172,13 +180,13 @@ describe('MatomoInitializerService', () => {
     let injectedScript: HTMLScriptElement | undefined;
     const service = instantiate({
       trackers: [
-        {siteId: 'site1', trackerUrl: 'http://fakeTrackerUrl1'},
-        {siteId: 'site2', trackerUrl: 'http://fakeTrackerUrl2/'}, // Should work with trailing slash
-        {siteId: 'site3', trackerUrl: 'http://fakeTrackerUrl3'},
+        { siteId: 'site1', trackerUrl: 'http://fakeTrackerUrl1' },
+        { siteId: 'site2', trackerUrl: 'http://fakeTrackerUrl2/' }, // Should work with trailing slash
+        { siteId: 'site3', trackerUrl: 'http://fakeTrackerUrl3' },
       ],
     });
 
-    setUpScriptInjection(script => injectedScript = script);
+    setUpScriptInjection(script => (injectedScript = script));
 
     // When
     service.init();
@@ -202,7 +210,7 @@ describe('MatomoInitializerService', () => {
       trackerUrl: 'http://fakeTrackerUrl',
     });
 
-    setUpScriptInjection(script => injectedScript = script);
+    setUpScriptInjection(script => (injectedScript = script));
 
     // When
     service.init();
@@ -211,5 +219,4 @@ describe('MatomoInitializerService', () => {
     expect(injectedScript).toBeUndefined();
     expect(window._paq).toBeUndefined();
   });
-
 });

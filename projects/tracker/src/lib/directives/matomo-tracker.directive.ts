@@ -1,7 +1,7 @@
-import {Directive, ElementRef, Input, OnDestroy} from '@angular/core';
-import {fromEvent, merge, Subscription} from 'rxjs';
-import {requireNonNull} from '../coercion';
-import {MatomoTracker} from '../matomo-tracker.service';
+import { Directive, ElementRef, Input, OnDestroy } from '@angular/core';
+import { fromEvent, merge, Subscription } from 'rxjs';
+import { requireNonNull } from '../coercion';
+import { MatomoTracker } from '../matomo-tracker.service';
 
 export interface TrackArgs {
   category?: string;
@@ -26,7 +26,6 @@ function coerceEventNames(input: DOMEventInput): EventName[] | null | undefined 
   exportAs: 'matomo',
 })
 export class MatomoTrackerDirective implements OnDestroy {
-
   private sub?: Subscription;
 
   /** Set the event category */
@@ -38,8 +37,7 @@ export class MatomoTrackerDirective implements OnDestroy {
   /** Set the event value */
   @Input() matomoValue?: number;
 
-  constructor(private readonly tracker: MatomoTracker,
-              private readonly elementRef: ElementRef) {}
+  constructor(private readonly tracker: MatomoTracker, private readonly elementRef: ElementRef) {}
 
   /** Track a Matomo event whenever specified DOM event is triggered */
   @Input()
@@ -49,7 +47,9 @@ export class MatomoTrackerDirective implements OnDestroy {
     this.sub?.unsubscribe();
 
     if (eventNames) {
-      const handlers = eventNames.map(eventName => fromEvent(this.elementRef.nativeElement, eventName));
+      const handlers = eventNames.map(eventName =>
+        fromEvent(this.elementRef.nativeElement, eventName)
+      );
 
       this.sub = merge(...handlers).subscribe(() => this.trackEvent());
     } else {
@@ -102,7 +102,7 @@ export class MatomoTrackerDirective implements OnDestroy {
       requireNonNull(category, 'matomo category is required'),
       requireNonNull(action, 'matomo action is required'),
       name,
-      value,
+      value
     );
   }
 }

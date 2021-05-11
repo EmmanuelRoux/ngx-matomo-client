@@ -1,16 +1,17 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
-import {MatomoTracker} from '../matomo-tracker.service';
-import {MatomoTrackClickDirective} from './matomo-track-click.directive';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatomoTracker } from '../matomo-tracker.service';
+import { MatomoTrackClickDirective } from './matomo-track-click.directive';
 
 @Component({
-  template: `
-    <button type="button"
-            #button
-            [matomoClickCategory]="category"
-            [matomoClickAction]="action"
-            [matomoClickName]="name"
-            [matomoClickValue]="value"></button>`,
+  template: ` <button
+    type="button"
+    #button
+    [matomoClickCategory]="category"
+    [matomoClickAction]="action"
+    [matomoClickName]="name"
+    [matomoClickValue]="value"
+  ></button>`,
 })
 class HostComponent {
   @ViewChild('button') buttonRef?: ElementRef<HTMLButtonElement>;
@@ -30,16 +31,19 @@ describe('MatomoTrackClickDirective', () => {
   let fixture: ComponentFixture<HostComponent>;
   let tracker: jasmine.SpyObj<MatomoTracker>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      providers: [{
-        provide: MatomoTracker,
-        useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
-      }],
-      declarations: [HostComponent, MatomoTrackClickDirective],
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          {
+            provide: MatomoTracker,
+            useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
+          },
+        ],
+        declarations: [HostComponent, MatomoTrackClickDirective],
+      }).compileComponents();
     })
-      .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
     tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
@@ -93,5 +97,4 @@ describe('MatomoTrackClickDirective', () => {
     // Then
     expect(tracker.trackEvent).toHaveBeenCalledWith('myCategory', 'myAction', 'myName', 100);
   });
-
 });
