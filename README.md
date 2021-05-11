@@ -7,6 +7,9 @@ Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or
 [![CircleCI](https://img.shields.io/circleci/build/github/EmmanuelRoux/ngx-matomo/main.svg?logo=circleci&logoColor=fff&label=CircleCI)](https://circleci.com/gh/EmmanuelRoux/ngx-matomo)
 [![Coverage Status](https://coveralls.io/repos/github/EmmanuelRoux/ngx-matomo/badge.svg?branch=main)](https://coveralls.io/github/EmmanuelRoux/ngx-matomo?branch=main)
 [![MIT license](https://img.shields.io/badge/License-MIT-limegreen.svg)](https://opensource.org/licenses/MIT)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-limegreen.svg?logo=prettier)](https://github.com/prettier/prettier)
+
+<!-- prettier-ignore-start -->
 
 <!-- toc -->
 
@@ -30,6 +33,8 @@ Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or
   * [NgxMatomoRouterModule](#ngxmatomoroutermodule)
 
 <!-- tocstop -->
+
+<!-- prettier-ignore-end -->
 
 ## Dependencies
 
