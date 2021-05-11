@@ -1,7 +1,8 @@
-import {inject, InjectFlags, InjectionToken} from '@angular/core';
-import {requireNonNull} from './coercion';
+import { inject, InjectFlags, InjectionToken } from '@angular/core';
+import { requireNonNull } from './coercion';
 
-const CONFIG_NOT_FOUND = 'No Matomo configuration found! Have you included Matomo module using NgxMatomoTrackerModule.forRoot() ?';
+const CONFIG_NOT_FOUND =
+  'No Matomo configuration found! Have you included Matomo module using NgxMatomoTrackerModule.forRoot() ?';
 
 /** Injection token for {@link MatomoConfiguration} */
 export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MATOMO_CONFIGURATION');
@@ -10,13 +11,17 @@ export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MAT
  * For internal use only. Injection token for {@link InternalMatomoConfiguration}
  *
  */
-export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>('INTERNAL_MATOMO_CONFIGURATION', {
-  factory: () => ({
-    enableLinkTracking: true,
-    trackAppInitialLoad: false,
-    ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
-  }) as InternalMatomoConfiguration,
-});
+export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>(
+  'INTERNAL_MATOMO_CONFIGURATION',
+  {
+    factory: () =>
+      ({
+        enableLinkTracking: true,
+        trackAppInitialLoad: false,
+        ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
+      } as InternalMatomoConfiguration),
+  }
+);
 
 /**
  * For internal use only. Module configuration merged with default values.
@@ -48,7 +53,6 @@ export interface MultiTrackersConfiguration {
 }
 
 export interface BaseMatomoConfiguration {
-
   /** If `true`, track a page view when app loads (default `false`) */
   trackAppInitialLoad?: boolean;
 
@@ -71,11 +75,10 @@ export interface BaseAutoMatomoConfiguration {
 
   /** Matomo script url (default is `matomo.js` appended to main tracker url) */
   scriptUrl?: string;
-
 }
 
 type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
-type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
 export type ManualMatomoConfiguration = {
   /**
@@ -85,7 +88,8 @@ export type ManualMatomoConfiguration = {
   mode: MatomoInitializationMode.MANUAL;
 };
 
+export type AutoMatomoConfiguration = BaseAutoMatomoConfiguration &
+  XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
 
-export type AutoMatomoConfiguration = BaseAutoMatomoConfiguration & XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
-
-export type MatomoConfiguration = BaseMatomoConfiguration & XOR<AutoMatomoConfiguration, ManualMatomoConfiguration>;
+export type MatomoConfiguration = BaseMatomoConfiguration &
+  XOR<AutoMatomoConfiguration, ManualMatomoConfiguration>;

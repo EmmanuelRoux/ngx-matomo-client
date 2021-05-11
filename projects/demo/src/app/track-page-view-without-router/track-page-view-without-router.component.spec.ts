@@ -1,7 +1,7 @@
-import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {MatomoConfiguration, NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
-import {TrackPageViewWithoutRouterComponent} from './track-page-view-without-router.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatomoConfiguration, NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { TrackPageViewWithoutRouterComponent } from './track-page-view-without-router.component';
 
 describe('TrackPageViewWithoutRouterComponent', () => {
   let component: TrackPageViewWithoutRouterComponent;
@@ -9,11 +9,15 @@ describe('TrackPageViewWithoutRouterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgxMatomoTrackerModule.forRoot({trackerUrl: '', siteId: ''} as MatomoConfiguration)],
+      imports: [
+        NgxMatomoTrackerModule.forRoot({
+          trackerUrl: '',
+          siteId: '',
+        } as MatomoConfiguration),
+      ],
       declarations: [TrackPageViewWithoutRouterComponent],
       schemas: [NO_ERRORS_SCHEMA],
-    })
-      .compileComponents();
+    }).compileComponents();
   });
 
   beforeEach(() => {

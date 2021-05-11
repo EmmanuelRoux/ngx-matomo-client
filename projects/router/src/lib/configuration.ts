@@ -1,12 +1,13 @@
-import {inject, InjectFlags, InjectionToken} from '@angular/core';
-import {INTERNAL_MATOMO_CONFIGURATION} from '@ngx-matomo/tracker';
+import { inject, InjectFlags, InjectionToken } from '@angular/core';
+import { INTERNAL_MATOMO_CONFIGURATION } from '@ngx-matomo/tracker';
 
-export const MATOMO_ROUTER_CONFIGURATION = new InjectionToken<MatomoRouterConfiguration>('MATOMO_ROUTER_CONFIGURATION');
+export const MATOMO_ROUTER_CONFIGURATION = new InjectionToken<MatomoRouterConfiguration>(
+  'MATOMO_ROUTER_CONFIGURATION'
+);
 
 export type ExclusionConfig = string | RegExp | (string | RegExp)[];
 
 export interface MatomoRouterConfiguration {
-
   /**
    * Set whether the application base href should be included in Matomo tracked urls
    *
@@ -41,7 +42,6 @@ export interface MatomoRouterConfiguration {
    * Optional, default is no url excluded
    */
   exclude?: ExclusionConfig;
-
 }
 
 export const DEFAULT_ROUTER_CONFIGURATION: Required<MatomoRouterConfiguration> = {
@@ -56,11 +56,18 @@ export type InternalRouterConfiguration = Required<MatomoRouterConfiguration> & 
   enableLinkTracking: boolean;
 };
 
-export const INTERNAL_ROUTER_CONFIGURATION = new InjectionToken<InternalRouterConfiguration>('INTERNAL_ROUTER_CONFIGURATION', {
-  factory: () => {
-    const {enableLinkTracking} = inject(INTERNAL_MATOMO_CONFIGURATION);
-    const routerConfig = inject(MATOMO_ROUTER_CONFIGURATION, InjectFlags.Optional) || {};
+export const INTERNAL_ROUTER_CONFIGURATION = new InjectionToken<InternalRouterConfiguration>(
+  'INTERNAL_ROUTER_CONFIGURATION',
+  {
+    factory: () => {
+      const { enableLinkTracking } = inject(INTERNAL_MATOMO_CONFIGURATION);
+      const routerConfig = inject(MATOMO_ROUTER_CONFIGURATION, InjectFlags.Optional) || {};
 
-    return {...DEFAULT_ROUTER_CONFIGURATION, ...routerConfig, enableLinkTracking};
-  },
-});
+      return {
+        ...DEFAULT_ROUTER_CONFIGURATION,
+        ...routerConfig,
+        enableLinkTracking,
+      };
+    },
+  }
+);

@@ -1,12 +1,13 @@
 @import '~@angular/material/theming';
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   cursor: default;
 }
 
@@ -16,13 +17,15 @@ $candy-app-primary: mat-palette($mat-indigo);
 $candy-app-accent: mat-palette($mat-pink, A200, A100, A400);
 $candy-app-warn: mat-palette($mat-red);
 
-$candy-app-theme: mat-light-theme((
-  color: (
-    primary: $candy-app-primary,
-    accent: $candy-app-accent,
-    warn: $candy-app-warn,
+$candy-app-theme: mat-light-theme(
+  (
+    color: (
+      primary: $candy-app-primary,
+      accent: $candy-app-accent,
+      warn: $candy-app-warn,
+    ),
   )
-));
+);
 
 @include angular-material-theme($candy-app-theme);
 

@@ -1,12 +1,12 @@
 // #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const {LIBRARIES, DIST_DIR, SOURCES_DIR} = require('./constants');
-const {readPkgJson, writePkgJson, getPkgName} = require('./utils');
+const { LIBRARIES, DIST_DIR, SOURCES_DIR } = require('./constants');
+const { readPkgJson, writePkgJson, getPkgName } = require('./utils');
 const [version] = process.argv.slice(2);
 
 function updatePkgVersion(pkgDir) {
-  const pkg = readPkgJson(pkgDir)
+  const pkg = readPkgJson(pkgDir);
 
   pkg.version = version;
 

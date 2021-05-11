@@ -1,7 +1,6 @@
-import {requireNonNull} from './coercion';
+import { requireNonNull } from './coercion';
 
 describe('coercion', () => {
-
   describe('requireNonNull', () => {
     it('should throw an error if argument is null or undefined', () => {
       expect(() => requireNonNull(null, 'mycustommessage')).toThrowError(/mycustommessage/);
@@ -12,5 +11,4 @@ describe('coercion', () => {
       expect(() => requireNonNull({}, 'mycustommessage')).not.toThrow();
     });
   });
-
 });

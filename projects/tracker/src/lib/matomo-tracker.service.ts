@@ -1,12 +1,14 @@
-import {Injectable} from '@angular/core';
-import {MatomoHolder} from './holder';
-import {Getters} from './types';
+import { Injectable } from '@angular/core';
+import { MatomoHolder } from './holder';
+import { Getters } from './types';
 
 declare var window: MatomoHolder;
 
 function checkInitialized(): void {
   if (!window._paq) {
-    throw new Error('Matomo has not been initialized properly. Be sure to use mode AUTO or to include matomo script.');
+    throw new Error(
+      'Matomo has not been initialized properly. Be sure to use mode AUTO or to include matomo script.'
+    );
   }
 }
 
@@ -28,11 +30,12 @@ export interface MatomoECommerceItem {
   quantity?: number;
 }
 
-export type MatomoECommerceItemView = Required<Pick<MatomoECommerceItem, 'productSKU' | 'productName' | 'productCategory' | 'price'>>;
+export type MatomoECommerceItemView = Required<
+  Pick<MatomoECommerceItem, 'productSKU' | 'productName' | 'productCategory' | 'price'>
+>;
 
 /** Matomo's internal tracker instance */
 export interface MatomoInstance {
-
   getMatomoUrl(): string;
 
   getCurrentUrl(): string;
@@ -69,12 +72,10 @@ export interface MatomoInstance {
   hasCookies(): boolean;
 
   getCrossDomainLinkingUrlParameter(): string;
-
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class MatomoTracker {
-
   constructor() {
     checkInitialized();
   }
@@ -191,8 +192,19 @@ export class MatomoTracker {
    * @param contentPiece Content piece.
    * @param contentTarget Content target.
    */
-  trackContentInteraction(contentInteraction: string, contentName: string, contentPiece: string, contentTarget: string): void {
-    this.push(['trackContentInteraction', contentInteraction, contentName, contentPiece, contentTarget]);
+  trackContentInteraction(
+    contentInteraction: string,
+    contentName: string,
+    contentPiece: string,
+    contentTarget: string
+  ): void {
+    this.push([
+      'trackContentInteraction',
+      contentInteraction,
+      contentName,
+      contentPiece,
+      contentTarget,
+    ]);
   }
 
   /**
@@ -621,7 +633,12 @@ export class MatomoTracker {
    * - "page" means the custom variable applies to the current page view.
    * - "visit" means the custom variable applies to the current visitor.
    */
-  setCustomVariable(index: number, name: string, value: string, scope: 'page' | 'visit' | 'event'): void {
+  setCustomVariable(
+    index: number,
+    name: string,
+    value: string,
+    scope: 'page' | 'visit' | 'event'
+  ): void {
     this.push(['setCustomVariable', index, name, value, scope]);
   }
 
@@ -736,7 +753,12 @@ export class MatomoTracker {
    * @param productCategory Category of the viewed product.
    * @param price Price of the viewed product.
    */
-  setEcommerceView(productSKU: string, productName: string, productCategory: string, price: number): void;
+  setEcommerceView(
+    productSKU: string,
+    productName: string,
+    productCategory: string,
+    price: number
+  ): void;
 
   /**
    * Set the current page view as a product or category page view.<br />
@@ -745,11 +767,22 @@ export class MatomoTracker {
    */
   setEcommerceView(product: MatomoECommerceItemView): void;
 
-  setEcommerceView(productOrSKU: string | MatomoECommerceItemView, productName?: string, productCategory?: string, price?: number): void {
+  setEcommerceView(
+    productOrSKU: string | MatomoECommerceItemView,
+    productName?: string,
+    productCategory?: string,
+    price?: number
+  ): void {
     if (typeof productOrSKU === 'string') {
       this.push(['setEcommerceView', productOrSKU, productName, productCategory, price]);
     } else {
-      this.push(['setEcommerceView', productOrSKU.productSKU, productOrSKU.productName, productOrSKU.productCategory, productOrSKU.price]);
+      this.push([
+        'setEcommerceView',
+        productOrSKU.productSKU,
+        productOrSKU.productName,
+        productOrSKU.productCategory,
+        productOrSKU.price,
+      ]);
     }
   }
 
@@ -763,7 +796,13 @@ export class MatomoTracker {
    * @param [price] Optional price of the product to add.
    * @param [quantity] Optional quantity of the product to add.
    */
-  addEcommerceItem(productSKU: string, productName?: string, productCategory?: string, price?: number, quantity?: number): void;
+  addEcommerceItem(
+    productSKU: string,
+    productName?: string,
+    productCategory?: string,
+    price?: number,
+    quantity?: number
+  ): void;
 
   /**
    * Adds a product into the eCommerce order.<br />
@@ -771,17 +810,24 @@ export class MatomoTracker {
    *
    */
   addEcommerceItem(product: MatomoECommerceItem): void;
-  addEcommerceItem(productOrSKU: string | MatomoECommerceItem,
-                   productName?: string,
-                   productCategory?: string,
-                   price?: number,
-                   quantity?: number): void {
+  addEcommerceItem(
+    productOrSKU: string | MatomoECommerceItem,
+    productName?: string,
+    productCategory?: string,
+    price?: number,
+    quantity?: number
+  ): void {
     if (typeof productOrSKU === 'string') {
       this.push(['addEcommerceItem', productOrSKU, productName, productCategory, price, quantity]);
     } else {
-      this.push(['addEcommerceItem',
-        productOrSKU.productSKU, productOrSKU.productName,
-        productOrSKU.productCategory, productOrSKU.price, productOrSKU.quantity]);
+      this.push([
+        'addEcommerceItem',
+        productOrSKU.productSKU,
+        productOrSKU.productName,
+        productOrSKU.productCategory,
+        productOrSKU.price,
+        productOrSKU.quantity,
+      ]);
     }
   }
 
@@ -836,7 +882,14 @@ export class MatomoTracker {
    * @param [shipping] Shipping fees for the tracked order.
    * @param [discount] Discount granted for the tracked order.
    */
-  trackEcommerceOrder(orderId: string, grandTotal: number, subTotal?: number, tax?: number, shipping?: number, discount?: number): void {
+  trackEcommerceOrder(
+    orderId: string,
+    grandTotal: number,
+    subTotal?: number,
+    tax?: number,
+    shipping?: number,
+    discount?: number
+  ): void {
     this.push(['trackEcommerceOrder', orderId, grandTotal, subTotal, tax, shipping, discount]);
   }
 
@@ -1024,7 +1077,9 @@ export class MatomoTracker {
   }
 
   /** Asynchronously call provided method name on matomo tracker instance */
-  private get<G extends Getters<MatomoInstance>>(getter: G): Promise<ReturnType<MatomoInstance[G]>> {
+  private get<G extends Getters<MatomoInstance>>(
+    getter: G
+  ): Promise<ReturnType<MatomoInstance[G]>> {
     return this.pushFn(matomo => matomo[getter]() as ReturnType<MatomoInstance[G]>);
   }
 
@@ -1035,9 +1090,11 @@ export class MatomoTracker {
    */
   private pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
     return new Promise(resolve => {
-      this.push([function(this: MatomoInstance): void {
-        resolve(fn(this));
-      }]);
+      this.push([
+        function (this: MatomoInstance): void {
+          resolve(fn(this));
+        },
+      ]);
     });
   }
 
@@ -1045,5 +1102,4 @@ export class MatomoTracker {
   private push(args: unknown[]): void {
     window._paq.push(trimTrailingUndefinedElements(args));
   }
-
 }

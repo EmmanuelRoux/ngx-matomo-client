@@ -1,6 +1,6 @@
-const path = require("path");
-const {LIBRARIES, DIST_DIR} = require("./constants");
-const {readPkgJson, getRegistry, getChannel} = require("./utils");
+const path = require('path');
+const { LIBRARIES, DIST_DIR } = require('./constants');
+const { readPkgJson, getRegistry, getChannel } = require('./utils');
 const [version, channel] = process.argv.slice(2);
 
 function getAddTagCmd(pkgName, distTag, registry, npmrc) {
@@ -17,7 +17,7 @@ function addDistTag(libName) {
 
   console.log(`Adding version ${version} of ${libName} to npm registry on dist-tag ${distTag}`);
 
-  exec(addTagCmd, {cwd: baseDir});
+  exec(addTagCmd, { cwd: baseDir });
 
   console.log(`Added ${pkg.name}@${version} to dist-tag @${distTag} on ${registry}`);
 }
