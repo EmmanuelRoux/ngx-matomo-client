@@ -516,6 +516,18 @@ export class MatomoTracker {
   }
 
   /**
+   * Set the 16 characters ID for the visitor
+   * <p/>
+   * The visitorId needs to be a 16 digit hex string.
+   * It won't be persisted in a cookie and needs to be set on every new page load.
+   *
+   * @param visitorId a 16 digit hex string
+   */
+  setVisitorId(visitorId: string): void {
+    this.push(['setVisitorId', visitorId]);
+  }
+
+  /**
    * Returns the visitor cookie contents in an array.
    *
    * @returns Promise for the cookie contents in an array.
