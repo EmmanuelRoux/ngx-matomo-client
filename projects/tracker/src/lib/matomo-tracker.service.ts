@@ -907,6 +907,19 @@ export class MatomoTracker {
   }
 
   /**
+   * Set cookie <i>same site</i>
+   * <p/>
+   * Defaults to Lax.
+   * Can be set to None or Strict.
+   * None requires all traffic to be on HTTPS and will also automatically set the secure cookie.
+   * It can be useful for example if the tracked website is an iframe.
+   * Strict only works if your Matomo and the website runs on the very same domain.
+   */
+  setCookieSameSite(sameSite: 'Strict' | 'Lax' | 'None'): void {
+    this.push(['setCookieSameSite', sameSite]);
+  }
+
+  /**
    * Set the visitor cookie timeout.<br />
    * Default is 13 months.
    *
