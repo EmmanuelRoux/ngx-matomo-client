@@ -56,6 +56,10 @@ export class MatomoInitializerService {
       }
     }
 
+    if (this.config.acceptDoNotTrack) {
+      _paq.push(['setDoNotTrack', true]);
+    }
+
     if (!isManualConfiguration(this.config)) {
       const {scriptUrl: customScriptUrl} = this.config;
       const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(this.config);

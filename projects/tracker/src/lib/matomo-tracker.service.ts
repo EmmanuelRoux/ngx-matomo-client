@@ -453,11 +453,7 @@ export class MatomoTracker {
     this.push(['appendToTrackingUrl', appendToUrl]);
   }
 
-  /**
-   * Set to true to not track users who opt out of tracking using Mozilla's (proposed) Do Not Track setting.
-   *
-   * @param doNotTrack If true, users who opted for Do Not Track in their settings won't be tracked.
-   */
+  /** Set to `true` to not track users who opt out of tracking using <i>Do Not Track</i> setting */
   setDoNotTrack(doNotTrack: boolean): void {
     this.push(['setDoNotTrack', doNotTrack]);
   }

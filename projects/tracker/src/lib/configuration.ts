@@ -57,6 +57,9 @@ export interface BaseMatomoConfiguration {
    * Used when {@link trackAppInitialLoad} is `true` and by Router module.
    */
   enableLinkTracking?: boolean;
+
+  /** Set to `true` to not track users who opt out of tracking using <i>Do Not Track</i> setting */
+  acceptDoNotTrack?: boolean;
 }
 
 export interface BaseAutoMatomoConfiguration {
