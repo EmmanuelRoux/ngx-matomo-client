@@ -3,7 +3,7 @@ import {fromEvent, merge, Subscription} from 'rxjs';
 import {requireNonNull} from '../coercion';
 import {MatomoTracker} from '../matomo-tracker.service';
 
-interface TrackArgs {
+export interface TrackArgs {
   category?: string;
   action?: string;
   name?: string;
