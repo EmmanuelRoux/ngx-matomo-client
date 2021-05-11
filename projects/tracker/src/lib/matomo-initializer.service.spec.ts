@@ -26,14 +26,14 @@ describe('MatomoInitializerService', () => {
     expect(window._paq).toBeUndefined();
 
     // When
-    // tslint:disable-next-line:no-unused-expression
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     new MatomoInitializerService({} as InternalMatomoConfiguration);
     // Then
     expect(window._paq).toEqual([]);
     paq = window._paq;
 
     // When
-    // tslint:disable-next-line:no-unused-expression
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     new MatomoInitializerService({} as InternalMatomoConfiguration);
     // Then
     expect(window._paq).toEqual([]);
