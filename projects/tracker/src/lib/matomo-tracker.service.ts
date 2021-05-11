@@ -245,6 +245,11 @@ export abstract class MatomoTracker {
     this.push(['enableLinkTracking', usePseudoClickHandler]);
   }
 
+  /** Disables page performance tracking */
+  disablePerformanceTracking(): void {
+    this.push(['disablePerformanceTracking']);
+  }
+
   /**
    * Enables cross domain linking. By default, the visitor ID that identifies a unique visitor is stored in the browser's
    * first party cookies.<br />
