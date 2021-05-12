@@ -33,6 +33,7 @@ Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or
 - [Configuration reference](#configuration-reference)
   * [NgxMatomoTrackerModule](#ngxmatomotrackermodule)
   * [NgxMatomoRouterModule](#ngxmatomoroutermodule)
+- [Roadmap](#roadmap)
 
 <!-- tocstop -->
 
@@ -407,12 +408,67 @@ or `MatomoConsentMode.TRACKING`:
 
 [See official guide](https://developer.matomo.org/guides/tracking-consent)
 
+For integration with a consent opt-in form, you may want to use following `MatomoTracker` methods:
+
+- `isConsentRequired()`
+- `setConsentGiven()` / `setCookieConsentGiven()`
+- `rememberConsentGiven(hoursToExpire?: number)` / `rememberCookieConsentGiven(hoursToExpire?: number)`
+- `forgetConsentGiven()` / `forgetCookieConsentGiven()`
+- `hasRememberedConsent()` / `areCookiesEnabled()`
+- `getRememberedConsent()`
+
+See also example below on how to create a consent form. Example below is about creating an opt-in form, but it may be
+easily adapted using methods listed above.
+
 #### Consent opt-out
 
 To manage consent opt-out, use dedicated methods `MatomoTracker.optUserOut()` and `MatomoTracker.forgetUserOptOut()`.
 
-[See official guide](https://developer.matomo.org/guides/tracking-javascript-guide#optional-creating-a-custom-opt-out-form)
-for how to create a custom opt-out form
+A (very) simple form is provided through `<matomo-opt-out-form>` component.
+
+For more advanced integration with a custom form, you may want to define your own component and use `MatomoTracker`
+methods:
+
+```html
+<p>To opt-out, please activate the checkbox below to receive an opt-out cookie.</p>
+<p>
+  <label>
+    <input type="checkbox" [ngModel]="optedOut$ | async" (ngModelChange)="handleChange($event)" />
+    <ng-container *ngIf="optedOut$ | async; else: optedIn">
+      You are currently opted out. Click here to opt in.
+    </ng-container>
+    <ng-template #optedIn>You are currently opted in. Click here to opt out.</ng-template>
+  </label>
+</p>
+```
+
+```typescript
+@Component({
+  selector: 'my-opt-out-form',
+  templateUrl: '...',
+})
+export class MatomoOptOutFormComponent {
+  optedOut$: Promise<boolean>;
+
+  constructor(private readonly tracker: MatomoTracker) {
+    this.optedOut$ = tracker.isUserOptedOut();
+  }
+
+  handleChange(optOut: boolean) {
+    if (optOut) {
+      this.tracker.optUserOut();
+    } else {
+      this.tracker.forgetUserOptOut();
+    }
+
+    this.optedOut$ = this.tracker.isUserOptedOut();
+  }
+}
+```
+
+This example is adapted from
+[official guide](https://developer.matomo.org/guides/tracking-javascript-guide#optional-creating-a-custom-opt-out-form)
+about how to create a custom opt-out form
 
 ## Launch demo app
 
@@ -603,3 +659,7 @@ interface MatomoRouterConfiguration {
   exclude?: string | RegExp | string[] | RegExp[];
 }
 ```
+
+## Roadmap
+
+See [ROADMAP.md](./ROADMAP.md)
