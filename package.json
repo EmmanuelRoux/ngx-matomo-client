@@ -27,7 +27,8 @@
     "semantic-release": "semantic-release",
     "semantic-release:prepare-ci": "chmod +x -R ./scripts/",
     "semantic-release:ci": "npm run semantic-release:prepare-ci && npm run semantic-release",
-    "update:toc": "markdown-toc README.md -i --maxdepth=3"
+    "update:toc": "markdown-toc README.md -i --maxdepth=3",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@angular/animations": "~12.0.1",
@@ -63,6 +64,7 @@
     "@typescript-eslint/parser": "4.16.1",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^8.3.0",
+    "husky": "^6.0.0",
     "jasmine-core": "~3.7.1",
     "jasmine-spec-reporter": "~7.0.0",
     "karma": "~6.3.2",
@@ -71,6 +73,7 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.6.0",
     "karma-junit-reporter": "^2.0.1",
+    "lint-staged": "^11.0.0",
     "markdown-toc": "^1.2.0",
     "nerf-dart": "^1.0.0",
     "ng-packagr": "^12.0.0",
@@ -91,5 +94,8 @@
     "url": "https://github.com/EmmanuelRoux/ngx-matomo/issues"
   },
   "license": "MIT",
-  "homepage": "https://github.com/EmmanuelRoux/ngx-matomo#readme"
+  "homepage": "https://github.com/EmmanuelRoux/ngx-matomo#readme",
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
 }
