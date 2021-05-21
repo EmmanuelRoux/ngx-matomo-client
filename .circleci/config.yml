@@ -3,7 +3,7 @@ jobs:
   install:
     working_directory: ~/ngx-matomo
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:14.16.1-browsers
     steps:
       - checkout
       - run: echo ${CIRCLE_BRANCH}
@@ -23,7 +23,7 @@ jobs:
   build-libs:
     working_directory: ~/ngx-matomo
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:14.16.1-browsers
     steps:
       - attach_workspace:
           at: .
@@ -39,7 +39,7 @@ jobs:
   lint:
     working_directory: ~/ngx-matomo
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:14.16.1-browsers
     steps:
       - attach_workspace:
           at: .
@@ -47,7 +47,7 @@ jobs:
   test:
     working_directory: ~/ngx-matomo
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:14.16.1-browsers
     steps:
       - attach_workspace:
           at: .
@@ -60,7 +60,7 @@ jobs:
   publish-libs:
     working_directory: ~/ngx-matomo
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:14.16.1-browsers
     steps:
       - attach_workspace:
           at: .
