@@ -1,8 +1,8 @@
 # Ngx-Matomo
 
-Matomo (fka. Piwik) client for Angular 9+ applications.
+Matomo (fka. Piwik) client for Angular 9-12 applications
 
-[![Angular 11](https://img.shields.io/badge/Angular-11-limegreen.svg?logo=angular)](https://angular.io/)
+[![Angular 12](https://img.shields.io/badge/Angular-12-limegreen.svg?logo=angular)](https://angular.io/)
 [![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
 [![CircleCI](https://img.shields.io/circleci/build/github/EmmanuelRoux/ngx-matomo/main.svg?logo=circleci&logoColor=fff&label=CircleCI)](https://circleci.com/gh/EmmanuelRoux/ngx-matomo)
 [![MIT license](https://img.shields.io/badge/License-MIT-limegreen.svg)](https://opensource.org/licenses/MIT)
@@ -31,9 +31,9 @@ Matomo (fka. Piwik) client for Angular 9+ applications.
 
 ## Dependencies
 
-| NgxMatomo | Angular            |
-| --------- | ------------------ |
-| latest    | 9.x, 10.x, 11.x    |
+| NgxMatomo | Angular               |
+| --------- | --------------------- |
+| latest    | 9.x, 10.x, 11.x, 12.x |
 
 ## Installation
 
