@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.3...v1.1.0) (2021-05-25)
+
+
+### Features
+
+* migrate to Angular 12 ([db57d89](https://github.com/EmmanuelRoux/ngx-matomo/commit/db57d890dbcce7dd7a607b4b68f1606412d242b5)), closes [#1](https://github.com/EmmanuelRoux/ngx-matomo/issues/1)
+
 # [1.1.0-next.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.3...v1.1.0-next.1) (2021-05-25)
 
 
