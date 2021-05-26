@@ -22,6 +22,7 @@ Matomo (fka. Piwik) client for Angular 9-12 applications
   * [Tracking any event in template](#tracking-any-event-in-template)
   * [Tracking events from component/service](#tracking-events-from-componentservice)
   * [Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...](#using-other-matomos-tracking-features-ecommerce-analytics-marketing-campaigns)
+  * [Disable tracking in some environments](#disable-tracking-in-some-environments)
 - [Launch demo app](#launch-demo-app)
 - [Configuration reference](#configuration-reference)
   * [NgxMatomoTrackerModule](#ngxmatomotrackermodule)
@@ -360,6 +361,32 @@ export class ExampleComponent {
 Please note that some features (such as `setEcommerceView`) must be called **before**
 `trackPageView`, so be careful when using router adapter!
 
+### Disable tracking in some environments
+
+You may want to disable tracker in dev environments to avoid tracking some unwanted usage: local dev usage, end-to-end
+tests...
+
+To do so just set the `disabled` switch:
+
+```typescript
+import {NgModule} from '@angular/core';
+import {NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
+import {environment} from './environment';
+
+@NgModule({
+  imports: [
+    // ...
+    NgxMatomoTrackerModule.forRoot({
+      disabled: !environment.production,
+      // include here your normal Matomo config
+    }),
+  ],
+  // ...
+})
+export class AppModule {
+}
+```
+
 ## Launch demo app
 
 1. Clone this repository
@@ -394,6 +421,16 @@ Available options :
 
 ```typescript
 interface MatomoConfiguration {
+
+  /**
+   * If set to `true` then all tracking operations become no-op
+   * Note that in this case, all getter methods will return rejected Promises
+   *
+   * Optional
+   * Default: false
+   */
+  disabled?: boolean;
+
   /**
    * Set whether tracking code should be automatically embedded or not.
    * If set to MatomoInitializationMode.MANUAL, most other option cannot be used
