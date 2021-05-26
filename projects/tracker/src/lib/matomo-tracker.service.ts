@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration} from './configuration';
 import {MatomoHolder} from './holder';
 import {Getters} from './types';
 
@@ -57,13 +58,16 @@ export interface MatomoInstance {
 
 }
 
-@Injectable({providedIn: 'root'})
-export class MatomoTracker {
+export function createMatomoTracker(config: InternalMatomoConfiguration): MatomoTracker {
+  return config.disabled ? new NoopMatomoTracker() : new StandardMatomoTracker();
+}
 
-  constructor() {
-    checkInitialized();
-  }
-
+@Injectable({
+  providedIn: 'root',
+  useFactory: createMatomoTracker,
+  deps: [INTERNAL_MATOMO_CONFIGURATION],
+})
+export abstract class MatomoTracker {
   /**
    * Logs a visit to this page.
    *
@@ -865,7 +869,7 @@ export class MatomoTracker {
   }
 
   /** Asynchronously call provided method name on matomo tracker instance */
-  private get<G extends Getters<MatomoInstance>>(getter: G): Promise<ReturnType<MatomoInstance[G]>> {
+  protected get<G extends Getters<MatomoInstance>>(getter: G): Promise<ReturnType<MatomoInstance[G]>> {
     return this.pushFn(matomo => matomo[getter]() as ReturnType<MatomoInstance[G]>);
   }
 
@@ -874,7 +878,18 @@ export class MatomoTracker {
    *
    * @return Promise resolving to the return value of given method
    */
-  private pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
+  protected abstract pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T>;
+
+  protected abstract push(args: unknown[]): void;
+}
+
+export class StandardMatomoTracker extends MatomoTracker {
+  constructor() {
+    super();
+    checkInitialized();
+  }
+
+  protected pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
     return new Promise(resolve => {
       this.push([function(this: MatomoInstance): void {
         resolve(fn(this));
@@ -882,9 +897,18 @@ export class MatomoTracker {
     });
   }
 
-  // noinspection JSMethodCanBeStatic
-  private push(args: unknown[]): void {
+  protected push(args: unknown[]): void {
     window._paq.push(trimTrailingUndefinedElements(args));
   }
 
+}
+
+export class NoopMatomoTracker extends MatomoTracker {
+  protected push(args: unknown[]): void {
+    // No-op
+  }
+
+  protected pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
+    return Promise.reject('MatomoTracker is disabled');
+  }
 }

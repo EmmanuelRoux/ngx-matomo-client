@@ -1,10 +1,15 @@
+import {InternalMatomoConfiguration} from './configuration';
 import {MatomoHolder} from './holder';
-import {MatomoInstance, MatomoTracker} from './matomo-tracker.service';
+import {createMatomoTracker, MatomoInstance, MatomoTracker} from './matomo-tracker.service';
 import {Getters, Methods} from './types';
 
 declare var window: MatomoHolder;
 
 describe('MatomoTracker', () => {
+
+  function createTracker(disabled = false): MatomoTracker {
+    return createMatomoTracker({disabled} as InternalMatomoConfiguration);
+  }
 
   beforeEach(() => {
     window._paq = [];
@@ -15,13 +20,13 @@ describe('MatomoTracker', () => {
     delete (window as Partial<MatomoHolder>)._paq;
 
     // Then
-    expect(() => new MatomoTracker()).toThrow();
+    expect(() => createTracker()).toThrow();
   });
 
   function expectPush(when: (tracker: MatomoTracker) => void, expected: unknown[][]): () => void {
     return () => {
       // When
-      when(new MatomoTracker());
+      when(createTracker());
       // Then
       expect(window._paq).toEqual(expected);
     };
@@ -378,7 +383,7 @@ describe('MatomoTracker', () => {
                                                                          mockInstance: Partial<MatomoInstance>,
                                                                          expected: T): Promise<void> {
     // Given
-    const tracker = new MatomoTracker();
+    const tracker = createTracker();
 
     spyOn(window._paq, 'push').and.callFake(((...args: any[]) => {
       args[0][0].call(mockInstance);
@@ -537,7 +542,7 @@ describe('MatomoTracker', () => {
 
   it('should get custom variable', done => {
     // Given
-    const tracker = new MatomoTracker();
+    const tracker = createTracker();
     const mockInstance = {
       getCustomVariable(...args: any[]): string {
         return args.join('|');
@@ -557,7 +562,7 @@ describe('MatomoTracker', () => {
 
   it('should get custom variable', done => {
     // Given
-    const tracker = new MatomoTracker();
+    const tracker = createTracker();
     const mockInstance = {
       getCustomDimension(...args: any[]): string {
         return 'dim-' + args.join('|');
@@ -573,6 +578,29 @@ describe('MatomoTracker', () => {
       // Then
       expect(url).toEqual('dim-42');
     }).then(done);
+  });
+
+  it('should ignore calls when disabled', () => {
+    // Given
+    const tracker = createTracker(true);
+    (window as any)._paq = undefined;
+
+    // Then
+    expect(() => tracker.trackPageView()).not.toThrow();
+    expect(window._paq).toBeUndefined();
+  });
+
+  it('should reject all promises when disabled', done => {
+    // Given
+    const tracker = createTracker(true);
+
+    // Then
+    tracker.getCustomDimension(0)
+      .then(() => fail('rejected promise expected'))
+      .catch(() => {
+        expect().nothing();
+        done();
+      });
   });
 
 });
