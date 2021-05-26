@@ -1,8 +1,8 @@
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {Event, NavigationEnd, Router} from '@angular/router';
-import {MATOMO_CONFIGURATION, MatomoConfiguration, MatomoTracker} from '@ngx-matomo/tracker';
+import {MATOMO_CONFIGURATION, MatomoTracker} from '@ngx-matomo/tracker';
 import {of, Subject} from 'rxjs';
-import {MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration} from './configuration';
+import {InternalGlobalConfiguration, MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration} from './configuration';
 import {MatomoRouter} from './matomo-router.service';
 import {MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider} from './page-title-providers';
 import {MATOMO_PAGE_URL_PROVIDER, PageUrlProvider} from './page-url-provider';
@@ -11,7 +11,7 @@ describe('MatomoRouter', () => {
   let routerEvents: Subject<Event>;
   let nextEventId: number;
 
-  function instantiate(routerConfig: MatomoRouterConfiguration, config: Pick<MatomoConfiguration, 'enableLinkTracking'>): MatomoRouter {
+  function instantiate(routerConfig: MatomoRouterConfiguration, config: Partial<InternalGlobalConfiguration>): MatomoRouter {
     TestBed.configureTestingModule({
       providers: [
         {
@@ -223,6 +223,22 @@ describe('MatomoRouter', () => {
       ['accepted-url-1', 'accepted-url-2'],
       ['accepted-url-1', 'accepted-url-2'],
     );
+  }));
+
+  it('should not track page view if disabled', fakeAsync(() => {
+    // Given
+    const service = instantiate({}, {disabled: true, enableLinkTracking: false});
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.init();
+    triggerEvent('/');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.setCustomUrl).not.toHaveBeenCalled();
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+    expect(tracker.setReferrerUrl).not.toHaveBeenCalled();
   }));
 
 });
