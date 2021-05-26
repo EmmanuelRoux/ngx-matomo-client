@@ -12,6 +12,7 @@ export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MAT
  */
 export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>('INTERNAL_MATOMO_CONFIGURATION', {
   factory: () => ({
+    disabled: false,
     enableLinkTracking: true,
     trackAppInitialLoad: false,
     ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
@@ -48,6 +49,8 @@ export interface MultiTrackersConfiguration {
 }
 
 export interface BaseMatomoConfiguration {
+  /** Set to `true` to disable tracking */
+  disabled?: boolean;
 
   /** If `true`, track a page view when app loads (default `false`) */
   trackAppInitialLoad?: boolean;
