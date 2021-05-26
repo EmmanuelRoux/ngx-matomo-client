@@ -41,6 +41,11 @@ export class MatomoRouter {
               private readonly tracker: MatomoTracker) { }
 
   init(): void {
+    if (this.config.disabled) {
+      // Do not set-up router if globally disabled
+      return;
+    }
+
     const delayOp: MonoTypeOperatorFunction<NavigationEnd> = this.config.delay === -1
       ? identity
       : delay(this.config.delay);
