@@ -179,4 +179,23 @@ describe('MatomoInitializerService', () => {
     ]);
   });
 
+  it('should do nothing when disabled', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
+      disabled: true,
+      siteId: 'fakeSiteId',
+      trackerUrl: 'http://fakeTrackerUrl',
+    });
+
+    setUpScriptInjection(script => injectedScript = script);
+
+    // When
+    service.init();
+
+    // Then
+    expect(injectedScript).toBeUndefined();
+    expect(window._paq).toBeUndefined();
+  });
+
 });

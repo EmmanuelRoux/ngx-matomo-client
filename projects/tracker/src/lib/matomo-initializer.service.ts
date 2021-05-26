@@ -1,4 +1,4 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   AutoMatomoConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
@@ -38,10 +38,25 @@ function appendTrailingSlash(str: string): string {
 const TRACKER_SUFFIX = 'matomo.php';
 const DEFAULT_SCRIPT_SUFFIX = 'matomo.js';
 
-@Injectable({providedIn: 'root'})
-export class MatomoInitializerService {
+export function createMatomoInitializer(config: InternalMatomoConfiguration): MatomoInitializerService {
+  return config.disabled
+    ? new NoopMatomoInitializer() as MatomoInitializerService
+    : new MatomoInitializerService(config);
+}
 
-  constructor(@Inject(INTERNAL_MATOMO_CONFIGURATION) private readonly config: InternalMatomoConfiguration) {
+export class NoopMatomoInitializer implements Pick<MatomoInitializerService, 'init'> {
+  init(): void {
+    // No-op
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+  useFactory: createMatomoInitializer,
+  deps: [INTERNAL_MATOMO_CONFIGURATION],
+})
+export class MatomoInitializerService {
+  constructor(private readonly config: InternalMatomoConfiguration) {
     window._paq = window._paq || [];
   }
 
