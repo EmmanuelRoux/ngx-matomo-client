@@ -451,6 +451,14 @@ interface MatomoConfiguration {
   trackAppInitialLoad?: boolean,
 
   /**
+   * If set to false, disable Matomo link tracking
+   *
+   * Optional
+   * Default: true
+   */
+  enableLinkTracking?: boolean,
+
+  /**
    * Download Matomo tracking code from another source
    *
    * Optional
