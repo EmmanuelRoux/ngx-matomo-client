@@ -103,30 +103,7 @@ export class AppModule {
 ### Setup manually with script tag
 
 Insert Matomo tracking code into your application
-[as explained here](https://developer.matomo.org/guides/tracking-javascript-guide). Tracking code looks like this:
-
-```html
-<!-- Matomo -->
-<script type="text/javascript">
-  var _paq = window._paq = window._paq || [];
-  // _paq.push(['trackPageView']);
-  // _paq.push(['enableLinkTracking']);
-  (function () {
-    var u = "//{$MATOMO_URL}/";
-    _paq.push(['setTrackerUrl', u + 'matomo.php']);
-    _paq.push(['setSiteId', {$IDSITE}]);
-    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-    g.type = 'text/javascript';
-    g.async = true;
-    g.src = u + 'matomo.js';
-    s.parentNode.insertBefore(g, s);
-  })();
-</script>
-<!-- End Matomo Code -->
-```
-
-Note that you should also probably remove the two instructions commented out in this example, as detailed in
-the [Matomo documentation for single-page applications](https://developer.matomo.org/guides/spa-tracking).
+[as explained here](https://developer.matomo.org/guides/tracking-javascript-guide).
 
 Add `NgxMatomoTrackerModule` module into your application, specifying the `MANUAL` setup mode:
 
