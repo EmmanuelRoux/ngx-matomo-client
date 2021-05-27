@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.1.0...v1.2.0) (2021-05-27)
+
+
+### Features
+
+* **tracker:** add option to disable tracking ([900c617](https://github.com/EmmanuelRoux/ngx-matomo/commit/900c61729e35cc0de2779881b8dea6a09688633b)), closes [#3](https://github.com/EmmanuelRoux/ngx-matomo/issues/3)
+
+
+### Performance Improvements
+
+* **router:** avoid unnecessary subscription if disabled ([23cc580](https://github.com/EmmanuelRoux/ngx-matomo/commit/23cc580648b2c285a861618b90d40b54554ee49a))
+
 # [1.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.0.3...v1.1.0) (2021-05-25)
 
 
