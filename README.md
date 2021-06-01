@@ -468,6 +468,21 @@ interface MatomoConfiguration {
   enableLinkTracking?: boolean;
 
   /**
+   * Set whether to not track users who opt out of tracking using <i>Do Not Track</i> setting
+   *
+   * <b>Note:</b> do-not-track setting is configured server-side! You should likely set this setting here to match you server-side configuration.
+   * In case users opt-in for do-not-track:
+   * - If set to `true` here, users will not be tracked, independently of you server-side setting.
+   * - If set to `false` here (the default), users will be tracked depending on your server setting, <b>but tracking requests and cookies will still be created!</b>
+   *
+   * See official guide: https://fr.matomo.org/docs/privacy-how-to/#step-4-respect-donottrack-preference
+   *
+   * Optional
+   * Default: false
+   */
+  acceptDoNotTrack?: boolean;
+
+  /**
    * Download Matomo tracking code from another source
    *
    * Optional
