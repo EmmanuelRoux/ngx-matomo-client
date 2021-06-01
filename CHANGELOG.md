@@ -1,3 +1,16 @@
+# [1.3.0-next.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.2.0...v1.3.0-next.1) (2021-06-01)
+
+
+### Bug Fixes
+
+* **tracker:** fix test case ([7c5a8cd](https://github.com/EmmanuelRoux/ngx-matomo/commit/7c5a8cd884f3c812df87cc1ba28f80dbc667f91b))
+
+
+### Features
+
+* **tracker:** add methods to enable/disable sendBeacon ([2a69ff5](https://github.com/EmmanuelRoux/ngx-matomo/commit/2a69ff5205ac3292514741ee3e1c3e9233918f4c))
+* **tracker:** add missing ecommerce methods ([317812e](https://github.com/EmmanuelRoux/ngx-matomo/commit/317812e8b562f6c655ca28a73c7be02110eb1b20))
+
 # [1.2.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.1.0...v1.2.0) (2021-05-27)
 
 
