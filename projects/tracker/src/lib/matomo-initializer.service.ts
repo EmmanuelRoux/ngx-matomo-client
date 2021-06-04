@@ -53,6 +53,7 @@ export class NoopMatomoInitializer implements Pick<MatomoInitializerService, 'in
     // No-op
   }
 }
+
 @Injectable({
   providedIn: 'root',
   useFactory: createMatomoInitializer,
@@ -66,16 +67,16 @@ export class MatomoInitializerService {
   init(): void {
     const _paq = window._paq;
 
+    if (this.config.acceptDoNotTrack) {
+      _paq.push(['setDoNotTrack', true]);
+    }
+
     if (this.config.trackAppInitialLoad) {
       _paq.push(['trackPageView']);
 
       if (this.config.enableLinkTracking) {
         window._paq.push(['enableLinkTracking']);
       }
-    }
-
-    if (this.config.acceptDoNotTrack) {
-      _paq.push(['setDoNotTrack', true]);
     }
 
     if (!isManualConfiguration(this.config)) {

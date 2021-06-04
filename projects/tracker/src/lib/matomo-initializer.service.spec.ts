@@ -81,13 +81,15 @@ describe('MatomoInitializerService', () => {
     const service = instantiate({
       mode: MatomoInitializationMode.MANUAL,
       acceptDoNotTrack: true,
+      trackAppInitialLoad: true,
+      enableLinkTracking: false,
     });
 
     // When
     service.init();
 
     // Then
-    expect(window._paq).toEqual([['setDoNotTrack', true]]);
+    expect(window._paq).toEqual([['setDoNotTrack', true], ['trackPageView']]);
   });
 
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
