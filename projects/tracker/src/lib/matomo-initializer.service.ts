@@ -5,6 +5,7 @@ import {
   InternalMatomoConfiguration,
   ManualMatomoConfiguration,
   MatomoConfiguration,
+  MatomoConsentMode,
   MatomoInitializationMode,
   MatomoTrackerConfiguration,
   MultiTrackersConfiguration,
@@ -69,6 +70,12 @@ export class MatomoInitializerService {
 
     if (this.config.acceptDoNotTrack) {
       _paq.push(['setDoNotTrack', true]);
+    }
+
+    if (this.config.requireConsent === MatomoConsentMode.COOKIE) {
+      _paq.push(['requireCookieConsent']);
+    } else if (this.config.requireConsent === MatomoConsentMode.TRACKING) {
+      _paq.push(['requireConsent']);
     }
 
     if (this.config.trackAppInitialLoad) {

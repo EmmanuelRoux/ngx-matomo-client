@@ -27,6 +27,7 @@ Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or
   * [Tracking events from component/service](#tracking-events-from-componentservice)
   * [Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...](#using-other-matomos-tracking-features-ecommerce-analytics-marketing-campaigns)
   * [Disable tracking in some environments](#disable-tracking-in-some-environments)
+  * [Managing user consent: opt-in/opt-out for tracking & cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
 - [Launch demo app](#launch-demo-app)
 - [Configuration reference](#configuration-reference)
   * [NgxMatomoTrackerModule](#ngxmatomotrackermodule)
@@ -372,6 +373,46 @@ import { environment } from './environment';
 export class AppModule {}
 ```
 
+### Managing user consent: opt-in/opt-out for tracking & cookies
+
+Matomo supports multiple options to allow requiring user consent for tracking.
+
+To identify whether you need to ask for any consent, you need to determine whether your lawful basis for processing
+personal data is "Consent" or "Legitimate interest", or whether you can avoid collecting personal data altogether.
+
+#### Do not track
+
+The _do not track_ feature is supported, just set the `acceptDoNotTrack` configuration option.
+
+Please note that _do-not-track_ setting is configured server-side! You should likely set this setting here to match you
+server-side configuration. In case users opt-in for _do-not-track_:
+
+- If set to `true` here, users will not be tracked, independently of you server-side setting.
+- If set to `false` here (the default), users will be tracked depending on your server setting, **but tracking requests
+  and cookies will still be created!**
+
+[See official guide](https://fr.matomo.org/docs/privacy-how-to/#step-4-respect-donottrack-preference)
+
+#### Consent opt-in
+
+By default, no consent is required. To manage consent opt-in, first set dedicated configuration option `requireConsent`
+to either `MatomoConsentMode.COOKIE`
+or `MatomoConsentMode.TRACKING`:
+
+- In the context of <b>tracking consent</b> no cookies will be used and no tracking request will be sent unless consent
+  was given. As soon as consent was given, tracking requests will be sent and cookies will be used.
+- In the context of <b>cookie consent</b> tracking requests will be always sent. However, cookies will be only used if
+  consent for storing and using cookies was given by the user.
+
+[See official guide](https://developer.matomo.org/guides/tracking-consent)
+
+#### Consent opt-out
+
+To manage consent opt-out, use dedicated methods `MatomoTracker.optUserOut()` and `MatomoTracker.forgetUserOptOut()`.
+
+[See official guide](https://developer.matomo.org/guides/tracking-javascript-guide#optional-creating-a-custom-opt-out-form)
+for how to create a custom opt-out form
+
 ## Launch demo app
 
 1. Clone this repository
@@ -451,6 +492,15 @@ interface MatomoConfiguration {
   trackers?: { siteId: number | string; trackerUrl: string }[];
 
   /**
+   * Download Matomo tracking code from another source
+   *
+   * Optional
+   * Default is deduced from tracker url
+   * Not available if mode is MANUAL
+   */
+  scriptUrl?: string;
+
+  /**
    * If set to true, will call trackPageView on application init.
    * This should probably never be used on a routed single-page application.
    *
@@ -470,26 +520,18 @@ interface MatomoConfiguration {
   /**
    * Set whether to not track users who opt out of tracking using <i>Do Not Track</i> setting
    *
-   * <b>Note:</b> do-not-track setting is configured server-side! You should likely set this setting here to match you server-side configuration.
-   * In case users opt-in for do-not-track:
-   * - If set to `true` here, users will not be tracked, independently of you server-side setting.
-   * - If set to `false` here (the default), users will be tracked depending on your server setting, <b>but tracking requests and cookies will still be created!</b>
-   *
-   * See official guide: https://fr.matomo.org/docs/privacy-how-to/#step-4-respect-donottrack-preference
-   *
    * Optional
    * Default: false
    */
   acceptDoNotTrack?: boolean;
 
   /**
-   * Download Matomo tracking code from another source
+   * Configure user consent requirement
    *
    * Optional
-   * Default is deduced from tracker url
-   * Not available if mode is MANUAL
+   * Default: MatomoConsentMode.NONE
    */
-  scriptUrl?: string;
+  requireConsent?: MatomoConsentMode;
 }
 ```
 

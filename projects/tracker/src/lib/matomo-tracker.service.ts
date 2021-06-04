@@ -73,6 +73,16 @@ export interface MatomoInstance {
   hasCookies(): boolean;
 
   getCrossDomainLinkingUrlParameter(): string;
+
+  hasRememberedConsent(): boolean;
+
+  getRememberedConsent(): number | string;
+
+  isConsentRequired(): boolean;
+
+  areCookiesEnabled(): boolean;
+
+  isUserOptedOut(): boolean;
 }
 
 export function createMatomoTracker(config: InternalMatomoConfiguration): MatomoTracker {
@@ -896,6 +906,134 @@ export abstract class MatomoTracker {
     discount?: number
   ): void {
     this.push(['trackEcommerceOrder', orderId, grandTotal, subTotal, tax, shipping, discount]);
+  }
+
+  /**
+   * Require nothing is tracked until a user consents
+   *
+   * By default the Matomo tracker assumes consent to tracking.
+   *
+   * @see `requireConsent` module configuration property
+   */
+  requireConsent(): void {
+    this.push(['requireConsent']);
+  }
+
+  /**
+   * Mark that the current user has consented
+   *
+   * The consent is one-time only, so in a subsequent browser session, the user will have to consent again.
+   * To remember consent, see {@link rememberConsentGiven}.
+   */
+  setConsentGiven(): void {
+    this.push(['setConsentGiven']);
+  }
+
+  /**
+   * Mark that the current user has consented, and remembers this consent through a browser cookie.
+   *
+   * The next time the user visits the site, Matomo will remember that they consented, and track them.
+   * If you call this method, you do not need to call {@link setConsentGiven}.
+   *
+   * @param hoursToExpire After how many hours the consent should expire. By default the consent is valid
+   *                          for 30 years unless cookies are deleted by the user or the browser prior to this
+   */
+  rememberConsentGiven(hoursToExpire?: number): void {
+    this.push(['rememberConsentGiven', hoursToExpire]);
+  }
+
+  /**
+   * Remove a user's consent, both if the consent was one-time only and if the consent was remembered.
+   *
+   * After calling this method, the user will have to consent again in order to be tracked.
+   */
+  forgetConsentGiven(): void {
+    this.push(['forgetConsentGiven']);
+  }
+
+  /** Return whether the current visitor has given consent previously or not */
+  hasRememberedConsent(): Promise<boolean> {
+    return this.get('hasRememberedConsent');
+  }
+
+  /**
+   * If consent was given, returns the timestamp when the visitor gave consent
+   *
+   * Only works if {@link rememberConsentGiven} was used and not when {@link setConsentGiven} was used.
+   * The timestamp is the local timestamp which depends on the visitors time.
+   */
+  getRememberedConsent(): Promise<string | number> {
+    return this.get('getRememberedConsent');
+  }
+
+  /** Return whether {@link requireConsent} was called previously */
+  isConsentRequired(): Promise<boolean> {
+    return this.get('isConsentRequired');
+  }
+
+  /**
+   * Require no cookies are used
+   *
+   * By default the Matomo tracker assumes consent to using cookies
+   */
+  requireCookieConsent(): void {
+    this.push(['requireCookieConsent']);
+  }
+
+  /**
+   * Mark that the current user has consented to using cookies
+   *
+   * The consent is one-time only, so in a subsequent browser session, the user will have to consent again.
+   * To remember cookie consent, see {@link rememberCookieConsentGiven}.
+   */
+  setCookieConsentGiven(): void {
+    this.push(['setCookieConsentGiven']);
+  }
+
+  /**
+   * Mark that the current user has consented to using cookies, and remembers this consent through a browser cookie.
+   *
+   * The next time the user visits the site, Matomo will remember that they consented, and use cookies.
+   * If you call this method, you do not need to call {@link setCookieConsentGiven}.
+   *
+   * @param hoursToExpire After how many hours the cookie consent should expire. By default the consent is valid
+   *                          for 30 years unless cookies are deleted by the user or the browser prior to this
+   */
+  rememberCookieConsentGiven(hoursToExpire?: number): void {
+    this.push(['rememberCookieConsentGiven', hoursToExpire]);
+  }
+
+  /**
+   * Remove a user's cookie consent, both if the consent was one-time only and if the consent was remembered.
+   *
+   * After calling this method, the user will have to consent again in order for cookies to be used.
+   */
+  forgetCookieConsentGiven(): void {
+    this.push(['forgetCookieConsentGiven']);
+  }
+
+  /** Return whether cookies are currently enabled or disabled */
+  areCookiesEnabled(): Promise<boolean> {
+    return this.get('areCookiesEnabled');
+  }
+
+  /** After calling this function, the user will be opted out and no longer be tracked */
+  optUserOut(): void {
+    this.push(['optUserOut']);
+  }
+
+  /** After calling this method the user will be tracked again */
+  forgetUserOptOut(): void {
+    this.push(['forgetUserOptOut']);
+  }
+
+  /**
+   * Return whether the user is opted out or not
+   *
+   * Note: This method might not return the correct value if you are using the opt out iframe.
+   */
+  isUserOptedOut(): Promise<boolean> {
+    return this.get('isUserOptedOut');
   }
 
   /**

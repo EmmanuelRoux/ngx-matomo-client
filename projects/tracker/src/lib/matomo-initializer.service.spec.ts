@@ -3,6 +3,7 @@ import {
   InternalMatomoConfiguration,
   MATOMO_CONFIGURATION,
   MatomoConfiguration,
+  MatomoConsentMode,
   MatomoInitializationMode,
 } from './configuration';
 import { MatomoHolder } from './holder';
@@ -90,6 +91,38 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expect(window._paq).toEqual([['setDoNotTrack', true], ['trackPageView']]);
+  });
+
+  it('should require tracking consent if setting if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.MANUAL,
+      requireConsent: MatomoConsentMode.TRACKING,
+      trackAppInitialLoad: true,
+      enableLinkTracking: false,
+    });
+
+    // When
+    service.init();
+
+    // Then
+    expect(window._paq).toEqual([['requireConsent'], ['trackPageView']]);
+  });
+
+  it('should require tracking consent if setting if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.MANUAL,
+      requireConsent: MatomoConsentMode.COOKIE,
+      trackAppInitialLoad: true,
+      enableLinkTracking: false,
+    });
+
+    // When
+    service.init();
+
+    // Then
+    expect(window._paq).toEqual([['requireCookieConsent'], ['trackPageView']]);
   });
 
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {

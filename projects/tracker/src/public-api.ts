@@ -8,6 +8,7 @@ export {
   MatomoConfiguration,
   MATOMO_CONFIGURATION,
   MatomoInitializationMode,
+  MatomoConsentMode,
   InternalMatomoConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
 } from './lib/configuration';

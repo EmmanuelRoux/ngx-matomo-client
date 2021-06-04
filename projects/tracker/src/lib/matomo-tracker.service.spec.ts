@@ -274,6 +274,86 @@ describe('MatomoTracker', () => {
 
   it('should track ecommerce order', expectSimpleMethod('trackEcommerceOrder', ['orderId', 999]));
 
+  it('should require consent', expectSimpleMethod('requireConsent', []));
+
+  it('should set consent given', expectSimpleMethod('setConsentGiven', []));
+
+  it('should remember consent given', expectSimpleMethod('rememberConsentGiven', []));
+
+  it('should forget consent given', expectSimpleMethod('forgetConsentGiven', []));
+
+  it('should return whether has remembered consent', done => {
+    expectGetter(
+      'hasRememberedConsent',
+      {
+        hasRememberedConsent(): boolean {
+          return true;
+        },
+      },
+      true
+    ).then(done);
+  });
+
+  it('should return remembered consent', done => {
+    expectGetter(
+      'getRememberedConsent',
+      {
+        getRememberedConsent(): string | number {
+          return 99999;
+        },
+      },
+      99999
+    ).then(done);
+  });
+
+  it('should return whether consent is required', done => {
+    expectGetter(
+      'isConsentRequired',
+      {
+        isConsentRequired(): boolean {
+          return true;
+        },
+      },
+      true
+    ).then(done);
+  });
+
+  it('should require cookie consent', expectSimpleMethod('requireCookieConsent', []));
+
+  it('should set cookie consent given', expectSimpleMethod('setCookieConsentGiven', []));
+
+  it('should remember cookie consent given', expectSimpleMethod('rememberCookieConsentGiven', []));
+
+  it('should forget cookie consent given', expectSimpleMethod('forgetCookieConsentGiven', []));
+
+  it('should return whether cookies are enabled', done => {
+    expectGetter(
+      'areCookiesEnabled',
+      {
+        areCookiesEnabled(): boolean {
+          return true;
+        },
+      },
+      true
+    ).then(done);
+  });
+
+  it('should opt user out', expectSimpleMethod('optUserOut', []));
+
+  it('should forget user opt out', expectSimpleMethod('forgetUserOptOut', []));
+
+  it('should return whether user opted out', done => {
+    expectGetter(
+      'isUserOptedOut',
+      {
+        isUserOptedOut(): boolean {
+          return true;
+        },
+      },
+      true
+    ).then(done);
+  });
+
   it('should disable cookies', expectSimpleMethod('disableCookies', []));
 
   it('should delete cookies', expectSimpleMethod('deleteCookies', []));
@@ -323,10 +403,10 @@ describe('MatomoTracker', () => {
 
   it('should set requestQueueInterval', expectSimpleMethod('setRequestQueueInterval', [4200]));
 
-  function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>>(
+  function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>, E extends T = T>(
     getter: G,
     mockInstance: Partial<MatomoInstance>,
-    expected: T
+    expected: E
   ): Promise<void> {
     // Given
     const tracker = createTracker();

@@ -19,6 +19,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
         disabled: false,
         enableLinkTracking: true,
         trackAppInitialLoad: false,
+        requireConsent: MatomoConsentMode.NONE,
         ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
       } as InternalMatomoConfiguration),
   }
@@ -35,6 +36,15 @@ export enum MatomoInitializationMode {
   AUTO,
   /** Do not inject Matomo script. In this case, initialization script must be provided */
   MANUAL,
+}
+
+export enum MatomoConsentMode {
+  /** Do not require any consent, always track users */
+  NONE,
+  /** Require cookie consent */
+  COOKIE,
+  /** Require tracking consent */
+  TRACKING,
 }
 
 export interface MatomoTrackerConfiguration {
@@ -68,6 +78,26 @@ export interface BaseMatomoConfiguration {
 
   /** Set to `true` to not track users who opt out of tracking using <i>Do Not Track</i> setting */
   acceptDoNotTrack?: boolean;
+
+  /**
+   * Configure user consent requirement
+   *
+   * To identify whether you need to ask for any consent, you need to determine whether your lawful
+   * basis for processing personal data is "Consent" or "Legitimate interest", or whether you can
+   * avoid collecting personal data altogether.
+   *
+   * Matomo differentiates between cookie and tracking consent:
+   * - In the context of <b>tracking consent</b> no cookies will be used and no tracking request
+   *   will be sent unless consent was given. As soon as consent was given, tracking requests will
+   *   be sent and cookies will be used.
+   * - In the context of <b>cookie consent</b> tracking requests will be always sent. However,
+   *   cookies will be only used if consent for storing and using cookies was given by the user.
+   *
+   * Note that cookies impact reports accuracy.
+   *
+   * See Matomo guide: {@link https://developer.matomo.org/guides/tracking-consent}
+   */
+  requireConsent?: MatomoConsentMode;
 }
 
 export interface BaseAutoMatomoConfiguration {
