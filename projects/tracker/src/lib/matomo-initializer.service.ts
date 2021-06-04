@@ -1,34 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
-  AutoMatomoConfiguration,
+  getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
   InternalMatomoConfiguration,
-  ManualMatomoConfiguration,
-  MatomoConfiguration,
+  isManualConfiguration,
   MatomoConsentMode,
-  MatomoInitializationMode,
-  MatomoTrackerConfiguration,
-  MultiTrackersConfiguration,
 } from './configuration';
 import { MatomoHolder } from './holder';
 
 declare var window: MatomoHolder;
-
-function isManualConfiguration(config: MatomoConfiguration): config is ManualMatomoConfiguration {
-  return config.mode === MatomoInitializationMode.MANUAL;
-}
-
-function isMultiTrackerConfiguration(
-  config: AutoMatomoConfiguration
-): config is MultiTrackersConfiguration {
-  return Array.isArray(config.trackers);
-}
-
-function getTrackersConfiguration(config: AutoMatomoConfiguration): MatomoTrackerConfiguration[] {
-  return isMultiTrackerConfiguration(config)
-    ? config.trackers
-    : [{ trackerUrl: config.trackerUrl, siteId: config.siteId }];
-}
 
 function coerceSiteId(siteId: number | string): string {
   return `${siteId}`;

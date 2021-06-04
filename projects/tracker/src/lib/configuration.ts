@@ -127,3 +127,23 @@ export type AutoMatomoConfiguration = BaseAutoMatomoConfiguration &
 
 export type MatomoConfiguration = BaseMatomoConfiguration &
   XOR<AutoMatomoConfiguration, ManualMatomoConfiguration>;
+
+export function isManualConfiguration(
+  config: MatomoConfiguration
+): config is ManualMatomoConfiguration {
+  return config.mode === MatomoInitializationMode.MANUAL;
+}
+
+export function isMultiTrackerConfiguration(
+  config: AutoMatomoConfiguration
+): config is MultiTrackersConfiguration {
+  return Array.isArray(config.trackers);
+}
+
+export function getTrackersConfiguration(
+  config: AutoMatomoConfiguration
+): MatomoTrackerConfiguration[] {
+  return isMultiTrackerConfiguration(config)
+    ? config.trackers
+    : [{ trackerUrl: config.trackerUrl, siteId: config.siteId }];
+}

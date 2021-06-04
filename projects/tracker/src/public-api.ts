@@ -14,3 +14,4 @@ export {
 } from './lib/configuration';
 export { MatomoTrackerDirective } from './lib/directives/matomo-tracker.directive';
 export { MatomoTrackClickDirective } from './lib/directives/matomo-track-click.directive';
+export { MatomoOptOutFormComponent } from './lib/directives/matomo-opt-out-form.component';
