@@ -18,8 +18,9 @@ function readPkgJson(dir) {
 
 function writePkgJson(dir, pkg) {
   const pkgPath = path.resolve(dir, 'package.json');
+  const pkgJson = JSON.stringify(pkg, null, 2);
 
-  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+  fs.writeFileSync(pkgPath, pkgJson + '\n');
 }
 
 function getChannel(channel) {
