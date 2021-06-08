@@ -156,6 +156,8 @@ describe('MatomoTracker', () => {
 
   it('should set tracker url', expectSimpleMethod('setTrackerUrl', ['http://url']));
 
+  it('should add tracker', expectSimpleMethod('addTracker', ['http://url', '1']));
+
   it('should set download classes', expectSimpleMethod('setDownloadClasses', ['myClass']));
 
   it('should set download extensions', expectSimpleMethod('setDownloadExtensions', ['docx']));

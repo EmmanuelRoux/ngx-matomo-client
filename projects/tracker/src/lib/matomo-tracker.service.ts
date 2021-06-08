@@ -377,6 +377,17 @@ export abstract class MatomoTracker {
   }
 
   /**
+   * Register an additional Matomo server<br />
+   * Redundant: can be specified in getTracker() constructor.
+   *
+   * @param url URL for the Matomo server.
+   * @param siteId Site ID for the tracker
+   */
+  addTracker(url: string, siteId: number | string): void {
+    this.push(['addTracker', url, siteId]);
+  }
+
+  /**
    * Returns the Matomo server URL.
    *
    * @returns Promise for the Matomo server URL.
