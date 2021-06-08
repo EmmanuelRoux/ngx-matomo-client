@@ -1,3 +1,19 @@
+# [1.3.0-next.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.2...v1.3.0-next.3) (2021-06-08)
+
+
+### Bug Fixes
+
+* **tracker:** add missing configuration property documentation to README ([4b4ba6c](https://github.com/EmmanuelRoux/ngx-matomo/commit/4b4ba6c0dae470845a085d9ece10aadffe8850f2))
+* **tracker:** fix initial page load track not respecting do-not-track setting ([6f6d0ff](https://github.com/EmmanuelRoux/ngx-matomo/commit/6f6d0ffe694dcd24ecf98317ba49ae624fe10b50))
+* **tracker:** fix setSiteId parameter type ([a1cdd9d](https://github.com/EmmanuelRoux/ngx-matomo/commit/a1cdd9dc618255037535410eae0beeb3e9af5f2f))
+
+
+### Features
+
+* **tracker:** add addTracker method ([b72b989](https://github.com/EmmanuelRoux/ngx-matomo/commit/b72b989dee85e76c980332f5a308359fb2adbebc))
+* **tracker:** add opt-out form component ([c2a03b5](https://github.com/EmmanuelRoux/ngx-matomo/commit/c2a03b54e6e7360a69b36b4dd8ed727666460d5c))
+* **tracker:** add tracking-consent support ([4f426a2](https://github.com/EmmanuelRoux/ngx-matomo/commit/4f426a2df4b55573644d4e8615413c8d326a9905))
+
 # [1.3.0-next.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.1...v1.3.0-next.2) (2021-06-01)
 
 
