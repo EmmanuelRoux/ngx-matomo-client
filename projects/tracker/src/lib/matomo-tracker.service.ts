@@ -350,7 +350,7 @@ export abstract class MatomoTracker {
    *
    * @param siteId Site ID for the tracker.
    */
-  setSiteId(siteId: number): void {
+  setSiteId(siteId: number | string): void {
     this.push(['setSiteId', siteId]);
   }
 
