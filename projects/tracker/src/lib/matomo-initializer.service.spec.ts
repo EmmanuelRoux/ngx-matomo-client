@@ -1,3 +1,4 @@
+import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   InternalMatomoConfiguration,
@@ -8,6 +9,7 @@ import {
 } from './configuration';
 import { MatomoHolder } from './holder';
 import { MatomoInitializerService } from './matomo-initializer.service';
+import { MatomoTracker } from './matomo-tracker.service';
 
 declare var window: MatomoHolder;
 
@@ -29,19 +31,20 @@ describe('MatomoInitializerService', () => {
 
   it('should register _paq global once', () => {
     // Given
+    const injector = Injector.create({ providers: [] });
     let paq: MatomoHolder['_paq'];
     expect(window._paq).toBeUndefined();
 
     // When
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    new MatomoInitializerService({} as InternalMatomoConfiguration);
+    new MatomoInitializerService({} as InternalMatomoConfiguration, injector);
     // Then
     expect(window._paq).toEqual([]);
     paq = window._paq;
 
     // When
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    new MatomoInitializerService({} as InternalMatomoConfiguration);
+    new MatomoInitializerService({} as InternalMatomoConfiguration, injector);
     // Then
     expect(window._paq).toEqual([]);
     expect(window._paq).toBe(paq); // should not
@@ -54,12 +57,15 @@ describe('MatomoInitializerService', () => {
       trackAppInitialLoad: true,
       enableLinkTracking: false,
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
 
     // When
     service.init();
 
     // Then
-    expect(window._paq).toEqual([['trackPageView']]);
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
   });
 
   it('should track initial page view and enable link tracking with manual configuration', () => {
@@ -69,12 +75,17 @@ describe('MatomoInitializerService', () => {
       trackAppInitialLoad: true,
       enableLinkTracking: true,
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'enableLinkTracking');
 
     // When
     service.init();
 
     // Then
-    expect(window._paq).toEqual([['trackPageView'], ['enableLinkTracking']]);
+    expect(tracker.enableLinkTracking).toHaveBeenCalledOnceWith();
+    expect(tracker.trackPageView).toHaveBeenCalledBefore(tracker.enableLinkTracking);
   });
 
   it('should set Do Not Track setting if enabled', () => {
@@ -85,12 +96,18 @@ describe('MatomoInitializerService', () => {
       trackAppInitialLoad: true,
       enableLinkTracking: false,
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'setDoNotTrack');
 
     // When
     service.init();
 
     // Then
-    expect(window._paq).toEqual([['setDoNotTrack', true], ['trackPageView']]);
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+    expect(tracker.setDoNotTrack).toHaveBeenCalledOnceWith(true);
+    expect(tracker.setDoNotTrack).toHaveBeenCalledBefore(tracker.trackPageView);
   });
 
   it('should require tracking consent if setting if enabled', () => {
@@ -101,12 +118,18 @@ describe('MatomoInitializerService', () => {
       trackAppInitialLoad: true,
       enableLinkTracking: false,
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'requireConsent');
 
     // When
     service.init();
 
     // Then
-    expect(window._paq).toEqual([['requireConsent'], ['trackPageView']]);
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+    expect(tracker.requireConsent).toHaveBeenCalledOnceWith();
+    expect(tracker.requireConsent).toHaveBeenCalledBefore(tracker.trackPageView);
   });
 
   it('should require tracking consent if setting if enabled', () => {
@@ -117,12 +140,18 @@ describe('MatomoInitializerService', () => {
       trackAppInitialLoad: true,
       enableLinkTracking: false,
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'requireCookieConsent');
 
     // When
     service.init();
 
     // Then
-    expect(window._paq).toEqual([['requireCookieConsent'], ['trackPageView']]);
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+    expect(tracker.requireCookieConsent).toHaveBeenCalledOnceWith();
+    expect(tracker.requireCookieConsent).toHaveBeenCalledBefore(tracker.trackPageView);
   });
 
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
@@ -157,7 +186,10 @@ describe('MatomoInitializerService', () => {
       siteId: 'fakeSiteId',
       trackerUrl: 'http://fakeTrackerUrl',
     });
+    const tracker = TestBed.inject(MatomoTracker);
 
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
@@ -165,10 +197,8 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
-    expect(window._paq).toEqual([
-      ['setTrackerUrl', 'http://fakeTrackerUrl/matomo.php'],
-      ['setSiteId', 'fakeSiteId'],
-    ]);
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('fakeSiteId');
   });
 
   it('should inject script automatically with site id as number', () => {
@@ -178,7 +208,10 @@ describe('MatomoInitializerService', () => {
       siteId: 99,
       trackerUrl: 'http://fakeTrackerUrl',
     });
+    const tracker = TestBed.inject(MatomoTracker);
 
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
@@ -186,10 +219,8 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
-    expect(window._paq).toEqual([
-      ['setTrackerUrl', 'http://fakeTrackerUrl/matomo.php'],
-      ['setSiteId', '99'],
-    ]);
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('99');
   });
 
   it('should inject script automatically with custom script url', () => {
@@ -220,7 +251,11 @@ describe('MatomoInitializerService', () => {
         { siteId: 'site3', trackerUrl: 'http://fakeTrackerUrl3' },
       ],
     });
+    const tracker = TestBed.inject(MatomoTracker);
 
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    spyOn(tracker, 'addTracker');
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
@@ -228,12 +263,11 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expectInjectedScript(injectedScript, 'http://fakeTrackerUrl1/matomo.js');
-    expect(window._paq).toEqual([
-      ['setTrackerUrl', 'http://fakeTrackerUrl1/matomo.php'],
-      ['setSiteId', 'site1'],
-      ['addTracker', 'http://fakeTrackerUrl2/matomo.php', 'site2'],
-      ['addTracker', 'http://fakeTrackerUrl3/matomo.php', 'site3'],
-    ]);
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl1/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('site1');
+    expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl2/matomo.php', 'site2');
+    expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl3/matomo.php', 'site3');
+    expect(tracker.addTracker).toHaveBeenCalledTimes(2);
   });
 
   it('should do nothing when disabled', () => {
