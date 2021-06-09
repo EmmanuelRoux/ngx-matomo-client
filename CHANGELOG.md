@@ -1,3 +1,10 @@
+# [1.3.0-next.5](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.4...v1.3.0-next.5) (2021-06-09)
+
+
+### Bug Fixes
+
+* **tracker:** fix test name ([b0b2227](https://github.com/EmmanuelRoux/ngx-matomo/commit/b0b2227d469606c0ded3b471c62db22bf8083b20))
+
 # [1.3.0-next.4](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.3...v1.3.0-next.4) (2021-06-09)
 
 
