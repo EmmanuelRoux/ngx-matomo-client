@@ -55,9 +55,11 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
    * Default is the current app locale available in LOCALE_ID token
    */
   @Input() locale: string;
+  /** Font color (note that Matomo currently only supports hexadecimal without leading hash notation) */
   @Input() color: string = '';
-  @Input() fontSize: string = '';
+  /** Background color (note that Matomo currently only supports hexadecimal without leading hash notation) */
   @Input() backgroundColor: string = '';
+  @Input() fontSize: string = '';
   @Input() fontFamily: string = '';
 
   constructor(
