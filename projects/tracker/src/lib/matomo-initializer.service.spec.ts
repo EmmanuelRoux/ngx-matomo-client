@@ -132,7 +132,7 @@ describe('MatomoInitializerService', () => {
     expect(tracker.requireConsent).toHaveBeenCalledBefore(tracker.trackPageView);
   });
 
-  it('should require tracking consent if setting if enabled', () => {
+  it('should require cookie consent if setting if enabled', () => {
     // Given
     const service = instantiate({
       mode: MatomoInitializationMode.MANUAL,
