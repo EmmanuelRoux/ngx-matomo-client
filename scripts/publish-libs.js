@@ -2,9 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const nerfDart = require('nerf-dart');
-const {exec} = require('child_process');
-const {LIBRARIES, DIST_DIR} = require('./constants');
-const {checkNpmToken, readPkgJson, getChannel, getRegistry} = require('./utils');
+const { exec } = require('child_process');
+const { LIBRARIES, DIST_DIR } = require('./constants');
+const { checkNpmToken, readPkgJson, getChannel, getRegistry } = require('./utils');
 
 const [version, channel] = process.argv.slice(2);
 
@@ -37,7 +37,7 @@ function publishLib(libName) {
   console.log(`Publishing version ${version} of ${libName} to npm registry on dist-tag ${distTag}`);
 
   setUpNpmAuth(baseDir, registry);
-  exec(publishCmd, {cwd: baseDir}, publishCallback);
+  exec(publishCmd, { cwd: baseDir }, publishCallback);
 
   console.log(`Published ${pkg.name}@${version} to dist-tag @${distTag} on ${registry}`);
 }

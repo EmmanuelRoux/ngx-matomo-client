@@ -1,4 +1,4 @@
 // #!/usr/bin/env node
-const {checkNpmToken} = require('./utils');
+const { checkNpmToken } = require('./utils');
 
 checkNpmToken();

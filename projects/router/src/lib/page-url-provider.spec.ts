@@ -1,13 +1,15 @@
-import {APP_BASE_HREF, PlatformLocation} from '@angular/common';
-import {TestBed} from '@angular/core/testing';
-import {NavigationEnd} from '@angular/router';
-import {MATOMO_CONFIGURATION, MatomoConfiguration} from '@ngx-matomo/tracker';
-import {MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration} from './configuration';
-import {MATOMO_PAGE_URL_PROVIDER, PageUrlProvider} from './page-url-provider';
+import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
+import { TestBed } from '@angular/core/testing';
+import { NavigationEnd } from '@angular/router';
+import { MATOMO_CONFIGURATION, MatomoConfiguration } from '@ngx-matomo/tracker';
+import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './configuration';
+import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
 
 describe('PageUrlProvider', () => {
-
-  function instantiate(config: MatomoRouterConfiguration | null, baseHref: string | null): PageUrlProvider {
+  function instantiate(
+    config: MatomoRouterConfiguration | null,
+    baseHref: string | null
+  ): PageUrlProvider {
     TestBed.configureTestingModule({
       providers: [
         {
@@ -41,7 +43,12 @@ describe('PageUrlProvider', () => {
 
   it('should return page url prepended with APP_BASE_HREF', () => {
     // Given
-    const provider = instantiate({/* prependBaseHref: true */}, '/test/');
+    const provider = instantiate(
+      {
+        /* prependBaseHref: true */
+      },
+      '/test/'
+    );
 
     // When
     provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
@@ -52,7 +59,12 @@ describe('PageUrlProvider', () => {
 
   it('should return page url prepended with DOM base href', () => {
     // Given
-    const provider = instantiate({/* prependBaseHref: true */}, null);
+    const provider = instantiate(
+      {
+        /* prependBaseHref: true */
+      },
+      null
+    );
     const platform = TestBed.inject(PlatformLocation);
 
     spyOn(platform, 'getBaseHrefFromDOM').and.returnValue('/test');
@@ -66,7 +78,7 @@ describe('PageUrlProvider', () => {
 
   it('should return page url without base href', () => {
     // Given
-    const provider = instantiate({prependBaseHref: false}, '/test/');
+    const provider = instantiate({ prependBaseHref: false }, '/test/');
     const platform = TestBed.inject(PlatformLocation);
 
     spyOn(platform, 'getBaseHrefFromDOM').and.returnValue('/test');
@@ -77,5 +89,4 @@ describe('PageUrlProvider', () => {
       expect(url).toEqual('/my-page');
     });
   });
-
 });

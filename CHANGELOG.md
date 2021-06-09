@@ -1,3 +1,65 @@
+# [1.3.0-next.5](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.4...v1.3.0-next.5) (2021-06-09)
+
+
+### Bug Fixes
+
+* **tracker:** fix test name ([b0b2227](https://github.com/EmmanuelRoux/ngx-matomo/commit/b0b2227d469606c0ded3b471c62db22bf8083b20))
+
+# [1.3.0-next.4](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.3...v1.3.0-next.4) (2021-06-09)
+
+
+### Features
+
+* **tracker:** add support for lazy-loaded modules ([f958a9d](https://github.com/EmmanuelRoux/ngx-matomo/commit/f958a9dfa2f721f5d9fb395009a89e95bd56b98d)), closes [#7](https://github.com/EmmanuelRoux/ngx-matomo/issues/7)
+
+# [1.3.0-next.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.2...v1.3.0-next.3) (2021-06-08)
+
+
+### Bug Fixes
+
+* **tracker:** add missing configuration property documentation to README ([4b4ba6c](https://github.com/EmmanuelRoux/ngx-matomo/commit/4b4ba6c0dae470845a085d9ece10aadffe8850f2))
+* **tracker:** fix initial page load track not respecting do-not-track setting ([6f6d0ff](https://github.com/EmmanuelRoux/ngx-matomo/commit/6f6d0ffe694dcd24ecf98317ba49ae624fe10b50))
+* **tracker:** fix setSiteId parameter type ([a1cdd9d](https://github.com/EmmanuelRoux/ngx-matomo/commit/a1cdd9dc618255037535410eae0beeb3e9af5f2f))
+
+
+### Features
+
+* **tracker:** add addTracker method ([b72b989](https://github.com/EmmanuelRoux/ngx-matomo/commit/b72b989dee85e76c980332f5a308359fb2adbebc))
+* **tracker:** add opt-out form component ([c2a03b5](https://github.com/EmmanuelRoux/ngx-matomo/commit/c2a03b54e6e7360a69b36b4dd8ed727666460d5c))
+* **tracker:** add tracking-consent support ([4f426a2](https://github.com/EmmanuelRoux/ngx-matomo/commit/4f426a2df4b55573644d4e8615413c8d326a9905))
+
+# [1.3.0-next.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.1...v1.3.0-next.2) (2021-06-01)
+
+
+### Bug Fixes
+
+* **tracker:** fix scope parameter type ([6d57154](https://github.com/EmmanuelRoux/ngx-matomo/commit/6d57154a782a283e3092c4c5c6cda99964f732b6))
+
+
+### Features
+
+* **tracker:** add configuration option for DoNotTrack ([2166ee2](https://github.com/EmmanuelRoux/ngx-matomo/commit/2166ee21e03229e29ab372f16c72a48da8a008c3))
+* **tracker:** add disablePerformanceTracking method ([973966e](https://github.com/EmmanuelRoux/ngx-matomo/commit/973966e21a12ba84bb81e22915a9e541b26e3a40))
+* **tracker:** add missing cross-domain linking parameter getter ([ed4b7e6](https://github.com/EmmanuelRoux/ngx-matomo/commit/ed4b7e6715324b94baec9255ea717308a0d50fd9))
+* **tracker:** add missing ping function ([3c9bdfd](https://github.com/EmmanuelRoux/ngx-matomo/commit/3c9bdfd2e9c27017ae167d862bb5eb9447650788))
+* **tracker:** add missing queue request functions ([75a9df8](https://github.com/EmmanuelRoux/ngx-matomo/commit/75a9df8d3e5d089bd4fa916f194185c8dbf32fd9))
+* **tracker:** add setCookieSameSite method ([a27f8d6](https://github.com/EmmanuelRoux/ngx-matomo/commit/a27f8d69cf60c001b3dc1c6b5befed3a5c661a2a))
+* **tracker:** add setVisitorId method ([3c18822](https://github.com/EmmanuelRoux/ngx-matomo/commit/3c18822a53cac45a85d8fa347c54036ae6fcbe68))
+* **tracker:** set default value of enableLinkTracking parameter to false ([56578a6](https://github.com/EmmanuelRoux/ngx-matomo/commit/56578a67e21436c95d80db7a913e81d973b0f1e6))
+
+# [1.3.0-next.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.2.0...v1.3.0-next.1) (2021-06-01)
+
+
+### Bug Fixes
+
+* **tracker:** fix test case ([7c5a8cd](https://github.com/EmmanuelRoux/ngx-matomo/commit/7c5a8cd884f3c812df87cc1ba28f80dbc667f91b))
+
+
+### Features
+
+* **tracker:** add methods to enable/disable sendBeacon ([2a69ff5](https://github.com/EmmanuelRoux/ngx-matomo/commit/2a69ff5205ac3292514741ee3e1c3e9233918f4c))
+* **tracker:** add missing ecommerce methods ([317812e](https://github.com/EmmanuelRoux/ngx-matomo/commit/317812e8b562f6c655ca28a73c7be02110eb1b20))
+
 # [1.2.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.1.0...v1.2.0) (2021-05-27)
 
 

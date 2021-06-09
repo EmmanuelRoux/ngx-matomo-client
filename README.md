@@ -1,11 +1,16 @@
 # Ngx-Matomo
 
-Matomo (fka. Piwik) client for Angular 9-12 applications
+Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or 4 and Angular 9-12.
 
 [![Angular 12](https://img.shields.io/badge/Angular-12-limegreen.svg?logo=angular)](https://angular.io/)
 [![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
 [![CircleCI](https://img.shields.io/circleci/build/github/EmmanuelRoux/ngx-matomo/main.svg?logo=circleci&logoColor=fff&label=CircleCI)](https://circleci.com/gh/EmmanuelRoux/ngx-matomo)
+[![Coverage Status](https://coveralls.io/repos/github/EmmanuelRoux/ngx-matomo/badge.svg?branch=main)](https://coveralls.io/github/EmmanuelRoux/ngx-matomo?branch=main)
 [![MIT license](https://img.shields.io/badge/License-MIT-limegreen.svg)](https://opensource.org/licenses/MIT)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-limegreen.svg?logo=prettier)](https://github.com/prettier/prettier)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-limegreen.svg)](https://github.com/semantic-release/semantic-release)
+
+<!-- prettier-ignore-start -->
 
 <!-- toc -->
 
@@ -23,18 +28,22 @@ Matomo (fka. Piwik) client for Angular 9-12 applications
   * [Tracking events from component/service](#tracking-events-from-componentservice)
   * [Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...](#using-other-matomos-tracking-features-ecommerce-analytics-marketing-campaigns)
   * [Disable tracking in some environments](#disable-tracking-in-some-environments)
+  * [Managing user consent: opt-in/opt-out for tracking & cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
 - [Launch demo app](#launch-demo-app)
 - [Configuration reference](#configuration-reference)
   * [NgxMatomoTrackerModule](#ngxmatomotrackermodule)
   * [NgxMatomoRouterModule](#ngxmatomoroutermodule)
+- [Roadmap](#roadmap)
 
 <!-- tocstop -->
 
+<!-- prettier-ignore-end -->
+
 ## Dependencies
 
-| NgxMatomo | Angular               |
-| --------- | --------------------- |
-| latest    | 9.x, 10.x, 11.x, 12.x |
+| NgxMatomo | Angular     | Matomo        |
+| --------- | ----------- | ------------- |
+| latest    | 9.x to 12.x | Matomo 3 or 4 |
 
 ## Installation
 
@@ -59,8 +68,8 @@ NgxMatomo is also able to integrate with Angular Router, so you don't need any e
 Add `NgxMatomoTrackerModule` module into your application:
 
 ```typescript
-import {NgModule} from '@angular/core';
-import {NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
+import { NgModule } from '@angular/core';
+import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 
 @NgModule({
   imports: [
@@ -72,8 +81,7 @@ import {NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
   ],
   // ...
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 ### Setup Angular Router integration
@@ -81,9 +89,9 @@ export class AppModule {
 First follow steps described in the previous section. Then add `NgxMatomoRouterModule` module into your application:
 
 ```typescript
-import {NgModule} from '@angular/core';
-import {NgxMatomoRouterModule} from '@ngx-matomo/router';
-import {NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
+import { NgModule } from '@angular/core';
+import { NgxMatomoRouterModule } from '@ngx-matomo/router';
+import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 
 @NgModule({
   imports: [
@@ -96,8 +104,7 @@ import {NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
   ],
   // ...
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 ### Setup manually with script tag
@@ -108,8 +115,8 @@ Insert Matomo tracking code into your application
 Add `NgxMatomoTrackerModule` module into your application, specifying the `MANUAL` setup mode:
 
 ```typescript
-import {NgModule} from '@angular/core';
-import {MatomoInitializationMode, NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
+import { NgModule } from '@angular/core';
+import { MatomoInitializationMode, NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 
 @NgModule({
   // ...
@@ -121,8 +128,7 @@ import {MatomoInitializationMode, NgxMatomoTrackerModule} from '@ngx-matomo/trac
   ],
   // ...
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 ## Usage
@@ -142,25 +148,24 @@ application base href. This is fully customizable as described below. Before def
 You may provide a custom service to return current page title:
 
 ```typescript
-import {PageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER} from '@ngx-matomo/router';
+import { PageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER } from '@ngx-matomo/router';
 
 @NgModule({
   // ...
-  providers: [{
-    provide: MATOMO_PAGE_TITLE_PROVIDER,
-    useClass: MyPageTitleProvider,
-  }],
+  providers: [
+    {
+      provide: MATOMO_PAGE_TITLE_PROVIDER,
+      useClass: MyPageTitleProvider,
+    },
+  ],
 })
-export class AppModule {
-}
+export class AppModule {}
 
 @Injectable()
 export class MyPageTitleProvider implements PageTitleProvider {
-
   getCurrentPageTitle(event: NavigationEnd): Observable<string> {
     return of('Whatever you want as current page title');
   }
-
 }
 ```
 
@@ -169,36 +174,35 @@ export class MyPageTitleProvider implements PageTitleProvider {
 You may provide a custom service to return current page url:
 
 ```typescript
-import {PageUrlProvider, MATOMO_PAGE_URL_PROVIDER} from '@ngx-matomo/router';
+import { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from '@ngx-matomo/router';
 
 @NgModule({
   // ...
-  providers: [{
-    provide: MATOMO_PAGE_URL_PROVIDER,
-    useClass: MyPageUrlProvider,
-  }],
+  providers: [
+    {
+      provide: MATOMO_PAGE_URL_PROVIDER,
+      useClass: MyPageUrlProvider,
+    },
+  ],
 })
-export class AppModule {
-}
+export class AppModule {}
 
 @Injectable()
 export class MyPageUrlProvider implements PageUrlProvider {
-
   getCurrentPageUrl(event: NavigationEnd): Observable<string> {
     return of('Whatever you want as current page url');
   }
-
 }
 ```
 
 ### Tracking page view (without Angular Router)
 
-Call `MatomoTracker.trackPageView()` from wherever you want (typically from your *page components*). You may have to
+Call `MatomoTracker.trackPageView()` from wherever you want (typically from your _page components_). You may have to
 manually call `setCustomUrl` or `setReferrerUrl`.
 
 ```typescript
-import {Component, OnInit} from '@angular/core';
-import {MatomoTracker} from '@ngx-matomo/tracker';
+import { Component, OnInit } from '@angular/core';
+import { MatomoTracker } from '@ngx-matomo/tracker';
 
 @Component({
   selector: 'app-example',
@@ -206,8 +210,7 @@ import {MatomoTracker} from '@ngx-matomo/tracker';
   styleUrls: ['./example.component.scss'],
 })
 export class ExampleComponent implements OnInit {
-
-  constructor(private readonly tracker: MatomoTracker) { }
+  constructor(private readonly tracker: MatomoTracker) {}
 
   ngOnInit() {
     this.tracker.trackPageView();
@@ -215,7 +218,6 @@ export class ExampleComponent implements OnInit {
     // With custom page title
     this.tracker.trackPageView('My page title');
   }
-
 }
 ```
 
@@ -228,16 +230,16 @@ export class ExampleComponent implements OnInit {
 </button>
 
 <!-- Dynamic bindings/interpolation are available as well -->
-<div [matomoClickCategory]="'myCategory'" matomoClickAction="{{'myAction'}}">
-  Example #2
-</div>
+<div [matomoClickCategory]="'myCategory'" matomoClickAction="{{'myAction'}}">Example #2</div>
 
 <!-- You may also provide optional Matomo's name/value -->
-<button type="button"
-        matomoClickCategory="myCategory"
-        matomoClickAction="myAction"
-        matomoClickName="myName"
-        [matomoClickValue]="42">
+<button
+  type="button"
+  matomoClickCategory="myCategory"
+  matomoClickAction="myAction"
+  matomoClickName="myName"
+  [matomoClickValue]="42"
+>
   Example #3
 </button>
 ```
@@ -246,56 +248,67 @@ export class ExampleComponent implements OnInit {
 
 ```html
 <!-- Add 'matomoTracker' directive and set some @Input() properties -->
-<input type="text"
-       matomoTracker="change"
-       matomoCategory="myCategory"
-       matomoAction="myAction"
-       matomoName="myName"
-       [matomoValue]="myValue">
+<input
+  type="text"
+  matomoTracker="change"
+  matomoCategory="myCategory"
+  matomoAction="myAction"
+  matomoName="myName"
+  [matomoValue]="myValue"
+/>
 
 <!-- You may also set multiple events to listen -->
-<input type="text"
-       [matomoTracker]="['focus', 'blur']"
-       matomoCategory="myCategory"
-       matomoAction="myAction"
-       matomoName="myName">
+<input
+  type="text"
+  [matomoTracker]="['focus', 'blur']"
+  matomoCategory="myCategory"
+  matomoAction="myAction"
+  matomoName="myName"
+/>
 
 <!-- For advanced usage, export directive as a variable and call its 'trackEvent()' method -->
-<input type="text"
-       matomoTracker
-       #tracker="matomo"
-       matomoCategory="myCategory"
-       matomoAction="myAction"
-       matomoName="myName"
-       [matomoValue]="myValue"
-       (change)="tracker.trackEvent()">
+<input
+  type="text"
+  matomoTracker
+  #tracker="matomo"
+  matomoCategory="myCategory"
+  matomoAction="myAction"
+  matomoName="myName"
+  [matomoValue]="myValue"
+  (change)="tracker.trackEvent()"
+/>
 
 <!-- You may also use $event object -->
-<input type="text"
-       matomoTracker
-       #tracker="matomo"
-       (change)="tracker.trackEvent('myCategory', 'myAction', $event.name, $event.value)">
+<input
+  type="text"
+  matomoTracker
+  #tracker="matomo"
+  (change)="tracker.trackEvent('myCategory', 'myAction', $event.name, $event.value)"
+/>
 
 <!-- This directive is very flexible: you may set default values as @Input() and overwrite them in method call -->
-<input type="text"
-       matomoTracker
-       #tracker="matomo"
-       matomoCategory="myCategory"
-       matomoAction="myAction"
-       (focus)="tracker.trackEvent('focus')"
-       (blur)="tracker.trackEvent('blur')">
+<input
+  type="text"
+  matomoTracker
+  #tracker="matomo"
+  matomoCategory="myCategory"
+  matomoAction="myAction"
+  (focus)="tracker.trackEvent('focus')"
+  (blur)="tracker.trackEvent('blur')"
+/>
 ```
 
 ### Tracking events from component/service
 
 ```typescript
-import {Component} from '@angular/core';
-import {MatomoTracker} from '@ngx-matomo/tracker';
+import { Component } from '@angular/core';
+import { MatomoTracker } from '@ngx-matomo/tracker';
 
-@Component({ /* ... */})
+@Component({
+  /* ... */
+})
 export class ExampleComponent {
-
-  constructor(private readonly tracker: MatomoTracker) { }
+  constructor(private readonly tracker: MatomoTracker) {}
 
   myMethod() {
     // Call trackEvent method
@@ -304,7 +317,6 @@ export class ExampleComponent {
     // With optional name & value arguments
     this.tracker.trackEvent('myCategory', 'myAction', 'name', 0);
   }
-
 }
 ```
 
@@ -314,13 +326,14 @@ Other Matomo tracking features are available through `MatomoTracker` service. Pl
 to [Matomo documentation](https://fr.matomo.org/docs) for details.
 
 ```typescript
-import {Component} from '@angular/core';
-import {MatomoTracker} from '@ngx-matomo/tracker';
+import { Component } from '@angular/core';
+import { MatomoTracker } from '@ngx-matomo/tracker';
 
-@Component({ /* ... */})
+@Component({
+  /* ... */
+})
 export class ExampleComponent {
-
-  constructor(private readonly tracker: MatomoTracker) { }
+  constructor(private readonly tracker: MatomoTracker) {}
 
   myMethod() {
     // Example of using e-commerce features:
@@ -331,7 +344,6 @@ export class ExampleComponent {
 
     // ... many more methods are available
   }
-
 }
 ```
 
@@ -346,9 +358,9 @@ tests...
 To do so just set the `disabled` switch:
 
 ```typescript
-import {NgModule} from '@angular/core';
-import {NgxMatomoTrackerModule} from '@ngx-matomo/tracker';
-import {environment} from './environment';
+import { NgModule } from '@angular/core';
+import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { environment } from './environment';
 
 @NgModule({
   imports: [
@@ -360,9 +372,103 @@ import {environment} from './environment';
   ],
   // ...
 })
-export class AppModule {
+export class AppModule {}
+```
+
+### Managing user consent: opt-in/opt-out for tracking & cookies
+
+Matomo supports multiple options to allow requiring user consent for tracking.
+
+To identify whether you need to ask for any consent, you need to determine whether your lawful basis for processing
+personal data is "Consent" or "Legitimate interest", or whether you can avoid collecting personal data altogether.
+
+#### Do not track
+
+The _do not track_ feature is supported, just set the `acceptDoNotTrack` configuration option.
+
+Please note that _do-not-track_ setting is configured server-side! You should likely set this setting here to match you
+server-side configuration. In case users opt-in for _do-not-track_:
+
+- If set to `true` here, users will not be tracked, independently of you server-side setting.
+- If set to `false` here (the default), users will be tracked depending on your server setting, **but tracking requests
+  and cookies will still be created!**
+
+[See official guide](https://fr.matomo.org/docs/privacy-how-to/#step-4-respect-donottrack-preference)
+
+#### Consent opt-in
+
+By default, no consent is required. To manage consent opt-in, first set dedicated configuration option `requireConsent`
+to either `MatomoConsentMode.COOKIE`
+or `MatomoConsentMode.TRACKING`:
+
+- In the context of <b>tracking consent</b> no cookies will be used and no tracking request will be sent unless consent
+  was given. As soon as consent was given, tracking requests will be sent and cookies will be used.
+- In the context of <b>cookie consent</b> tracking requests will be always sent. However, cookies will be only used if
+  consent for storing and using cookies was given by the user.
+
+[See official guide](https://developer.matomo.org/guides/tracking-consent)
+
+For integration with a consent opt-in form, you may want to use following `MatomoTracker` methods:
+
+- `isConsentRequired()`
+- `setConsentGiven()` / `setCookieConsentGiven()`
+- `rememberConsentGiven(hoursToExpire?: number)` / `rememberCookieConsentGiven(hoursToExpire?: number)`
+- `forgetConsentGiven()` / `forgetCookieConsentGiven()`
+- `hasRememberedConsent()` / `areCookiesEnabled()`
+- `getRememberedConsent()`
+
+See also example below on how to create a consent form. Example below is about creating an opt-in form, but it may be
+easily adapted using methods listed above.
+
+#### Consent opt-out
+
+To manage consent opt-out, use dedicated methods `MatomoTracker.optUserOut()` and `MatomoTracker.forgetUserOptOut()`.
+
+A (very) simple form is provided through `<matomo-opt-out-form>` component.
+
+For more advanced integration with a custom form, you may want to define your own component and use `MatomoTracker`
+methods:
+
+```html
+<p>To opt-out, please activate the checkbox below to receive an opt-out cookie.</p>
+<p>
+  <label>
+    <input type="checkbox" [ngModel]="optedOut$ | async" (ngModelChange)="handleChange($event)" />
+    <ng-container *ngIf="optedOut$ | async; else: optedIn">
+      You are currently opted out. Click here to opt in.
+    </ng-container>
+    <ng-template #optedIn>You are currently opted in. Click here to opt out.</ng-template>
+  </label>
+</p>
+```
+
+```typescript
+@Component({
+  selector: 'my-opt-out-form',
+  templateUrl: '...',
+})
+export class MatomoOptOutFormComponent {
+  optedOut$: Promise<boolean>;
+
+  constructor(private readonly tracker: MatomoTracker) {
+    this.optedOut$ = tracker.isUserOptedOut();
+  }
+
+  handleChange(optOut: boolean) {
+    if (optOut) {
+      this.tracker.optUserOut();
+    } else {
+      this.tracker.forgetUserOptOut();
+    }
+
+    this.optedOut$ = this.tracker.isUserOptedOut();
+  }
 }
 ```
+
+This example is adapted from
+[official guide](https://developer.matomo.org/guides/tracking-javascript-guide#optional-creating-a-custom-opt-out-form)
+about how to create a custom opt-out form
 
 ## Launch demo app
 
@@ -383,22 +489,22 @@ token:
 ```typescript
 @NgModule({
   imports: [NgxMatomoTrackerModule],
-  providers: [{
-    provide: MATOMO_CONFIGURATION,
-    useValue: {
-      // ...
-    } as MatomoConfiguration,
-  }],
+  providers: [
+    {
+      provide: MATOMO_CONFIGURATION,
+      useValue: {
+        // ...
+      } as MatomoConfiguration,
+    },
+  ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 Available options :
 
 ```typescript
 interface MatomoConfiguration {
-
   /**
    * If set to `true` then all tracking operations become no-op
    * Note that in this case, all getter methods will return rejected Promises
@@ -415,7 +521,7 @@ interface MatomoConfiguration {
    * Optional
    * Default: MatomoInitializationMode.AUTO
    */
-  mode?: MatomoInitializationMode,
+  mode?: MatomoInitializationMode;
 
   /**
    * Your Matomo site id (may be found in your Matomo server's settings)
@@ -423,7 +529,7 @@ interface MatomoConfiguration {
    * Required unless "trackers" is set
    * Not available if mode is MANUAL
    */
-  siteId?: number | string,
+  siteId?: number | string;
 
   /**
    * Your Matomo server url
@@ -431,7 +537,7 @@ interface MatomoConfiguration {
    * Required unless "trackers" is set
    * Not available if mode is MANUAL
    */
-  trackerUrl?: string,
+  trackerUrl?: string;
 
   /**
    * A list of multiple Matomo servers.
@@ -440,24 +546,7 @@ interface MatomoConfiguration {
    * Optional (mutually exclusive with the two previous options)
    * Not available if mode is MANUAL
    */
-  trackers?: { siteId: number | string, trackerUrl: string }[],
-
-  /**
-   * If set to true, will call trackPageView on application init.
-   * This should probably never be used on a routed single-page application.
-   *
-   * Optional
-   * Default: false
-   */
-  trackAppInitialLoad?: boolean,
-
-  /**
-   * If set to false, disable Matomo link tracking
-   *
-   * Optional
-   * Default: true
-   */
-  enableLinkTracking?: boolean,
+  trackers?: { siteId: number | string; trackerUrl: string }[];
 
   /**
    * Download Matomo tracking code from another source
@@ -466,8 +555,40 @@ interface MatomoConfiguration {
    * Default is deduced from tracker url
    * Not available if mode is MANUAL
    */
-  scriptUrl?: string,
+  scriptUrl?: string;
 
+  /**
+   * If set to true, will call trackPageView on application init.
+   * This should probably never be used on a routed single-page application.
+   *
+   * Optional
+   * Default: false
+   */
+  trackAppInitialLoad?: boolean;
+
+  /**
+   * If set to false, disable Matomo link tracking
+   *
+   * Optional
+   * Default: true
+   */
+  enableLinkTracking?: boolean;
+
+  /**
+   * Set whether to not track users who opt out of tracking using <i>Do Not Track</i> setting
+   *
+   * Optional
+   * Default: false
+   */
+  acceptDoNotTrack?: boolean;
+
+  /**
+   * Configure user consent requirement
+   *
+   * Optional
+   * Default: MatomoConsentMode.NONE
+   */
+  requireConsent?: MatomoConsentMode;
 }
 ```
 
@@ -479,22 +600,22 @@ token:
 ```typescript
 @NgModule({
   imports: [NgxMatomoRouterModule],
-  providers: [{
-    provide: MATOMO_ROUTER_CONFIGURATION,
-    useValue: {
-      // ...
-    } as MatomoRouterConfiguration,
-  }],
+  providers: [
+    {
+      provide: MATOMO_ROUTER_CONFIGURATION,
+      useValue: {
+        // ...
+      } as MatomoRouterConfiguration,
+    },
+  ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 Available options :
 
 ```typescript
 interface MatomoRouterConfiguration {
-
   /**
    * Set whether the application's Base Href should be prepended to current url when tracking page views.
    * Set it to false to disable this behavior.
@@ -536,6 +657,9 @@ interface MatomoRouterConfiguration {
    * Default: []
    */
   exclude?: string | RegExp | string[] | RegExp[];
-
 }
 ```
+
+## Roadmap
+
+See [ROADMAP.md](./ROADMAP.md)

@@ -1,13 +1,15 @@
-import {Injectable} from '@angular/core';
-import {INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration} from './configuration';
-import {MatomoHolder} from './holder';
-import {Getters} from './types';
+import { Injectable } from '@angular/core';
+import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
+import { MatomoHolder } from './holder';
+import { Getters } from './types';
 
 declare var window: MatomoHolder;
 
 function checkInitialized(): void {
   if (!window._paq) {
-    throw new Error('Matomo has not been initialized properly. Be sure to use mode AUTO or to include matomo script.');
+    throw new Error(
+      'Matomo has not been initialized properly. Be sure to use mode AUTO or to include matomo script.'
+    );
   }
 }
 
@@ -21,8 +23,20 @@ function trimTrailingUndefinedElements<T>(array: T[]): T[] {
   return trimmed;
 }
 
-export interface MatomoInstance {
+export interface MatomoECommerceItem {
+  productSKU: string;
+  productName?: string;
+  productCategory?: string;
+  price?: number;
+  quantity?: number;
+}
 
+export type MatomoECommerceItemView = Required<
+  Pick<MatomoECommerceItem, 'productSKU' | 'productName' | 'productCategory' | 'price'>
+>;
+
+/** Matomo's internal tracker instance */
+export interface MatomoInstance {
   getMatomoUrl(): string;
 
   getCurrentUrl(): string;
@@ -54,8 +68,21 @@ export interface MatomoInstance {
 
   getCustomDimension(customDimensionId: number): string;
 
+  getEcommerceItems(): MatomoECommerceItem[];
+
   hasCookies(): boolean;
 
+  getCrossDomainLinkingUrlParameter(): string;
+
+  hasRememberedConsent(): boolean;
+
+  getRememberedConsent(): number | string;
+
+  isConsentRequired(): boolean;
+
+  areCookiesEnabled(): boolean;
+
+  isUserOptedOut(): boolean;
 }
 
 export function createMatomoTracker(config: InternalMatomoConfiguration): MatomoTracker {
@@ -180,8 +207,19 @@ export abstract class MatomoTracker {
    * @param contentPiece Content piece.
    * @param contentTarget Content target.
    */
-  trackContentInteraction(contentInteraction: string, contentName: string, contentPiece: string, contentTarget: string): void {
-    this.push(['trackContentInteraction', contentInteraction, contentName, contentPiece, contentTarget]);
+  trackContentInteraction(
+    contentInteraction: string,
+    contentName: string,
+    contentPiece: string,
+    contentTarget: string
+  ): void {
+    this.push([
+      'trackContentInteraction',
+      contentInteraction,
+      contentName,
+      contentPiece,
+      contentTarget,
+    ]);
   }
 
   /**
@@ -189,6 +227,20 @@ export abstract class MatomoTracker {
    */
   logAllContentBlocksOnPage(): void {
     this.push(['logAllContentBlocksOnPage']);
+  }
+
+  /**
+   * Send a ping request
+   * <p>
+   * Ping requests do not track new actions.
+   * If they are sent within the standard visit length, they will update the existing visit time.
+   * If sent after the standard visit length, ping requests will be ignored.
+   * See also {@link #enableHeartBeatTimer enableHeartBeatTimer()}.
+   *
+   * @see enableHeartBeatTimer
+   */
+  ping(): void {
+    this.push(['ping']);
   }
 
   /**
@@ -206,14 +258,19 @@ export abstract class MatomoTracker {
   /**
    * Installs link tracking on all applicable link elements.
    *
-   * @param enable Set the enable parameter to true to use pseudo click-handler (treat middle click and open contextmenu as
+   * @param usePseudoClickHandler Set to `true` to use pseudo click-handler (treat middle click and open contextmenu as
    * left click).<br />
    * A right click (or any click that opens the context menu) on a link will be tracked as clicked even if "Open in new tab"
    * is not selected.<br />
    * If "false" (default), nothing will be tracked on open context menu or middle click.
    */
-  enableLinkTracking(enable: boolean): void {
-    this.push(['enableLinkTracking', enable]);
+  enableLinkTracking(usePseudoClickHandler = false): void {
+    this.push(['enableLinkTracking', usePseudoClickHandler]);
+  }
+
+  /** Disables page performance tracking */
+  disablePerformanceTracking(): void {
+    this.push(['disablePerformanceTracking']);
   }
 
   /**
@@ -234,10 +291,19 @@ export abstract class MatomoTracker {
    * By default, the two visits across domains will be linked together when the link is clicked and the page is loaded within
    * a 180 seconds timeout window.
    *
-   * @param timeout Timeout, in seconds, between two actions across two domanes before creating a new visit.
+   * @param timeout Timeout, in seconds, between two actions across two domains before creating a new visit.
    */
   setCrossDomainLinkingTimeout(timeout: number): void {
     this.push(['setCrossDomainLinkingTimeout', timeout]);
+  }
+
+  /**
+   * Get the query parameter to append to links to handle cross domain linking.
+   *
+   * Use this to add cross domain support for links that are added to the DOM dynamically
+   */
+  getCrossDomainLinkingUrlParameter(): Promise<string> {
+    return this.get('getCrossDomainLinkingUrlParameter');
   }
 
   /**
@@ -250,7 +316,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets array of hostnames or domains to be treated as local.<br />
+   * Set array of hostnames or domains to be treated as local.<br />
    * For wildcard subdomains, you can use: `setDomains('.example.com')`; or `setDomains('*.example.com');`.<br />
    * You can also specify a path along a domain: `setDomains('*.example.com/subsite1');`.
    *
@@ -284,7 +350,7 @@ export abstract class MatomoTracker {
    *
    * @param siteId Site ID for the tracker.
    */
-  setSiteId(siteId: number): void {
+  setSiteId(siteId: number | string): void {
     this.push(['setSiteId', siteId]);
   }
 
@@ -311,6 +377,17 @@ export abstract class MatomoTracker {
   }
 
   /**
+   * Register an additional Matomo server<br />
+   * Redundant: can be specified in getTracker() constructor.
+   *
+   * @param url URL for the Matomo server.
+   * @param siteId Site ID for the tracker
+   */
+  addTracker(url: string, siteId: number | string): void {
+    this.push(['addTracker', url, siteId]);
+  }
+
+  /**
    * Returns the Matomo server URL.
    *
    * @returns Promise for the Matomo server URL.
@@ -330,7 +407,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets classes to be treated as downloads (in addition to piwik_download).
+   * Set classes to be treated as downloads (in addition to piwik_download).
    *
    * @param classes Class, or list of classes to be treated as downloads.
    */
@@ -339,7 +416,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets list of file extensions to be recognized as downloads.<br />
+   * Set list of file extensions to be recognized as downloads.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions to be recognized as downloads.
@@ -349,7 +426,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets additional file extensions to be recognized as downloads.<br />
+   * Set additional file extensions to be recognized as downloads.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions to be recognized as downloads.
@@ -359,7 +436,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets file extensions to be removed from the list of download file extensions.<br />
+   * Set file extensions to be removed from the list of download file extensions.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions not to be recognized as downloads.
@@ -369,7 +446,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets classes to be ignored if present in link (in addition to piwik_ignore).
+   * Set classes to be ignored if present in link (in addition to piwik_ignore).
    *
    * @param classes Class, or list of classes to be ignored if present in link.
    */
@@ -417,6 +494,8 @@ export abstract class MatomoTracker {
    * By default Matomo uses the browser DOM Timing API to accurately determine the time it takes to generate and download
    * the page. You may overwrite this value with this function.
    *
+   * <b>This feature has been deprecated since Matomo 4. Any call will be ignored with Matomo 4.</b>
+   *
    * @param generationTime Time, in milliseconds, of the page generation.
    */
   setGenerationTimeMs(generationTime: number): void {
@@ -432,11 +511,7 @@ export abstract class MatomoTracker {
     this.push(['appendToTrackingUrl', appendToUrl]);
   }
 
-  /**
-   * Set to true to not track users who opt out of tracking using Mozilla's (proposed) Do Not Track setting.
-   *
-   * @param doNotTrack If true, users who opted for Do Not Track in their settings won't be tracked.
-   */
+  /** Set to `true` to not track users who opt out of tracking using <i>Do Not Track</i> setting */
   setDoNotTrack(doNotTrack: boolean): void {
     this.push(['setDoNotTrack', doNotTrack]);
   }
@@ -476,6 +551,18 @@ export abstract class MatomoTracker {
    */
   getVisitorId(): Promise<string> {
     return this.get('getVisitorId');
+  }
+
+  /**
+   * Set the 16 characters ID for the visitor
+   * <p/>
+   * The visitorId needs to be a 16 digit hex string.
+   * It won't be persisted in a cookie and needs to be set on every new page load.
+   *
+   * @param visitorId a 16 digit hex string
+   */
+  setVisitorId(visitorId: string): void {
+    this.push(['setVisitorId', visitorId]);
   }
 
   /**
@@ -546,7 +633,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a User ID to this user (such as an email address or a username).
+   * Set a User ID to this user (such as an email address or a username).
    *
    * @param userId User ID to set for the current visitor.
    */
@@ -555,7 +642,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Resets the User ID which also generates a new Visitor ID.
+   * Reset the User ID which also generates a new Visitor ID.
    *
    */
   resetUserId(): void {
@@ -563,7 +650,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a custom variable.
+   * Set a custom variable.
    *
    * @param index Index, the number from 1 to 5 where this custom variable name is stored for the current page view.
    * @param name Name, the name of the variable, for example: Category, Sub-category, UserType.
@@ -572,7 +659,12 @@ export abstract class MatomoTracker {
    * - "page" means the custom variable applies to the current page view.
    * - "visit" means the custom variable applies to the current visitor.
    */
-  setCustomVariable(index: number, name: string, value: string, scope: 'page' | 'visit'): void {
+  setCustomVariable(
+    index: number,
+    name: string,
+    value: string,
+    scope: 'page' | 'visit' | 'event'
+  ): void {
     this.push(['setCustomVariable', index, name, value, scope]);
   }
 
@@ -582,7 +674,7 @@ export abstract class MatomoTracker {
    * @param index Index of the custom variable to delete.
    * @param scope Scope of the custom variable to delete.
    */
-  deleteCustomVariable(index: number, scope: string): void {
+  deleteCustomVariable(index: number, scope: 'page' | 'visit' | 'event'): void {
     this.push(['deleteCustomVariable', index, scope]);
   }
 
@@ -591,7 +683,7 @@ export abstract class MatomoTracker {
    *
    * @param scope Scope of the custom variables to delete.
    */
-  deleteCustomVariables(scope: string): void {
+  deleteCustomVariables(scope: 'page' | 'visit' | 'event'): void {
     this.push(['deleteCustomVariables', scope]);
   }
 
@@ -602,7 +694,7 @@ export abstract class MatomoTracker {
    * @param scope Scope of the custom variable to retrieve.
    * @returns Promise for the value of custom variable.
    */
-  getCustomVariable(index: number, scope: string): Promise<string> {
+  getCustomVariable(index: number, scope: 'page' | 'visit' | 'event'): Promise<string> {
     return this.pushFn(matomo => matomo.getCustomVariable(index, scope));
   }
 
@@ -618,7 +710,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a custom dimension.<br />
+   * Set a custom dimension.<br />
    * (requires Matomo 2.15.1 + Custom Dimensions plugin)
    *
    * @param customDimensionId ID of the custom dimension to set.
@@ -650,7 +742,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets campaign name parameter(s).
+   * Set campaign name parameter(s).
    *
    * @param name Name of the campaign
    */
@@ -659,7 +751,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets campaign keyword parameter(s).
+   * Set campaign keyword parameter(s).
    *
    * @param keyword Keyword parameter(s) of the campaign.
    */
@@ -679,7 +771,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the current page view as a product or category page view.<br />
+   * Set the current page view as a product or category page view.<br />
    * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
    *
    * @param productSKU SKU of the viewed product.
@@ -687,8 +779,37 @@ export abstract class MatomoTracker {
    * @param productCategory Category of the viewed product.
    * @param price Price of the viewed product.
    */
-  setEcommerceView(productSKU: string, productName: string, productCategory: string, price: number): void {
-    this.push(['setEcommerceView', productSKU, productName, productCategory, price]);
+  setEcommerceView(
+    productSKU: string,
+    productName: string,
+    productCategory: string,
+    price: number
+  ): void;
+
+  /**
+   * Set the current page view as a product or category page view.<br />
+   * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
+   *
+   */
+  setEcommerceView(product: MatomoECommerceItemView): void;
+
+  setEcommerceView(
+    productOrSKU: string | MatomoECommerceItemView,
+    productName?: string,
+    productCategory?: string,
+    price?: number
+  ): void {
+    if (typeof productOrSKU === 'string') {
+      this.push(['setEcommerceView', productOrSKU, productName, productCategory, price]);
+    } else {
+      this.push([
+        'setEcommerceView',
+        productOrSKU.productSKU,
+        productOrSKU.productName,
+        productOrSKU.productCategory,
+        productOrSKU.price,
+      ]);
+    }
   }
 
   /**
@@ -701,13 +822,74 @@ export abstract class MatomoTracker {
    * @param [price] Optional price of the product to add.
    * @param [quantity] Optional quantity of the product to add.
    */
-  addEcommerceItem(productSKU: string, productName?: string, productCategory?: string, price?: number, quantity?: number): void {
-    this.push(['addEcommerceItem', productSKU, productName, productCategory, price, quantity]);
+  addEcommerceItem(
+    productSKU: string,
+    productName?: string,
+    productCategory?: string,
+    price?: number,
+    quantity?: number
+  ): void;
+
+  /**
+   * Adds a product into the eCommerce order.<br />
+   * Must be called for each product in the order.
+   *
+   */
+  addEcommerceItem(product: MatomoECommerceItem): void;
+  addEcommerceItem(
+    productOrSKU: string | MatomoECommerceItem,
+    productName?: string,
+    productCategory?: string,
+    price?: number,
+    quantity?: number
+  ): void {
+    if (typeof productOrSKU === 'string') {
+      this.push(['addEcommerceItem', productOrSKU, productName, productCategory, price, quantity]);
+    } else {
+      this.push([
+        'addEcommerceItem',
+        productOrSKU.productSKU,
+        productOrSKU.productName,
+        productOrSKU.productCategory,
+        productOrSKU.price,
+        productOrSKU.quantity,
+      ]);
+    }
+  }
+
+  /**
+   * Remove the specified product from the untracked ecommerce order
+   *
+   * @param productSKU SKU of the product to remove.
+   */
+  removeEcommerceItem(productSKU: string): void {
+    this.push(['removeEcommerceItem', productSKU]);
+  }
+
+  /**
+   * Remove all products in the untracked ecommerce order
+   *
+   * Note: This is done automatically after {@link #trackEcommerceOrder trackEcommerceOrder()} is called
+   */
+  clearEcommerceCart(): void {
+    this.push(['clearEcommerceCart']);
+  }
+
+  /**
+   * Return all ecommerce items currently in the untracked ecommerce order
+   * <p/>
+   * The returned array will be a copy, so changing it won't affect the ecommerce order.
+   * To affect what gets tracked, use the {@link #addEcommerceItem addEcommerceItem()}, {@link #removeEcommerceItem removeEcommerceItem()},
+   * {@link #clearEcommerceCart clearEcommerceCart()} methods.
+   * Use this method to see what will be tracked before you track an order or cart update.
+   */
+  getEcommerceItems(): Promise<MatomoECommerceItem[]> {
+    return this.get('getEcommerceItems');
   }
 
   /**
    * Tracks a shopping cart.<br />
-   * Call this javascript function every time a user is adding, updating or deleting a product from the cart.
+   * Call this function every time a user is adding, updating or deleting a product from the cart.
    *
    * @param grandTotal Grand total of the shopping cart.
    */
@@ -726,8 +908,143 @@ export abstract class MatomoTracker {
    * @param [shipping] Shipping fees for the tracked order.
    * @param [discount] Discount granted for the tracked order.
    */
-  trackEcommerceOrder(orderId: string, grandTotal: number, subTotal?: number, tax?: number, shipping?: number, discount?: number): void {
+  trackEcommerceOrder(
+    orderId: string,
+    grandTotal: number,
+    subTotal?: number,
+    tax?: number,
+    shipping?: number,
+    discount?: number
+  ): void {
     this.push(['trackEcommerceOrder', orderId, grandTotal, subTotal, tax, shipping, discount]);
+  }
+
+  /**
+   * Require nothing is tracked until a user consents
+   *
+   * By default the Matomo tracker assumes consent to tracking.
+   *
+   * @see `requireConsent` module configuration property
+   */
+  requireConsent(): void {
+    this.push(['requireConsent']);
+  }
+
+  /**
+   * Mark that the current user has consented
+   *
+   * The consent is one-time only, so in a subsequent browser session, the user will have to consent again.
+   * To remember consent, see {@link rememberConsentGiven}.
+   */
+  setConsentGiven(): void {
+    this.push(['setConsentGiven']);
+  }
+
+  /**
+   * Mark that the current user has consented, and remembers this consent through a browser cookie.
+   *
+   * The next time the user visits the site, Matomo will remember that they consented, and track them.
+   * If you call this method, you do not need to call {@link setConsentGiven}.
+   *
+   * @param hoursToExpire After how many hours the consent should expire. By default the consent is valid
+   *                          for 30 years unless cookies are deleted by the user or the browser prior to this
+   */
+  rememberConsentGiven(hoursToExpire?: number): void {
+    this.push(['rememberConsentGiven', hoursToExpire]);
+  }
+
+  /**
+   * Remove a user's consent, both if the consent was one-time only and if the consent was remembered.
+   *
+   * After calling this method, the user will have to consent again in order to be tracked.
+   */
+  forgetConsentGiven(): void {
+    this.push(['forgetConsentGiven']);
+  }
+
+  /** Return whether the current visitor has given consent previously or not */
+  hasRememberedConsent(): Promise<boolean> {
+    return this.get('hasRememberedConsent');
+  }
+
+  /**
+   * If consent was given, returns the timestamp when the visitor gave consent
+   *
+   * Only works if {@link rememberConsentGiven} was used and not when {@link setConsentGiven} was used.
+   * The timestamp is the local timestamp which depends on the visitors time.
+   */
+  getRememberedConsent(): Promise<string | number> {
+    return this.get('getRememberedConsent');
+  }
+
+  /** Return whether {@link requireConsent} was called previously */
+  isConsentRequired(): Promise<boolean> {
+    return this.get('isConsentRequired');
+  }
+
+  /**
+   * Require no cookies are used
+   *
+   * By default the Matomo tracker assumes consent to using cookies
+   */
+  requireCookieConsent(): void {
+    this.push(['requireCookieConsent']);
+  }
+
+  /**
+   * Mark that the current user has consented to using cookies
+   *
+   * The consent is one-time only, so in a subsequent browser session, the user will have to consent again.
+   * To remember cookie consent, see {@link rememberCookieConsentGiven}.
+   */
+  setCookieConsentGiven(): void {
+    this.push(['setCookieConsentGiven']);
+  }
+
+  /**
+   * Mark that the current user has consented to using cookies, and remembers this consent through a browser cookie.
+   *
+   * The next time the user visits the site, Matomo will remember that they consented, and use cookies.
+   * If you call this method, you do not need to call {@link setCookieConsentGiven}.
+   *
+   * @param hoursToExpire After how many hours the cookie consent should expire. By default the consent is valid
+   *                          for 30 years unless cookies are deleted by the user or the browser prior to this
+   */
+  rememberCookieConsentGiven(hoursToExpire?: number): void {
+    this.push(['rememberCookieConsentGiven', hoursToExpire]);
+  }
+
+  /**
+   * Remove a user's cookie consent, both if the consent was one-time only and if the consent was remembered.
+   *
+   * After calling this method, the user will have to consent again in order for cookies to be used.
+   */
+  forgetCookieConsentGiven(): void {
+    this.push(['forgetCookieConsentGiven']);
+  }
+
+  /** Return whether cookies are currently enabled or disabled */
+  areCookiesEnabled(): Promise<boolean> {
+    return this.get('areCookiesEnabled');
+  }
+
+  /** After calling this function, the user will be opted out and no longer be tracked */
+  optUserOut(): void {
+    this.push(['optUserOut']);
+  }
+
+  /** After calling this method the user will be tracked again */
+  forgetUserOptOut(): void {
+    this.push(['forgetUserOptOut']);
+  }
+
+  /**
+   * Return whether the user is opted out or not
+   *
+   * Note: This method might not return the correct value if you are using the opt out iframe.
+   */
+  isUserOptedOut(): Promise<boolean> {
+    return this.get('isUserOptedOut');
   }
 
   /**
@@ -755,7 +1072,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the tracking cookie name prefix.<br />
+   * Set the tracking cookie name prefix.<br />
    * Default prefix is 'pk'.
    *
    * @param prefix Prefix for the tracking cookie names.
@@ -765,7 +1082,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the domain of the tracking cookies.<br />
+   * Set the domain of the tracking cookies.<br />
    * Default is the document domain.<br />
    * If your website can be visited at both www.example.com and example.com, you would use: `'.example.com'` or `'*.example.com'`.
    *
@@ -776,7 +1093,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the path of the tracking cookies.<br />
+   * Set the path of the tracking cookies.<br />
    * Default is '/'.
    *
    * @param path Path of the tracking cookies.
@@ -797,7 +1114,20 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the visitor cookie timeout.<br />
+   * Set cookie <i>same site</i>
+   * <p/>
+   * Defaults to Lax.
+   * Can be set to None or Strict.
+   * None requires all traffic to be on HTTPS and will also automatically set the secure cookie.
+   * It can be useful for example if the tracked website is an iframe.
+   * Strict only works if your Matomo and the website runs on the very same domain.
+   */
+  setCookieSameSite(sameSite: 'Strict' | 'Lax' | 'None'): void {
+    this.push(['setCookieSameSite', sameSite]);
+  }
+
+  /**
+   * Set the visitor cookie timeout.<br />
    * Default is 13 months.
    *
    * @param timeout Timeout, in seconds, for the visitor cookie timeout.
@@ -807,7 +1137,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the referral cookie timeout.<br />
+   * Set the referral cookie timeout.<br />
    * Default is 6 months.
    *
    * @param timeout Timeout, in seconds, for the referral cookie timeout.
@@ -817,7 +1147,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the session cookie timeout.<br />
+   * Set the session cookie timeout.<br />
    * Default is 30 minutes.
    *
    * @param timeout Timeout, in seconds, for the session cookie timeout.
@@ -837,7 +1167,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets the request method to either "GET" or "POST". (The default is "GET".)<br />
+   * Set the request method to either "GET" or "POST". (The default is "GET".)<br />
    * To use the POST request method, either:<br />
    * 1) the Matomo host is the same as the tracked website host (Matomo installed in the same domain as your tracked website), or<br />
    * 2) if Matomo is not installed on the same host as your website, you need to enable CORS (Cross domain requests).
@@ -849,7 +1179,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets a function that will process the request content.<br />
+   * Set a function that will process the request content.<br />
    * The function will be called once the request (query parameters string) has been prepared, and before the request content is sent.
    *
    * @param callback Function that will process the request content.
@@ -859,7 +1189,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Sets request Content-Type header value.<br />
+   * Set request Content-Type header value.<br />
    * Applicable when "POST" request method is used via setRequestMethod.
    *
    * @param contentType Value for Content-Type HTTP header.
@@ -868,8 +1198,42 @@ export abstract class MatomoTracker {
     this.push(['setRequestContentType', contentType]);
   }
 
+  /**
+   * Disable the feature which groups together multiple tracking requests and send them as a bulk POST request.
+   * <p/>
+   * Disabling this feature is useful when you want to be able to replay all logs:
+   * one must use disableQueueRequest to disable this behaviour to later be able to replay logged
+   * Matomo logs (otherwise a subset of the requests wouldn't be able to be replayed).
+   */
+  disableQueueRequest(): void {
+    this.push(['disableQueueRequest']);
+  }
+
+  /**
+   * Defines after how many ms a queued requests will be executed after the request was queued initially
+   * <p/>
+   * The higher the value the more tracking requests can be send together at once
+   *
+   * @param interval Interval in milliseconds, must be at least 1000, defaults to 2500
+   */
+  setRequestQueueInterval(interval: number): void {
+    this.push(['setRequestQueueInterval', interval]);
+  }
+
+  /** Disable sending tracking tracking requests using `navigator.sendBeacon` which is enabled by default */
+  disableAlwaysUseSendBeacon(): void {
+    this.push(['disableAlwaysUseSendBeacon']);
+  }
+
+  /** Enable sending tracking tracking requests using `navigator.sendBeacon` (enabled by default) */
+  alwaysUseSendBeacon(): void {
+    this.push(['alwaysUseSendBeacon']);
+  }
+
   /** Asynchronously call provided method name on matomo tracker instance */
-  protected get<G extends Getters<MatomoInstance>>(getter: G): Promise<ReturnType<MatomoInstance[G]>> {
+  protected get<G extends Getters<MatomoInstance>>(
+    getter: G
+  ): Promise<ReturnType<MatomoInstance[G]>> {
     return this.pushFn(matomo => matomo[getter]() as ReturnType<MatomoInstance[G]>);
   }
 
@@ -891,16 +1255,17 @@ export class StandardMatomoTracker extends MatomoTracker {
 
   protected pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
     return new Promise(resolve => {
-      this.push([function(this: MatomoInstance): void {
-        resolve(fn(this));
-      }]);
+      this.push([
+        function (this: MatomoInstance): void {
+          resolve(fn(this));
+        },
+      ]);
     });
   }
 
   protected push(args: unknown[]): void {
     window._paq.push(trimTrailingUndefinedElements(args));
   }
-
 }
 
 export class NoopMatomoTracker extends MatomoTracker {

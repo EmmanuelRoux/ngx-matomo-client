@@ -1,7 +1,8 @@
-import {inject, InjectFlags, InjectionToken} from '@angular/core';
-import {requireNonNull} from './coercion';
+import { inject, InjectFlags, InjectionToken } from '@angular/core';
+import { requireNonNull } from './coercion';
 
-const CONFIG_NOT_FOUND = 'No Matomo configuration found! Have you included Matomo module using NgxMatomoTrackerModule.forRoot() ?';
+const CONFIG_NOT_FOUND =
+  'No Matomo configuration found! Have you included Matomo module using NgxMatomoTrackerModule.forRoot() ?';
 
 /** Injection token for {@link MatomoConfiguration} */
 export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MATOMO_CONFIGURATION');
@@ -10,14 +11,19 @@ export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MAT
  * For internal use only. Injection token for {@link InternalMatomoConfiguration}
  *
  */
-export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>('INTERNAL_MATOMO_CONFIGURATION', {
-  factory: () => ({
-    disabled: false,
-    enableLinkTracking: true,
-    trackAppInitialLoad: false,
-    ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
-  }) as InternalMatomoConfiguration,
-});
+export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>(
+  'INTERNAL_MATOMO_CONFIGURATION',
+  {
+    factory: () =>
+      ({
+        disabled: false,
+        enableLinkTracking: true,
+        trackAppInitialLoad: false,
+        requireConsent: MatomoConsentMode.NONE,
+        ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
+      } as InternalMatomoConfiguration),
+  }
+);
 
 /**
  * For internal use only. Module configuration merged with default values.
@@ -30,6 +36,15 @@ export enum MatomoInitializationMode {
   AUTO,
   /** Do not inject Matomo script. In this case, initialization script must be provided */
   MANUAL,
+}
+
+export enum MatomoConsentMode {
+  /** Do not require any consent, always track users */
+  NONE,
+  /** Require cookie consent */
+  COOKIE,
+  /** Require tracking consent */
+  TRACKING,
 }
 
 export interface MatomoTrackerConfiguration {
@@ -60,6 +75,29 @@ export interface BaseMatomoConfiguration {
    * Used when {@link trackAppInitialLoad} is `true` and by Router module.
    */
   enableLinkTracking?: boolean;
+
+  /** Set to `true` to not track users who opt out of tracking using <i>Do Not Track</i> setting */
+  acceptDoNotTrack?: boolean;
+
+  /**
+   * Configure user consent requirement
+   *
+   * To identify whether you need to ask for any consent, you need to determine whether your lawful
+   * basis for processing personal data is "Consent" or "Legitimate interest", or whether you can
+   * avoid collecting personal data altogether.
+   *
+   * Matomo differentiates between cookie and tracking consent:
+   * - In the context of <b>tracking consent</b> no cookies will be used and no tracking request
+   *   will be sent unless consent was given. As soon as consent was given, tracking requests will
+   *   be sent and cookies will be used.
+   * - In the context of <b>cookie consent</b> tracking requests will be always sent. However,
+   *   cookies will be only used if consent for storing and using cookies was given by the user.
+   *
+   * Note that cookies impact reports accuracy.
+   *
+   * See Matomo guide: {@link https://developer.matomo.org/guides/tracking-consent}
+   */
+  requireConsent?: MatomoConsentMode;
 }
 
 export interface BaseAutoMatomoConfiguration {
@@ -71,11 +109,10 @@ export interface BaseAutoMatomoConfiguration {
 
   /** Matomo script url (default is `matomo.js` appended to main tracker url) */
   scriptUrl?: string;
-
 }
 
 type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
-type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
 export type ManualMatomoConfiguration = {
   /**
@@ -85,7 +122,28 @@ export type ManualMatomoConfiguration = {
   mode: MatomoInitializationMode.MANUAL;
 };
 
+export type AutoMatomoConfiguration = BaseAutoMatomoConfiguration &
+  XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
 
-export type AutoMatomoConfiguration = BaseAutoMatomoConfiguration & XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
+export type MatomoConfiguration = BaseMatomoConfiguration &
+  XOR<AutoMatomoConfiguration, ManualMatomoConfiguration>;
 
-export type MatomoConfiguration = BaseMatomoConfiguration & XOR<AutoMatomoConfiguration, ManualMatomoConfiguration>;
+export function isManualConfiguration(
+  config: MatomoConfiguration
+): config is ManualMatomoConfiguration {
+  return config.mode === MatomoInitializationMode.MANUAL;
+}
+
+export function isMultiTrackerConfiguration(
+  config: AutoMatomoConfiguration
+): config is MultiTrackersConfiguration {
+  return Array.isArray(config.trackers);
+}
+
+export function getTrackersConfiguration(
+  config: AutoMatomoConfiguration
+): MatomoTrackerConfiguration[] {
+  return isMultiTrackerConfiguration(config)
+    ? config.trackers
+    : [{ trackerUrl: config.trackerUrl, siteId: config.siteId }];
+}

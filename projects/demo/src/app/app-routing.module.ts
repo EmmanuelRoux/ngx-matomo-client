@@ -1,10 +1,10 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {HomeComponent} from './home/home.component';
-import {TrackEventComponentComponent} from './track-event-component/track-event-component.component';
-import {TrackEventTemplateComponent} from './track-event-template/track-event-template.component';
-import {TrackPageViewWithoutRouterComponent} from './track-page-view-without-router/track-page-view-without-router.component';
-import {TrackSimpleClickEventComponent} from './track-simple-click-event/track-simple-click-event.component';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { TrackEventComponentComponent } from './track-event-component/track-event-component.component';
+import { TrackEventTemplateComponent } from './track-event-template/track-event-template.component';
+import { TrackPageViewWithoutRouterComponent } from './track-page-view-without-router/track-page-view-without-router.component';
+import { TrackSimpleClickEventComponent } from './track-simple-click-event/track-simple-click-event.component';
 
 const routes: Routes = [
   {
@@ -31,6 +31,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

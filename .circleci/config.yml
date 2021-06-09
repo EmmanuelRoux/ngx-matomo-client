@@ -1,4 +1,6 @@
-version: 2
+version: 2.1
+orbs:
+  coveralls: coveralls/coveralls@1.0.6
 jobs:
   install:
     working_directory: ~/ngx-matomo
@@ -57,6 +59,16 @@ jobs:
       - run: npm run test:ci
       - store_test_results:
           path: test-reports
+      - coveralls/upload:
+          path_to_lcov: ./coverage/tracker/lcov.info
+          parallel: true
+          flag_name: tracker
+      - coveralls/upload:
+          path_to_lcov: ./coverage/router/lcov.info
+          parallel: true
+          flag_name: router
+      - coveralls/upload:
+          parallel_finished: true
   publish-libs:
     working_directory: ~/ngx-matomo
     docker:

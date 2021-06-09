@@ -1,19 +1,20 @@
-import {Component, ElementRef, Type, ViewChild} from '@angular/core';
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
-import {MatomoTracker} from '../matomo-tracker.service';
-import {MatomoTrackerDirective} from './matomo-tracker.directive';
+import { Component, ElementRef, Type, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatomoTracker } from '../matomo-tracker.service';
+import { MatomoTrackerDirective, TrackArgs } from './matomo-tracker.directive';
 
 type HTMLElementEvent = keyof HTMLElementEventMap;
 
 @Component({
-  template: `
-    <input type="text"
-           #input
-           [matomoTracker]="events"
-           [matomoCategory]="defaultCategory"
-           [matomoAction]="defaultAction"
-           [matomoName]="defaultName"
-           [matomoValue]="defaultValue">`,
+  template: ` <input
+    type="text"
+    #input
+    [matomoTracker]="events"
+    [matomoCategory]="defaultCategory"
+    [matomoAction]="defaultAction"
+    [matomoName]="defaultName"
+    [matomoValue]="defaultValue"
+  />`,
 })
 class HostWithInputEventsComponent {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -30,10 +31,17 @@ class HostWithInputEventsComponent {
 }
 
 @Component({
-  template: `<input type="text" #input #tracker="matomo" matomoTracker
-                    [matomoCategory]="defaultCategory" [matomoAction]="defaultAction"
-                    [matomoName]="defaultName" [matomoValue]="defaultValue"
-                    (change)="tracker.trackEvent('myName')">`,
+  template: `<input
+    type="text"
+    #input
+    #tracker="matomo"
+    matomoTracker
+    [matomoCategory]="defaultCategory"
+    [matomoAction]="defaultAction"
+    [matomoName]="defaultName"
+    [matomoValue]="defaultValue"
+    (change)="tracker.trackEvent(arg1, arg2)"
+  />`,
 })
 class HostWithCustomHandler1Component {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -42,6 +50,8 @@ class HostWithCustomHandler1Component {
   defaultAction?: string;
   defaultName?: string;
   defaultValue?: number;
+  arg1?: string | number;
+  arg2?: number;
 
   triggerEvent(event: Event): void {
     this.inputRef?.nativeElement.dispatchEvent(event);
@@ -49,10 +59,17 @@ class HostWithCustomHandler1Component {
 }
 
 @Component({
-  template: `<input type="text" #input #tracker="matomo" matomoTracker
-                    [matomoCategory]="defaultCategory" [matomoAction]="defaultAction"
-                    [matomoName]="defaultName" [matomoValue]="defaultValue"
-                    (change)="tracker.trackEvent({category: 'customCategory', name: 'customName', value: 42})">`,
+  template: `<input
+    type="text"
+    #input
+    #tracker="matomo"
+    matomoTracker
+    [matomoCategory]="defaultCategory"
+    [matomoAction]="defaultAction"
+    [matomoName]="defaultName"
+    [matomoValue]="defaultValue"
+    (change)="tracker.trackEvent(customArgs)"
+  />`,
 })
 class HostWithCustomHandler2Component {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -62,6 +79,8 @@ class HostWithCustomHandler2Component {
   defaultName?: string;
   defaultValue?: number;
 
+  customArgs?: TrackArgs;
+
   triggerEvent(event: Event): void {
     this.inputRef?.nativeElement.dispatchEvent(event);
   }
@@ -70,38 +89,41 @@ class HostWithCustomHandler2Component {
 describe('MatomoTrackerDirective', () => {
   let tracker: jasmine.SpyObj<MatomoTracker>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      providers: [{
-        provide: MatomoTracker,
-        useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
-      }],
-      declarations: [
-        HostWithInputEventsComponent,
-        MatomoTrackerDirective,
-        HostWithCustomHandler1Component,
-        HostWithCustomHandler2Component,
-      ],
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          {
+            provide: MatomoTracker,
+            useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
+          },
+        ],
+        declarations: [
+          HostWithInputEventsComponent,
+          MatomoTrackerDirective,
+          HostWithCustomHandler1Component,
+          HostWithCustomHandler2Component,
+        ],
+      }).compileComponents();
     })
-      .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
     tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
   });
 
-  function createComponent<T>(type: Type<T>): { component: T, fixture: ComponentFixture<T> } {
+  function createComponent<T>(type: Type<T>): { component: T; fixture: ComponentFixture<T> } {
     const fixture = TestBed.createComponent(type);
     const component = fixture.componentInstance;
 
     fixture.detectChanges();
 
-    return {fixture, component};
+    return { fixture, component };
   }
 
   it('should track custom element events', () => {
     // Given
-    const {fixture, component} = createComponent(HostWithInputEventsComponent);
+    const { fixture, component } = createComponent(HostWithInputEventsComponent);
 
     component.events = ['focus', 'blur'];
     component.defaultCategory = 'myCategory';
@@ -131,34 +153,99 @@ describe('MatomoTrackerDirective', () => {
     component.triggerEvent(new CustomEvent('focus'));
     // Then
     expect(tracker.trackEvent).toHaveBeenCalledTimes(2);
+
+    // When
+    component.events = 'focus';
+    fixture.detectChanges();
+    component.triggerEvent(new CustomEvent('focus'));
+    // Then
+    expect(tracker.trackEvent).toHaveBeenCalledTimes(3);
+
+    // When
+    fixture.destroy();
+    // Then
+    expect(tracker.trackEvent).toHaveBeenCalledTimes(3);
   });
 
   it('should track events using custom handler', () => {
     // Given
-    const {fixture, component} = createComponent(HostWithCustomHandler1Component);
+    const { fixture, component } = createComponent(HostWithCustomHandler1Component);
 
-    component.defaultCategory = 'myCategory';
-    component.defaultAction = 'myAction';
-    fixture.detectChanges();
+    component.defaultCategory = 'defaultCategory';
+    component.defaultAction = 'defaultAction';
+    component.defaultName = 'defaultName';
 
     // When
+    component.arg1 = 99;
+    fixture.detectChanges();
     component.triggerEvent(new FocusEvent('change'));
     // Then
-    expect(tracker.trackEvent).toHaveBeenCalledWith('myCategory', 'myAction', 'myName', undefined);
+    expect(tracker.trackEvent).toHaveBeenCalledWith(
+      'defaultCategory',
+      'defaultAction',
+      'defaultName',
+      99
+    );
+
+    // When
+    component.arg1 = 'myName';
+    fixture.detectChanges();
+    component.triggerEvent(new FocusEvent('change'));
+    // Then
+    expect(tracker.trackEvent).toHaveBeenCalledWith(
+      'defaultCategory',
+      'defaultAction',
+      'myName',
+      undefined
+    );
+
+    // When
+    component.arg2 = 42;
+    fixture.detectChanges();
+    component.triggerEvent(new FocusEvent('change'));
+    // Then
+    expect(tracker.trackEvent).toHaveBeenCalledWith(
+      'defaultCategory',
+      'defaultAction',
+      'myName',
+      42
+    );
   });
 
   it('should track events using custom handler and overwritten arguments', () => {
     // Given
-    const {fixture, component} = createComponent(HostWithCustomHandler2Component);
-
-    component.defaultCategory = 'defaultCategory';
-    component.defaultAction = 'defaultAction';
-    fixture.detectChanges();
+    const { fixture, component } = createComponent(HostWithCustomHandler2Component);
 
     // When
+    component.defaultCategory = 'defaultCategory';
+    component.defaultAction = 'defaultAction';
+    component.defaultName = 'defaultName';
+    component.defaultValue = -1;
+    component.customArgs = {};
+    fixture.detectChanges();
     component.triggerEvent(new FocusEvent('change'));
     // Then
-    expect(tracker.trackEvent).toHaveBeenCalledWith('customCategory', 'defaultAction', 'customName', 42);
-  });
+    expect(tracker.trackEvent).toHaveBeenCalledWith(
+      'defaultCategory',
+      'defaultAction',
+      'defaultName',
+      -1
+    );
 
+    // When
+    component.defaultCategory = 'defaultCategory';
+    component.defaultAction = 'defaultAction';
+    component.defaultName = 'defaultName';
+    component.defaultValue = -1;
+    component.customArgs = {
+      category: 'myCategory',
+      action: 'myAction',
+      name: 'myName',
+      value: 99,
+    };
+    fixture.detectChanges();
+    component.triggerEvent(new FocusEvent('change'));
+    // Then
+    expect(tracker.trackEvent).toHaveBeenCalledWith('myCategory', 'myAction', 'myName', 99);
+  });
 });
