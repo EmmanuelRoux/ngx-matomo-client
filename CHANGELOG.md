@@ -1,3 +1,10 @@
+# [1.3.0-next.4](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.3...v1.3.0-next.4) (2021-06-09)
+
+
+### Features
+
+* **tracker:** add support for lazy-loaded modules ([f958a9d](https://github.com/EmmanuelRoux/ngx-matomo/commit/f958a9dfa2f721f5d9fb395009a89e95bd56b98d)), closes [#7](https://github.com/EmmanuelRoux/ngx-matomo/issues/7)
+
 # [1.3.0-next.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0-next.2...v1.3.0-next.3) (2021-06-08)
 
 
