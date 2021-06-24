@@ -167,13 +167,17 @@ describe('MatomoOptOutFormComponent', () => {
     fixture.detectChanges();
 
     const iframe = fixture.debugElement.query(By.css('iframe'));
+    const color = 'red';
+    const backgroundColor = 'blue';
+    const fontSize = '10px';
+    const fontFamily = 'Arial, "Times New Roman", sans-serif';
 
-    component.color = 'red';
-    component.backgroundColor = 'blue';
-    component.fontSize = '10px';
-    component.fontFamily = 'Arial';
+    component.color = color;
+    component.backgroundColor = backgroundColor;
+    component.fontSize = fontSize;
+    component.fontFamily = fontFamily;
     component.serverUrl = sanitizer.bypassSecurityTrustResourceUrl(
-      'http://my.custom.server.url.localhost:42'
+      'https://my.custom.server.url.localhost:42'
     );
     component.locale = 'fr';
 
@@ -181,7 +185,12 @@ describe('MatomoOptOutFormComponent', () => {
 
     expect(iframe.attributes).toEqual(
       jasmine.objectContaining({
-        src: 'http://my.custom.server.url.localhost:42/index.php?module=CoreAdminHome&action=optOut&language=fr&backgroundColor=blue&fontColor=red&fontSize=10px&fontFamily=Arial',
+        src:
+          'https://my.custom.server.url.localhost:42/index.php?module=CoreAdminHome&action=optOut&language=fr' +
+          `&backgroundColor=${encodeURIComponent(backgroundColor)}` +
+          `&fontColor=${encodeURIComponent(color)}` +
+          `&fontSize=${encodeURIComponent(fontSize)}` +
+          `&fontFamily=${encodeURIComponent(fontFamily)}`,
       })
     );
   });

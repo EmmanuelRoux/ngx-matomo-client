@@ -152,11 +152,11 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
     }
 
     const url = URL_PATTERN.replace('{SERVER}', serverUrl)
-      .replace('{LOCALE}', this.locale)
-      .replace('{COLOR}', this.color)
-      .replace('{BG_COLOR}', this.backgroundColor)
-      .replace('{FONT_SIZE}', this.fontSize)
-      .replace('{FONT_FAMILY}', this.fontFamily);
+      .replace('{LOCALE}', encodeURIComponent(this.locale))
+      .replace('{COLOR}', encodeURIComponent(this.color))
+      .replace('{BG_COLOR}', encodeURIComponent(this.backgroundColor))
+      .replace('{FONT_SIZE}', encodeURIComponent(this.fontSize))
+      .replace('{FONT_FAMILY}', encodeURIComponent(this.fontFamily));
 
     this._iframeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
