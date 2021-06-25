@@ -38,7 +38,7 @@
     [
       "@semantic-release/git",
       {
-        "message": "chore(release): ${nextRelease.version}\\n\\n${nextRelease.notes}\n",
+        "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}\n",
         "assets": [
           "package.json",
           "package-lock.json",
