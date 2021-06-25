@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0...v1.3.1) (2021-06-25)
+
+
+### Bug Fixes
+
+* **tracker:** fix opt-out form parameters encoding ([f160199](https://github.com/EmmanuelRoux/ngx-matomo/commit/f160199c587d7547eaa917de3bad59b9b4e248dc)), closes [#9](https://github.com/EmmanuelRoux/ngx-matomo/issues/9)
+
 # [1.3.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.2.0...v1.3.0) (2021-06-09)
 
 
