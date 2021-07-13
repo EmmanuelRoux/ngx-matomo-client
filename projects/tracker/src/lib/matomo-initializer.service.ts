@@ -102,10 +102,10 @@ export class MatomoInitializerService {
 
     if (this.config.trackAppInitialLoad) {
       tracker.trackPageView();
+    }
 
-      if (this.config.enableLinkTracking) {
-        tracker.enableLinkTracking();
-      }
+    if (this.config.enableLinkTracking) {
+      tracker.enableLinkTracking();
     }
   }
 }
