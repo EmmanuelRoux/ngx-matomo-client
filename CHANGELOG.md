@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.1...v1.3.2) (2021-07-20)
+
+
+### Bug Fixes
+
+* **tracker:** allow auto link tracking without tracking initial page view ([df13f9f](https://github.com/EmmanuelRoux/ngx-matomo/commit/df13f9f4498c03d47ac24e8331c954d5d788953c)), closes [#11](https://github.com/EmmanuelRoux/ngx-matomo/issues/11)
+
 ## [1.3.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.0...v1.3.1) (2021-06-25)
 
 
