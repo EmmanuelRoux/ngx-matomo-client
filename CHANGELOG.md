@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.2...v1.3.3) (2021-09-10)
+
+
+### Bug Fixes
+
+* **tracker:** lazily check tracker initialization ([c3250ba](https://github.com/EmmanuelRoux/ngx-matomo/commit/c3250badbba13bbf5c90cdf20a6cad6e9faea4f1)), closes [#15](https://github.com/EmmanuelRoux/ngx-matomo/issues/15)
+
 ## [1.3.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.1...v1.3.2) (2021-07-20)
 
 
