@@ -1248,10 +1248,11 @@ export abstract class MatomoTracker {
 }
 
 export class StandardMatomoTracker extends MatomoTracker {
-  constructor() {
-    super();
+  private checkInitialized = () => {
     checkInitialized();
-  }
+    // Switch to no-op after successfully checked once
+    this.checkInitialized = () => {};
+  };
 
   protected pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
     return new Promise(resolve => {
@@ -1264,6 +1265,8 @@ export class StandardMatomoTracker extends MatomoTracker {
   }
 
   protected push(args: unknown[]): void {
+    this.checkInitialized();
+
     window._paq.push(trimTrailingUndefinedElements(args));
   }
 }

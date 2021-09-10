@@ -24,7 +24,7 @@ describe('MatomoTracker', () => {
     delete (window as Partial<MatomoHolder>)._paq;
 
     // Then
-    expect(() => createTracker()).toThrow();
+    expect(() => createTracker().ping()).toThrow();
   });
 
   function expectPush(when: (tracker: MatomoTracker) => void, expected: unknown[][]): () => void {
