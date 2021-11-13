@@ -1,3 +1,15 @@
+# [2.0.0-next.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.3...v2.0.0-next.1) (2021-11-13)
+
+
+### Features
+
+* migrate to Angular 13 ([4358341](https://github.com/EmmanuelRoux/ngx-matomo/commit/4358341fd5b9ae1b22a2def719799a1331674d1f))
+
+
+### BREAKING CHANGES
+
+* Angular version 13 is now required as peer dependency
+
 ## [1.3.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.2...v1.3.3) (2021-09-10)
 
 
