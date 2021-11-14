@@ -6,7 +6,7 @@ import {
   isManualConfiguration,
   MatomoConsentMode,
 } from './configuration';
-import { MatomoHolder } from './holder';
+import { initializeMatomoHolder, MatomoHolder } from './holder';
 import { MatomoTracker } from './matomo-tracker.service';
 
 declare var window: MatomoHolder;
@@ -47,7 +47,7 @@ export class MatomoInitializerService {
     private readonly config: InternalMatomoConfiguration,
     private readonly injector: Injector
   ) {
-    window._paq = window._paq || [];
+    initializeMatomoHolder();
   }
 
   init(): void {
