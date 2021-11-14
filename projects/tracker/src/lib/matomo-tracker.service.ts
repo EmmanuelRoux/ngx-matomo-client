@@ -1,17 +1,9 @@
 import { Injectable } from '@angular/core';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
-import { MatomoHolder } from './holder';
+import { initializeMatomoHolder, MatomoHolder } from './holder';
 import { Getters } from './types';
 
 declare var window: MatomoHolder;
-
-function checkInitialized(): void {
-  if (!window._paq) {
-    throw new Error(
-      'Matomo has not been initialized properly. Be sure to use mode AUTO or to include matomo script.'
-    );
-  }
-}
 
 function trimTrailingUndefinedElements<T>(array: T[]): T[] {
   const trimmed = [...array];
@@ -1248,11 +1240,10 @@ export abstract class MatomoTracker {
 }
 
 export class StandardMatomoTracker extends MatomoTracker {
-  private checkInitialized = () => {
-    checkInitialized();
-    // Switch to no-op after successfully checked once
-    this.checkInitialized = () => {};
-  };
+  constructor() {
+    super();
+    initializeMatomoHolder();
+  }
 
   protected pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
     return new Promise(resolve => {
@@ -1265,8 +1256,6 @@ export class StandardMatomoTracker extends MatomoTracker {
   }
 
   protected push(args: unknown[]): void {
-    this.checkInitialized();
-
     window._paq.push(trimTrailingUndefinedElements(args));
   }
 }
