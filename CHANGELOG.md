@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.3...v1.3.4) (2021-11-22)
+
+
+### Bug Fixes
+
+* **tracker:** remove tracker initialization check ([6502394](https://github.com/EmmanuelRoux/ngx-matomo/commit/6502394358bb14857c681aff5550c45a86444f61))
+
 ## [1.3.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.2...v1.3.3) (2021-09-10)
 
 
