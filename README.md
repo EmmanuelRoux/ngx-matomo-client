@@ -1,8 +1,8 @@
 # Ngx-Matomo
 
-Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or 4 and Angular 9-12.
+Matomo (fka. Piwik) client for Angular applications
 
-[![Angular 12](https://img.shields.io/badge/Angular-12-limegreen.svg?logo=angular)](https://angular.io/)
+[![Angular 13](https://img.shields.io/badge/Angular-13-limegreen.svg?logo=angular)](https://angular.io/)
 [![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
 [![CircleCI](https://img.shields.io/circleci/build/github/EmmanuelRoux/ngx-matomo/main.svg?logo=circleci&logoColor=fff&label=CircleCI)](https://circleci.com/gh/EmmanuelRoux/ngx-matomo)
 [![Coverage Status](https://coveralls.io/repos/github/EmmanuelRoux/ngx-matomo/badge.svg?branch=main)](https://coveralls.io/github/EmmanuelRoux/ngx-matomo?branch=main)
@@ -43,7 +43,8 @@ Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or
 
 | NgxMatomo | Angular     | Matomo        |
 | --------- | ----------- | ------------- |
-| latest    | 9.x to 12.x | Matomo 3 or 4 |
+| 1.x       | 9.x to 12.x | Matomo 3 or 4 |
+| 2.x       | 13.x        | Matomo 3 or 4 |
 
 ## Installation
 

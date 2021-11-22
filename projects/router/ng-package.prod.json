@@ -2,9 +2,6 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist-prod/router",
   "lib": {
-    "entryFile": "src/public-api.ts",
-    "umdModuleIds": {
-      "@ngx-matomo/tracker": "@ngx-matomo/tracker"
-    }
+    "entryFile": "src/public-api.ts"
   }
 }

@@ -19,14 +19,6 @@ describe('MatomoTracker', () => {
     window._paq = [];
   });
 
-  it('should throw an error if Matomo has not been initialized', () => {
-    // Given
-    delete (window as Partial<MatomoHolder>)._paq;
-
-    // Then
-    expect(() => createTracker().ping()).toThrow();
-  });
-
   function expectPush(when: (tracker: MatomoTracker) => void, expected: unknown[][]): () => void {
     return () => {
       // When
