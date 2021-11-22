@@ -1,3 +1,20 @@
+# [2.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.3...v2.0.0) (2021-11-22)
+
+
+### Bug Fixes
+
+* **tracker:** remove tracker initialization check ([8cc72c8](https://github.com/EmmanuelRoux/ngx-matomo/commit/8cc72c85097a3179a0bb8f2f321f19dc62090e32))
+
+
+### Features
+
+* migrate to Angular 13 ([4358341](https://github.com/EmmanuelRoux/ngx-matomo/commit/4358341fd5b9ae1b22a2def719799a1331674d1f))
+
+
+### BREAKING CHANGES
+
+* Angular version 13 is now required as peer dependency
+
 # [2.0.0-next.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.0.0-next.1...v2.0.0-next.2) (2021-11-14)
 
 
