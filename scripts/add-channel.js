@@ -1,4 +1,5 @@
 const path = require('path');
+const { exec } = require('child_process');
 const { LIBRARIES, DIST_DIR } = require('./constants');
 const { readPkgJson, getRegistry, getChannel } = require('./utils');
 const [version, channel] = process.argv.slice(2);
