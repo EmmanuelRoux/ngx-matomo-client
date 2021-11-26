@@ -14,18 +14,15 @@ Matomo (fka. Piwik) client for Angular applications
 
 <!-- toc -->
 
-- [Dependencies](#dependencies)
 - [Installation](#installation)
-- [Setup](#setup)
-  * [Basic setup](#basic-setup)
-  * [Setup Angular Router integration](#setup-angular-router-integration)
-  * [Setup manually with script tag](#setup-manually-with-script-tag)
+  * [Installing with `ng add`](#installing-with-ng-add)
+  * [Installing with `npm` or `yarn`](#installing-with-npm-or-yarn)
+  * [Manual installation with script tag](#manual-installation-with-script-tag)
 - [Usage](#usage)
-  * [Tracking page view (with Angular Router & NgxMatomoRouterModule)](#tracking-page-view-with-angular-router--ngxmatomoroutermodule)
-  * [Tracking page view (without Angular Router)](#tracking-page-view-without-angular-router)
+  * [Tracking page views with Angular Router](#tracking-page-views-with-angular-router)
+  * [Tracking page views without Angular Router](#tracking-page-views-without-angular-router)
   * [Tracking simple click events in template](#tracking-simple-click-events-in-template)
   * [Tracking any event in template](#tracking-any-event-in-template)
-  * [Tracking events from component/service](#tracking-events-from-componentservice)
   * [Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...](#using-other-matomos-tracking-features-ecommerce-analytics-marketing-campaigns)
   * [Disable tracking in some environments](#disable-tracking-in-some-environments)
   * [Managing user consent: opt-in/opt-out for tracking & cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
@@ -39,34 +36,29 @@ Matomo (fka. Piwik) client for Angular applications
 
 <!-- prettier-ignore-end -->
 
-## Dependencies
-
-| NgxMatomo | Angular     | Matomo        |
-| --------- | ----------- | ------------- |
-| 1.x       | 9.x to 12.x | Matomo 3 or 4 |
-| 2.x       | 13.x        | Matomo 3 or 4 |
-
 ## Installation
 
-`npm install --save @ngx-matomo/tracker`
+If you need NgxMatomo for an older Angular version, see [compatibility table here](docs/compatibility.md).
 
-Optionally, if you use [Angular router](https://angular.io/guide/router) and want to easily track routed components, you
-may also install the NgxMatomo router adapter
-([see documentation below](#tracking-page-view-with-angular-router--ngxmatomoroutermodule)):
+### Installing with `ng add`
 
-`npm install --save @ngx-matomo/router`
+If your project is using [Angular CLI](https://angular.io/cli/add) then you can just run:
 
-## Setup
+`ng add @ngx-matomo/tracker`
 
-NgxMatomo is able to include Matomo's script for you. **You don't need to copy/paste the tracking code into your
-application.** If you still really want to include the tracking code yourself,
-[see the explanations below](#setup-manually-with-script-tag).
+This will prompt you for some information such as your Matomo's server address and site ID. You can find your site ID in
+Matomo admin panel.
 
-NgxMatomo is also able to integrate with Angular Router, so you don't need any explicit call to track page views.
+It will also ask if you want to enable automatic page views tracking. **This requires @angular/router to be installed.**
 
-### Basic setup
+This command will take care of importing `NgxMatomoTrackerModule` (and `NgxMatomoRouterModule` if needed), along with
+basic configuration, into your root `AppModule`. Use the `--module [module]` flag to specify a different root module.
 
-Add `NgxMatomoTrackerModule` module into your application:
+### Installing with `npm` or `yarn`
+
+Run `npm install --save @ngx-matomo/tracker` or `yarn add @ngx-matomo/tracker`
+
+Then import `NgxMatomoTrackerModule` into your root module (typically `AppModule`):
 
 ```typescript
 import { NgModule } from '@angular/core';
@@ -85,14 +77,18 @@ import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 export class AppModule {}
 ```
 
-### Setup Angular Router integration
+**If you use [Angular router](https://angular.io/guide/router) and want to automatically track page views**, you may
+optionally install the router adapter
+([see documentation below](#tracking-page-views-with-angular-router)):
 
-First follow steps described in the previous section. Then add `NgxMatomoRouterModule` module into your application:
+Run `npm install --save @ngx-matomo/router` or `yarn add @ngx-matomo/router`
+
+Then import `NgxMatomoRouterModule` into your root module:
 
 ```typescript
 import { NgModule } from '@angular/core';
+import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 import { NgxMatomoRouterModule } from '@ngx-matomo/router';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 
 @NgModule({
   imports: [
@@ -101,48 +97,34 @@ import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
       siteId: 'YOUR_MATOMO_SITE_ID', // your Matomo's site ID (find it in your Matomo's settings)
       trackerUrl: 'YOUR_MATOMO_SERVER_URL', // your matomo server root url
     }),
-    NgxMatomoRouterModule, // Add this
+    NgxMatomoRouterModule,
   ],
   // ...
 })
 export class AppModule {}
 ```
 
-### Setup manually with script tag
+### Manual installation with script tag
 
-Insert Matomo tracking code into your application
-[as explained here](https://developer.matomo.org/guides/tracking-javascript-guide).
+NgxMatomo includes Matomo's tracking script for you.
+**You don't need to copy/paste the tracking code into your application.**
 
-Add `NgxMatomoTrackerModule` module into your application, specifying the `MANUAL` setup mode:
-
-```typescript
-import { NgModule } from '@angular/core';
-import { MatomoInitializationMode, NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
-
-@NgModule({
-  // ...
-  imports: [
-    // ...
-    NgxMatomoTrackerModule.forRoot({
-      mode: MatomoInitializationMode.MANUAL,
-    }),
-  ],
-  // ...
-})
-export class AppModule {}
-```
+If for some reason you want to manually include the script tag yourself, install as described in previous sections then
+follow the [instructions described here](docs/manual-installation.md).
 
 ## Usage
 
-### Tracking page view (with Angular Router & NgxMatomoRouterModule)
+As a general rule, either use provided directives and components from your templates, or inject `MatomoTracker` service
+into your components, services... and use its methods. See next subsections for more detailed usage examples.
 
-NgxMatomoRouterModule automatically tracks page views for you after each successful Angular Router navigation event,
-detecting current page url & title. Under the hood, it calls `trackPageView`, `setCustomUrl` and `setReferrerUrl` for
-you.
+### Tracking page views with Angular Router
 
-By default, page title is grabbed from DOM document title and page url is built from Router url prepended with
-application base href. This is fully customizable as described below. Before defining custom services, please consider
-`MatomoRouterConfiguration` options.
+If you followed installation instructions, `NgxMatomoRouterModule` automatically tracks page views for you after each
+successful Angular Router navigation event. Under the hood, it calls tracker methods such as `trackPageView`
+, `setCustomUrl` and `setReferrerUrl` for you.
+
+By default, page title is grabbed from DOM document title and page url is built from Router url. This is fully
+customizable as described in following subsections.
 
 #### Customize page title
 
@@ -196,7 +178,7 @@ export class MyPageUrlProvider implements PageUrlProvider {
 }
 ```
 
-### Tracking page view (without Angular Router)
+### Tracking page views without Angular Router
 
 Call `MatomoTracker.trackPageView()` from wherever you want (typically from your _page components_). You may have to
 manually call `setCustomUrl` or `setReferrerUrl`.
@@ -230,9 +212,6 @@ export class ExampleComponent implements OnInit {
   Example #1
 </button>
 
-<!-- Dynamic bindings/interpolation are available as well -->
-<div [matomoClickCategory]="'myCategory'" matomoClickAction="{{'myAction'}}">Example #2</div>
-
 <!-- You may also provide optional Matomo's name/value -->
 <button
   type="button"
@@ -241,7 +220,7 @@ export class ExampleComponent implements OnInit {
   matomoClickName="myName"
   [matomoClickValue]="42"
 >
-  Example #3
+  Example #2
 </button>
 ```
 
@@ -299,28 +278,6 @@ export class ExampleComponent implements OnInit {
 />
 ```
 
-### Tracking events from component/service
-
-```typescript
-import { Component } from '@angular/core';
-import { MatomoTracker } from '@ngx-matomo/tracker';
-
-@Component({
-  /* ... */
-})
-export class ExampleComponent {
-  constructor(private readonly tracker: MatomoTracker) {}
-
-  myMethod() {
-    // Call trackEvent method
-    this.tracker.trackEvent('myCategory', 'myAction');
-
-    // With optional name & value arguments
-    this.tracker.trackEvent('myCategory', 'myAction', 'name', 0);
-  }
-}
-```
-
 ### Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...
 
 Other Matomo tracking features are available through `MatomoTracker` service. Please refer
@@ -349,14 +306,14 @@ export class ExampleComponent {
 ```
 
 Please note that some features (such as `setEcommerceView`) must be called **before**
-`trackPageView`, so be careful when using router adapter!
+`trackPageView`, so be careful when using router adapter! Simpler usage will come in a future version.
 
 ### Disable tracking in some environments
 
 You may want to disable tracker in dev environments to avoid tracking some unwanted usage: local dev usage, end-to-end
 tests...
 
-To do so just set the `disabled` switch:
+To do so just set the `disabled` configuration switch:
 
 ```typescript
 import { NgModule } from '@angular/core';
@@ -663,4 +620,4 @@ interface MatomoRouterConfiguration {
 
 ## Roadmap
 
-See [ROADMAP.md](./ROADMAP.md)
+[See roadmap here](docs/roadmap.md)
