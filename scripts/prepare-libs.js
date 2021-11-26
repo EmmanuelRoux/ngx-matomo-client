@@ -1,7 +1,7 @@
 // #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { LIBRARIES, DIST_DIR, SOURCES_DIR } = require('./constants');
+const { LIBRARIES, DIST_DIR, SOURCES_DIR, LIB_TRACKER } = require('./constants');
 const { readPkgJson, writePkgJson, getPkgName } = require('./utils');
 const [version] = process.argv.slice(2);
 
@@ -22,12 +22,24 @@ function updatePkgVersion(pkgDir) {
   writePkgJson(pkgDir, pkg);
 }
 
+function updateSchematicsVersion(rootDir) {
+  const versionPath = path.resolve(rootDir, 'schematics/version.ts');
+  const versionExpr = `^${version}`;
+
+  fs.writeFileSync(versionPath, `export const version = '${versionExpr}';\n`);
+}
+
 function updateLibVersion(libName) {
   const sourceDir = path.resolve(SOURCES_DIR, libName);
   const distDir = path.resolve(DIST_DIR, libName);
 
   updatePkgVersion(sourceDir);
   updatePkgVersion(distDir);
+
+  if (libName === LIB_TRACKER) {
+    updateSchematicsVersion(sourceDir);
+    updateSchematicsVersion(distDir);
+  }
 }
 
 function copyReadmeTo(libName) {
@@ -40,7 +52,7 @@ function copyReadmeTo(libName) {
 console.log('Preparing version %s of libraries', version);
 
 // Copy README to main library
-copyReadmeTo('tracker');
+copyReadmeTo(LIB_TRACKER);
 
 // Update package.json version number
 LIBRARIES.forEach(updateLibVersion);

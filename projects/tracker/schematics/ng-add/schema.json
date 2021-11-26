@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "properties": {
+    "skipImport": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not import @ngx-matomo modules into the owning NgModule."
+    },
+    "module": {
+      "type": "string",
+      "default": "app",
+      "description": "The declaring NgModule in which to import @ngx-matomo modules.",
+      "alias": "m",
+      "subtype": "filepath"
+    },
+    "path": {
+      "type": "string",
+      "format": "path",
+      "description": "The path pointing to the module where @ngx-matomo modules will be imported.",
+      "visible": false
+    },
+    "project": {
+      "type": "string",
+      "description": "The name of the project.",
+      "$default": {
+        "$source": "projectName"
+      }
+    },
+    "serverUrl": {
+      "type": "string",
+      "description": "The Matomo server url",
+      "alias": "s",
+      "x-prompt": "What is your Matomo server url?"
+    },
+    "siteId": {
+      "type": "string",
+      "description": "The Matomo site ID",
+      "alias": "id",
+      "x-prompt": "What is your Matomo site ID?"
+    },
+    "router": {
+      "type": "boolean",
+      "default": true,
+      "description": "Specifies if @ngx-matomo/router should be installed to automatically track page views. This requires @angular/router as a dependency.",
+      "alias": "r",
+      "x-prompt": "Would you like to automatically track page views?"
+    }
+  }
+}

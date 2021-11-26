@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.schematics.json",
+  "compilerOptions": {
+    "outDir": "../../dist-prod/tracker/schematics"
+  },
+  "include": ["schematics/**/*"],
+  "exclude": ["schematics/*/files/**/*"]
+}
