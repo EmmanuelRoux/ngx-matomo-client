@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.0.0...v2.1.0) (2021-11-29)
+
+
+### Features
+
+* add ng-add schematics ([524cc76](https://github.com/EmmanuelRoux/ngx-matomo/commit/524cc76500db587e20a40eb3e7533418d752bc24))
+
 # [2.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.3...v2.0.0) (2021-11-22)
 
 

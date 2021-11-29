@@ -1,1 +1,1 @@
-export const version = '0.0.0-PLACEHOLDER';
+export const version = '^2.1.0';
