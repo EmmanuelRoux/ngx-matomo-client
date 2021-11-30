@@ -47,7 +47,8 @@
           "projects/tracker/schematics/version.ts",
           "projects/router/package.json",
           "CHANGELOG.md"
-        ]
+        ],
+        "failComment": false
       }
     ]
   ]
