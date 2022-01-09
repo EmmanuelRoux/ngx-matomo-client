@@ -1,4 +1,6 @@
-import { Injectable, Injector } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+import { requireNonNull } from './coercion';
 import {
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
@@ -6,10 +8,9 @@ import {
   isManualConfiguration,
   MatomoConsentMode,
 } from './configuration';
-import { initializeMatomoHolder, MatomoHolder } from './holder';
+import { initializeMatomoHolder } from './holder';
 import { MatomoTracker } from './matomo-tracker.service';
-
-declare var window: MatomoHolder;
+import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './script-factory';
 
 function coerceSiteId(siteId: number | string): string {
   return `${siteId}`;
@@ -24,11 +25,13 @@ const DEFAULT_SCRIPT_SUFFIX = 'matomo.js';
 
 export function createMatomoInitializer(
   config: InternalMatomoConfiguration,
-  injector: Injector
+  tracker: MatomoTracker,
+  scriptFactory: MatomoScriptFactory,
+  document: Document
 ): MatomoInitializerService {
   return config.disabled
     ? (new NoopMatomoInitializer() as MatomoInitializerService)
-    : new MatomoInitializerService(config, injector);
+    : new MatomoInitializerService(config, tracker, scriptFactory, document);
 }
 
 export class NoopMatomoInitializer implements Pick<MatomoInitializerService, 'init'> {
@@ -40,12 +43,14 @@ export class NoopMatomoInitializer implements Pick<MatomoInitializerService, 'in
 @Injectable({
   providedIn: 'root',
   useFactory: createMatomoInitializer,
-  deps: [INTERNAL_MATOMO_CONFIGURATION, Injector],
+  deps: [INTERNAL_MATOMO_CONFIGURATION, MatomoTracker, MATOMO_SCRIPT_FACTORY, DOCUMENT],
 })
 export class MatomoInitializerService {
   constructor(
     private readonly config: InternalMatomoConfiguration,
-    private readonly injector: Injector
+    private readonly tracker: MatomoTracker,
+    @Inject(MATOMO_SCRIPT_FACTORY) private readonly scriptFactory: MatomoScriptFactory,
+    @Inject(DOCUMENT) private readonly document: Document
   ) {
     initializeMatomoHolder();
   }
@@ -57,55 +62,50 @@ export class MatomoInitializerService {
 
   private injectMatomoScript() {
     if (!isManualConfiguration(this.config)) {
-      // Lazy-inject tracker via Injector because it requires _paq to be initialized
-      const tracker = this.injector.get(MatomoTracker);
       const { scriptUrl: customScriptUrl } = this.config;
       const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(this.config);
       const mainTrackerUrl = appendTrailingSlash(mainTracker.trackerUrl);
       const mainTrackerSiteId = coerceSiteId(mainTracker.siteId);
 
-      tracker.setTrackerUrl(mainTrackerUrl + TRACKER_SUFFIX);
-      tracker.setSiteId(mainTrackerSiteId);
+      this.tracker.setTrackerUrl(mainTrackerUrl + TRACKER_SUFFIX);
+      this.tracker.setSiteId(mainTrackerSiteId);
 
       additionalTrackers.forEach(({ trackerUrl, siteId }) => {
         const additionalTrackerUrl = appendTrailingSlash(trackerUrl);
         const additionalTrackerSiteId = coerceSiteId(siteId);
 
-        tracker.addTracker(additionalTrackerUrl + TRACKER_SUFFIX, additionalTrackerSiteId);
+        this.tracker.addTracker(additionalTrackerUrl + TRACKER_SUFFIX, additionalTrackerSiteId);
       });
 
-      const d = window.document;
-      const g = d.createElement('script');
-      const s = d.getElementsByTagName('script')[0];
+      const scriptUrl = customScriptUrl ?? mainTrackerUrl + DEFAULT_SCRIPT_SUFFIX;
+      const scriptElement = this.scriptFactory(scriptUrl, this.document);
+      const selfScript = requireNonNull(
+        this.document.getElementsByTagName('script')[0],
+        'no existing script found'
+      );
+      const parent = requireNonNull(selfScript.parentNode, "no script's parent node found");
 
-      g.type = 'text/javascript';
-      g.async = true;
-      g.defer = true;
-      g.src = customScriptUrl ?? mainTrackerUrl + DEFAULT_SCRIPT_SUFFIX;
-      s.parentNode!.insertBefore(g, s); // Parent node has at least one script tag: ourself :-)
+      parent.insertBefore(scriptElement, selfScript);
     }
   }
 
   private runPreInitTasks(): void {
-    // Lazy-inject tracker via Injector because it requires _paq to be initialized
-    const tracker = this.injector.get(MatomoTracker);
-
     if (this.config.acceptDoNotTrack) {
-      tracker.setDoNotTrack(true);
+      this.tracker.setDoNotTrack(true);
     }
 
     if (this.config.requireConsent === MatomoConsentMode.COOKIE) {
-      tracker.requireCookieConsent();
+      this.tracker.requireCookieConsent();
     } else if (this.config.requireConsent === MatomoConsentMode.TRACKING) {
-      tracker.requireConsent();
+      this.tracker.requireConsent();
     }
 
     if (this.config.trackAppInitialLoad) {
-      tracker.trackPageView();
+      this.tracker.trackPageView();
     }
 
     if (this.config.enableLinkTracking) {
-      tracker.enableLinkTracking();
+      this.tracker.enableLinkTracking();
     }
   }
 }

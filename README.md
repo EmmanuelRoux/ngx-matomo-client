@@ -26,11 +26,12 @@ Matomo (fka. Piwik) client for Angular applications
   * [Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...](#using-other-matomos-tracking-features-ecommerce-analytics-marketing-campaigns)
   * [Disable tracking in some environments](#disable-tracking-in-some-environments)
   * [Managing user consent: opt-in/opt-out for tracking & cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
-- [Launch demo app](#launch-demo-app)
 - [Configuration reference](#configuration-reference)
   * [NgxMatomoTrackerModule](#ngxmatomotrackermodule)
   * [NgxMatomoRouterModule](#ngxmatomoroutermodule)
 - [Roadmap](#roadmap)
+- [Customizing script tag](#customizing-script-tag)
+- [Launch demo app](#launch-demo-app)
 
 <!-- tocstop -->
 
@@ -428,15 +429,6 @@ This example is adapted from
 [official guide](https://developer.matomo.org/guides/tracking-javascript-guide#optional-creating-a-custom-opt-out-form)
 about how to create a custom opt-out form
 
-## Launch demo app
-
-1. Clone this repository
-2. Update `matomoSiteId` and `matomoTrackerUrl` in `projects/demo/src/environments/environment.ts`
-3. Launch the app using `npm run demo`. This will build and launch the app on `http://localhost:4200`
-
-Note: if you can't bind to an existing Matomo server, see https://github.com/matomo-org/docker to set-up a local Matomo
-instance
-
 ## Configuration reference
 
 ### NgxMatomoTrackerModule
@@ -621,3 +613,50 @@ interface MatomoRouterConfiguration {
 ## Roadmap
 
 [See roadmap here](docs/roadmap.md)
+
+## Customizing script tag
+
+By default, Matomo's script is injected using a basic script tag looking
+like `<script src="..." defer async type="text/javascript">`.
+
+To customize this script tag, provide a custom factory function to module's `.forRoot()`:
+
+```ts
+import { createDefaultMatomoScriptElement } from '@ngx-matomo/tracker';
+
+@NgModule({
+  imports: [
+    // ...
+    NgxMatomoTrackerModule.forRoot(
+      {
+        /* your config here */
+      },
+      (scriptUrl: string, document: Document) => {
+        // Create using default factory...
+        const script = createDefaultMatomoScriptElement(scriptUrl, document);
+
+        // ...or if you prefer do it yourself
+        // const script = document.createElement('script')
+        // script.url = scriptUrl;
+
+        script.setAttribute('data-cookieconsent', 'statistics');
+
+        return script;
+      }
+    ),
+  ],
+})
+export class AppModule {}
+```
+
+If you need more advanced customization, you can directly provide your factory using `MATOMO_SCRIPT_FACTORY` injection
+token.
+
+## Launch demo app
+
+1. Clone this repository
+2. Update `matomoSiteId` and `matomoTrackerUrl` in `projects/demo/src/environments/environment.ts`
+3. Launch the app using `npm run demo`. This will build and launch the app on `http://localhost:4200`
+
+Note: if you can't bind to an existing Matomo server, see https://github.com/matomo-org/docker to set-up a local Matomo
+instance

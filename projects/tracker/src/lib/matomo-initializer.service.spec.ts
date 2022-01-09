@@ -1,4 +1,4 @@
-import { Injector } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import {
   InternalMatomoConfiguration,
@@ -9,7 +9,12 @@ import {
 } from './configuration';
 import { MatomoHolder } from './holder';
 import { MatomoInitializerService } from './matomo-initializer.service';
-import { MatomoTracker } from './matomo-tracker.service';
+import { MatomoTracker, NoopMatomoTracker } from './matomo-tracker.service';
+import {
+  createDefaultMatomoScriptElement,
+  MATOMO_SCRIPT_FACTORY,
+  MatomoScriptFactory,
+} from './script-factory';
 
 declare var window: MatomoHolder;
 
@@ -31,20 +36,31 @@ describe('MatomoInitializerService', () => {
 
   it('should register _paq global once', () => {
     // Given
-    const injector = Injector.create({ providers: [] });
+    const tracker = new NoopMatomoTracker();
+    const doc = TestBed.inject(DOCUMENT);
     let paq: MatomoHolder['_paq'];
     expect(window._paq).toBeUndefined();
 
     // When
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    new MatomoInitializerService({} as InternalMatomoConfiguration, injector);
+    new MatomoInitializerService(
+      {} as InternalMatomoConfiguration,
+      tracker,
+      createDefaultMatomoScriptElement,
+      doc
+    );
     // Then
     expect(window._paq).toEqual([]);
     paq = window._paq;
 
     // When
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    new MatomoInitializerService({} as InternalMatomoConfiguration, injector);
+    new MatomoInitializerService(
+      {} as InternalMatomoConfiguration,
+      tracker,
+      createDefaultMatomoScriptElement,
+      doc
+    );
     // Then
     expect(window._paq).toEqual([]);
     expect(window._paq).toBe(paq); // should not
@@ -285,5 +301,44 @@ describe('MatomoInitializerService', () => {
     // Then
     expect(injectedScript).toBeUndefined();
     expect(window._paq).toBeUndefined();
+  });
+
+  it('should create custom script tag', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: MATOMO_CONFIGURATION,
+          useValue: {
+            siteId: 1,
+            trackerUrl: '',
+            scriptUrl: '/fake/script/url',
+          } as MatomoConfiguration,
+        },
+        {
+          provide: MATOMO_SCRIPT_FACTORY,
+          useValue: ((scriptUrl, document) => {
+            const script = createDefaultMatomoScriptElement(scriptUrl, document);
+
+            script.setAttribute('data-cookieconsent', 'statistics');
+
+            return script;
+          }) as MatomoScriptFactory,
+        },
+      ],
+    });
+
+    const service = TestBed.inject(MatomoInitializerService);
+
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.init();
+
+    // Then
+    expect(injectedScript?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
+    expect(injectedScript?.dataset.cookieconsent).toEqual('statistics');
   });
 });
