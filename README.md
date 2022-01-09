@@ -15,9 +15,6 @@ Matomo (fka. Piwik) client for Angular applications
 <!-- toc -->
 
 - [Installation](#installation)
-  * [Installing with `ng add`](#installing-with-ng-add)
-  * [Installing with `npm` or `yarn`](#installing-with-npm-or-yarn)
-  * [Manual installation with script tag](#manual-installation-with-script-tag)
 - [Usage](#usage)
   * [Tracking page views with Angular Router](#tracking-page-views-with-angular-router)
   * [Tracking page views without Angular Router](#tracking-page-views-without-angular-router)
@@ -39,12 +36,6 @@ Matomo (fka. Piwik) client for Angular applications
 
 ## Installation
 
-If you need NgxMatomo for an older Angular version, see [compatibility table here](docs/compatibility.md).
-
-### Installing with `ng add`
-
-If your project is using [Angular CLI](https://angular.io/cli/add) then you can just run:
-
 `ng add @ngx-matomo/tracker`
 
 This will prompt you for some information such as your Matomo's server address and site ID. You can find your site ID in
@@ -55,74 +46,26 @@ It will also ask if you want to enable automatic page views tracking. **This req
 This command will take care of importing `NgxMatomoTrackerModule` (and `NgxMatomoRouterModule` if needed), along with
 basic configuration, into your root `AppModule`. Use the `--module [module]` flag to specify a different root module.
 
-### Installing with `npm` or `yarn`
+_Note #1: If you're not using Angular CLI, [follow instructions here](docs/installation-without-cli.md) instead._
 
-Run `npm install --save @ngx-matomo/tracker` or `yarn add @ngx-matomo/tracker`
-
-Then import `NgxMatomoTrackerModule` into your root module (typically `AppModule`):
-
-```typescript
-import { NgModule } from '@angular/core';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
-
-@NgModule({
-  imports: [
-    // ...
-    NgxMatomoTrackerModule.forRoot({
-      siteId: 'YOUR_MATOMO_SITE_ID', // your Matomo's site ID (find it in your Matomo's settings)
-      trackerUrl: 'YOUR_MATOMO_SERVER_URL', // your matomo server root url
-    }),
-  ],
-  // ...
-})
-export class AppModule {}
-```
-
-**If you use [Angular router](https://angular.io/guide/router) and want to automatically track page views**, you may
-optionally install the router adapter
-([see documentation below](#tracking-page-views-with-angular-router)):
-
-Run `npm install --save @ngx-matomo/router` or `yarn add @ngx-matomo/router`
-
-Then import `NgxMatomoRouterModule` into your root module:
-
-```typescript
-import { NgModule } from '@angular/core';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
-import { NgxMatomoRouterModule } from '@ngx-matomo/router';
-
-@NgModule({
-  imports: [
-    // ...
-    NgxMatomoTrackerModule.forRoot({
-      siteId: 'YOUR_MATOMO_SITE_ID', // your Matomo's site ID (find it in your Matomo's settings)
-      trackerUrl: 'YOUR_MATOMO_SERVER_URL', // your matomo server root url
-    }),
-    NgxMatomoRouterModule,
-  ],
-  // ...
-})
-export class AppModule {}
-```
-
-### Manual installation with script tag
-
-NgxMatomo includes Matomo's tracking script for you.
+_Note #2: NgxMatomo includes Matomo's tracking script for you.
 **You don't need to copy/paste the tracking code into your application.**
-
 If for some reason you want to manually include the script tag yourself, install as described in previous sections then
-follow the [instructions described here](docs/manual-installation.md).
+follow the [instructions described here](docs/manual-installation.md)._
+
+_Note #3: The latest version supports Angular 13 and newer. If you need NgxMatomo for an older Angular version,
+see [compatibility table here](docs/compatibility.md)._
 
 ## Usage
 
-As a general rule, either use provided directives and components from your templates, or inject `MatomoTracker` service
+As a general rule, either use provided directives and components in your templates, or inject `MatomoTracker` service
 into your components, services... and use its methods. See next subsections for more detailed usage examples.
 
 ### Tracking page views with Angular Router
 
 If you followed installation instructions, `NgxMatomoRouterModule` automatically tracks page views for you after each
-successful Angular Router navigation event. Under the hood, it calls tracker methods such as `trackPageView`
-, `setCustomUrl` and `setReferrerUrl` for you.
+successful Angular Router navigation event. Under the hood, it calls tracker methods such as
+`trackPageView`, `setCustomUrl` and `setReferrerUrl` for you.
 
 By default, page title is grabbed from DOM document title and page url is built from Router url. This is fully
 customizable as described in following subsections.
