@@ -1,3 +1,15 @@
+# [2.2.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.1.0...v2.2.0) (2022-01-16)
+
+
+### Bug Fixes
+
+* auto-disable tracker on non-browser platforms ([4547bf9](https://github.com/EmmanuelRoux/ngx-matomo/commit/4547bf92eacb61860e31124b66f0878f8fa8c45e)), closes [#23](https://github.com/EmmanuelRoux/ngx-matomo/issues/23)
+
+
+### Features
+
+* add support for custom script tags ([1586af4](https://github.com/EmmanuelRoux/ngx-matomo/commit/1586af4fc2ee6495880466550b67f4b1294c93db)), closes [#22](https://github.com/EmmanuelRoux/ngx-matomo/issues/22)
+
 # [2.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.0.0...v2.1.0) (2021-11-29)
 
 
