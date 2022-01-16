@@ -10,9 +10,13 @@ import { Getters, Methods } from './types';
 
 declare var window: MatomoHolder;
 
+// Extracted from https://github.com/angular/angular/blob/b66e479cdb1e474a29ff676f10a5fcc3d7eae799/packages/common/src/platform_id.ts
+const PLATFORM_BROWSER_ID = 'browser';
+const PLATFORM_SERVER_ID = 'server';
+
 describe('MatomoTracker', () => {
-  function createTracker(disabled = false): MatomoTracker {
-    return createMatomoTracker({ disabled } as InternalMatomoConfiguration);
+  function createTracker(disabled = false, platform: Object = PLATFORM_BROWSER_ID): MatomoTracker {
+    return createMatomoTracker({ disabled } as InternalMatomoConfiguration, platform);
   }
 
   beforeEach(() => {
@@ -619,6 +623,30 @@ describe('MatomoTracker', () => {
   it('should reject all promises when disabled', done => {
     // Given
     const tracker = createTracker(true);
+
+    // Then
+    tracker
+      .getCustomDimension(0)
+      .then(() => fail('rejected promise expected'))
+      .catch(() => {
+        expect().nothing();
+        done();
+      });
+  });
+
+  it('should ignore calls when platform is not browser', () => {
+    // Given
+    const tracker = createTracker(false, PLATFORM_SERVER_ID);
+    (window as any)._paq = undefined;
+
+    // Then
+    expect(() => tracker.trackPageView()).not.toThrow();
+    expect(window._paq).toBeUndefined();
+  });
+
+  it('should reject all promises when platform is not browser', done => {
+    // Given
+    const tracker = createTracker(false, PLATFORM_SERVER_ID);
 
     // Then
     tracker

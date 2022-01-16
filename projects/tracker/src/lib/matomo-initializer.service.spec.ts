@@ -1,4 +1,5 @@
 import { DOCUMENT } from '@angular/common';
+import { PLATFORM_ID, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   InternalMatomoConfiguration,
@@ -19,13 +20,17 @@ import {
 declare var window: MatomoHolder;
 
 describe('MatomoInitializerService', () => {
-  function instantiate(config: MatomoConfiguration): MatomoInitializerService {
+  function instantiate(
+    config: MatomoConfiguration,
+    providers: Provider[] = []
+  ): MatomoInitializerService {
     TestBed.configureTestingModule({
       providers: [
         {
           provide: MATOMO_CONFIGURATION,
           useValue: config,
         },
+        ...providers,
       ],
     });
 
@@ -292,6 +297,30 @@ describe('MatomoInitializerService', () => {
       siteId: 'fakeSiteId',
       trackerUrl: 'http://fakeTrackerUrl',
     });
+
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.init();
+
+    // Then
+    expect(injectedScript).toBeUndefined();
+    expect(window._paq).toBeUndefined();
+  });
+
+  it('should do nothing when platform is not browser', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+    // See here: https://github.com/angular/angular/blob/b66e479cdb1e474a29ff676f10a5fcc3d7eae799/packages/common/src/platform_id.ts
+    const serverPlatform = 'server';
+    const service = instantiate(
+      {
+        disabled: false,
+        siteId: 'fakeSiteId',
+        trackerUrl: 'http://fakeTrackerUrl',
+      },
+      [{ provide: PLATFORM_ID, useValue: serverPlatform }]
+    );
 
     setUpScriptInjection(script => (injectedScript = script));
 

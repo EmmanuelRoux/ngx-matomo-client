@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID } from '@angular/core';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
 import { initializeMatomoHolder, MatomoHolder } from './holder';
 import { Getters } from './types';
@@ -77,14 +78,19 @@ export interface MatomoInstance {
   isUserOptedOut(): boolean;
 }
 
-export function createMatomoTracker(config: InternalMatomoConfiguration): MatomoTracker {
-  return config.disabled ? new NoopMatomoTracker() : new StandardMatomoTracker();
+export function createMatomoTracker(
+  config: InternalMatomoConfiguration,
+  platformId: Object
+): MatomoTracker {
+  return config.disabled || !isPlatformBrowser(platformId)
+    ? new NoopMatomoTracker()
+    : new StandardMatomoTracker();
 }
 
 @Injectable({
   providedIn: 'root',
   useFactory: createMatomoTracker,
-  deps: [INTERNAL_MATOMO_CONFIGURATION],
+  deps: [INTERNAL_MATOMO_CONFIGURATION, PLATFORM_ID],
 })
 export abstract class MatomoTracker {
   /**

@@ -26,8 +26,10 @@ Matomo (fka. Piwik) client for Angular applications
 - [Configuration reference](#configuration-reference)
   * [NgxMatomoTrackerModule](#ngxmatomotrackermodule)
   * [NgxMatomoRouterModule](#ngxmatomoroutermodule)
+- [Advanced use cases](#advanced-use-cases)
+  * [Customizing script tag](#customizing-script-tag)
+  * [Server-side rendering (SSR) with Angular Universal](#server-side-rendering-ssr-with-angular-universal)
 - [Roadmap](#roadmap)
-- [Customizing script tag](#customizing-script-tag)
 - [Launch demo app](#launch-demo-app)
 
 <!-- tocstop -->
@@ -553,11 +555,9 @@ interface MatomoRouterConfiguration {
 }
 ```
 
-## Roadmap
+## Advanced use cases
 
-[See roadmap here](docs/roadmap.md)
-
-## Customizing script tag
+### Customizing script tag
 
 By default, Matomo's script is injected using a basic script tag looking
 like `<script src="..." defer async type="text/javascript">`.
@@ -594,6 +594,14 @@ export class AppModule {}
 
 If you need more advanced customization, you can directly provide your factory using `MATOMO_SCRIPT_FACTORY` injection
 token.
+
+### Server-side rendering (SSR) with Angular Universal
+
+Ngx-matomo cannot be used server-side and automatically disables itself on non-browser platforms.
+
+## Roadmap
+
+[See roadmap here](docs/roadmap.md)
 
 ## Launch demo app
 

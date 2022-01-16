@@ -1,5 +1,5 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { requireNonNull } from './coercion';
 import {
   getTrackersConfiguration,
@@ -27,9 +27,10 @@ export function createMatomoInitializer(
   config: InternalMatomoConfiguration,
   tracker: MatomoTracker,
   scriptFactory: MatomoScriptFactory,
-  document: Document
+  document: Document,
+  platformId: Object
 ): MatomoInitializerService {
-  return config.disabled
+  return config.disabled || !isPlatformBrowser(platformId)
     ? (new NoopMatomoInitializer() as MatomoInitializerService)
     : new MatomoInitializerService(config, tracker, scriptFactory, document);
 }
@@ -43,7 +44,13 @@ export class NoopMatomoInitializer implements Pick<MatomoInitializerService, 'in
 @Injectable({
   providedIn: 'root',
   useFactory: createMatomoInitializer,
-  deps: [INTERNAL_MATOMO_CONFIGURATION, MatomoTracker, MATOMO_SCRIPT_FACTORY, DOCUMENT],
+  deps: [
+    INTERNAL_MATOMO_CONFIGURATION,
+    MatomoTracker,
+    MATOMO_SCRIPT_FACTORY,
+    DOCUMENT,
+    PLATFORM_ID,
+  ],
 })
 export class MatomoInitializerService {
   constructor(
