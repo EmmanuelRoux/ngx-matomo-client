@@ -20,7 +20,14 @@ function appendTrailingSlash(str: string): string {
   return str.endsWith('/') ? str : `${str}/`;
 }
 
-const TRACKER_SUFFIX = 'matomo.php';
+function buildTrackerUrl(url: string, suffix: string | undefined): string {
+  if (suffix == null) {
+    return appendTrailingSlash(url) + DEFAULT_TRACKER_SUFFIX;
+  }
+  return url + suffix;
+}
+
+const DEFAULT_TRACKER_SUFFIX = 'matomo.php';
 const DEFAULT_SCRIPT_SUFFIX = 'matomo.js';
 
 export function createMatomoInitializer(
@@ -71,20 +78,21 @@ export class MatomoInitializerService {
     if (!isManualConfiguration(this.config)) {
       const { scriptUrl: customScriptUrl } = this.config;
       const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(this.config);
-      const mainTrackerUrl = appendTrailingSlash(mainTracker.trackerUrl);
+      const mainTrackerUrl = buildTrackerUrl(mainTracker.trackerUrl, mainTracker.trackerUrlSuffix);
       const mainTrackerSiteId = coerceSiteId(mainTracker.siteId);
 
-      this.tracker.setTrackerUrl(mainTrackerUrl + TRACKER_SUFFIX);
+      this.tracker.setTrackerUrl(mainTrackerUrl);
       this.tracker.setSiteId(mainTrackerSiteId);
 
-      additionalTrackers.forEach(({ trackerUrl, siteId }) => {
-        const additionalTrackerUrl = appendTrailingSlash(trackerUrl);
+      additionalTrackers.forEach(({ trackerUrl, siteId, trackerUrlSuffix }) => {
+        const additionalTrackerUrl = buildTrackerUrl(trackerUrl, trackerUrlSuffix);
         const additionalTrackerSiteId = coerceSiteId(siteId);
 
-        this.tracker.addTracker(additionalTrackerUrl + TRACKER_SUFFIX, additionalTrackerSiteId);
+        this.tracker.addTracker(additionalTrackerUrl, additionalTrackerSiteId);
       });
 
-      const scriptUrl = customScriptUrl ?? mainTrackerUrl + DEFAULT_SCRIPT_SUFFIX;
+      const scriptUrl =
+        customScriptUrl ?? appendTrailingSlash(mainTracker.trackerUrl) + DEFAULT_SCRIPT_SUFFIX;
       const scriptElement = this.scriptFactory(scriptUrl, this.document);
       const selfScript = requireNonNull(
         this.document.getElementsByTagName('script')[0],
