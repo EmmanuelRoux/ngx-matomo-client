@@ -63,12 +63,19 @@ jobs:
   publish-npm:
     needs: [lint, test]
     runs-on: ubuntu-latest
+    env:
+      GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+      GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 14.17.6
           cache: npm
+      - run: echo -n "${GPG_SECRET_KEY}" > git_gpg_key.asc
+      - run: gpg --batch --yes --import git_gpg_key.asc
+      - run: git config commit.gpgsign true
+      - run: git config --global user.signingkey ${GPG_KEY_ID}
       - run: npm install
       - run: npm run build:prod:tracker
       - run: npm run build:prod:router
@@ -79,7 +86,7 @@ jobs:
           if-no-files-found: error
       - run: npm run semantic-release:ci
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
           GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
