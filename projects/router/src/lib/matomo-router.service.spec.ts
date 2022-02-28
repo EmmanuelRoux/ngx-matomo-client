@@ -1,4 +1,5 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { Provider } from '@angular/core';
+import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { MATOMO_CONFIGURATION, MatomoTracker } from '@ngx-matomo/tracker';
 import { of, Subject } from 'rxjs';
@@ -7,6 +8,7 @@ import {
   MATOMO_ROUTER_CONFIGURATION,
   MatomoRouterConfiguration,
 } from './configuration';
+import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
 import { MatomoRouter } from './matomo-router.service';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
@@ -17,7 +19,8 @@ describe('MatomoRouter', () => {
 
   function instantiate(
     routerConfig: MatomoRouterConfiguration,
-    config: Partial<InternalGlobalConfiguration>
+    config: Partial<InternalGlobalConfiguration>,
+    providers: Provider[] = []
   ): MatomoRouter {
     TestBed.configureTestingModule({
       providers: [
@@ -51,11 +54,13 @@ describe('MatomoRouter', () => {
           provide: MatomoTracker,
           useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', [
             'setCustomUrl',
+            'setDocumentTitle',
             'trackPageView',
             'enableLinkTracking',
             'setReferrerUrl',
           ]),
         },
+        ...providers,
       ],
     });
 
@@ -90,7 +95,8 @@ describe('MatomoRouter', () => {
 
     // Then
     expect(tracker.setCustomUrl).toHaveBeenCalledWith('/custom-url');
-    expect(tracker.trackPageView).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.setDocumentTitle).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.trackPageView).toHaveBeenCalled();
     expect(tracker.setReferrerUrl).toHaveBeenCalledWith('/custom-url');
   }));
 
@@ -109,6 +115,7 @@ describe('MatomoRouter', () => {
     triggerEvent('/');
     // Then
     expect(tracker.setCustomUrl).not.toHaveBeenCalled();
+    expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
     expect(tracker.trackPageView).not.toHaveBeenCalled();
     expect(tracker.setReferrerUrl).not.toHaveBeenCalled();
 
@@ -116,8 +123,8 @@ describe('MatomoRouter', () => {
     tick();
     // Then
     expect(tracker.setCustomUrl).toHaveBeenCalledWith('/custom-url');
+    expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
     expect(tracker.trackPageView).toHaveBeenCalled();
-    expect(tracker.trackPageView.calls.argsFor(0)[0]).toBeUndefined();
     expect(tracker.setReferrerUrl).toHaveBeenCalledWith('/custom-url');
   }));
 
@@ -137,7 +144,8 @@ describe('MatomoRouter', () => {
 
     // Then
     expect(tracker.setCustomUrl).toHaveBeenCalledWith('/custom-url');
-    expect(tracker.trackPageView).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.setDocumentTitle).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.trackPageView).toHaveBeenCalled();
     expect(tracker.setReferrerUrl).toHaveBeenCalledWith('/custom-url');
   }));
 
@@ -157,6 +165,7 @@ describe('MatomoRouter', () => {
     tick(41);
     // Then
     expect(tracker.setCustomUrl).not.toHaveBeenCalled();
+    expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
     expect(tracker.trackPageView).not.toHaveBeenCalled();
     expect(tracker.setReferrerUrl).not.toHaveBeenCalled();
 
@@ -164,7 +173,8 @@ describe('MatomoRouter', () => {
     tick(1);
     // Then
     expect(tracker.setCustomUrl).toHaveBeenCalledWith('/custom-url');
-    expect(tracker.trackPageView).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.setDocumentTitle).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.trackPageView).toHaveBeenCalled();
     expect(tracker.setReferrerUrl).toHaveBeenCalledWith('/custom-url');
   }));
 
@@ -185,7 +195,8 @@ describe('MatomoRouter', () => {
 
     // Then
     expect(tracker.setCustomUrl).toHaveBeenCalledWith('/custom-url');
-    expect(tracker.trackPageView).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.setDocumentTitle).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.trackPageView).toHaveBeenCalled();
     expect(tracker.setReferrerUrl).toHaveBeenCalledWith('/custom-url');
     expect(tracker.enableLinkTracking).toHaveBeenCalledWith(true);
   }));
@@ -255,7 +266,51 @@ describe('MatomoRouter', () => {
 
     // Then
     expect(tracker.setCustomUrl).not.toHaveBeenCalled();
+    expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
     expect(tracker.trackPageView).not.toHaveBeenCalled();
     expect(tracker.setReferrerUrl).not.toHaveBeenCalled();
+  }));
+
+  it('should call interceptors if any and wait for them to resolve', fakeAsync(() => {
+    // Given
+    const interceptor1 = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor1', [
+      'beforePageTrack',
+    ]);
+    let interceptor2Resolve: () => void;
+    const interceptor2Promise = new Promise<void>(resolve => (interceptor2Resolve = resolve));
+    const interceptor2 = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor2', {
+      beforePageTrack: interceptor2Promise,
+    });
+    const interceptor3Subject = new Subject<void>();
+    const interceptor3 = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor3', {
+      beforePageTrack: interceptor3Subject,
+    });
+    const service = instantiate({ delay: -1 }, { enableLinkTracking: false }, [
+      { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor1 },
+      { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor2 },
+      { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor3 },
+    ]);
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.init();
+    triggerEvent('/');
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+    expect(interceptor1.beforePageTrack).toHaveBeenCalled();
+    expect(interceptor2.beforePageTrack).toHaveBeenCalled();
+    expect(interceptor3.beforePageTrack).toHaveBeenCalled();
+
+    // When
+    interceptor3Subject.next();
+    interceptor3Subject.complete();
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+
+    // When
+    interceptor2Resolve!();
+    flush();
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalled();
   }));
 });

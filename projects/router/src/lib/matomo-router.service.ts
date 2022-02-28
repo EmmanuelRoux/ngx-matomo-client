@@ -1,13 +1,27 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { MatomoTracker } from '@ngx-matomo/tracker';
-import { combineLatest, identity, MonoTypeOperatorFunction, Observable, of } from 'rxjs';
-import { delay, distinctUntilKeyChanged, filter, map, switchMap } from 'rxjs/operators';
+import {
+  combineLatest,
+  defaultIfEmpty,
+  forkJoin,
+  from,
+  identity,
+  map,
+  mapTo,
+  MonoTypeOperatorFunction,
+  Observable,
+  of,
+  take,
+  tap,
+} from 'rxjs';
+import { delay, distinctUntilKeyChanged, filter, switchMap } from 'rxjs/operators';
 import {
   ExclusionConfig,
   INTERNAL_ROUTER_CONFIGURATION,
   InternalRouterConfiguration,
 } from './configuration';
+import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
 
@@ -43,7 +57,10 @@ export class MatomoRouter {
     private readonly pageTitleProvider: PageTitleProvider,
     @Inject(MATOMO_PAGE_URL_PROVIDER)
     private readonly pageUrlProvider: PageUrlProvider,
-    private readonly tracker: MatomoTracker
+    private readonly tracker: MatomoTracker,
+    @Optional()
+    @Inject(MATOMO_ROUTER_INTERCEPTORS)
+    private readonly interceptors: MatomoRouterInterceptor[] | null
   ) {}
 
   init(): void {
@@ -65,28 +82,47 @@ export class MatomoRouter {
         distinctUntilKeyChanged('urlAfterRedirects'),
         // Optionally add some delay
         delayOp,
-        // Grab page title & url
-        switchMap(event => this.getPageTitleAndUrl(event))
+        // Set default page title & url
+        switchMap(event =>
+          this.presetPageTitleAndUrl(event).pipe(map(({ pageUrl }) => ({ pageUrl, event })))
+        ),
+        // Call interceptors
+        switchMap(context => this.callInterceptors(context.event).pipe(mapTo(context)))
       )
-      .subscribe(({ pageTitle, pageUrl }) => this.trackPageView(pageTitle, pageUrl));
+      .subscribe(({ pageUrl }) => this.trackPageView(pageUrl));
   }
 
-  private getPageTitleAndUrl(
-    event: NavigationEnd
-  ): Observable<{ pageTitle: string | undefined; pageUrl: string }> {
+  private callInterceptors(event: NavigationEnd): Observable<void> {
+    if (this.interceptors) {
+      return forkJoin(
+        this.interceptors.map(interceptor => {
+          const result = interceptor.beforePageTrack(event);
+          const result$ = result == null ? of(undefined) : from(result);
+
+          // Must not be an empty observable (otherwise forkJoin would complete without waiting others)
+          return result$.pipe(take(1), defaultIfEmpty(undefined));
+        })
+      ).pipe(mapTo(undefined), defaultIfEmpty(undefined));
+    } else {
+      return of(undefined);
+    }
+  }
+
+  private presetPageTitleAndUrl(event: NavigationEnd): Observable<{ pageUrl: string }> {
     const title$ = this.config.trackPageTitle
-      ? this.pageTitleProvider.getCurrentPageTitle(event)
+      ? this.pageTitleProvider
+          .getCurrentPageTitle(event)
+          .pipe(tap(pageTitle => this.tracker.setDocumentTitle(pageTitle)))
       : of(undefined);
-    const url$ = this.pageUrlProvider.getCurrentPageUrl(event);
+    const url$ = this.pageUrlProvider
+      .getCurrentPageUrl(event)
+      .pipe(tap(pageUrl => this.tracker.setCustomUrl(pageUrl)));
 
-    return combineLatest([title$, url$]).pipe(
-      map(([pageTitle, pageUrl]) => ({ pageTitle, pageUrl }))
-    );
+    return combineLatest([title$, url$]).pipe(map(([_, pageUrl]) => ({ pageUrl })));
   }
 
-  private trackPageView(pageTitle: string | undefined, pageUrl: string): void {
-    this.tracker.setCustomUrl(pageUrl);
-    this.tracker.trackPageView(pageTitle);
+  private trackPageView(pageUrl: string): void {
+    this.tracker.trackPageView();
 
     if (this.config.enableLinkTracking) {
       this.tracker.enableLinkTracking(true);

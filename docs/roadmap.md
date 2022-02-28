@@ -24,4 +24,4 @@ Don't hesitate to post issues and suggest pull requests!
 
 ### @ngx-matomo/router
 
-- [ ] **short term:** simplify current page details customization (url, title, ecommerce features...)
+- [x] **short term:** simplify current page details customization (url, title, ecommerce features...)

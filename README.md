@@ -124,6 +124,56 @@ export class MyPageUrlProvider implements PageUrlProvider {
 }
 ```
 
+#### Customize anything
+
+You may hook into the tracking process right before `trackPageView` is called. To do so, declare one or
+more `MATOMO_ROUTER_INTERCEPTORS` providers:
+
+```typescript
+import { MatomoRouterInterceptor, MATOMO_ROUTER_INTERCEPTORS } from '@ngx-matomo/router';
+
+@NgModule({
+  // ...
+  providers: [
+    {
+      provide: MATOMO_ROUTER_INTERCEPTORS,
+      multi: true,
+      useClass: MySimpleInterceptor,
+    },
+    {
+      provide: MATOMO_ROUTER_INTERCEPTORS,
+      multi: true,
+      useClass: MyAsyncInterceptor,
+    },
+  ],
+})
+export class AppModule {}
+
+@Injectable()
+export class MySimpleInterceptor implements MatomoRouterInterceptor {
+  constructor(private readonly tracker: MatomoTracker) {}
+
+  beforePageTrack(event: NavigationEnd): void {
+    this.tracker.setEcommerceView(/* ... */);
+  }
+}
+
+@Injectable()
+export class MyAsyncInterceptor implements MatomoRouterInterceptor {
+  constructor(private readonly tracker: MatomoTracker) {}
+
+  async beforePageTrack(event: NavigationEnd): Promise<void> {
+    const value = await this.loadSomething();
+
+    this.tracker.setCustomDimension(1, value);
+  }
+
+  private async loadSomething(): Promise<string> {
+    return new Promise(/* ... */);
+  }
+}
+```
+
 ### Tracking page views without Angular Router
 
 Call `MatomoTracker.trackPageView()` from wherever you want (typically from your _page components_). You may have to
@@ -252,7 +302,8 @@ export class ExampleComponent {
 ```
 
 Please note that some features (such as `setEcommerceView`) must be called **before**
-`trackPageView`, so be careful when using router adapter! Simpler usage will come in a future version.
+`trackPageView`, so be careful when using router adapter!
+You may want to look at [how to use interceptors](#customize-anything).
 
 ### Disable tracking in some environments
 
