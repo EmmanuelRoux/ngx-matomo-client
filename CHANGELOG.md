@@ -1,3 +1,16 @@
+# [2.3.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.2.1...v2.3.0) (2022-02-28)
+
+
+### Bug Fixes
+
+* **tracker:** expose missing types as public api ([52501ee](https://github.com/EmmanuelRoux/ngx-matomo/commit/52501ee3d36a05afc813572cffa257e49a849268))
+* add missing ng-update package-group ([e186300](https://github.com/EmmanuelRoux/ngx-matomo/commit/e1863007a86a7a96eb9f90fbe2f3b8a6ba08772c))
+
+
+### Features
+
+* **router:** add router interceptor api ([9ca105c](https://github.com/EmmanuelRoux/ngx-matomo/commit/9ca105cc0cd10d1dc3c6c1cfd2aba47da19ce61c))
+
 ## [2.2.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.2.0...v2.2.1) (2022-01-28)
 
 
