@@ -124,25 +124,16 @@ export class MyPageUrlProvider implements PageUrlProvider {
 
 #### Customize anything
 
-You may hook into the tracking process right before `trackPageView` is called. To do so, declare one or
-more `MATOMO_ROUTER_INTERCEPTORS` providers:
+You may hook into the tracking process right before `trackPageView` is called. To do so, declare some interceptors using
+the router's configuration `interceptors` property (see [configuration reference](#configuration-reference) for
+details):
 
 ```typescript
-import { MatomoRouterInterceptor, MATOMO_ROUTER_INTERCEPTORS } from '@ngx-matomo/router';
-
 @NgModule({
-  // ...
-  providers: [
-    {
-      provide: MATOMO_ROUTER_INTERCEPTORS,
-      multi: true,
-      useClass: MySimpleInterceptor,
-    },
-    {
-      provide: MATOMO_ROUTER_INTERCEPTORS,
-      multi: true,
-      useClass: MyAsyncInterceptor,
-    },
+  imports: [
+    NgxMatomoRouterModule.forRoot({
+      interceptors: [MySimpleInterceptor, MyAsyncInterceptor],
+    }),
   ],
 })
 export class AppModule {}
@@ -170,6 +161,24 @@ export class MyAsyncInterceptor implements MatomoRouterInterceptor {
     return new Promise(/* ... */);
   }
 }
+```
+
+Alternatively, declare your interceptors providers using `MATOMO_ROUTER_INTERCEPTORS` token:
+
+```typescript
+import { MatomoRouterInterceptor, MATOMO_ROUTER_INTERCEPTORS } from '@ngx-matomo/router';
+
+@NgModule({
+  // ...
+  providers: [
+    {
+      provide: MATOMO_ROUTER_INTERCEPTORS,
+      multi: true,
+      useFactory: myInterceptorFactory,
+    },
+  ],
+})
+export class AppModule {}
 ```
 
 ### Tracking page views without Angular Router

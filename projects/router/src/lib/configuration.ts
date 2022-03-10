@@ -1,5 +1,6 @@
-import { inject, InjectFlags, InjectionToken } from '@angular/core';
+import { inject, InjectFlags, InjectionToken, Type } from '@angular/core';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from '@ngx-matomo/tracker';
+import { MatomoRouterInterceptor } from './interceptor';
 
 export const MATOMO_ROUTER_CONFIGURATION = new InjectionToken<MatomoRouterConfiguration>(
   'MATOMO_ROUTER_CONFIGURATION'
@@ -42,6 +43,16 @@ export interface MatomoRouterConfiguration {
    * Optional, default is no url excluded
    */
   exclude?: ExclusionConfig;
+}
+
+export interface MatomoRouterConfigurationWithInterceptors extends MatomoRouterConfiguration {
+  /**
+   * Interceptors types to register.
+   *
+   * For more complex scenarios, it is possible to configure any interceptor by
+   * providing token `MATOMO_ROUTER_INTERCEPTORS` as `multi` provider(s).
+   */
+  interceptors?: Type<MatomoRouterInterceptor>[];
 }
 
 export const DEFAULT_ROUTER_CONFIGURATION: Required<MatomoRouterConfiguration> = {
