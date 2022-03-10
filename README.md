@@ -486,19 +486,27 @@ interface MatomoConfiguration {
   trackerUrl?: string;
 
   /**
+   * Suffix to append to trackerUrl
+   *
+   * Optional
+   * Default: matomo.php
+   */
+  trackerUrlSuffix?: string;
+
+  /**
    * A list of multiple Matomo servers.
    * Note that tracking code will be downloaded from the FIRST tracker in the list
    *
-   * Optional (mutually exclusive with the two previous options)
+   * Optional (mutually exclusive with the three previous options)
    * Not available if mode is MANUAL
    */
-  trackers?: { siteId: number | string; trackerUrl: string }[];
+  trackers?: { siteId: number | string; trackerUrl: string; trackerUrlSuffix?: string }[];
 
   /**
    * Download Matomo tracking code from another source
    *
    * Optional
-   * Default is deduced from tracker url
+   * Default is deduced from tracker url (suffixed with 'matomo.js')
    * Not available if mode is MANUAL
    */
   scriptUrl?: string;
