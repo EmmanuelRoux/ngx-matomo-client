@@ -6,6 +6,7 @@ export { NgxMatomoRouterModule } from './lib/ngx-matomo-router.module';
 export {
   MatomoRouterConfiguration,
   MATOMO_ROUTER_CONFIGURATION,
+  ExclusionConfig,
   MatomoRouterConfigurationWithInterceptors,
 } from './lib/configuration';
 export { PageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER } from './lib/page-title-providers';
