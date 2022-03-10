@@ -21,6 +21,7 @@ import {
   INTERNAL_ROUTER_CONFIGURATION,
   InternalRouterConfiguration,
 } from './configuration';
+import { invalidInterceptorsProviderError } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
@@ -61,7 +62,11 @@ export class MatomoRouter {
     @Optional()
     @Inject(MATOMO_ROUTER_INTERCEPTORS)
     private readonly interceptors: MatomoRouterInterceptor[] | null
-  ) {}
+  ) {
+    if (interceptors && !Array.isArray(interceptors)) {
+      throw invalidInterceptorsProviderError();
+    }
+  }
 
   init(): void {
     if (this.config.disabled) {

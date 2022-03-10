@@ -8,6 +8,7 @@ import {
   MATOMO_ROUTER_CONFIGURATION,
   MatomoRouterConfiguration,
 } from './configuration';
+import { invalidInterceptorsProviderError } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
 import { MatomoRouter } from './matomo-router.service';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
@@ -312,5 +313,33 @@ describe('MatomoRouter', () => {
     flush();
     // Then
     expect(tracker.trackPageView).toHaveBeenCalled();
+  }));
+
+  it('should throw an error when interceptors are not declared as multi provider', fakeAsync(() => {
+    // Given
+    const interceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor', [
+      'beforePageTrack',
+    ]);
+    const errorMessage = invalidInterceptorsProviderError().message;
+
+    // Then
+    expect(() =>
+      instantiate({}, {}, [
+        {
+          provide: MATOMO_ROUTER_INTERCEPTORS,
+          useValue: interceptor,
+        },
+      ])
+    ).toThrowError(errorMessage);
+    TestBed.resetTestingModule();
+    expect(() =>
+      instantiate({}, {}, [
+        {
+          provide: MATOMO_ROUTER_INTERCEPTORS,
+          multi: true,
+          useValue: interceptor,
+        },
+      ])
+    ).not.toThrow();
   }));
 });
