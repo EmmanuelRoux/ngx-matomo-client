@@ -779,9 +779,9 @@ export abstract class MatomoTracker {
    */
   setEcommerceView(
     productSKU: string,
-    productName: string,
-    productCategory: string,
-    price: number
+    productName?: string,
+    productCategory?: string,
+    price?: number
   ): void;
 
   /**
