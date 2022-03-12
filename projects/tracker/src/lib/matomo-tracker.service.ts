@@ -24,9 +24,23 @@ export interface MatomoECommerceItem {
   quantity?: number;
 }
 
-export type MatomoECommerceItemView = Required<
-  Pick<MatomoECommerceItem, 'productSKU' | 'productName' | 'productCategory' | 'price'>
->;
+export type MatomoECommerceItemView = Omit<MatomoECommerceItem, 'quantity'>;
+export type MatomoECommerceCategoryView = Required<Pick<MatomoECommerceItem, 'productCategory'>>;
+export type MatomoECommerceView = MatomoECommerceItemView | MatomoECommerceCategoryView;
+
+function isECommerceCategoryView(
+  param: string | MatomoECommerceView
+): param is MatomoECommerceCategoryView {
+  return (
+    typeof param === 'object' && Object.keys(param).length === 1 && param.productCategory != null
+  );
+}
+
+function isECommerceItemView(
+  param: string | MatomoECommerceView
+): param is MatomoECommerceItemView {
+  return typeof param === 'object' && 'productSKU' in param;
+}
 
 /** Matomo's internal tracker instance */
 export interface MatomoInstance {
@@ -769,7 +783,7 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * Set the current page view as a product or category page view.<br />
+   * Set the current page view as a product page view.<br />
    * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
    *
    * @param productSKU SKU of the viewed product.
@@ -785,21 +799,35 @@ export abstract class MatomoTracker {
   ): void;
 
   /**
-   * Set the current page view as a product or category page view.<br />
+   * Set the current page view as a product page view.<br />
    * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
    *
    */
   setEcommerceView(product: MatomoECommerceItemView): void;
 
+  /**
+   * Set the current page view as a category page view.<br />
+   * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
+   *
+   */
+  setEcommerceView(product: MatomoECommerceCategoryView): void;
+
+  /**
+   * Set the current page view as a product or category page view.<br />
+   * When you call setEcommerceView, it must be followed by a call to trackPageView to record the product or category page view.
+   *
+   */
+  setEcommerceView(product: MatomoECommerceView): void;
+
   setEcommerceView(
-    productOrSKU: string | MatomoECommerceItemView,
+    productOrSKU: string | MatomoECommerceView,
     productName?: string,
     productCategory?: string,
     price?: number
   ): void {
-    if (typeof productOrSKU === 'string') {
-      this.push(['setEcommerceView', productOrSKU, productName, productCategory, price]);
-    } else {
+    if (isECommerceCategoryView(productOrSKU)) {
+      this.push(['setEcommerceView', false, false, productOrSKU.productCategory]);
+    } else if (isECommerceItemView(productOrSKU)) {
       this.push([
         'setEcommerceView',
         productOrSKU.productSKU,
@@ -807,6 +835,8 @@ export abstract class MatomoTracker {
         productOrSKU.productCategory,
         productOrSKU.price,
       ]);
+    } else {
+      this.push(['setEcommerceView', productOrSKU, productName, productCategory, price]);
     }
   }
 

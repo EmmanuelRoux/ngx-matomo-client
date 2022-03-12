@@ -5,7 +5,9 @@
 export {
   MatomoTracker,
   MatomoECommerceItem,
+  MatomoECommerceView,
   MatomoECommerceItemView,
+  MatomoECommerceCategoryView,
 } from './lib/matomo-tracker.service';
 export { NgxMatomoTrackerModule } from './lib/ngx-matomo-tracker.module';
 export {

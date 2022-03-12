@@ -224,10 +224,14 @@ describe('MatomoTracker', () => {
           productCategory: 'cat2',
           price: 42,
         });
+        tracker.setEcommerceView({
+          productCategory: 'cat3',
+        });
       },
       [
         ['setEcommerceView', 'sku1', 'name1', 'cat1', 42],
         ['setEcommerceView', 'sku2', 'name2', 'cat2', 42],
+        ['setEcommerceView', false, false, 'cat3'],
       ]
     )
   );
