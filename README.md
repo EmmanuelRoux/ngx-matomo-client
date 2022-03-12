@@ -70,32 +70,6 @@ successful Angular Router navigation event. Under the hood, it calls tracker met
 By default, page title is grabbed from DOM document title and page url is built from Router url. This is fully
 customizable as described in following subsections.
 
-#### Customize page title
-
-You may provide a custom service to return current page title:
-
-```typescript
-import { PageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER } from '@ngx-matomo/router';
-
-@NgModule({
-  // ...
-  providers: [
-    {
-      provide: MATOMO_PAGE_TITLE_PROVIDER,
-      useClass: MyPageTitleProvider,
-    },
-  ],
-})
-export class AppModule {}
-
-@Injectable()
-export class MyPageTitleProvider implements PageTitleProvider {
-  getCurrentPageTitle(event: NavigationEnd): Observable<string> {
-    return of('Whatever you want as current page title');
-  }
-}
-```
-
 #### Customize page url
 
 You may provide a custom service to return current page url:
@@ -122,11 +96,52 @@ export class MyPageUrlProvider implements PageUrlProvider {
 }
 ```
 
-#### Customize anything
+#### Customize anything (page title, ecommerce view...)
 
 You may hook into the tracking process right before `trackPageView` is called. To do so, declare some interceptors using
-the router's configuration `interceptors` property (see [configuration reference](#configuration-reference) for
-details):
+the router's configuration `interceptors` property (see [configuration reference](#configuration-reference)).
+
+A built-in interceptor is provided to collect tracking information from Route data:
+
+```typescript
+const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+    data: {
+      matomo: {
+        title: 'My Home Page Title',
+      },
+    },
+  },
+  {
+    path: 'hello',
+    component: HelloComponent,
+    data: {
+      matomo: {
+        title: 'My Home Page Title',
+        ecommerce: {
+          productSKU: '12345',
+          productName: 'French baguette',
+        } as MatomoECommerceView,
+      },
+    },
+  },
+];
+
+@NgModule({
+  imports: [
+    RouterModule.forRoot(routes),
+    NgxMatomoRouterModule.forRoot({
+      // Declare built-in MatomoRouteDataInterceptor
+      interceptors: [MatomoRouteDataInterceptor],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+If you need custom logic to extract data, provide custom interceptor implementation:
 
 ```typescript
 @NgModule({
@@ -143,22 +158,25 @@ export class MySimpleInterceptor implements MatomoRouterInterceptor {
   constructor(private readonly tracker: MatomoTracker) {}
 
   beforePageTrack(event: NavigationEnd): void {
+    this.tracker.setDocumentTitle('My title');
     this.tracker.setEcommerceView(/* ... */);
   }
 }
 
 @Injectable()
-export class MyAsyncInterceptor implements MatomoRouterInterceptor {
-  constructor(private readonly tracker: MatomoTracker) {}
-
-  async beforePageTrack(event: NavigationEnd): Promise<void> {
-    const value = await this.loadSomething();
-
-    this.tracker.setCustomDimension(1, value);
+export class MyAsyncInterceptor extends MatomoRouteInterceptorBase<string> {
+  constructor(private readonly tracker: MatomoTracker, router: Router) {
+    super(router);
   }
 
-  private async loadSomething(): Promise<string> {
-    return new Promise(/* ... */);
+  protected extractRouteData(route: ActivatedRouteSnapshot): string {
+    return route.paramMap.get('productId');
+  }
+
+  protected async processRouteData(productId: string): Promise<void> {
+    const product = await this.loadProductData(productId);
+
+    this.tracker.setEcommerceView(productId, product.name);
   }
 }
 ```
