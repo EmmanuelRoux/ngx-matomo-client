@@ -3,6 +3,7 @@ import { Event, NavigationEnd, Router } from '@angular/router';
 import { MatomoTracker } from '@ngx-matomo/tracker';
 import {
   combineLatest,
+  concatMap,
   defaultIfEmpty,
   forkJoin,
   from,
@@ -91,10 +92,12 @@ export class MatomoRouter {
         switchMap(event =>
           this.presetPageTitleAndUrl(event).pipe(map(({ pageUrl }) => ({ pageUrl, event })))
         ),
-        // Call interceptors
-        switchMap(context => this.callInterceptors(context.event).pipe(mapTo(context)))
+        // Run interceptors then track page view
+        concatMap(({ event, pageUrl }) =>
+          this.callInterceptors(event).pipe(tap(() => this.trackPageView(pageUrl)))
+        )
       )
-      .subscribe(({ pageUrl }) => this.trackPageView(pageUrl));
+      .subscribe();
   }
 
   private callInterceptors(event: NavigationEnd): Observable<void> {

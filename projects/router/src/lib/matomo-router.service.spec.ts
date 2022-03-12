@@ -342,4 +342,57 @@ describe('MatomoRouter', () => {
       ])
     ).not.toThrow();
   }));
+
+  it('should wait for interceptors to resolve and queue calls', fakeAsync(() => {
+    // Given
+    let slowInterceptorResolve1: () => void;
+    let slowInterceptorResolve2: () => void;
+    let slowInterceptorResolve3: () => void;
+    const slowInterceptorPromise1 = new Promise<void>(
+      resolve => (slowInterceptorResolve1 = resolve)
+    );
+    const slowInterceptorPromise2 = new Promise<void>(
+      resolve => (slowInterceptorResolve2 = resolve)
+    );
+    const slowInterceptorPromise3 = new Promise<void>(
+      resolve => (slowInterceptorResolve3 = resolve)
+    );
+    const slowInterceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('slowInterceptor', [
+      'beforePageTrack',
+    ]);
+    const service = instantiate({ delay: -1 }, { enableLinkTracking: false }, [
+      { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: slowInterceptor },
+    ]);
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    slowInterceptor.beforePageTrack.and.returnValues(
+      slowInterceptorPromise1,
+      slowInterceptorPromise2,
+      slowInterceptorPromise3
+    );
+
+    // When
+    service.init();
+    triggerEvent('/page1');
+    triggerEvent('/page2');
+    triggerEvent('/page3');
+    slowInterceptorResolve2!(); // Resolve #2 first
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+    expect(slowInterceptor.beforePageTrack).toHaveBeenCalledTimes(1);
+
+    // When
+    slowInterceptorResolve1!(); // Resolve #1
+    flush();
+    // Then
+    expect(slowInterceptor.beforePageTrack).toHaveBeenCalledTimes(3);
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(2);
+
+    // When
+    slowInterceptorResolve3!(); // Resolve #3
+    flush();
+    // Then
+    expect(slowInterceptor.beforePageTrack).toHaveBeenCalledTimes(3);
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(3);
+  }));
 });
