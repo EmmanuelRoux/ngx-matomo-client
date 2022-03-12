@@ -18,3 +18,7 @@ export {
   provideInterceptors,
 } from './lib/interceptor';
 export { MatomoRouteInterceptorBase } from './lib/interceptors/route-interceptor-base';
+export {
+  MatomoRouteData,
+  MatomoRouteDataInterceptor,
+} from './lib/interceptors/route-data-interceptor';
