@@ -260,6 +260,28 @@ describe('MatomoInitializerService', () => {
     expectInjectedScript(injectedScript, 'http://myCustomScriptUrl');
   });
 
+  it('should inject script with embedded tracker configuration', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
+      scriptUrl: 'http://myCustomScript.js',
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.init();
+
+    // Then
+    expectInjectedScript(injectedScript, 'http://myCustomScript.js');
+    expect(tracker.setTrackerUrl).not.toHaveBeenCalled();
+    expect(tracker.setSiteId).not.toHaveBeenCalled();
+  });
+
   it('should inject script automatically with multiple trackers', () => {
     // Given
     let injectedScript: HTMLScriptElement | undefined;

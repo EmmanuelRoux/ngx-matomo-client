@@ -58,3 +58,5 @@ import { NgxMatomoRouterModule } from '@ngx-matomo/router';
 })
 export class AppModule {}
 ```
+
+These are example configurations: see all options in [configuration reference](configuration-reference.md).

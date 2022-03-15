@@ -30,13 +30,19 @@
       "type": "string",
       "description": "The Matomo server url",
       "alias": "s",
-      "x-prompt": "What is your Matomo server url?"
+      "x-prompt": "What is your Matomo server url? (leave blank if pre-defined)"
     },
     "siteId": {
       "type": "string",
       "description": "The Matomo site ID",
       "alias": "id",
-      "x-prompt": "What is your Matomo site ID?"
+      "x-prompt": "What is your Matomo site ID? (leave blank if pre-defined)"
+    },
+    "scriptUrl": {
+      "type": "string",
+      "description": "The Matomo script url",
+      "alias": "js",
+      "x-prompt": "What is your Matomo script url? (leave blank to use default)"
     },
     "router": {
       "type": "boolean",

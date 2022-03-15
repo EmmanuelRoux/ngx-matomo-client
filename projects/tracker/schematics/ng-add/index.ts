@@ -63,14 +63,40 @@ function addPackageJsonDependencies(options: Options) {
   };
 }
 
-function buildTrackerConfig(options: Options): string {
+function buildTrackerConfig(
+  options: Options,
+  context: SchematicContext,
+  modulePath: string
+): string {
   const trackerUrl = escapeLiteral(options.serverUrl || '');
   const siteId = escapeLiteral(options.siteId || '');
+  const scriptUrl = escapeLiteral(options.scriptUrl || '');
+  const embeddedMode = !!scriptUrl && !trackerUrl && !siteId;
+  let config: string;
 
-  return `{ trackerUrl: '${trackerUrl}', siteId: '${siteId}' }`;
+  if (embeddedMode) {
+    config = `{ scriptUrl: '${scriptUrl}' }`;
+  } else {
+    if (scriptUrl) {
+      config = `{ trackerUrl: '${trackerUrl}', siteId: '${siteId}', scriptUrl: '${scriptUrl}' }`;
+    } else {
+      config = `{ trackerUrl: '${trackerUrl}', siteId: '${siteId}' }`;
+    }
+
+    if (!trackerUrl || !siteId) {
+      context.logger.warn(
+        'Configuration properties "siteId" and "trackerUrl" are usually required. ' +
+          'You will need to manually update your configuration in "' +
+          modulePath +
+          "'. "
+      );
+    }
+  }
+
+  return config;
 }
 
-function addImportsToNgModule(options: Options): Rule {
+function addImportsToNgModule(options: Options, context: SchematicContext): Rule {
   return (host: Tree) => {
     const modulePath = options.module;
 
@@ -79,7 +105,8 @@ function addImportsToNgModule(options: Options): Rule {
     }
 
     const source = readIntoSourceFile(host, modulePath);
-    const trackerDeclaration = `NgxMatomoTrackerModule.forRoot(${buildTrackerConfig(options)})`;
+    const trackerConfig = buildTrackerConfig(options, context, modulePath);
+    const trackerDeclaration = `NgxMatomoTrackerModule.forRoot(${trackerConfig})`;
     const routerDeclaration = 'NgxMatomoRouterModule';
 
     let changes = addImportToModule(source, modulePath, trackerDeclaration, '@ngx-matomo/tracker');
@@ -104,7 +131,7 @@ function addImportsToNgModule(options: Options): Rule {
 }
 
 export function ngAdd(options: Options): Rule {
-  return async host => {
+  return async (host, context) => {
     if (options.path === undefined) {
       options.path = await createDefaultPath(host, options.project!);
     }
@@ -116,6 +143,6 @@ export function ngAdd(options: Options): Rule {
       name: '',
     });
 
-    return chain([addPackageJsonDependencies(options), addImportsToNgModule(options)]);
+    return chain([addPackageJsonDependencies(options), addImportsToNgModule(options, context)]);
   };
 }

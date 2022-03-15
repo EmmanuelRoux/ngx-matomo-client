@@ -5,5 +5,6 @@ export interface Schema {
   project?: string;
   serverUrl?: string;
   siteId?: string;
+  scriptUrl?: string;
   router?: boolean;
 }

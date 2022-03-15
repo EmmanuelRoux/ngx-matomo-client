@@ -15,7 +15,7 @@ import {
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
   InternalMatomoConfiguration,
-  isManualConfiguration,
+  isExplicitTrackerConfiguration,
 } from '../configuration';
 
 const DEFAULT_BORDER = '0';
@@ -42,11 +42,12 @@ function missingServerUrlError(): Error {
   templateUrl: './matomo-opt-out-form.component.html',
 })
 export class MatomoOptOutFormComponent implements OnInit, OnChanges {
+  private readonly _defaultServerUrl?: string;
+
   private _border: string = DEFAULT_BORDER;
   private _width: string = DEFAULT_WIDTH;
   private _height: string = DEFAULT_HEIGHT;
   private _iframeSrc: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
-  private _defaultServerUrl?: string;
   private _serverUrlOverride?: SafeResourceUrl;
 
   /**
@@ -70,7 +71,7 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
     // Set default locale
     this.locale = locale;
 
-    if (!isManualConfiguration(this.config)) {
+    if (isExplicitTrackerConfiguration(this.config)) {
       this._defaultServerUrl = getTrackersConfiguration(this.config)[0].trackerUrl;
     }
   }

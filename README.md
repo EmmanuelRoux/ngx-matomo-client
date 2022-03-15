@@ -27,6 +27,7 @@ Matomo (fka. Piwik) client for Angular applications
 - [Advanced use cases](#advanced-use-cases)
   * [Customizing script tag](#customizing-script-tag)
   * [Server-side rendering (SSR) with Angular Universal](#server-side-rendering-ssr-with-angular-universal)
+  * [Scripts with pre-defined (embedded) tracker configuration (Tag Manager variable...)](#scripts-with-pre-defined-embedded-tracker-configuration-tag-manager-variable)
 - [Roadmap](#roadmap)
 - [Launch demo app](#launch-demo-app)
 
@@ -497,6 +498,29 @@ token.
 ### Server-side rendering (SSR) with Angular Universal
 
 Ngx-matomo cannot be used server-side and automatically disables itself on non-browser platforms.
+
+### Scripts with pre-defined (embedded) tracker configuration (Tag Manager variable...)
+
+If your tracker configuration is embedded in JS client (e.g. from a Tag Manager _variable_), you don't have to set
+yourself the `trackerUrl` and `siteId`.
+
+During install with `ng add`, leave `serverUrl` and `siteId` blank and provide a value for `scriptUrl`.
+
+Your configuration should look like that:
+
+```typescript
+import { NgModule } from '@angular/core';
+import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+
+@NgModule({
+  imports: [
+    NgxMatomoTrackerModule.forRoot({
+      scriptUrl: 'YOUR_MATOMO_SCRIPT_URL', // your Matomo's script url
+    }),
+  ],
+})
+export class AppModule {}
+```
 
 ## Roadmap
 

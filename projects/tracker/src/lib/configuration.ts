@@ -111,7 +111,7 @@ export interface BaseAutoMatomoConfiguration {
   mode?: MatomoInitializationMode.AUTO;
 
   /** Matomo script url (default is `matomo.js` appended to main tracker url) */
-  scriptUrl?: string;
+  scriptUrl: string;
 }
 
 type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
@@ -125,16 +125,46 @@ export type ManualMatomoConfiguration = {
   mode: MatomoInitializationMode.MANUAL;
 };
 
-export type AutoMatomoConfiguration = BaseAutoMatomoConfiguration &
+export type ExplicitAutoConfiguration = Partial<BaseAutoMatomoConfiguration> &
   XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
+export type EmbeddedAutoConfiguration = BaseAutoMatomoConfiguration &
+  Partial<MultiTrackersConfiguration>;
+
+export type AutoMatomoConfiguration = XOR<ExplicitAutoConfiguration, EmbeddedAutoConfiguration>;
 
 export type MatomoConfiguration = BaseMatomoConfiguration &
   XOR<AutoMatomoConfiguration, ManualMatomoConfiguration>;
 
-export function isManualConfiguration(
+export function isAutoConfigurationMode(
   config: MatomoConfiguration
-): config is ManualMatomoConfiguration {
-  return config.mode === MatomoInitializationMode.MANUAL;
+): config is AutoMatomoConfiguration {
+  return config.mode !== MatomoInitializationMode.MANUAL;
+}
+
+function hasMainTrackerConfiguration(
+  config: AutoMatomoConfiguration
+): config is ExplicitAutoConfiguration {
+  // If one is undefined, both should be
+  return config.siteId != null && config.trackerUrl != null;
+}
+
+export function isEmbeddedTrackerConfiguration(
+  config: MatomoConfiguration
+): config is EmbeddedAutoConfiguration {
+  return (
+    isAutoConfigurationMode(config) &&
+    config.scriptUrl != null &&
+    !hasMainTrackerConfiguration(config)
+  );
+}
+
+export function isExplicitTrackerConfiguration(
+  config: MatomoConfiguration
+): config is ExplicitAutoConfiguration {
+  return (
+    isAutoConfigurationMode(config) &&
+    (hasMainTrackerConfiguration(config) || isMultiTrackerConfiguration(config))
+  );
 }
 
 export function isMultiTrackerConfiguration(
@@ -144,7 +174,7 @@ export function isMultiTrackerConfiguration(
 }
 
 export function getTrackersConfiguration(
-  config: AutoMatomoConfiguration
+  config: ExplicitAutoConfiguration
 ): MatomoTrackerConfiguration[] {
   return isMultiTrackerConfiguration(config)
     ? config.trackers
