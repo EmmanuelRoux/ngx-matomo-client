@@ -1,3 +1,10 @@
+# [2.4.0-next.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.0-next.1...v2.4.0-next.2) (2022-03-16)
+
+
+### Bug Fixes
+
+* **schematics:** use correct version in schematics ([d0c7667](https://github.com/EmmanuelRoux/ngx-matomo/commit/d0c7667bbfd94d140b51261c485cd201201b3ca5))
+
 # [2.4.0-next.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.3.0...v2.4.0-next.1) (2022-03-16)
 
 
