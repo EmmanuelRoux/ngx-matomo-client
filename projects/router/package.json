@@ -1,6 +1,6 @@
 {
   "name": "@ngx-matomo/router",
-  "version": "2.4.0-next.2",
+  "version": "2.4.0-next.3",
   "author": "Emmanuel Roux (https://github.com/EmmanuelRoux)",
   "description": "Plugin or @ngx-matomo/tracker, a Matomo (fka. Piwik) client for Angular applications",
   "keywords": [
@@ -13,7 +13,7 @@
     "@angular/common": "^13.0.0",
     "@angular/core": "^13.0.0",
     "@angular/router": "^13.0.0",
-    "@ngx-matomo/tracker": "2.4.0-next.2"
+    "@ngx-matomo/tracker": "2.4.0-next.3"
   },
   "dependencies": {
     "tslib": "^2.0.0"

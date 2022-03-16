@@ -1,3 +1,27 @@
+# [2.4.0-next.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.0-next.2...v2.4.0-next.3) (2022-03-16)
+
+
+### Bug Fixes
+
+* **router:** correctly queue concurrent tracking calls ([54882b4](https://github.com/EmmanuelRoux/ngx-matomo/commit/54882b4668f1af4d04a621632a4e659328d9ef37)), closes [#33](https://github.com/EmmanuelRoux/ngx-matomo/issues/33)
+
+
+### Documentation
+
+* **router:** deprecate PageTitleProvider and MATOMO_PAGE_TITLE_PROVIDER ([61db04a](https://github.com/EmmanuelRoux/ngx-matomo/commit/61db04a42e4e702b74facee03bf23d810b739df9))
+
+
+### Features
+
+* **tracker:** add support for pre-defined tracker ([ee9364d](https://github.com/EmmanuelRoux/ngx-matomo/commit/ee9364d5667121763765b13980b239ca8b610568)), closes [#32](https://github.com/EmmanuelRoux/ngx-matomo/issues/32)
+
+
+### Deprecations
+
+* **router:** Interface `PageTitleProvider` and injection token `MATOMO_PAGE_TITLE_PROVIDER` are now deprecated.
+Use `MatomoRouterInterceptor` instead, for example declared in `NgxMatomoRouterModule.forRoot()`.
+See documentation for details on how to configure interceptors.
+
 # [2.4.0-next.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.0-next.1...v2.4.0-next.2) (2022-03-16)
 
 
