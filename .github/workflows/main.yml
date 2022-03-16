@@ -63,7 +63,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   publish-npm:
-    needs: [ lint, test ]
+    needs: [lint, test]
     runs-on: ubuntu-latest
     env:
       GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
