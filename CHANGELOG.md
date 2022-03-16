@@ -1,3 +1,20 @@
+# [2.4.0-next.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.3.0...v2.4.0-next.1) (2022-03-16)
+
+
+### Bug Fixes
+
+* **router:** check for invalid interceptors config ([0b6686d](https://github.com/EmmanuelRoux/ngx-matomo/commit/0b6686d4fbb7031a81c94bddd99abebf6bc7ba0c))
+* **router:** export missing public api symbol ([d77aba0](https://github.com/EmmanuelRoux/ngx-matomo/commit/d77aba0385de19128a0cc423f16926f80376dabd))
+* **router:** simplify interceptors config ([ce407dd](https://github.com/EmmanuelRoux/ngx-matomo/commit/ce407ddb081c15e58d46fa9c20b5cf6f63949bca)), closes [#12](https://github.com/EmmanuelRoux/ngx-matomo/issues/12)
+* **tracker:** allow tracking ecommerce category page ([9e14ca5](https://github.com/EmmanuelRoux/ngx-matomo/commit/9e14ca5fdd1ccc70ccdae5c69c73e7568a527417)), closes [#34](https://github.com/EmmanuelRoux/ngx-matomo/issues/34)
+* **tracker:** make ecommerce parameters optional ([382f5dc](https://github.com/EmmanuelRoux/ngx-matomo/commit/382f5dc479beef7365776d78ad54aed728abdc2b))
+
+
+### Features
+
+* **router:** add built-in route data interceptor ([dfd9409](https://github.com/EmmanuelRoux/ngx-matomo/commit/dfd9409f24de18b8c8e9096c0210f8434ae5d5f7)), closes [#12](https://github.com/EmmanuelRoux/ngx-matomo/issues/12)
+* **router:** provide base implementation for interceptors depending on ActivatedRoute ([39904e7](https://github.com/EmmanuelRoux/ngx-matomo/commit/39904e7c4432878eebd1e036ea94ef0c2e71a613)), closes [#12](https://github.com/EmmanuelRoux/ngx-matomo/issues/12)
+
 # [2.3.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.2.1...v2.3.0) (2022-02-28)
 
 
