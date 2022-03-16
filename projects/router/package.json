@@ -31,5 +31,11 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
+  },
+  "ng-update": {
+    "packageGroup": [
+      "@ngx-matomo/tracker",
+      "@ngx-matomo/router"
+    ]
   }
 }
