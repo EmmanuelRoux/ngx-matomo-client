@@ -1,6 +1,7 @@
 // #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 const { LIBRARIES, DIST_DIR, SOURCES_DIR, LIB_TRACKER } = require('./constants');
 const { readPkgJson, writePkgJson, getPkgName } = require('./utils');
 const [version] = process.argv.slice(2);
@@ -38,7 +39,9 @@ function updateLibVersion(libName) {
 
   if (libName === LIB_TRACKER) {
     updateSchematicsVersion(sourceDir);
-    updateSchematicsVersion(distDir);
+    // Schematics .ts file should be recompiled to .js (not as simple as overwriting version in dist .js file)
+    // So updateSchematicsVersion(distDir) would not be sufficient
+    execSync('npm run build:prod:schematics', { stdio: 'inherit' });
   }
 }
 

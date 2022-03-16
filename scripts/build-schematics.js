@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { ncp } = require('ncp');
-const { exec } = require('child_process');
+const { execSync } = require('child_process');
 const { DIST_DIR, LOCAL_DIST_DIR, SOURCES_DIR, LIB_TRACKER } = require('./constants');
 
 const isProd = process.argv.includes('--prod');
@@ -9,15 +9,11 @@ const distDir = path.resolve(isProd ? DIST_DIR : LOCAL_DIST_DIR, LIB_TRACKER);
 const sourceDir = path.resolve(SOURCES_DIR, LIB_TRACKER);
 const tsconfigPath = isProd ? 'tsconfig.schematics.prod.json' : 'tsconfig.schematics.json';
 
-function errorHandler(error) {
-  if (error) {
-    console.error('Unable to build schematics: ', error);
-    return process.exit(1);
-  }
-}
-
 function build() {
-  exec(`"../../node_modules/.bin/tsc" -p ${tsconfigPath}`, { cwd: sourceDir }, errorHandler);
+  execSync(`"../../node_modules/.bin/tsc" -p ${tsconfigPath}`, {
+    cwd: sourceDir,
+    stdio: 'inherit',
+  });
 }
 
 /**
