@@ -1,3 +1,35 @@
+# [2.4.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.3.0...v2.4.0) (2022-03-16)
+
+
+### Bug Fixes
+
+* **router:** check for invalid interceptors config ([0b6686d](https://github.com/EmmanuelRoux/ngx-matomo/commit/0b6686d4fbb7031a81c94bddd99abebf6bc7ba0c))
+* **router:** correctly queue concurrent tracking calls ([54882b4](https://github.com/EmmanuelRoux/ngx-matomo/commit/54882b4668f1af4d04a621632a4e659328d9ef37)), closes [#33](https://github.com/EmmanuelRoux/ngx-matomo/issues/33)
+* **router:** export missing public api symbol ([d77aba0](https://github.com/EmmanuelRoux/ngx-matomo/commit/d77aba0385de19128a0cc423f16926f80376dabd))
+* **router:** simplify interceptors config ([ce407dd](https://github.com/EmmanuelRoux/ngx-matomo/commit/ce407ddb081c15e58d46fa9c20b5cf6f63949bca)), closes [#12](https://github.com/EmmanuelRoux/ngx-matomo/issues/12)
+* **schematics:** use correct version in schematics ([d0c7667](https://github.com/EmmanuelRoux/ngx-matomo/commit/d0c7667bbfd94d140b51261c485cd201201b3ca5))
+* **tracker:** allow tracking ecommerce category page ([9e14ca5](https://github.com/EmmanuelRoux/ngx-matomo/commit/9e14ca5fdd1ccc70ccdae5c69c73e7568a527417)), closes [#34](https://github.com/EmmanuelRoux/ngx-matomo/issues/34)
+* **tracker:** make ecommerce parameters optional ([382f5dc](https://github.com/EmmanuelRoux/ngx-matomo/commit/382f5dc479beef7365776d78ad54aed728abdc2b))
+
+
+### Documentation
+
+* **router:** deprecate PageTitleProvider and MATOMO_PAGE_TITLE_PROVIDER ([61db04a](https://github.com/EmmanuelRoux/ngx-matomo/commit/61db04a42e4e702b74facee03bf23d810b739df9))
+
+
+### Features
+
+* **router:** add built-in route data interceptor ([dfd9409](https://github.com/EmmanuelRoux/ngx-matomo/commit/dfd9409f24de18b8c8e9096c0210f8434ae5d5f7)), closes [#12](https://github.com/EmmanuelRoux/ngx-matomo/issues/12)
+* **router:** provide base implementation for interceptors depending on ActivatedRoute ([39904e7](https://github.com/EmmanuelRoux/ngx-matomo/commit/39904e7c4432878eebd1e036ea94ef0c2e71a613)), closes [#12](https://github.com/EmmanuelRoux/ngx-matomo/issues/12)
+* **tracker:** add support for pre-defined tracker ([ee9364d](https://github.com/EmmanuelRoux/ngx-matomo/commit/ee9364d5667121763765b13980b239ca8b610568)), closes [#32](https://github.com/EmmanuelRoux/ngx-matomo/issues/32)
+
+
+### Deprecations
+
+* **router:** Interface `PageTitleProvider` and injection token `MATOMO_PAGE_TITLE_PROVIDER` are now deprecated.
+Use `MatomoRouterInterceptor` instead, for example declared in `NgxMatomoRouterModule.forRoot()`.
+See documentation for details on how to configure interceptors.
+
 # [2.4.0-next.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.0-next.2...v2.4.0-next.3) (2022-03-16)
 
 
