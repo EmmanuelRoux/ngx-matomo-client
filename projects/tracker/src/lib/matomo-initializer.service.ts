@@ -1,4 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
+
 import {
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
@@ -19,7 +20,14 @@ function appendTrailingSlash(str: string): string {
   return str.endsWith('/') ? str : `${str}/`;
 }
 
-const TRACKER_SUFFIX = 'matomo.php';
+function buildTrackerUrl(url: string, suffix: string | undefined): string {
+  if (suffix == null) {
+    return appendTrailingSlash(url) + DEFAULT_TRACKER_SUFFIX;
+  }
+  return url + suffix;
+}
+
+const DEFAULT_TRACKER_SUFFIX = 'matomo.php';
 const DEFAULT_SCRIPT_SUFFIX = 'matomo.js';
 
 export function createMatomoInitializer(
@@ -61,17 +69,17 @@ export class MatomoInitializerService {
       const tracker = this.injector.get(MatomoTracker);
       const { scriptUrl: customScriptUrl } = this.config;
       const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(this.config);
-      const mainTrackerUrl = appendTrailingSlash(mainTracker.trackerUrl);
+      const mainTrackerUrl = buildTrackerUrl(mainTracker.trackerUrl, mainTracker.trackerUrlSuffix);
       const mainTrackerSiteId = coerceSiteId(mainTracker.siteId);
 
-      tracker.setTrackerUrl(mainTrackerUrl + TRACKER_SUFFIX);
+      tracker.setTrackerUrl(mainTrackerUrl);
       tracker.setSiteId(mainTrackerSiteId);
 
-      additionalTrackers.forEach(({ trackerUrl, siteId }) => {
-        const additionalTrackerUrl = appendTrailingSlash(trackerUrl);
+      additionalTrackers.forEach(({ trackerUrl, siteId, trackerUrlSuffix }) => {
+        const additionalTrackerUrl = buildTrackerUrl(trackerUrl, trackerUrlSuffix);
         const additionalTrackerSiteId = coerceSiteId(siteId);
 
-        tracker.addTracker(additionalTrackerUrl + TRACKER_SUFFIX, additionalTrackerSiteId);
+        tracker.addTracker(additionalTrackerUrl, additionalTrackerSiteId);
       });
 
       const d = window.document;
@@ -81,7 +89,8 @@ export class MatomoInitializerService {
       g.type = 'text/javascript';
       g.async = true;
       g.defer = true;
-      g.src = customScriptUrl ?? mainTrackerUrl + DEFAULT_SCRIPT_SUFFIX;
+      g.src =
+        customScriptUrl ?? appendTrailingSlash(mainTracker.trackerUrl) + DEFAULT_SCRIPT_SUFFIX;
       s.parentNode!.insertBefore(g, s); // Parent node has at least one script tag: ourself :-)
     }
   }

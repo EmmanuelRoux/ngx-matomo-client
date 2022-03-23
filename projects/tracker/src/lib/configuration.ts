@@ -1,4 +1,5 @@
 import { inject, InjectFlags, InjectionToken } from '@angular/core';
+
 import { requireNonNull } from './coercion';
 
 const CONFIG_NOT_FOUND =
@@ -53,6 +54,9 @@ export interface MatomoTrackerConfiguration {
 
   /** Matomo server url */
   trackerUrl: string;
+
+  /** The trackerUrlSuffix is always appended to the trackerUrl. It defaults to matomo.php */
+  trackerUrlSuffix?: string;
 }
 
 export interface MultiTrackersConfiguration {
@@ -145,5 +149,11 @@ export function getTrackersConfiguration(
 ): MatomoTrackerConfiguration[] {
   return isMultiTrackerConfiguration(config)
     ? config.trackers
-    : [{ trackerUrl: config.trackerUrl, siteId: config.siteId }];
+    : [
+        {
+          trackerUrl: config.trackerUrl,
+          siteId: config.siteId,
+          trackerUrlSuffix: config.trackerUrlSuffix,
+        },
+      ];
 }

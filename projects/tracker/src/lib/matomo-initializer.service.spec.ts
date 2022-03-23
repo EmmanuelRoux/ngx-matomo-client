@@ -1,5 +1,6 @@
 import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+
 import {
   InternalMatomoConfiguration,
   MATOMO_CONFIGURATION,
@@ -264,6 +265,42 @@ describe('MatomoInitializerService', () => {
     expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl1/matomo.php');
     expect(tracker.setSiteId).toHaveBeenCalledOnceWith('site1');
     expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl2/matomo.php', 'site2');
+    expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl3/matomo.php', 'site3');
+    expect(tracker.addTracker).toHaveBeenCalledTimes(2);
+  });
+
+  it('should append custom tracker suffix if configured, matomo.php otherwise', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
+      trackers: [
+        { siteId: 'site1', trackerUrl: 'http://fakeTrackerUrl1', trackerUrlSuffix: '' },
+        {
+          siteId: 'site2',
+          trackerUrl: 'http://fakeTrackerUrl2',
+          trackerUrlSuffix: '/custom-tracker.php',
+        },
+        { siteId: 'site3', trackerUrl: 'http://fakeTrackerUrl3' },
+      ],
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    spyOn(tracker, 'addTracker');
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.init();
+
+    // Then
+    expectInjectedScript(injectedScript, 'http://fakeTrackerUrl1/matomo.js');
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl1');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('site1');
+    expect(tracker.addTracker).toHaveBeenCalledWith(
+      'http://fakeTrackerUrl2/custom-tracker.php',
+      'site2'
+    );
     expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl3/matomo.php', 'site3');
     expect(tracker.addTracker).toHaveBeenCalledTimes(2);
   });
