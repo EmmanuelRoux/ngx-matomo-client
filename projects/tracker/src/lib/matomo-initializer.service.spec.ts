@@ -2,8 +2,11 @@ import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import {
-    InternalMatomoConfiguration, MATOMO_CONFIGURATION, MatomoConfiguration, MatomoConsentMode,
-    MatomoInitializationMode
+  InternalMatomoConfiguration,
+  MATOMO_CONFIGURATION,
+  MatomoConfiguration,
+  MatomoConsentMode,
+  MatomoInitializationMode,
 } from './configuration';
 import { MatomoHolder } from './holder';
 import { MatomoInitializerService } from './matomo-initializer.service';

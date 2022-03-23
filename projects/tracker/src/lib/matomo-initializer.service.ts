@@ -1,8 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
 
 import {
-    getTrackersConfiguration, INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration,
-    isManualConfiguration, MatomoConsentMode
+  getTrackersConfiguration,
+  INTERNAL_MATOMO_CONFIGURATION,
+  InternalMatomoConfiguration,
+  isManualConfiguration,
+  MatomoConsentMode,
 } from './configuration';
 import { initializeMatomoHolder, MatomoHolder } from './holder';
 import { MatomoTracker } from './matomo-tracker.service';
@@ -86,7 +89,8 @@ export class MatomoInitializerService {
       g.type = 'text/javascript';
       g.async = true;
       g.defer = true;
-      g.src = customScriptUrl ?? appendTrailingSlash(mainTracker.trackerUrl) + DEFAULT_SCRIPT_SUFFIX;
+      g.src =
+        customScriptUrl ?? appendTrailingSlash(mainTracker.trackerUrl) + DEFAULT_SCRIPT_SUFFIX;
       s.parentNode!.insertBefore(g, s); // Parent node has at least one script tag: ourself :-)
     }
   }
