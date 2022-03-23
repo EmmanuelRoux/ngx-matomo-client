@@ -1,3 +1,10 @@
+## [1.3.5](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.4...v1.3.5) (2022-03-23)
+
+
+### Bug Fixes
+
+* **tracker:** add option to override matomo.php suffix which is automatically appended to trackerUrl ([d133bba](https://github.com/EmmanuelRoux/ngx-matomo/commit/d133bba308bcac889d6982525587ec9d95d4e3b0)), closes [#38](https://github.com/EmmanuelRoux/ngx-matomo/issues/38)
+
 ## [1.3.4](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.3...v1.3.4) (2021-11-22)
 
 
