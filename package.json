@@ -31,7 +31,7 @@
     "semantic-release": "semantic-release",
     "semantic-release:prepare-ci": "chmod +x -R ./scripts/",
     "semantic-release:ci": "npm run semantic-release:prepare-ci && npm run semantic-release",
-    "update:toc": "markdown-toc README.md -i --maxdepth=3",
+    "update:toc": "markdown-toc README.md -i --maxdepth=3 && markdown-toc CONTRIBUTING.md -i --maxdepth=3",
     "prepare": "husky install"
   },
   "dependencies": {
