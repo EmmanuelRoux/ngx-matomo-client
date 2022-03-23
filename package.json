@@ -27,7 +27,7 @@
     "test:ci": "ng test --no-watch --no-progress --code-coverage --browsers=ChromeHeadlessCI",
     "lint": "ng lint && npm run prettier:check",
     "prettier:check": "prettier --check .",
-    "prettier:format": "prettier --write .",
+    "format": "prettier --write .",
     "semantic-release": "semantic-release",
     "semantic-release:prepare-ci": "chmod +x -R ./scripts/",
     "semantic-release:ci": "npm run semantic-release:prepare-ci && npm run semantic-release",
