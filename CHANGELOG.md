@@ -1,3 +1,10 @@
+## [2.4.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.0...v2.4.1) (2022-03-31)
+
+
+### Bug Fixes
+
+* **router:** use correct rxjs import path ([fe15b20](https://github.com/EmmanuelRoux/ngx-matomo/commit/fe15b20c5ccea09d7529145ae76b6e59ee69e867)), closes [#42](https://github.com/EmmanuelRoux/ngx-matomo/issues/42)
+
 # [2.4.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.3.0...v2.4.0) (2022-03-16)
 
 
