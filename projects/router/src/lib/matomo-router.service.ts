@@ -3,20 +3,25 @@ import { Event, NavigationEnd, Router } from '@angular/router';
 import { MatomoTracker } from '@ngx-matomo/tracker';
 import {
   combineLatest,
-  concatMap,
-  defaultIfEmpty,
   forkJoin,
   from,
   identity,
-  map,
-  mapTo,
   MonoTypeOperatorFunction,
   Observable,
   of,
+} from 'rxjs';
+import {
+  concatMap,
+  defaultIfEmpty,
+  delay,
+  distinctUntilKeyChanged,
+  filter,
+  map,
+  mapTo,
+  switchMap,
   take,
   tap,
-} from 'rxjs';
-import { delay, distinctUntilKeyChanged, filter, switchMap } from 'rxjs/operators';
+} from 'rxjs/operators';
 import {
   ExclusionConfig,
   INTERNAL_ROUTER_CONFIGURATION,
@@ -108,9 +113,9 @@ export class MatomoRouter {
           const result$ = result == null ? of(undefined) : from(result);
 
           // Must not be an empty observable (otherwise forkJoin would complete without waiting others)
-          return result$.pipe(take(1), defaultIfEmpty(undefined));
+          return result$.pipe(take(1), defaultIfEmpty(undefined as void));
         })
-      ).pipe(mapTo(undefined), defaultIfEmpty(undefined));
+      ).pipe(mapTo(undefined), defaultIfEmpty(undefined as void));
     } else {
       return of(undefined);
     }
