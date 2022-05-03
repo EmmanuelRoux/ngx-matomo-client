@@ -153,6 +153,27 @@ describe('MatomoInitializerService', () => {
     expect(tracker.requireCookieConsent).toHaveBeenCalledBefore(tracker.trackPageView);
   });
 
+  it('should enable JS errors tracking if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.MANUAL,
+      trackAppInitialLoad: true,
+      enableJSErrorTracking: true,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'enableJSErrorTracking');
+
+    // When
+    service.init();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(1);
+    expect(tracker.enableJSErrorTracking).toHaveBeenCalledTimes(1);
+    expect(tracker.enableJSErrorTracking).toHaveBeenCalledBefore(tracker.trackPageView);
+  });
+
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
     const mockContainer = jasmine.createSpyObj<HTMLElement>('FakeContainer', ['insertBefore']);
     const mockExistingScript = jasmine.createSpyObj<HTMLScriptElement>('FakeExistingScript', [], {

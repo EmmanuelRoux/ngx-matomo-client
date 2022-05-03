@@ -109,6 +109,10 @@ export class MatomoInitializerService {
       tracker.requireConsent();
     }
 
+    if (this.config.enableJSErrorTracking) {
+      tracker.enableJSErrorTracking();
+    }
+
     if (this.config.trackAppInitialLoad) {
       tracker.trackPageView();
     }
