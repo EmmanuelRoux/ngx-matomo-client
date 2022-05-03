@@ -89,24 +89,22 @@ class HostWithCustomHandler2Component {
 describe('MatomoTrackerDirective', () => {
   let tracker: jasmine.SpyObj<MatomoTracker>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        providers: [
-          {
-            provide: MatomoTracker,
-            useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
-          },
-        ],
-        declarations: [
-          HostWithInputEventsComponent,
-          MatomoTrackerDirective,
-          HostWithCustomHandler1Component,
-          HostWithCustomHandler2Component,
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: MatomoTracker,
+          useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
+        },
+      ],
+      declarations: [
+        HostWithInputEventsComponent,
+        MatomoTrackerDirective,
+        HostWithCustomHandler1Component,
+        HostWithCustomHandler2Component,
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;

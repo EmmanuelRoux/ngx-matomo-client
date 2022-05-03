@@ -31,19 +31,17 @@ describe('MatomoTrackClickDirective', () => {
   let fixture: ComponentFixture<HostComponent>;
   let tracker: jasmine.SpyObj<MatomoTracker>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        providers: [
-          {
-            provide: MatomoTracker,
-            useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
-          },
-        ],
-        declarations: [HostComponent, MatomoTrackClickDirective],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: MatomoTracker,
+          useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
+        },
+      ],
+      declarations: [HostComponent, MatomoTrackClickDirective],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
