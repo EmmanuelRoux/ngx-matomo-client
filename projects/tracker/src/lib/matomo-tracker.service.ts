@@ -1258,6 +1258,16 @@ export abstract class MatomoTracker {
     this.push(['alwaysUseSendBeacon']);
   }
 
+  /**
+   * Enable Javascript errors tracking. JS errors are then tracked as events with category
+   * "JavaScript Errors". Refer to official doc for more details.
+   *
+   * @see https://matomo.org/faq/how-to/how-do-i-enable-basic-javascript-error-tracking-and-reporting-in-matomo-browser-console-error-messages/
+   */
+  enableJSErrorTracking(): void {
+    this.push(['enableJSErrorTracking']);
+  }
+
   /** Asynchronously call provided method name on matomo tracker instance */
   protected get<G extends Getters<MatomoInstance>>(
     getter: G

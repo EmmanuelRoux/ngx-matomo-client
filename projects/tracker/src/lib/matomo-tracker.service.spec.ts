@@ -405,6 +405,8 @@ describe('MatomoTracker', () => {
 
   it('should set requestQueueInterval', expectSimpleMethod('setRequestQueueInterval', [4200]));
 
+  it('should enable JS error tracking', expectSimpleMethod('enableJSErrorTracking', []));
+
   function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>, E extends T = T>(
     getter: G,
     mockInstance: Partial<MatomoInstance>,
