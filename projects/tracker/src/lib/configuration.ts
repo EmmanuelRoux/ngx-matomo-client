@@ -94,7 +94,7 @@ export interface BaseMatomoConfiguration {
    * - In the context of <b>tracking consent</b> no cookies will be used and no tracking request
    *   will be sent unless consent was given. As soon as consent was given, tracking requests will
    *   be sent and cookies will be used.
-   * - In the context of <b>cookie consent</b> tracking requests will be always sent. However,
+   * - In the context of <b>cookie consent</b> tracking requests will always be sent. However,
    *   cookies will be only used if consent for storing and using cookies was given by the user.
    *
    * Note that cookies impact reports accuracy.

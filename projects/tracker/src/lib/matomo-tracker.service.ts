@@ -1240,7 +1240,7 @@ export abstract class MatomoTracker {
   /**
    * Defines after how many ms a queued requests will be executed after the request was queued initially
    * <p/>
-   * The higher the value the more tracking requests can be send together at once
+   * The higher the value the more tracking requests can be sent together at once
    *
    * @param interval Interval in milliseconds, must be at least 1000, defaults to 2500
    */
@@ -1248,12 +1248,12 @@ export abstract class MatomoTracker {
     this.push(['setRequestQueueInterval', interval]);
   }
 
-  /** Disable sending tracking tracking requests using `navigator.sendBeacon` which is enabled by default */
+  /** Disable sending tracking requests using `navigator.sendBeacon` which is enabled by default */
   disableAlwaysUseSendBeacon(): void {
     this.push(['disableAlwaysUseSendBeacon']);
   }
 
-  /** Enable sending tracking tracking requests using `navigator.sendBeacon` (enabled by default) */
+  /** Enable sending tracking requests using `navigator.sendBeacon` (enabled by default) */
   alwaysUseSendBeacon(): void {
     this.push(['alwaysUseSendBeacon']);
   }
