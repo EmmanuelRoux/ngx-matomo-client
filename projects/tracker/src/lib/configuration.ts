@@ -20,6 +20,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
         enableLinkTracking: true,
         trackAppInitialLoad: false,
         requireConsent: MatomoConsentMode.NONE,
+        enableJSErrorTracking: false,
         ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
       } as InternalMatomoConfiguration),
   }
@@ -101,6 +102,9 @@ export interface BaseMatomoConfiguration {
    * See Matomo guide: {@link https://developer.matomo.org/guides/tracking-consent}
    */
   requireConsent?: MatomoConsentMode;
+
+  /** Set to `true` to enable Javascript errors tracking as <i>events</i> (with category <i>JavaScript Errors</i>) */
+  enableJSErrorTracking?: boolean;
 }
 
 export interface BaseAutoMatomoConfiguration {
