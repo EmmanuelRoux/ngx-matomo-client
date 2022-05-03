@@ -1,3 +1,11 @@
+## [1.3.6](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.5...v1.3.6) (2022-05-03)
+
+
+### Bug Fixes
+
+* **tracker:** add enableJSErrorTracking as configuration option ([9a10e88](https://github.com/EmmanuelRoux/ngx-matomo/commit/9a10e88c877048cf2acec91b80c918682c21e6cc))
+* **tracker:** add enableJSErrorTracking tracker method ([234ea16](https://github.com/EmmanuelRoux/ngx-matomo/commit/234ea165365c3e5e11298da70e6e65434d44a69e)), closes [#37](https://github.com/EmmanuelRoux/ngx-matomo/issues/37)
+
 ## [1.3.5](https://github.com/EmmanuelRoux/ngx-matomo/compare/v1.3.4...v1.3.5) (2022-03-23)
 
 
