@@ -2,7 +2,7 @@
 
 Matomo (fka. Piwik) client for Angular applications
 
-[![Angular 13](https://img.shields.io/badge/Angular-13-limegreen.svg?logo=angular)](https://angular.io/)
+[![Angular 14](https://img.shields.io/badge/Angular-14-limegreen.svg?logo=angular)](https://angular.io/)
 [![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
 [![build](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml)
 [![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml)
@@ -38,6 +38,9 @@ Matomo (fka. Piwik) client for Angular applications
 
 ## Installation
 
+_The latest version supports Angular 14 and newer. If you need NgxMatomo for an older Angular version,
+see [compatibility table here](docs/compatibility.md)._
+
 `ng add @ngx-matomo/tracker`
 
 This will prompt you for some information such as your Matomo's server address and site ID. You can find your site ID in
@@ -54,9 +57,6 @@ _Note #2: NgxMatomo includes Matomo's tracking script for you.
 **You don't need to copy/paste the tracking code into your application.**
 If for some reason you want to manually include the script tag yourself, install as described in previous sections then
 follow the [instructions described here](docs/manual-installation.md)._
-
-_Note #3: The latest version supports Angular 13 and newer. If you need NgxMatomo for an older Angular version,
-see [compatibility table here](docs/compatibility.md)._
 
 ## Usage
 
@@ -330,7 +330,7 @@ export class ExampleComponent {
 
 Please note that some features (such as `setEcommerceView`) must be called **before**
 `trackPageView`, so be careful when using router adapter!
-You may want to look at [how to use interceptors](#customize-anything).
+You may want to look at [how to use interceptors](#customize-anything-page-title-ecommerce-view).
 
 ### Disable tracking in some environments
 
