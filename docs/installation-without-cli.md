@@ -33,10 +33,9 @@ export class AppModule {}
 ```
 
 **If you use [Angular router](https://angular.io/guide/router) and want to automatically track page views**, you may
-optionally install the router adapter
-([see documentation below](#tracking-page-views-with-angular-router)):
+optionally install the router adapter:
 
-Run `npm install --save @ngx-matomo/router` or `yarn add @ngx-matomo/router`
+`npm install --save @ngx-matomo/router` or `yarn add @ngx-matomo/router`
 
 Then import `NgxMatomoRouterModule` into your root module:
 
