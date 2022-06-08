@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.2...v3.0.0) (2022-06-08)
+
+
+### Features
+
+* upgrade to Angular 14 ([d80fe7d](https://github.com/EmmanuelRoux/ngx-matomo/commit/d80fe7df7c371c81ddf2a1b5aecce9e1553d23c5)), closes [#47](https://github.com/EmmanuelRoux/ngx-matomo/issues/47)
+
+
+### Breaking changes
+
+* Angular version 14 is now required as a peer dependency
+
 ## [2.4.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.1...v2.4.2) (2022-05-03)
 
 
