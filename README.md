@@ -72,9 +72,24 @@ successful Angular Router navigation event. Under the hood, it calls tracker met
 By default, page title is grabbed from DOM document title and page url is built from Router url. This is fully
 customizable as described in following subsections.
 
+#### Customize page title
+
+By default, Matomo's router tracks page view _right after_ `NavigationEnd` event is emitted by Angular router and
+retrieves title from Angular `Title` service. Delay is configurable with the `delay`
+[configuration property](docs/configuration-reference.md#ngxmatomoroutermodule).
+
+As of Angular 14, and as long as you don't set `delay` to `-1`, customizing page title by setting `title` property of
+Angular route config is natively supported. See Angular tutorial
+here: [Setting the page title](https://angular.io/guide/router#setting-the-page-title).
+
+If you still need more customization, you can define a `MatomoRouterInterceptor`
+calling `MatomoTracker.setDocumentTitle()` as detailed in
+the [dedicated section below](#customize-anything-page-title-ecommerce-view).
+
 #### Customize page url
 
-You may provide a custom service to return current page url:
+By default, the _current_ url will be sent to Matomo. You may provide a service
+to return a custom page url:
 
 ```typescript
 import { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from '@ngx-matomo/router';
