@@ -43,7 +43,7 @@ Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or
 
 | NgxMatomo | Angular     | Matomo        |
 | --------- | ----------- | ------------- |
-| 1.x    | 9.x to 12.x | Matomo 3 or 4 |
+| 1.x       | 9.x to 12.x | Matomo 3 or 4 |
 
 ## Installation
 
