@@ -43,17 +43,17 @@ Matomo (fka. Piwik) client for Angular applications. Compatible with Matomo 3 or
 
 | NgxMatomo | Angular     | Matomo        |
 | --------- | ----------- | ------------- |
-| latest    | 9.x to 12.x | Matomo 3 or 4 |
+| 1.x       | 9.x to 12.x | Matomo 3 or 4 |
 
 ## Installation
 
-`npm install --save @ngx-matomo/tracker`
+`npm install --save @ngx-matomo/tracker@^1`
 
 Optionally, if you use [Angular router](https://angular.io/guide/router) and want to easily track routed components, you
 may also install the NgxMatomo router adapter
 ([see documentation below](#tracking-page-view-with-angular-router--ngxmatomoroutermodule)):
 
-`npm install --save @ngx-matomo/router`
+`npm install --save @ngx-matomo/router@^1`
 
 ## Setup
 
