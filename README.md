@@ -38,7 +38,10 @@ Matomo (fka. Piwik) client for Angular applications
 
 ## Installation
 
-`ng add @ngx-matomo/tracker`
+**You are reading documentation for version 2.x compatible with Angular 13. For other versions, please refer to [main
+documentation](https://github.com/EmmanuelRoux/ngx-matomo).**
+
+`ng add @ngx-matomo/tracker@^2`
 
 This will prompt you for some information such as your Matomo's server address and site ID. You can find your site ID in
 Matomo admin panel.
@@ -54,9 +57,6 @@ _Note #2: NgxMatomo includes Matomo's tracking script for you.
 **You don't need to copy/paste the tracking code into your application.**
 If for some reason you want to manually include the script tag yourself, install as described in previous sections then
 follow the [instructions described here](docs/manual-installation.md)._
-
-_Note #3: The latest version supports Angular 13 and newer. If you need NgxMatomo for an older Angular version,
-see [compatibility table here](docs/compatibility.md)._
 
 ## Usage
 
