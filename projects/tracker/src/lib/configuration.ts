@@ -37,6 +37,10 @@ export enum MatomoInitializationMode {
   AUTO,
   /** Do not inject Matomo script. In this case, initialization script must be provided */
   MANUAL,
+  /**
+   * Automatically inject matomo script when deferred tracker configuration is provided using `MatomoDeferredInitializerService.init`.
+   */
+  AUTO_DEFERRED,
 }
 
 export enum MatomoConsentMode {
@@ -107,12 +111,12 @@ export interface BaseMatomoConfiguration {
   enableJSErrorTracking?: boolean;
 }
 
-export interface BaseAutoMatomoConfiguration {
+export interface BaseAutoMatomoConfiguration<M = MatomoInitializationMode.AUTO> {
   /**
    * Set the script initialization mode (default is `AUTO`)
    *
    */
-  mode?: MatomoInitializationMode.AUTO;
+  mode?: M;
 
   /** Matomo script url (default is `matomo.js` appended to main tracker url) */
   scriptUrl: string;
@@ -120,6 +124,7 @@ export interface BaseAutoMatomoConfiguration {
 
 type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+type XOR3<T, U, V> = XOR<T, XOR<U, V>>;
 
 export type ManualMatomoConfiguration = {
   /**
@@ -129,56 +134,72 @@ export type ManualMatomoConfiguration = {
   mode: MatomoInitializationMode.MANUAL;
 };
 
-export type ExplicitAutoConfiguration = Partial<BaseAutoMatomoConfiguration> &
-  XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
-export type EmbeddedAutoConfiguration = BaseAutoMatomoConfiguration &
-  Partial<MultiTrackersConfiguration>;
+export type DeferredMatomoConfiguration = {
+  /**
+   * Set the script initialization mode (default is `AUTO`)
+   *
+   */
+  mode: MatomoInitializationMode.AUTO_DEFERRED;
+};
 
-export type AutoMatomoConfiguration = XOR<ExplicitAutoConfiguration, EmbeddedAutoConfiguration>;
+export type ExplicitAutoConfiguration<
+  M extends
+    | MatomoInitializationMode.AUTO
+    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO
+> = Partial<BaseAutoMatomoConfiguration<M>> &
+  XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
+export type EmbeddedAutoConfiguration<
+  M extends
+    | MatomoInitializationMode.AUTO
+    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO
+> = BaseAutoMatomoConfiguration<M> & Partial<MultiTrackersConfiguration>;
+
+export type AutoMatomoConfiguration<
+  M extends
+    | MatomoInitializationMode.AUTO
+    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO
+> = XOR<ExplicitAutoConfiguration<M>, EmbeddedAutoConfiguration<M>>;
 
 export type MatomoConfiguration = BaseMatomoConfiguration &
-  XOR<AutoMatomoConfiguration, ManualMatomoConfiguration>;
+  XOR3<AutoMatomoConfiguration, ManualMatomoConfiguration, DeferredMatomoConfiguration>;
 
 export function isAutoConfigurationMode(
   config: MatomoConfiguration
 ): config is AutoMatomoConfiguration {
-  return config.mode !== MatomoInitializationMode.MANUAL;
+  return config.mode == null || config.mode === MatomoInitializationMode.AUTO;
 }
 
-function hasMainTrackerConfiguration(
-  config: AutoMatomoConfiguration
-): config is ExplicitAutoConfiguration {
+function hasMainTrackerConfiguration<
+  M extends MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
+>(config: AutoMatomoConfiguration<M>): config is ExplicitAutoConfiguration<M> {
   // If one is undefined, both should be
   return config.siteId != null && config.trackerUrl != null;
 }
 
-export function isEmbeddedTrackerConfiguration(
-  config: MatomoConfiguration
-): config is EmbeddedAutoConfiguration {
-  return (
-    isAutoConfigurationMode(config) &&
-    config.scriptUrl != null &&
-    !hasMainTrackerConfiguration(config)
-  );
+export function isEmbeddedTrackerConfiguration<
+  M extends MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
+>(config: AutoMatomoConfiguration<M>): config is EmbeddedAutoConfiguration<M> {
+  return config.scriptUrl != null && !hasMainTrackerConfiguration(config);
 }
 
-export function isExplicitTrackerConfiguration(
-  config: MatomoConfiguration
-): config is ExplicitAutoConfiguration {
-  return (
-    isAutoConfigurationMode(config) &&
-    (hasMainTrackerConfiguration(config) || isMultiTrackerConfiguration(config))
-  );
+export function isExplicitTrackerConfiguration<
+  M extends MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
+>(config: AutoMatomoConfiguration<M>): config is ExplicitAutoConfiguration<M> {
+  return hasMainTrackerConfiguration(config) || isMultiTrackerConfiguration(config);
 }
 
 export function isMultiTrackerConfiguration(
-  config: AutoMatomoConfiguration
+  config: AutoMatomoConfiguration<
+    MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
+  >
 ): config is MultiTrackersConfiguration {
   return Array.isArray(config.trackers);
 }
 
 export function getTrackersConfiguration(
-  config: ExplicitAutoConfiguration
+  config: ExplicitAutoConfiguration<
+    MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
+  >
 ): MatomoTrackerConfiguration[] {
   return isMultiTrackerConfiguration(config)
     ? config.trackers

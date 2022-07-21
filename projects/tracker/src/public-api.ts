@@ -10,6 +10,7 @@ export {
   MatomoECommerceCategoryView,
 } from './lib/matomo-tracker.service';
 export { NgxMatomoTrackerModule } from './lib/ngx-matomo-tracker.module';
+export { MatomoInitializerService } from './lib/matomo-initializer.service';
 export {
   MatomoConfiguration,
   MATOMO_CONFIGURATION,
