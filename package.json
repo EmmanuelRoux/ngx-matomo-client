@@ -12,7 +12,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "demo": "npm run build:prod:tracker && npm run build:prod:router && ng serve --open",
+    "demo": "npm run build:tracker && npm run build:router && ng serve --open",
     "build": "ng build",
     "build:tracker": "ng build tracker",
     "build:router": "ng build router",
