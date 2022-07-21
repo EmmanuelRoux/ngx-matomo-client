@@ -49,9 +49,9 @@ export function createMatomoInitializer(
 }
 
 export class NoopMatomoInitializer
-  implements Pick<MatomoInitializerService, 'init' | 'initializeTracker'>
+  implements Pick<MatomoInitializerService, 'initialize' | 'initializeTracker'>
 {
-  init(): void {
+  initialize(): void {
     // No-op
   }
 
@@ -87,7 +87,12 @@ export class MatomoInitializerService {
     initializeMatomoHolder();
   }
 
+  /** @deprecated use {@link initialize initialize()} instead */
   init(): void {
+    this.initialize();
+  }
+
+  initialize(): void {
     this.runPreInitTasks();
 
     if (isAutoConfigurationMode(this.config)) {

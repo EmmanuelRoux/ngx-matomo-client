@@ -84,7 +84,7 @@ describe('MatomoInitializerService', () => {
     spyOn(tracker, 'trackPageView');
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
@@ -102,7 +102,7 @@ describe('MatomoInitializerService', () => {
     spyOn(tracker, 'enableLinkTracking');
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(tracker.enableLinkTracking).toHaveBeenCalledOnceWith();
@@ -122,7 +122,7 @@ describe('MatomoInitializerService', () => {
     spyOn(tracker, 'setDoNotTrack');
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
@@ -144,7 +144,7 @@ describe('MatomoInitializerService', () => {
     spyOn(tracker, 'requireConsent');
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
@@ -166,7 +166,7 @@ describe('MatomoInitializerService', () => {
     spyOn(tracker, 'requireCookieConsent');
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
@@ -187,7 +187,7 @@ describe('MatomoInitializerService', () => {
     spyOn(tracker, 'enableJSErrorTracking');
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(tracker.trackPageView).toHaveBeenCalledTimes(1);
@@ -234,7 +234,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
@@ -256,7 +256,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
@@ -276,7 +276,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expectInjectedScript(injectedScript, 'http://myCustomScriptUrl');
@@ -296,7 +296,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expectInjectedScript(injectedScript, 'http://myCustomScript.js');
@@ -322,7 +322,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expectInjectedScript(injectedScript, 'http://fakeTrackerUrl1/matomo.js');
@@ -355,7 +355,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expectInjectedScript(injectedScript, 'http://fakeTrackerUrl1/matomo.js');
@@ -381,7 +381,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
     service.initializeTracker({ trackerUrl: '', siteId: '' });
 
     // Then
@@ -406,7 +406,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(injectedScript).toBeUndefined();
@@ -445,7 +445,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
 
     // Then
     expect(injectedScript?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
@@ -467,7 +467,7 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     // When
-    service.init();
+    service.initialize();
     // Then
     expect(injectedScript).toBeFalsy();
     expect(tracker.setTrackerUrl).not.toHaveBeenCalled();
@@ -500,5 +500,21 @@ describe('MatomoInitializerService', () => {
     expect(() => service.initializeTracker({ trackerUrl: '', siteId: '' })).toThrowError(
       ALREADY_INJECTED_ERROR
     );
+  });
+
+  it('should map deprecated init() method to initialize()', () => {
+    // Given
+    const service = instantiate({
+      trackerUrl: '',
+      siteId: '',
+    });
+
+    spyOn(service, 'initialize');
+
+    // When
+    service.init();
+
+    // Then
+    expect(service.initialize).toHaveBeenCalledOnceWith();
   });
 });
