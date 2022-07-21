@@ -8,7 +8,7 @@ import {
   MatomoConsentMode,
   MatomoInitializationMode,
 } from './configuration';
-import { ALREADY_INJECTED_ERROR } from './errors';
+import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoHolder } from './holder';
 import { MatomoInitializerService } from './matomo-initializer.service';
 import { MatomoTracker, NoopMatomoTracker } from './matomo-tracker.service';
@@ -487,6 +487,22 @@ describe('MatomoInitializerService', () => {
     expect(tracker.setSiteId).toHaveBeenCalledOnceWith('fakeSiteId');
   });
 
+  it('should map deprecated init() method to initialize()', () => {
+    // Given
+    const service = instantiate({
+      trackerUrl: '',
+      siteId: '',
+    });
+
+    spyOn(service, 'initialize');
+
+    // When
+    service.init();
+
+    // Then
+    expect(service.initialize).toHaveBeenCalledOnceWith();
+  });
+
   it('should throw an error when initialized trackers more than once', () => {
     // Given
     const service = instantiate({
@@ -502,19 +518,17 @@ describe('MatomoInitializerService', () => {
     );
   });
 
-  it('should map deprecated init() method to initialize()', () => {
+  it('should throw an error when initialized more than once', () => {
     // Given
     const service = instantiate({
       trackerUrl: '',
       siteId: '',
     });
 
-    spyOn(service, 'initialize');
-
     // When
-    service.init();
+    service.initialize();
 
     // Then
-    expect(service.initialize).toHaveBeenCalledOnceWith();
+    expect(() => service.initialize()).toThrowError(ALREADY_INITIALIZED_ERROR);
   });
 });
