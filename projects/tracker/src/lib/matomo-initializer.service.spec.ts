@@ -8,6 +8,7 @@ import {
   MatomoConsentMode,
   MatomoInitializationMode,
 } from './configuration';
+import { ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoHolder } from './holder';
 import { MatomoInitializerService } from './matomo-initializer.service';
 import { MatomoTracker, NoopMatomoTracker } from './matomo-tracker.service';
@@ -381,6 +382,7 @@ describe('MatomoInitializerService', () => {
 
     // When
     service.init();
+    service.initializeTracker({ trackerUrl: '', siteId: '' });
 
     // Then
     expect(injectedScript).toBeUndefined();
@@ -448,5 +450,55 @@ describe('MatomoInitializerService', () => {
     // Then
     expect(injectedScript?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
     expect(injectedScript?.dataset.cookieconsent).toEqual('statistics');
+  });
+
+  it('should defer script injection until tracker configuration is provided', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
+      mode: MatomoInitializationMode.AUTO_DEFERRED,
+      trackAppInitialLoad: true,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    spyOn(tracker, 'trackPageView');
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.init();
+    // Then
+    expect(injectedScript).toBeFalsy();
+    expect(tracker.setTrackerUrl).not.toHaveBeenCalled();
+    expect(tracker.setSiteId).not.toHaveBeenCalled();
+    // Pre-init actions must run
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+
+    // When
+    service.initializeTracker({
+      siteId: 'fakeSiteId',
+      trackerUrl: 'http://fakeTrackerUrl',
+    });
+
+    // Then
+    expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('fakeSiteId');
+  });
+
+  it('should throw an error when initialized trackers more than once', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.AUTO_DEFERRED,
+    });
+
+    // When
+    service.initializeTracker({ trackerUrl: '', siteId: '' });
+
+    // Then
+    expect(() => service.initializeTracker({ trackerUrl: '', siteId: '' })).toThrowError(
+      ALREADY_INJECTED_ERROR
+    );
   });
 });

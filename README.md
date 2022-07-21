@@ -29,6 +29,7 @@ Matomo (fka. Piwik) client for Angular applications
   * [Customizing script tag](#customizing-script-tag)
   * [Server-side rendering (SSR) with Angular Universal](#server-side-rendering-ssr-with-angular-universal)
   * [Scripts with pre-defined (embedded) tracker configuration (Tag Manager variable...)](#scripts-with-pre-defined-embedded-tracker-configuration-tag-manager-variable)
+  * [Deferred (asynchronous) configuration](#deferred-asynchronous-configuration)
 - [Roadmap](#roadmap)
 - [Launch demo app](#launch-demo-app)
 
@@ -522,6 +523,60 @@ import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 })
 export class AppModule {}
 ```
+
+### Deferred (asynchronous) configuration
+
+In some case, you may want to load your trackers configuration asynchronously. To do so, set the configuration mode
+to `AUTO_DEFERRED` and manually call `MatomoInitializerService.initializeTracker(config)` when you are ready:
+
+```ts
+function initializeMatomo(http: HttpClient, matomoInitializer: MatomoInitializerService) {
+  return () =>
+    http.get('/my-config').pipe(tap(config => matomoInitializer.initializeTracker(config)));
+}
+
+@NgModule({
+  imports: [
+    NgxMatomoTrackerModule.forRoot({
+      mode: MatomoInitializationMode.AUTO_DEFERRED,
+    }),
+  ],
+
+  // Option 1: with APP_INITIALIZER
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeMatomo,
+      deps: [HttpClient, MatomoInitializerService],
+      multi: true,
+    },
+  ],
+})
+export class AppModule {}
+
+// Option 2: from anywhere, call this when you're ready
+@Injectable()
+export class MyConfigService {
+  constructor(private readonly http: HttpClient, matomoInitializer: MatomoInitializerService) {}
+
+  initMatomo() {
+    this.http.get('/my-config').subscribe(config => matomoInitializer.initializeTracker(config));
+  }
+}
+```
+
+All tracking instructions before `initializeTracker` will be queued and sent only when this method is called. **Don't
+forget to call it!**
+
+If you need to asynchronously load more configuration properties, then
+consider [the solution described in this issue](https://github.com/EmmanuelRoux/ngx-matomo/issues/31) instead (which has
+some
+drawbacks, such as delaying the application startup).
+
+_Side note: only the **trackers** configuration can be deferred, not all configuration properties.
+This is required because some properties require to be set **before** any other action is tracked: for
+example, `requireConsent` must be set before any other tracking call and `trackAppInitialLoad` should be set before
+any navigation occurs._
 
 ## Roadmap
 

@@ -15,6 +15,7 @@ import {
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
   InternalMatomoConfiguration,
+  isAutoConfigurationMode,
   isExplicitTrackerConfiguration,
 } from '../configuration';
 
@@ -71,7 +72,7 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
     // Set default locale
     this.locale = locale;
 
-    if (isExplicitTrackerConfiguration(this.config)) {
+    if (isAutoConfigurationMode(this.config) && isExplicitTrackerConfiguration(this.config)) {
       this._defaultServerUrl = getTrackersConfiguration(this.config)[0].trackerUrl;
     }
   }
