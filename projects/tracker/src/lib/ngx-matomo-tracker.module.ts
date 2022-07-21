@@ -17,7 +17,7 @@ export class NgxMatomoTrackerModule {
   ) {
     if (!parent) {
       // Do not initialize if it is already (by a parent module)
-      this.initializer.init();
+      this.initializer.initialize();
     }
   }
 
