@@ -13,7 +13,7 @@ import {
   MatomoInitializationMode,
   MatomoTrackerConfiguration,
 } from './configuration';
-import { ALREADY_INJECTED_ERROR } from './errors';
+import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { initializeMatomoHolder } from './holder';
 import { MatomoTracker } from './matomo-tracker.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './script-factory';
@@ -76,6 +76,7 @@ export class NoopMatomoInitializer
   ],
 })
 export class MatomoInitializerService {
+  private initialized = false;
   private injected = false;
 
   constructor(
@@ -95,9 +96,15 @@ export class MatomoInitializerService {
   initialize(): void {
     this.runPreInitTasks();
 
+    if (this.initialized) {
+      throw new Error(ALREADY_INITIALIZED_ERROR);
+    }
+
     if (isAutoConfigurationMode(this.config)) {
       this.injectMatomoScript(this.config);
     }
+
+    this.initialized = true;
   }
 
   initializeTracker(config: AutoMatomoConfiguration<MatomoInitializationMode.AUTO_DEFERRED>): void {
