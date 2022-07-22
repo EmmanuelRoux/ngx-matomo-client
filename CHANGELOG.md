@@ -1,3 +1,26 @@
+# [2.5.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.2...v2.5.0) (2022-07-22)
+
+
+### Bug Fixes
+
+* **tracker:** prevent initializing Matomo more than once ([8b1e773](https://github.com/EmmanuelRoux/ngx-matomo/commit/8b1e7733dc751c46e9336abbc129311d2618d7cd))
+
+
+### Code Refactoring
+
+* **tracker:** replace init() method with initialized() for naming consistency ([30c415d](https://github.com/EmmanuelRoux/ngx-matomo/commit/30c415d5e6b5d950f4212b597066bf75120c5392))
+
+
+### Features
+
+* **tracker:** allow deferred trackers configuration ([77a377f](https://github.com/EmmanuelRoux/ngx-matomo/commit/77a377f91407ee314aa3897400c6d261ed2e5571)), closes [#31](https://github.com/EmmanuelRoux/ngx-matomo/issues/31) [#54](https://github.com/EmmanuelRoux/ngx-matomo/issues/54)
+
+
+### Deprecations
+
+* **tracker:** Method `MatomoInitializerService.init()` has been deprecated.
+Use `MatomoInitializerService.initialize()` instead.
+
 ## [2.4.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.4.1...v2.4.2) (2022-05-03)
 
 
