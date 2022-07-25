@@ -14,6 +14,7 @@ export { MatomoInitializerService } from './lib/matomo-initializer.service';
 export {
   MatomoConfiguration,
   MATOMO_CONFIGURATION,
+  AutoMatomoConfiguration,
   MatomoInitializationMode,
   MatomoConsentMode,
   InternalMatomoConfiguration,
