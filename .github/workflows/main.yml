@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v2
         with:
           node-version: 16.13.2
@@ -20,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v2
         with:
           node-version: 16.13.2
@@ -32,6 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v2
         with:
           node-version: 16.13.2
@@ -68,14 +74,20 @@ jobs:
     env:
       GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
       GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+      GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
+      GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v2
         with:
           node-version: 16.13.2
           cache: npm
       - run: echo -n "${GPG_SECRET_KEY}" > git_gpg_key.asc
       - run: gpg --batch --yes --import git_gpg_key.asc
+      - run: git config user.name ${GIT_AUTHOR_NAME}
+      - run: git config user.email ${GIT_AUTHOR_EMAIL}
       - run: git config commit.gpgsign true
       - run: git config --global user.signingkey ${GPG_KEY_ID}
       - run: npm install
@@ -89,6 +101,7 @@ jobs:
       - run: npm run semantic-release:ci
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
           GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
