@@ -111,7 +111,11 @@ export interface BaseMatomoConfiguration {
   enableJSErrorTracking?: boolean;
 }
 
-export interface BaseAutoMatomoConfiguration<M = MatomoInitializationMode.AUTO> {
+export interface BaseAutoMatomoConfiguration<
+  M extends
+    | MatomoInitializationMode.AUTO
+    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO
+> {
   /**
    * Set the script initialization mode (default is `AUTO`)
    *
