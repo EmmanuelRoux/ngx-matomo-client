@@ -1,6 +1,6 @@
 {
   "name": "ngx-matomo",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "author": "Emmanuel Roux (https://github.com/EmmanuelRoux)",
   "description": "Matomo (fka. Piwik) client for Angular applications",
   "keywords": [

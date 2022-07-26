@@ -1,3 +1,17 @@
+# [3.2.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v3.1.0...v3.2.0) (2022-07-26)
+
+
+### Bug Fixes
+
+* **tracker:** add missing generic parameter constraint ([5c1e4e8](https://github.com/EmmanuelRoux/ngx-matomo/commit/5c1e4e8903cbccb23e7fd351b03e2abb4500727c))
+* **tracker:** add missing symbol to public api ([eb79fc0](https://github.com/EmmanuelRoux/ngx-matomo/commit/eb79fc0f3383b5762c36d0ecfe608d7db6786dc7))
+* **tracker:** fix custom script factory provider ([c31342b](https://github.com/EmmanuelRoux/ngx-matomo/commit/c31342b9c63f2888d6507076ac83016cac20c93e)), closes [#56](https://github.com/EmmanuelRoux/ngx-matomo/issues/56)
+
+
+### Features
+
+* **tracker:** add setPagePerformanceTiming tracking method ([4e92fe7](https://github.com/EmmanuelRoux/ngx-matomo/commit/4e92fe798a98258faa03fbb4f8f5395bbdb8ba4b))
+
 # [3.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v3.0.0...v3.1.0) (2022-07-22)
 
 
