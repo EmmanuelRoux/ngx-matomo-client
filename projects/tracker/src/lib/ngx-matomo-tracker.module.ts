@@ -28,7 +28,7 @@ export class NgxMatomoTrackerModule {
     const providers: Provider[] = [{ provide: MATOMO_CONFIGURATION, useValue: config }];
 
     if (scriptFactory) {
-      providers.push({ provide: MATOMO_SCRIPT_FACTORY, useFactory: scriptFactory });
+      providers.push({ provide: MATOMO_SCRIPT_FACTORY, useValue: scriptFactory });
     }
 
     return {

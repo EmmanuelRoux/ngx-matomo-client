@@ -12,6 +12,7 @@ import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoHolder } from './holder';
 import { MatomoInitializerService } from './matomo-initializer.service';
 import { MatomoTracker, NoopMatomoTracker } from './matomo-tracker.service';
+import { NgxMatomoTrackerModule } from './ngx-matomo-tracker.module';
 import {
   createDefaultMatomoScriptElement,
   MATOMO_SCRIPT_FACTORY,
@@ -446,6 +447,39 @@ describe('MatomoInitializerService', () => {
 
     // When
     service.initialize();
+
+    // Then
+    expect(injectedScript?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
+    expect(injectedScript?.dataset.cookieconsent).toEqual('statistics');
+  });
+
+  it('should create custom script tag with forRoot factory', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+
+    setUpScriptInjection(script => (injectedScript = script));
+
+    TestBed.configureTestingModule({
+      imports: [
+        NgxMatomoTrackerModule.forRoot(
+          {
+            siteId: 1,
+            trackerUrl: '',
+            scriptUrl: '/fake/script/url',
+          } as MatomoConfiguration,
+          (scriptUrl, document) => {
+            const script = createDefaultMatomoScriptElement(scriptUrl, document);
+
+            script.setAttribute('data-cookieconsent', 'statistics');
+
+            return script;
+          }
+        ),
+      ],
+    });
+
+    // Inject service to trigger initialization on module init
+    TestBed.inject(MatomoInitializerService);
 
     // Then
     expect(injectedScript?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
