@@ -9,3 +9,7 @@ export type Methods<T> = keyof T &
   {
     [P in keyof T]: T[P] extends (...args: any[]) => any ? P : never;
   }[keyof T];
+
+export type RequireAtLeastOne<T> = {
+  [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>;
+}[keyof T];

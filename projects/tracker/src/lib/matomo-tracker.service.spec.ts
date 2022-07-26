@@ -172,6 +172,20 @@ describe('MatomoTracker', () => {
 
   it('should set generation time', expectSimpleMethod('setGenerationTimeMs', [42]));
 
+  it(
+    'should set performance timings',
+    expectPush(
+      tracker => {
+        tracker.setPagePerformanceTiming(42, undefined, 100, undefined);
+        tracker.setPagePerformanceTiming({ networkTimeInMs: 10, transferTimeInMs: 20 });
+      },
+      [
+        ['setPagePerformanceTiming', 42, undefined, 100],
+        ['setPagePerformanceTiming', 10, undefined, 20],
+      ]
+    )
+  );
+
   it('should append to tracking url', expectSimpleMethod('appendToTrackingUrl', ['?toAppend']));
 
   it('should set "DoNotTrack"', expectSimpleMethod('setDoNotTrack', [true]));
