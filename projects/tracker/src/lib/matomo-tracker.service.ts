@@ -2,7 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID } from '@angular/core';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
 import { initializeMatomoHolder, MatomoHolder } from './holder';
-import { Getters } from './types';
+import { Getters, RequireAtLeastOne } from './types';
 
 declare var window: MatomoHolder;
 
@@ -27,6 +27,15 @@ export interface MatomoECommerceItem {
 export type MatomoECommerceItemView = Omit<MatomoECommerceItem, 'quantity'>;
 export type MatomoECommerceCategoryView = Required<Pick<MatomoECommerceItem, 'productCategory'>>;
 export type MatomoECommerceView = MatomoECommerceItemView | MatomoECommerceCategoryView;
+
+export type PagePerformanceTimings = RequireAtLeastOne<{
+  networkTimeInMs?: number;
+  serverTimeInMs?: number;
+  transferTimeInMs?: number;
+  domProcessingTimeInMs?: number;
+  domCompletionTimeInMs?: number;
+  onloadTimeInMs?: number;
+}>;
 
 function isECommerceCategoryView(
   param: string | MatomoECommerceView
@@ -503,15 +512,74 @@ export abstract class MatomoTracker {
   }
 
   /**
-   * By default Matomo uses the browser DOM Timing API to accurately determine the time it takes to generate and download
+   * By default, Matomo uses the browser DOM Timing API to accurately determine the time it takes to generate and download
    * the page. You may overwrite this value with this function.
    *
-   * <b>This feature has been deprecated since Matomo 4. Any call will be ignored with Matomo 4.</b>
+   * <b>This feature has been deprecated since Matomo 4. Any call will be ignored with Matomo 4. Use {@link setPagePerformanceTiming setPagePerformanceTiming()} instead.</b>
    *
    * @param generationTime Time, in milliseconds, of the page generation.
    */
   setGenerationTimeMs(generationTime: number): void {
     this.push(['setGenerationTimeMs', generationTime]);
+  }
+
+  /**
+   * Manually set performance metrics in milliseconds in a Single Page App or when Matomo cannot detect some metrics.
+   *
+   * You can set parameters to undefined if you do not want to track this metric. At least one parameter needs to be set.
+   * The set performance timings will be tracked only on the next page view. If you track another page view then you will need to set the performance timings again.
+   *
+   * <b>Requires Matomo 4.5 or newer.</b>
+   *
+   */
+  setPagePerformanceTiming(timings: PagePerformanceTimings): void;
+  /**
+   * Manually set performance metrics in milliseconds in a Single Page App or when Matomo cannot detect some metrics.
+   *
+   * You can set parameters to undefined if you do not want to track this metric. At least one parameter needs to be set.
+   * The set performance timings will be tracked only on the next page view. If you track another page view then you will need to set the performance timings again.
+   *
+   * <b>Requires Matomo 4.5 or newer.</b>
+   *
+   */
+  setPagePerformanceTiming(
+    networkTimeInMs: number | undefined,
+    serverTimeInMs?: number,
+    transferTimeInMs?: number,
+    domProcessingTimeInMs?: number,
+    domCompletionTimeInMs?: number,
+    onloadTimeInMs?: number
+  ): void;
+  setPagePerformanceTiming(
+    networkTimeInMsOrTimings: PagePerformanceTimings | number | undefined,
+    serverTimeInMs?: number,
+    transferTimeInMs?: number,
+    domProcessingTimeInMs?: number,
+    domCompletionTimeInMs?: number,
+    onloadTimeInMs?: number
+  ): void {
+    let networkTimeInMs: number | undefined;
+
+    if (typeof networkTimeInMsOrTimings === 'object' && !!networkTimeInMsOrTimings) {
+      networkTimeInMs = networkTimeInMsOrTimings.networkTimeInMs;
+      serverTimeInMs = networkTimeInMsOrTimings.serverTimeInMs;
+      transferTimeInMs = networkTimeInMsOrTimings.transferTimeInMs;
+      domProcessingTimeInMs = networkTimeInMsOrTimings.domProcessingTimeInMs;
+      domCompletionTimeInMs = networkTimeInMsOrTimings.domCompletionTimeInMs;
+      onloadTimeInMs = networkTimeInMsOrTimings.onloadTimeInMs;
+    } else {
+      networkTimeInMs = networkTimeInMsOrTimings;
+    }
+
+    this.push([
+      'setPagePerformanceTiming',
+      networkTimeInMs,
+      serverTimeInMs,
+      transferTimeInMs,
+      domProcessingTimeInMs,
+      domCompletionTimeInMs,
+      onloadTimeInMs,
+    ]);
   }
 
   /**
