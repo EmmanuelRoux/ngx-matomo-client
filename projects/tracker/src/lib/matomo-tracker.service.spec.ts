@@ -195,6 +195,18 @@ describe('MatomoTracker', () => {
     )
   );
 
+  it('should get performance timings', done => {
+    expectGetter(
+      'getCustomPagePerformanceTiming',
+      {
+        getCustomPagePerformanceTiming(): string {
+          return 'test';
+        },
+      },
+      'test'
+    ).then(done);
+  });
+
   it('should append to tracking url', expectSimpleMethod('appendToTrackingUrl', ['?toAppend']));
 
   it('should set "DoNotTrack"', expectSimpleMethod('setDoNotTrack', [true]));

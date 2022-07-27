@@ -99,6 +99,8 @@ export interface MatomoInstance {
   areCookiesEnabled(): boolean;
 
   isUserOptedOut(): boolean;
+
+  getCustomPagePerformanceTiming(): string;
 }
 
 export function createMatomoTracker(
@@ -581,6 +583,10 @@ export abstract class MatomoTracker {
       domCompletionTimeInMs,
       onloadTimeInMs,
     ]);
+  }
+
+  getCustomPagePerformanceTiming(): Promise<string> {
+    return this.get('getCustomPagePerformanceTiming');
   }
 
   /**
