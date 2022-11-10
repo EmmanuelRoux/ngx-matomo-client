@@ -74,7 +74,7 @@ export const INTERNAL_ROUTER_CONFIGURATION = new InjectionToken<InternalRouterCo
   {
     factory: () => {
       const { disabled, enableLinkTracking } = inject(INTERNAL_MATOMO_CONFIGURATION);
-      const routerConfig = inject(MATOMO_ROUTER_CONFIGURATION, InjectFlags.Optional) || {};
+      const routerConfig = inject(MATOMO_ROUTER_CONFIGURATION, {optional: true}) || {};
 
       return { ...DEFAULT_ROUTER_CONFIGURATION, ...routerConfig, enableLinkTracking, disabled };
     },
