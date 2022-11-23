@@ -15,23 +15,30 @@ Matomo (fka. Piwik) client for Angular applications
 
 <!-- toc -->
 
-- [Installation](#installation)
-- [Usage](#usage)
-  * [Tracking page views with Angular Router](#tracking-page-views-with-angular-router)
-  * [Tracking page views without Angular Router](#tracking-page-views-without-angular-router)
-  * [Tracking simple click events in template](#tracking-simple-click-events-in-template)
-  * [Tracking any event in template](#tracking-any-event-in-template)
-  * [Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...](#using-other-matomos-tracking-features-ecommerce-analytics-marketing-campaigns)
-  * [Disable tracking in some environments](#disable-tracking-in-some-environments)
-  * [Managing user consent: opt-in/opt-out for tracking & cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
-- [Configuration reference](#configuration-reference)
-- [Advanced use cases](#advanced-use-cases)
-  * [Customizing script tag](#customizing-script-tag)
-  * [Server-side rendering (SSR) with Angular Universal](#server-side-rendering-ssr-with-angular-universal)
-  * [Scripts with pre-defined (embedded) tracker configuration (Tag Manager variable...)](#scripts-with-pre-defined-embedded-tracker-configuration-tag-manager-variable)
-  * [Deferred (asynchronous) configuration](#deferred-asynchronous-configuration)
-- [Roadmap](#roadmap)
-- [Launch demo app](#launch-demo-app)
+- [Ngx-Matomo](#ngx-matomo)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Tracking page views with Angular Router](#tracking-page-views-with-angular-router)
+      - [Customize page title](#customize-page-title)
+      - [Customize page url](#customize-page-url)
+      - [Customize anything (page title, ecommerce view...)](#customize-anything-page-title-ecommerce-view)
+    - [Tracking page views without Angular Router](#tracking-page-views-without-angular-router)
+    - [Tracking simple click events in template](#tracking-simple-click-events-in-template)
+    - [Tracking any event in template](#tracking-any-event-in-template)
+    - [Using other Matomo's tracking features: Ecommerce analytics, Marketing Campaigns...](#using-other-matomos-tracking-features-ecommerce-analytics-marketing-campaigns)
+    - [Disable tracking in some environments](#disable-tracking-in-some-environments)
+    - [Managing user consent: opt-in/opt-out for tracking \& cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
+      - [Do not track](#do-not-track)
+      - [Consent opt-in](#consent-opt-in)
+      - [Consent opt-out](#consent-opt-out)
+  - [Configuration reference](#configuration-reference)
+  - [Advanced use cases](#advanced-use-cases)
+    - [Customizing script tag](#customizing-script-tag)
+    - [Server-side rendering (SSR) with Angular Universal](#server-side-rendering-ssr-with-angular-universal)
+    - [Scripts with pre-defined (embedded) tracker configuration (Tag Manager variable...)](#scripts-with-pre-defined-embedded-tracker-configuration-tag-manager-variable)
+    - [Deferred (asynchronous) configuration](#deferred-asynchronous-configuration)
+  - [Roadmap](#roadmap)
+  - [Launch demo app](#launch-demo-app)
 
 <!-- tocstop -->
 
@@ -65,7 +72,8 @@ follow the [instructions described here](docs/manual-installation.md)._
 | ----------- | --------------------------------------------------------------------------- | ------------- |
 | 9.x to 12.x | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/1.x/README.md)) | Matomo 3 or 4 |
 | 13.x        | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md)) | Matomo 3 or 4 |
-| 14.x        | 3.x                                                                         | Matomo 3 or 4 |
+| 14.x        | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md)) | Matomo 3 or 4 |
+| 15.x        | 4.x                                                                         | Matomo 3 or 4 |
 
 ## Usage
 
