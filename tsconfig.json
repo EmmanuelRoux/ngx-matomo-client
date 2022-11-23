@@ -16,17 +16,10 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "es2020",
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "lib": ["es2018", "dom"],
     "paths": {
-      "@ngx-matomo/router": [
-        "dist/router"
-      ],
-      "@ngx-matomo/tracker": [
-        "dist/tracker"
-      ]
+      "@ngx-matomo/router": ["dist/router"],
+      "@ngx-matomo/tracker": ["dist/tracker"]
     },
     "useDefineForClassFields": false
   },
