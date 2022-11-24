@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v3.2.0...v4.0.0) (2022-11-24)
+
+
+### Features
+
+* add Angular 15 support ([ac91861](https://github.com/EmmanuelRoux/ngx-matomo/commit/ac91861291a7900118031a80a9b028b61d2c855d))
+
+
+### Breaking changes
+
+* Angular version 15 is now required as a peer dependency
+
 # [3.2.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v3.1.0...v3.2.0) (2022-07-26)
 
 
