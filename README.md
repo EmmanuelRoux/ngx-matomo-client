@@ -39,7 +39,7 @@ Matomo (fka. Piwik) client for Angular applications
 
 ## Installation
 
-_The latest version supports Angular 14 and newer. If you need NgxMatomo for an older Angular version,
+_The latest version supports Angular 15 and newer. If you need NgxMatomo for an older Angular version,
 see compatibility table below._
 
 `ng add @ngx-matomo/tracker`
