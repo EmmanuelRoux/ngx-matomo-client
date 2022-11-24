@@ -14,13 +14,14 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2020",
+    "target": "ES2022",
     "module": "es2020",
     "lib": ["es2018", "dom"],
     "paths": {
       "@ngx-matomo/router": ["dist/router"],
       "@ngx-matomo/tracker": ["dist/tracker"]
-    }
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
