@@ -2,7 +2,7 @@
 
 Matomo (fka. Piwik) client for Angular applications
 
-[![Angular 14](https://img.shields.io/badge/Angular-14-limegreen.svg?logo=angular)](https://angular.io/)
+[![Angular 15](https://img.shields.io/badge/Angular-15-limegreen.svg?logo=angular)](https://angular.io/)
 [![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
 [![build](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml)
 [![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml)
