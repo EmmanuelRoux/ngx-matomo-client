@@ -1,4 +1,4 @@
-import { inject, InjectFlags, InjectionToken } from '@angular/core';
+import { inject, InjectionToken } from '@angular/core';
 import { requireNonNull } from './coercion';
 
 const CONFIG_NOT_FOUND =
@@ -22,7 +22,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
         requireConsent: MatomoConsentMode.NONE,
         enableJSErrorTracking: false,
         runOutsideAngularZone: false,
-        ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
+        ...requireNonNull(inject(MATOMO_CONFIGURATION, { optional: true }), CONFIG_NOT_FOUND),
       } as InternalMatomoConfiguration),
   }
 );

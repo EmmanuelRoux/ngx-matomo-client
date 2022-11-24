@@ -1,4 +1,3 @@
-import { InjectFlags } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -51,7 +50,7 @@ describe('Interceptor', () => {
     TestBed.configureTestingModule({
       providers: [provideInterceptors(undefined)],
     });
-    const interceptors = TestBed.inject(MATOMO_ROUTER_INTERCEPTORS, null, InjectFlags.Optional);
+    const interceptors = TestBed.inject(MATOMO_ROUTER_INTERCEPTORS, null, { optional: true });
 
     // Then
     expect(interceptors).toBeNull();

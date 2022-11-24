@@ -1,5 +1,5 @@
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
-import { Inject, inject, InjectFlags, InjectionToken, Optional } from '@angular/core';
+import { Inject, inject, InjectionToken, Optional } from '@angular/core';
 import { NavigationEnd } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { INTERNAL_ROUTER_CONFIGURATION, InternalRouterConfiguration } from './configuration';
@@ -10,7 +10,7 @@ export const MATOMO_PAGE_URL_PROVIDER = new InjectionToken<PageUrlProvider>(
     factory: () =>
       new DefaultPageUrlProvider(
         inject(INTERNAL_ROUTER_CONFIGURATION),
-        inject(APP_BASE_HREF, InjectFlags.Optional),
+        inject(APP_BASE_HREF, { optional: true }),
         inject(PlatformLocation)
       ),
   }
