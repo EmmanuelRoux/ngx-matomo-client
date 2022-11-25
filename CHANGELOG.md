@@ -1,3 +1,10 @@
+## [2.6.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.6.0...v2.6.1) (2022-11-25)
+
+
+### Bug Fixes
+
+* **tracker:** add the option to run tracking outside of angular zone ([37c9745](https://github.com/EmmanuelRoux/ngx-matomo/commit/37c97450cb98f2edbb8d22bbff1795d0898babbc)), closes [#60](https://github.com/EmmanuelRoux/ngx-matomo/issues/60)
+
 # [2.6.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v2.5.0...v2.6.0) (2022-07-26)
 
 
