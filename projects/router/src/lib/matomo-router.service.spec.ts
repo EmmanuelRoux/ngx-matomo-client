@@ -395,4 +395,23 @@ describe('MatomoRouter', () => {
     expect(slowInterceptor.beforePageTrack).toHaveBeenCalledTimes(3);
     expect(tracker.trackPageView).toHaveBeenCalledTimes(3);
   }));
+
+  it('should ignore url params when ignoreUrlParam is true', fakeAsync(() => {
+    // Given
+    const service = instantiate({ ignoreUrlParams: true }, { enableLinkTracking: false });
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.init();
+    triggerEvent('/route');
+    tick(); // Tracking is asynchronous by default
+    triggerEvent('/route?param=2&otherParam=value');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.setCustomUrl).toHaveBeenCalledTimes(1);
+    expect(tracker.setDocumentTitle).toHaveBeenCalledTimes(1);
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(1);
+    expect(tracker.setReferrerUrl).toHaveBeenCalledTimes(1);
+  }));
 });

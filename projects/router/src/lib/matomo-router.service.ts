@@ -90,7 +90,7 @@ export class MatomoRouter {
         // Filter out excluded urls
         filter(isNotExcluded(this.config.exclude)),
         // Distinct urls
-        distinctUntilKeyChanged('urlAfterRedirects'),
+        distinctUntilKeyChanged('urlAfterRedirects', this.compareUrl),
         // Optionally add some delay
         delayOp,
         // Set default page title & url
@@ -143,5 +143,14 @@ export class MatomoRouter {
 
     // Set referrer for next page view
     this.tracker.setReferrerUrl(pageUrl);
+  }
+
+  private compareUrl(a: string, b: string): boolean {
+    if (this.config.ignoreUrlParams) {
+      // Only consider what's before the ? in the url
+      return a.split('?')[0] === b.split('?')[0];
+    } else {
+      return a === b;
+    }
   }
 }

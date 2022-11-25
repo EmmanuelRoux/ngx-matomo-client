@@ -43,6 +43,13 @@ export interface MatomoRouterConfiguration {
    * Optional, default is no url excluded
    */
   exclude?: ExclusionConfig;
+
+  /**
+   * Set to true to ignore route url params when tracking
+   *
+   * Optional, default is false
+   */
+  ignoreUrlParams?: boolean;
 }
 
 export interface MatomoRouterConfigurationWithInterceptors extends MatomoRouterConfiguration {
@@ -60,6 +67,7 @@ export const DEFAULT_ROUTER_CONFIGURATION: Required<MatomoRouterConfiguration> =
   trackPageTitle: true,
   delay: 0,
   exclude: [],
+  ignoreUrlParams: false,
 };
 
 export type InternalGlobalConfiguration = Pick<
