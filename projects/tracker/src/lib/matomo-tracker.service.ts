@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
 import { initializeMatomoHolder, MatomoHolder } from './holder';
 import { Getters, RequireAtLeastOne } from './types';
@@ -103,17 +103,18 @@ export interface MatomoInstance {
 
 export function createMatomoTracker(
   config: InternalMatomoConfiguration,
-  platformId: Object
+  platformId: Object,
+  ngZone: NgZone
 ): MatomoTracker {
   return config.disabled || !isPlatformBrowser(platformId)
     ? new NoopMatomoTracker()
-    : new StandardMatomoTracker();
+    : new StandardMatomoTracker(ngZone, config);
 }
 
 @Injectable({
   providedIn: 'root',
   useFactory: createMatomoTracker,
-  deps: [INTERNAL_MATOMO_CONFIGURATION, PLATFORM_ID],
+  deps: [INTERNAL_MATOMO_CONFIGURATION, PLATFORM_ID, NgZone],
 })
 export abstract class MatomoTracker {
   /**
@@ -1354,7 +1355,10 @@ export abstract class MatomoTracker {
 }
 
 export class StandardMatomoTracker extends MatomoTracker {
-  constructor() {
+  constructor(
+    private readonly ngZone: NgZone,
+    private readonly config: InternalMatomoConfiguration
+  ) {
     super();
     initializeMatomoHolder();
   }
@@ -1370,7 +1374,13 @@ export class StandardMatomoTracker extends MatomoTracker {
   }
 
   protected push(args: unknown[]): void {
-    window._paq.push(trimTrailingUndefinedElements(args));
+    if (this.config.runOutsideAngularZone) {
+      this.ngZone.runOutsideAngular(() => {
+        window._paq.push(trimTrailingUndefinedElements(args));
+      });
+    } else {
+      window._paq.push(trimTrailingUndefinedElements(args));
+    }
   }
 }
 
