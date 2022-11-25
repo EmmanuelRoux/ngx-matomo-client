@@ -1,6 +1,6 @@
 {
   "name": "@ngx-matomo/tracker",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "author": "Emmanuel Roux (https://github.com/EmmanuelRoux)",
   "description": "Matomo (fka. Piwik) client for Angular applications",
   "keywords": [
