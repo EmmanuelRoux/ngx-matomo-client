@@ -21,6 +21,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
         trackAppInitialLoad: false,
         requireConsent: MatomoConsentMode.NONE,
         enableJSErrorTracking: false,
+        runOutsideAngularZone: false,
         ...requireNonNull(inject(MATOMO_CONFIGURATION, InjectFlags.Optional), CONFIG_NOT_FOUND),
       } as InternalMatomoConfiguration),
   }
@@ -109,6 +110,9 @@ export interface BaseMatomoConfiguration {
 
   /** Set to `true` to enable Javascript errors tracking as <i>events</i> (with category <i>JavaScript Errors</i>) */
   enableJSErrorTracking?: boolean;
+
+  /** Set to `true` to run matomo calls outside of angular NgZone. This may fix angular freezes. */
+  runOutsideAngularZone?: boolean;
 }
 
 export interface BaseAutoMatomoConfiguration<

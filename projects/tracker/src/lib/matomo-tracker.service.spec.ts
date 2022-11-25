@@ -1,3 +1,4 @@
+import { NgZone } from '@angular/core';
 import { InternalMatomoConfiguration } from './configuration';
 import { MatomoHolder } from './holder';
 import {
@@ -15,8 +16,16 @@ const PLATFORM_BROWSER_ID = 'browser';
 const PLATFORM_SERVER_ID = 'server';
 
 describe('MatomoTracker', () => {
-  function createTracker(disabled = false, platform: Object = PLATFORM_BROWSER_ID): MatomoTracker {
-    return createMatomoTracker({ disabled } as InternalMatomoConfiguration, platform);
+  function createMockZone(): jasmine.SpyObj<NgZone> {
+    return jasmine.createSpyObj<NgZone>(['runOutsideAngular']);
+  }
+
+  function createTracker(
+    config: Partial<InternalMatomoConfiguration> = { disabled: false },
+    platform: Object = PLATFORM_BROWSER_ID,
+    ngZone: NgZone = createMockZone()
+  ): MatomoTracker {
+    return createMatomoTracker(config as InternalMatomoConfiguration, platform, ngZone);
   }
 
   beforeEach(() => {
@@ -632,7 +641,7 @@ describe('MatomoTracker', () => {
 
   it('should ignore calls when disabled', () => {
     // Given
-    const tracker = createTracker(true);
+    const tracker = createTracker({ disabled: true });
     (window as any)._paq = undefined;
 
     // Then
@@ -642,7 +651,7 @@ describe('MatomoTracker', () => {
 
   it('should reject all promises when disabled', done => {
     // Given
-    const tracker = createTracker(true);
+    const tracker = createTracker({ disabled: true });
 
     // Then
     tracker
@@ -656,7 +665,7 @@ describe('MatomoTracker', () => {
 
   it('should ignore calls when platform is not browser', () => {
     // Given
-    const tracker = createTracker(false, PLATFORM_SERVER_ID);
+    const tracker = createTracker({ disabled: false }, PLATFORM_SERVER_ID);
     (window as any)._paq = undefined;
 
     // Then
@@ -666,7 +675,7 @@ describe('MatomoTracker', () => {
 
   it('should reject all promises when platform is not browser', done => {
     // Given
-    const tracker = createTracker(false, PLATFORM_SERVER_ID);
+    const tracker = createTracker({ disabled: false }, PLATFORM_SERVER_ID);
 
     // Then
     tracker
@@ -676,5 +685,24 @@ describe('MatomoTracker', () => {
         expect().nothing();
         done();
       });
+  });
+
+  it('should run commands outside Angular Zone', () => {
+    // Given
+    const zone = createMockZone();
+    const tracker = createTracker({ runOutsideAngularZone: true }, PLATFORM_BROWSER_ID, zone);
+    let runOutside = false;
+
+    zone.runOutsideAngular.and.callFake(fn => {
+      runOutside = true;
+      return fn();
+    });
+
+    // When
+    tracker.ping();
+
+    // Then
+    expect(runOutside).toBeTrue();
+    expect(window._paq).toEqual([['ping']]);
   });
 });
