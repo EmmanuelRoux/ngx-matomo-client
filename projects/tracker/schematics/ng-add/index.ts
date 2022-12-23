@@ -21,6 +21,7 @@ import { Schema as Options } from './schema';
 
 /***********************************************************************************/
 /* Important note: this schematic depends on non-public API of @schematics/angular */
+
 /***********************************************************************************/
 
 function checkRequiredRouterDependency(host: Tree, context: SchematicContext) {
@@ -50,12 +51,6 @@ function addPackageJsonDependencies(options: Options) {
 
     if (options.router) {
       checkRequiredRouterDependency(host, context);
-
-      addPackageJsonDependency(host, {
-        type: NodeDependencyType.Default,
-        name: '@ngx-matomo/router',
-        version,
-      });
     }
 
     context.addTask(new NodePackageInstallTask());
@@ -113,7 +108,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
 
     if (options.router) {
       changes = changes.concat(
-        addImportToModule(source, modulePath, routerDeclaration, '@ngx-matomo/router')
+        addImportToModule(source, modulePath, routerDeclaration, '@ngx-matomo/tracker')
       );
     }
 

@@ -33,11 +33,5 @@
   "schematics": "./schematics/collection.json",
   "ng-add": {
     "save": true
-  },
-  "ng-update": {
-    "packageGroup": [
-      "@ngx-matomo/tracker",
-      "@ngx-matomo/router"
-    ]
   }
 }

@@ -2,9 +2,9 @@ import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core
 import {
   MATOMO_ROUTER_CONFIGURATION,
   MatomoRouterConfigurationWithInterceptors,
-} from './configuration';
-import { provideInterceptors } from './interceptor';
-import { MatomoRouter } from './matomo-router.service';
+} from './router/configuration';
+import { provideInterceptors } from './router/interceptor';
+import { MatomoRouter } from './router/matomo-router.service';
 
 @NgModule()
 export class NgxMatomoRouterModule {

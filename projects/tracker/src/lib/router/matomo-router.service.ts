@@ -1,6 +1,5 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
-import { MatomoTracker } from '@ngx-matomo/tracker';
 import {
   combineLatest,
   forkJoin,
@@ -22,6 +21,7 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
+import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import {
   ExclusionConfig,
   INTERNAL_ROUTER_CONFIGURATION,

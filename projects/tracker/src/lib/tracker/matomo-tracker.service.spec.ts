@@ -1,13 +1,13 @@
 import { NgZone } from '@angular/core';
 import { InternalMatomoConfiguration } from './configuration';
-import { MatomoHolder } from './holder';
+import { MatomoHolder } from '../holder';
 import {
   createMatomoTracker,
   MatomoECommerceItem,
   MatomoInstance,
   MatomoTracker,
 } from './matomo-tracker.service';
-import { Getters, Methods } from './types';
+import { Getters, Methods } from '../utils/types';
 
 declare var window: MatomoHolder;
 

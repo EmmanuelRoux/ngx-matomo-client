@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatomoTracker } from '../matomo-tracker.service';
+import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { MatomoTrackClickDirective } from './matomo-track-click.directive';
 
 @Component({

@@ -1,10 +1,10 @@
 import { ModuleWithProviders, NgModule, Optional, Provider, SkipSelf } from '@angular/core';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from './configuration';
 import { MatomoOptOutFormComponent } from './directives/matomo-opt-out-form.component';
 import { MatomoTrackClickDirective } from './directives/matomo-track-click.directive';
 import { MatomoTrackerDirective } from './directives/matomo-tracker.directive';
-import { MatomoInitializerService } from './matomo-initializer.service';
-import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './script-factory';
+import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
+import { MatomoInitializerService } from './tracker/matomo-initializer.service';
+import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
 
 @NgModule({
   declarations: [MatomoTrackerDirective, MatomoTrackClickDirective, MatomoOptOutFormComponent],

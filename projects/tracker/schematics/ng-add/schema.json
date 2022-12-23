@@ -47,7 +47,7 @@
     "router": {
       "type": "boolean",
       "default": true,
-      "description": "Specifies if @ngx-matomo/router should be installed to automatically track page views. This requires @angular/router as a dependency.",
+      "description": "Specifies if NgxMatomoRouterModule should be set-up to automatically track page views. This requires @angular/router as a dependency.",
       "alias": "r",
       "x-prompt": "Would you like to automatically track page views?"
     }

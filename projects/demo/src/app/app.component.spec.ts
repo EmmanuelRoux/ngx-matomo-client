@@ -1,8 +1,11 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NgxMatomoRouterModule } from '@ngx-matomo/router';
-import { MatomoConfiguration, NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import {
+  MatomoConfiguration,
+  NgxMatomoRouterModule,
+  NgxMatomoTrackerModule,
+} from '@ngx-matomo/tracker';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {

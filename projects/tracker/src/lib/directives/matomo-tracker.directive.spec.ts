@@ -1,6 +1,6 @@
 import { Component, ElementRef, Type, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatomoTracker } from '../matomo-tracker.service';
+import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { MatomoTrackerDirective, TrackArgs } from './matomo-tracker.directive';
 
 type HTMLElementEvent = keyof HTMLElementEventMap;

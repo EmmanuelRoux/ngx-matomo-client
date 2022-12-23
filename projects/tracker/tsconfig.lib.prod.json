@@ -4,7 +4,6 @@
   "compilerOptions": {
     "declarationMap": false,
     "paths": {
-      "@ngx-matomo/router": ["dist-prod/router"],
       "@ngx-matomo/tracker": ["dist-prod/tracker"]
     }
   },

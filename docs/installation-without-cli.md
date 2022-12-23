@@ -32,17 +32,12 @@ import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 export class AppModule {}
 ```
 
-**If you use [Angular router](https://angular.io/guide/router) and want to automatically track page views**, you may
-optionally install the router adapter:
-
-`npm install --save @ngx-matomo/router` or `yarn add @ngx-matomo/router`
-
-Then import `NgxMatomoRouterModule` into your root module:
+**If you use [Angular router](https://angular.io/guide/router) and want to automatically track page views**, import 
+`NgxMatomoRouterModule` into your root module:
 
 ```typescript
 import { NgModule } from '@angular/core';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
-import { NgxMatomoRouterModule } from '@ngx-matomo/router';
+import { NgxMatomoTrackerModule, NgxMatomoRouterModule } from '@ngx-matomo/tracker';
 
 @NgModule({
   imports: [
