@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from '@ngx-matomo/tracker';
+import { MATOMO_CONFIGURATION, MatomoConfiguration } from 'ngx-matomo-client';
 
 @Component({
   selector: 'app-root',

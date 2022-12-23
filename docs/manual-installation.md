@@ -6,7 +6,7 @@ Matomo (fka. Piwik) client for Angular applications
 
 [← return to documentation](../README.md)
 
-Be sure to first follow instruction installation to add `@ngx-matomo/tracker` dependency.
+Be sure to first follow instruction installation to add `ngx-matomo-client` dependency.
 
 NgxMatomo includes Matomo's tracking script for you.
 **You don't need to copy/paste the tracking code into your application.**
@@ -24,9 +24,9 @@ In your root module, import `NgxMatomoTrackerModule` and set the configuration m
 import { NgModule } from '@angular/core';
 import {
   MatomoInitializationMode,
-  NgxMatomoTrackerModule,
   NgxMatomoRouterModule,
-} from '@ngx-matomo/tracker';
+  NgxMatomoTrackerModule,
+} from 'ngx-matomo-client';
 
 @NgModule({
   // ...

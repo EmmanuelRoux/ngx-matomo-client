@@ -6,6 +6,11 @@
       "default": false,
       "description": "Do not import @ngx-matomo modules into the owning NgModule."
     },
+    "skipLegacyPackageMigration": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not migrate legacy @ngx-matomo/* imports to ngx-matomo-client imports."
+    },
     "module": {
       "type": "string",
       "default": "app",

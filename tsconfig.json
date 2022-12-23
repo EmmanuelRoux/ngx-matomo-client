@@ -18,7 +18,7 @@
     "module": "es2020",
     "lib": ["es2018", "dom"],
     "paths": {
-      "@ngx-matomo/tracker": ["dist/tracker"]
+      "ngx-matomo-client": ["dist/tracker"]
     },
     "useDefineForClassFields": false
   },

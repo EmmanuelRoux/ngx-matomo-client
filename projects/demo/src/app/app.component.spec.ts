@@ -5,7 +5,7 @@ import {
   MatomoConfiguration,
   NgxMatomoRouterModule,
   NgxMatomoTrackerModule,
-} from '@ngx-matomo/tracker';
+} from 'ngx-matomo-client';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {

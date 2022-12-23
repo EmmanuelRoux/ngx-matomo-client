@@ -84,7 +84,7 @@ function createTargetSchematicsDir(subdir) {
   }
 }
 
-console.log(`Building schematics for @ngx-matomo/tracker${isProd ? ' for production' : ''}`);
+console.log(`Building schematics for ngx-matomo-client${isProd ? ' for production' : ''}`);
 console.log(' > Compiling tsc...');
 build();
 console.log(' > Copying resources...');
