@@ -2,6 +2,7 @@
  * Public API Surface of tracker
  */
 
+export { NgxMatomoModule, NgxMatomoTrackerModule } from './lib/ngx-matomo.module';
 export {
   MatomoTracker,
   MatomoECommerceItem,
@@ -9,7 +10,6 @@ export {
   MatomoECommerceItemView,
   MatomoECommerceCategoryView,
 } from './lib/tracker/matomo-tracker.service';
-export { NgxMatomoTrackerModule } from './lib/ngx-matomo-tracker.module';
 export { MatomoInitializerService } from './lib/tracker/matomo-initializer.service';
 export {
   MatomoConfiguration,

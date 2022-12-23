@@ -12,7 +12,7 @@ import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoHolder } from '../holder';
 import { MatomoInitializerService } from './matomo-initializer.service';
 import { MatomoTracker, NoopMatomoTracker } from './matomo-tracker.service';
-import { NgxMatomoTrackerModule } from '../ngx-matomo-tracker.module';
+import { NgxMatomoModule } from '../ngx-matomo.module';
 import {
   createDefaultMatomoScriptElement,
   MATOMO_SCRIPT_FACTORY,
@@ -461,7 +461,7 @@ describe('MatomoInitializerService', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NgxMatomoTrackerModule.forRoot(
+        NgxMatomoModule.forRoot(
           {
             siteId: 1,
             trackerUrl: '',
