@@ -11,13 +11,13 @@ Matomo (fka. Piwik) client for Angular applications
 If your project is not using [Angular CLI](https://angular.io/cli/add) then you must install package then manually
 import the module into your application:
 
-Run `npm install --save @ngx-matomo/tracker` or `yarn add @ngx-matomo/tracker`
+Run `npm install --save ngx-matomo-client` or `yarn add ngx-matomo-client`
 
 Then import `NgxMatomoTrackerModule` into your root module (typically `AppModule`):
 
 ```typescript
 import { NgModule } from '@angular/core';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { NgxMatomoTrackerModule } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
@@ -32,12 +32,12 @@ import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 export class AppModule {}
 ```
 
-**If you use [Angular router](https://angular.io/guide/router) and want to automatically track page views**, import 
+**If you use [Angular router](https://angular.io/guide/router) and want to automatically track page views**, import
 `NgxMatomoRouterModule` into your root module:
 
 ```typescript
 import { NgModule } from '@angular/core';
-import { NgxMatomoTrackerModule, NgxMatomoRouterModule } from '@ngx-matomo/tracker';
+import { NgxMatomoTrackerModule, NgxMatomoRouterModule } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [

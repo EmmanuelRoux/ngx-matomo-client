@@ -1,5 +1,6 @@
 export interface Schema {
   skipImport?: boolean;
+  skipLegacyPackageMigration?: boolean;
   module?: string;
   path?: string;
   project?: string;

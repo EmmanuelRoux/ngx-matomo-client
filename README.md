@@ -3,7 +3,7 @@
 Matomo (fka. Piwik) client for Angular applications
 
 [![Angular 15](https://img.shields.io/badge/Angular-15-limegreen.svg?logo=angular)](https://angular.io/)
-[![NPM latest version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
+[![NPM latest version](https://img.shields.io/npm/v/ngx-matomo-client/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen)](https://www.npmjs.com/package/ngx-matomo-client)
 [![build](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml)
 [![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml)
 [![Coverage Status](https://coveralls.io/repos/github/EmmanuelRoux/ngx-matomo/badge.svg?branch=main)](https://coveralls.io/github/EmmanuelRoux/ngx-matomo?branch=main)
@@ -43,7 +43,7 @@ Matomo (fka. Piwik) client for Angular applications
 _The latest version supports Angular 15 and newer. If you need NgxMatomo for an older Angular version,
 see compatibility table below._
 
-`ng add @ngx-matomo/tracker`
+`ng add ngx-matomo-client`
 
 This will prompt you for some information such as your Matomo's server address and site ID. You can find your site ID in
 Matomo admin panel.
@@ -104,7 +104,7 @@ By default, the _current_ url will be sent to Matomo. You may provide a service
 to return a custom page url:
 
 ```typescript
-import { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from '@ngx-matomo/tracker';
+import { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from 'ngx-matomo-client';
 
 @NgModule({
   // ...
@@ -213,7 +213,7 @@ export class MyAsyncInterceptor extends MatomoRouteInterceptorBase<string> {
 Alternatively, declare your interceptors providers using `MATOMO_ROUTER_INTERCEPTORS` token:
 
 ```typescript
-import { MatomoRouterInterceptor, MATOMO_ROUTER_INTERCEPTORS } from '@ngx-matomo/tracker';
+import { MatomoRouterInterceptor, MATOMO_ROUTER_INTERCEPTORS } from 'ngx-matomo-client';
 
 @NgModule({
   // ...
@@ -235,7 +235,7 @@ manually call `setCustomUrl` or `setReferrerUrl`.
 
 ```typescript
 import { Component, OnInit } from '@angular/core';
-import { MatomoTracker } from '@ngx-matomo/tracker';
+import { MatomoTracker } from 'ngx-matomo-client';
 
 @Component({
   selector: 'app-example',
@@ -335,7 +335,7 @@ to [Matomo documentation](https://fr.matomo.org/docs) for details.
 
 ```typescript
 import { Component } from '@angular/core';
-import { MatomoTracker } from '@ngx-matomo/tracker';
+import { MatomoTracker } from 'ngx-matomo-client';
 
 @Component({
   /* ... */
@@ -368,7 +368,7 @@ To do so just set the `disabled` configuration switch:
 
 ```typescript
 import { NgModule } from '@angular/core';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { NgxMatomoTrackerModule } from 'ngx-matomo-client';
 import { environment } from './environment';
 
 @NgModule({
@@ -493,7 +493,7 @@ like `<script src="..." defer async type="text/javascript">`.
 To customize this script tag, provide a custom factory function to module's `.forRoot()`:
 
 ```ts
-import { createDefaultMatomoScriptElement } from '@ngx-matomo/tracker';
+import { createDefaultMatomoScriptElement } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
@@ -538,7 +538,7 @@ Your configuration should look like that:
 
 ```typescript
 import { NgModule } from '@angular/core';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { NgxMatomoTrackerModule } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [

@@ -15,7 +15,9 @@ const registry = getRegistry(baseDir);
 const distTag = getChannel(channel);
 const addTagCmd = getAddTagCmd(pkg.name, distTag, registry, npmrc);
 
-console.log(`Adding version ${version} of ${libName} to npm registry on dist-tag ${distTag}`);
+console.log(
+  `Adding version ${version} of ngx-matomo-client to npm registry on dist-tag ${distTag}`
+);
 
 exec(addTagCmd, { cwd: baseDir });
 

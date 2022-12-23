@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatomoTracker } from '@ngx-matomo/tracker';
+import { MatomoTracker } from 'ngx-matomo-client';
 import { BASE_TITLE } from '../title';
 
 @Component({
