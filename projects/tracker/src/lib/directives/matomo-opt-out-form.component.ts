@@ -10,14 +10,14 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { coerceCssSizeBinding, CssSizeInput } from '../coercion';
+import { coerceCssSizeBinding, CssSizeInput } from '../utils/coercion';
 import {
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
   InternalMatomoConfiguration,
   isAutoConfigurationMode,
   isExplicitTrackerConfiguration,
-} from '../configuration';
+} from '../tracker/configuration';
 
 const DEFAULT_BORDER = '0';
 const DEFAULT_WIDTH = '600px';

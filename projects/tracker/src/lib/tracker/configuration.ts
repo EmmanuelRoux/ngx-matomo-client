@@ -1,5 +1,5 @@
 import { inject, InjectionToken } from '@angular/core';
-import { requireNonNull } from './coercion';
+import { requireNonNull } from '../utils/coercion';
 
 const CONFIG_NOT_FOUND =
   'No Matomo configuration found! Have you included Matomo module using NgxMatomoTrackerModule.forRoot() ?';

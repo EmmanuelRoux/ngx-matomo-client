@@ -1,7 +1,7 @@
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { NavigationEnd } from '@angular/router';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from '@ngx-matomo/tracker';
+import { MATOMO_CONFIGURATION, MatomoConfiguration } from '../tracker/configuration';
 import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './configuration';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
 

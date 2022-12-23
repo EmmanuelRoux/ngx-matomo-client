@@ -22,8 +22,11 @@ In your root module, import `NgxMatomoTrackerModule` and set the configuration m
 
 ```typescript
 import { NgModule } from '@angular/core';
-import { MatomoInitializationMode, NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
-import { NgxMatomoRouterModule } from '@ngx-matomo/router';
+import {
+  MatomoInitializationMode,
+  NgxMatomoTrackerModule,
+  NgxMatomoRouterModule,
+} from '@ngx-matomo/tracker';
 
 @NgModule({
   // ...

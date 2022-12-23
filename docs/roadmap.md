@@ -14,7 +14,7 @@ in a little more weeks/months.
 
 Don't hesitate to post issues and suggest pull requests!
 
-### @ngx-matomo/tracker
+### tracker
 
 - [x] **short term:** add consent-related methods to MatomoTracker service
 - [ ] **short term:** add content-tracking helpers (components, directives...) to ease content impressions/interactions
@@ -23,7 +23,7 @@ Don't hesitate to post issues and suggest pull requests!
       simpler interface for tracking features)
 - [ ] **short term:** provide module using new _Angular 14 way_ of providing modules, standalone components, etc.
 
-### @ngx-matomo/router
+### router
 
 - [x] **short term:** simplify current page details customization (url, title, ecommerce features...)
 - [ ] **short term:** merge package into main package (no need to have a separate package thanks to tree-shaking in most applications)

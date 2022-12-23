@@ -1,6 +1,7 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { requireNonNull } from './coercion';
+import { initializeMatomoHolder } from '../holder';
+import { requireNonNull } from '../utils/coercion';
 import {
   AutoMatomoConfiguration,
   getTrackersConfiguration,
@@ -14,7 +15,6 @@ import {
   MatomoTrackerConfiguration,
 } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
-import { initializeMatomoHolder } from './holder';
 import { MatomoTracker } from './matomo-tracker.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './script-factory';
 

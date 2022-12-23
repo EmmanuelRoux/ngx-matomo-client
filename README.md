@@ -104,7 +104,7 @@ By default, the _current_ url will be sent to Matomo. You may provide a service
 to return a custom page url:
 
 ```typescript
-import { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from '@ngx-matomo/router';
+import { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from '@ngx-matomo/tracker';
 
 @NgModule({
   // ...
@@ -213,7 +213,7 @@ export class MyAsyncInterceptor extends MatomoRouteInterceptorBase<string> {
 Alternatively, declare your interceptors providers using `MATOMO_ROUTER_INTERCEPTORS` token:
 
 ```typescript
-import { MatomoRouterInterceptor, MATOMO_ROUTER_INTERCEPTORS } from '@ngx-matomo/router';
+import { MatomoRouterInterceptor, MATOMO_ROUTER_INTERCEPTORS } from '@ngx-matomo/tracker';
 
 @NgModule({
   // ...

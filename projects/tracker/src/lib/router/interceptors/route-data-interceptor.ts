@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { MatomoECommerceView, MatomoTracker } from '@ngx-matomo/tracker';
 import { Observable } from 'rxjs';
+import { MatomoECommerceView, MatomoTracker } from '../../tracker/matomo-tracker.service';
 import { MatomoRouteInterceptorBase } from './route-interceptor-base';
 
 export const DEFAULT_DATA_KEY = 'matomo';

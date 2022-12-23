@@ -33,15 +33,10 @@ function getRegistry(pkgDir) {
   return (pkg.publishConfig || {}).registry || DEFAULT_REGISTRY;
 }
 
-function getPkgName(libName) {
-  return `@ngx-matomo/${libName}`;
-}
-
 module.exports = {
   checkNpmToken,
   readPkgJson,
   writePkgJson,
   getChannel,
   getRegistry,
-  getPkgName,
 };

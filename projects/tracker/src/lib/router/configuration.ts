@@ -1,5 +1,8 @@
 import { inject, InjectionToken, Type } from '@angular/core';
-import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from '@ngx-matomo/tracker';
+import {
+  INTERNAL_MATOMO_CONFIGURATION,
+  InternalMatomoConfiguration,
+} from '../tracker/configuration';
 import { MatomoRouterInterceptor } from './interceptor';
 
 export const MATOMO_ROUTER_CONFIGURATION = new InjectionToken<MatomoRouterConfiguration>(

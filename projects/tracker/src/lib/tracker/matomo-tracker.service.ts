@@ -1,8 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
-import { initializeMatomoHolder, MatomoHolder } from './holder';
-import { Getters, RequireAtLeastOne } from './types';
+import { initializeMatomoHolder, MatomoHolder } from '../holder';
+import { Getters, RequireAtLeastOne } from '../utils/types';
 
 declare var window: MatomoHolder;
 

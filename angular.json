@@ -38,41 +38,6 @@
         }
       }
     },
-    "router": {
-      "projectType": "library",
-      "root": "projects/router",
-      "sourceRoot": "projects/router/src",
-      "prefix": "matomo",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "tsConfig": "projects/router/tsconfig.lib.json",
-            "project": "projects/router/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/router/tsconfig.lib.prod.json",
-              "project": "projects/router/ng-package.prod.json"
-            }
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/router/src/test.ts",
-            "tsConfig": "projects/router/tsconfig.spec.json",
-            "karmaConfig": "projects/router/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": ["projects/router/**/*.ts", "projects/router/**/*.html"]
-          }
-        }
-      }
-    },
     "demo": {
       "projectType": "application",
       "schematics": {

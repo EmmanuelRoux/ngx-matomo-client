@@ -1,7 +1,7 @@
 import { Directive, ElementRef, Input, OnDestroy } from '@angular/core';
 import { fromEvent, merge, Subscription } from 'rxjs';
-import { requireNonNull } from '../coercion';
-import { MatomoTracker } from '../matomo-tracker.service';
+import { requireNonNull } from '../utils/coercion';
+import { MatomoTracker } from '../tracker/matomo-tracker.service';
 
 export interface TrackArgs {
   category?: string;

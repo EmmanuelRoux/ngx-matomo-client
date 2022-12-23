@@ -1,6 +1,6 @@
 import { Directive, HostListener, Input } from '@angular/core';
-import { MatomoTracker } from '../matomo-tracker.service';
-import { requireNonNull } from '../coercion';
+import { MatomoTracker } from '../tracker/matomo-tracker.service';
+import { requireNonNull } from '../utils/coercion';
 
 @Directive({
   selector: '[matomoClickCategory][matomoClickAction]',

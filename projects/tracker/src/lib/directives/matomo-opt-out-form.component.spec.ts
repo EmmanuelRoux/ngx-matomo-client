@@ -7,7 +7,7 @@ import {
   MATOMO_CONFIGURATION,
   MatomoConfiguration,
   MatomoInitializationMode,
-} from '../configuration';
+} from '../tracker/configuration';
 import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
 
 @Component({
