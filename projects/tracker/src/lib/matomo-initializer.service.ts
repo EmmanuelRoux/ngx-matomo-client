@@ -94,11 +94,11 @@ export class MatomoInitializerService {
   }
 
   initialize(): void {
-    this.runPreInitTasks();
-
     if (this.initialized) {
       throw new Error(ALREADY_INITIALIZED_ERROR);
     }
+
+    this.runPreInitTasks();
 
     if (isAutoConfigurationMode(this.config)) {
       this.injectMatomoScript(this.config);
