@@ -10,7 +10,7 @@ export const MATOMO_PAGE_URL_PROVIDER = new InjectionToken<PageUrlProvider>(
     factory: () =>
       new DefaultPageUrlProvider(
         inject(INTERNAL_ROUTER_CONFIGURATION),
-        inject(APP_BASE_HREF, InjectFlags.Optional),
+        inject(APP_BASE_HREF, {optional: true}),
         inject(PlatformLocation)
       ),
   }
@@ -26,10 +26,10 @@ function trimTrailingSlash(str: string): string {
 
 export class DefaultPageUrlProvider implements PageUrlProvider {
   constructor(
-    @Optional()
-    @Inject(INTERNAL_ROUTER_CONFIGURATION)
+    // @Optional() @Inject(INTERNAL_ROUTER_CONFIGURATION)
     private readonly config: InternalRouterConfiguration,
-    @Optional() @Inject(APP_BASE_HREF) private readonly baseHref: string | null,
+    // @Optional() @Inject(APP_BASE_HREF) 
+    private readonly baseHref: string | null,
     private readonly platformLocation: PlatformLocation
   ) {}
 
