@@ -9,6 +9,8 @@ import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 import {
   addSymbolToNgModuleMetadata,
   findNodes,
+  getDecoratorMetadata,
+  getMetadataField,
   insertImport,
 } from '@schematics/angular/utility/ast-utils';
 import { applyToUpdateRecorder, Change, ReplaceChange } from '@schematics/angular/utility/change';
@@ -105,89 +107,48 @@ function applyChanges(host: Tree, modulePath: string, changes: Change[]): void {
   host.commitUpdate(recorder);
 }
 
-// function addImport(
-//   source: ts.SourceFile,
-//   modulePath: string,
-//   symbolName: string,
-//   importPath: string
-// ): { symbolName: string, changes: Change[] } {
-//   const allImports = findNodes(source, ts.SyntaxKind.ImportDeclaration) as ts.ImportDeclaration[];
-//   const relevantImports = allImports.filter(node => {
-//     return ts.isStringLiteral(node.moduleSpecifier) && node.moduleSpecifier?.text === importPath;
-//   });
-//   let returnName = symbolName;
-//   const changes: Change[] = [];
-//
-//   if (relevantImports.length > 0) {
-//     const imports: ts.Identifier[] = [];
-//     let hasAsteriskImport = false;
-//
-//     relevantImports.forEach(relevantImport => {
-//       if (relevantImport.importClause) {
-//         const bindings = relevantImport.importClause.namedBindings;
-//
-//         if (!bindings) {
-//           // Should not happen, because this lib has no import with side effect
-//           return;
-//         }
-//
-//         if (ts.isNamespaceImport(bindings)) {
-//           // Import is of the form import * as name from path
-//           // --> return the usable import expression
-//           returnName = `${bindings.name}.${symbolName}`;
-//           hasAsteriskImport = true;
-//         } else {
-//           imports.push(...(findNodes(relevantImport, ts.SyntaxKind.Identifier) as ts.Identifier[]));
-//         }
-//       }
-//     });
-//
-//     if (!hasAsteriskImport) {
-//       const importTextNodes = imports.filter(identifier => identifier.text === symbolName);
-//
-//       // insert import if it's not there
-//       if (importTextNodes.length === 0) {
-//         const fallbackPos =
-//           findNodes(relevantImports[0], ts.SyntaxKind.CloseBraceToken)[0].getStart() ||
-//           findNodes(relevantImports[0], ts.SyntaxKind.FromKeyword)[0].getStart();
-//
-//         changes.push(insertAfterLastOccurrence(imports, `, ${symbolName}`, modulePath, fallbackPos));
-//       }
-//     }
-//   } else {
-//     // Should add a new full import declaration
-//   }
-//
-//   return returnName;
-// }
-
-// /**
-//  * Get the module to import from: if a legacy import from legacyPackageName exist,
-//  * return it, otherwise return the new 'ngx-matomo-client' package name.
-//  */
-// function hasLegacyImport(source: ts.SourceFile, legacyPackageName: string): boolean {
-//   return (
-//     findNodes(source, ts.SyntaxKind.ImportDeclaration).filter(node => {
-//       return (
-//         ts.isImportDeclaration(node) &&
-//         ts.isStringLiteral(node.moduleSpecifier) &&
-//         node.moduleSpecifier?.text === legacyPackageName
-//       );
-//     }).length > 0
-//   );
-// }
-
-function isRelevantImportPath(importPath: string): boolean {
-  return importPath === 'ngx-matomo-client' || importPath.startsWith('@ngx-matomo/');
+function isLegacyImportPath(importPath: string): boolean {
+  return importPath.startsWith('@ngx-matomo/');
 }
 
-function findRelevantImports(source: ts.SourceFile): ts.ImportDeclaration[] {
+function isRelevantImportPath(importPath: string): boolean {
+  return importPath === 'ngx-matomo-client' || isLegacyImportPath(importPath);
+}
+
+function findRelevantImports(
+  source: ts.SourceFile,
+  predicate: (importPath: string) => boolean
+): ts.ImportDeclaration[] {
   const allImports = findNodes(source, ts.SyntaxKind.ImportDeclaration) as ts.ImportDeclaration[];
 
   return allImports.filter(
-    node =>
-      ts.isStringLiteral(node.moduleSpecifier) && isRelevantImportPath(node.moduleSpecifier.text)
+    node => ts.isStringLiteral(node.moduleSpecifier) && predicate(node.moduleSpecifier.text)
   );
+}
+
+function hasLegacyModuleDeclaration(source: ts.SourceFile): boolean {
+  const result = getDecoratorMetadata(source, 'NgModule', '@angular/core');
+  const node = result[0];
+  if (!node || !ts.isObjectLiteralExpression(node)) {
+    return false;
+  }
+
+  const matchingProperties = getMetadataField(node, 'imports');
+  if (!matchingProperties) {
+    return false;
+  }
+
+  const assignment = matchingProperties[0] as ts.PropertyAssignment;
+
+  if (assignment.initializer.kind !== ts.SyntaxKind.ArrayLiteralExpression) {
+    return false;
+  }
+
+  const arrLiteral = assignment.initializer as ts.ArrayLiteralExpression;
+
+  return arrLiteral.elements
+    .filter(el => el.kind === ts.SyntaxKind.CallExpression)
+    .some(el => (el as ts.Identifier).getText().startsWith('NgxMatomo'));
 }
 
 function addImportsToNgModule(options: Options, context: SchematicContext): Rule {
@@ -200,7 +161,17 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
 
     const changes: Change[] = [];
     const source = readIntoSourceFile(host, modulePath);
-    const imports = findRelevantImports(source);
+    const trackerConfig = buildTrackerConfig(options, context, modulePath);
+
+    // If some Matomo imports are already present, use the legacy setup using
+    // NgModule.
+    //
+    // If no import is present, use the new providers-style setup.
+    //
+    // Maybe in the future a schematics can be provided to migrate old NgModule
+    // setup to new providers-style setup.
+
+    const imports = findRelevantImports(source, isRelevantImportPath);
     let mainModuleIdentifier = 'NgxMatomoModule';
     let routerModuleIdentifier = 'NgxMatomoRouterModule';
     let asteriskAlias: string | undefined;
@@ -248,28 +219,54 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
       }
     }
 
-    const trackerConfig = buildTrackerConfig(options, context, modulePath);
+    if (hasLegacyModuleDeclaration(source)) {
+      context.logger.warn(
+        'Your configuration is using legacy configuration with NgModule imports. ' +
+          'While this is still supported, it is recommended to migrate your code to use the new provideMatomo() setup (see README > Installation)'
+      );
 
-    if (!mainModuleImported) {
-      changes.push(insertImport(source, modulePath, mainModuleIdentifier, 'ngx-matomo-client'));
-    }
-
-    changes.push(
-      ...addSymbolToNgModuleMetadata(
-        source,
-        modulePath,
-        'imports',
-        `${mainModuleIdentifier}.forRoot(${trackerConfig})`
-      )
-    );
-
-    if (options.router) {
-      if (!routerModuleImported) {
-        changes.push(insertImport(source, modulePath, routerModuleIdentifier, 'ngx-matomo-client'));
+      if (!mainModuleImported) {
+        changes.push(insertImport(source, modulePath, mainModuleIdentifier, 'ngx-matomo-client'));
       }
 
       changes.push(
-        ...addSymbolToNgModuleMetadata(source, modulePath, 'imports', routerModuleIdentifier)
+        ...addSymbolToNgModuleMetadata(
+          source,
+          modulePath,
+          'imports',
+          `${mainModuleIdentifier}.forRoot(${trackerConfig})`
+        )
+      );
+
+      if (options.router) {
+        if (!routerModuleImported) {
+          changes.push(
+            insertImport(source, modulePath, routerModuleIdentifier, 'ngx-matomo-client')
+          );
+        }
+
+        changes.push(
+          ...addSymbolToNgModuleMetadata(source, modulePath, 'imports', routerModuleIdentifier)
+        );
+      }
+    } else {
+      const provideMatomoArgs = [trackerConfig];
+
+      changes.push(insertImport(source, modulePath, 'provideMatomo', 'ngx-matomo-client'));
+
+      if (options.router) {
+        changes.push(insertImport(source, modulePath, 'withRouter', 'ngx-matomo-client'));
+
+        provideMatomoArgs.push(`withRouter()`);
+      }
+
+      changes.push(
+        ...addSymbolToNgModuleMetadata(
+          source,
+          modulePath,
+          'providers',
+          `provideMatomo(${provideMatomoArgs.join(', ')})`
+        )
       );
     }
 
@@ -285,7 +282,6 @@ function migrateAllLegacyImports(options: Options, context: SchematicContext): R
       context.logger.info('Migrating imports from old @ngx-matomo/* packages...');
 
       host.visit(path => {
-        // TODO ???
         // if (options.module && path.endsWith(options.module) && !options.skipImport) {
         //   context.logger.info('Skip migration of "' + path + '"');
         //   // If this is the main module path, handle migration directly in
