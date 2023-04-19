@@ -8,27 +8,37 @@ Matomo (fka. Piwik) client for Angular applications
 
 ## Configuration reference
 
-### NgxMatomoTrackerModule
+The configuration should be provided in your application's root module providers using `provideMatomo()`:
 
-Configuration may be provided either in `NgxMatomoTrackerModule.forRoot(...)` or by adding a provider with injection
-token:
+```ts
+import { NgModule } from '@angular/core';
+import { provideMatomo, MatomoConfiguration } from 'ngx-matomo-client';
 
-```typescript
 @NgModule({
-  imports: [NgxMatomoTrackerModule],
   providers: [
-    {
-      provide: MATOMO_CONFIGURATION,
-      useValue: {
-        // ...
-      } as MatomoConfiguration,
-    },
+    provideMatomo(
+      // Options:
+      {
+        siteId: 42,
+        trackerUrl: 'http://...',
+        // Find all available MatomoConfiguration properties below
+      },
+
+      // Optionally add one or more features:
+      withRouter({
+        // Find all available MatomoRouterConfiguration below
+      }),
+      withScriptFactory(),
+      withRouterInterceptors()
+    ),
   ],
 })
 export class AppModule {}
 ```
 
-Available options :
+### MatomoConfiguration
+
+Used in `provideMatomo()`. Available options are:
 
 | Option                | Type                                                                       | Default value                                                  | Description                                                                                                                                                                                              | Available in `MANUAL` mode |
 | --------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
@@ -46,32 +56,13 @@ Available options :
 | requireConsent        | `MatomoConsentMode`                                                        | `MatomoConsentMode.NONE`                                       | Configure user consent requirement.                                                                                                                                                                      | yes                        |
 | runOutsideAngularZone | `boolean`                                                                  | `false`                                                        | If set to `true`, will run matomo calls outside of angular's NgZone. This may help if the call causes the app to freeze.                                                                                 | yes                        |
 
-### NgxMatomoRouterModule
+### MatomoRouterConfiguration
 
-Configuration may be provided either in `NgxMatomoRouterModule.forRoot(...)` or by adding a provider with injection
-token:
+Used to configure `withRouter(MatomoRouterConfiguration)` feature. Available options are:
 
-```typescript
-@NgModule({
-  imports: [NgxMatomoRouterModule],
-  providers: [
-    {
-      provide: MATOMO_ROUTER_CONFIGURATION,
-      useValue: {
-        // ...
-      } as MatomoRouterConfiguration,
-    },
-  ],
-})
-export class AppModule {}
-```
-
-Available options :
-
-| Option          | Type                                            | Default value                         | Description                                                                                                                                                                                                                                                                                                                                                                                             |
-| --------------- | ----------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| prependBaseHref | `boolean`                                       | `true`                                | Set whether the application's <i>base href</i> should be prepended to current url when tracking page views. Set it to `false` to disable this behavior.                                                                                                                                                                                                                                                 |
-| trackPageTitle  | `boolean`                                       | `true`                                | Set whether to detect page title when tracking views. <br>By default, page title is automatically detected from DOM document title. <br>Note that if set to `false`, Matomo is likely to still use the initial document title for all tracked page views.                                                                                                                                               |
-| delay           | `number`<br>Set to `-1` to run synchronously    | `0` (no delay but still asynchronous) | Set a delay after navigation event before page view is tracked. <br>If your document title is updated asynchronously after Router events, you may have to set a delay to correctly detect document title. <br>If set to `0`, tacking is still asynchronous. Set it to `-1` to execute tracking synchronously.<br>See also previous sections for more advanced page title customization.                 |
-| exclude         | `string`, `RegExp`, `string[]` or `RegExp[]`    | `[]`                                  | Set some url patterns to exclude from page views tracking.                                                                                                                                                                                                                                                                                                                                              |
-| interceptors    | array of `MatomoRouterInterceptor` constructors | `[]`                                  | Interceptors types to register. <br>For more complex scenarios, it is possible to configure any interceptor by providing token `MATOMO_ROUTER_INTERCEPTORS` as `multi` provider(s). <br><b>This option is only available in `.forRoot()` options argument; otherwise they should be provided using [`MATOMO_ROUTER_INTERCEPTORS`](../README.md#customize-anything-page-title-ecommerce-view) token.</b> |
+| Option          | Type                                         | Default value                         | Description                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------- | -------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| prependBaseHref | `boolean`                                    | `true`                                | Set whether the application's <i>base href</i> should be prepended to current url when tracking page views. Set it to `false` to disable this behavior.                                                                                                                                                                                                                                 |
+| trackPageTitle  | `boolean`                                    | `true`                                | Set whether to detect page title when tracking views. <br>By default, page title is automatically detected from DOM document title. <br>Note that if set to `false`, Matomo is likely to still use the initial document title for all tracked page views.                                                                                                                               |
+| delay           | `number`<br>Set to `-1` to run synchronously | `0` (no delay but still asynchronous) | Set a delay after navigation event before page view is tracked. <br>If your document title is updated asynchronously after Router events, you may have to set a delay to correctly detect document title. <br>If set to `0`, tacking is still asynchronous. Set it to `-1` to execute tracking synchronously.<br>See also previous sections for more advanced page title customization. |
+| exclude         | `string`, `RegExp`, `string[]` or `RegExp[]` | `[]`                                  | Set some url patterns to exclude from page views tracking.                                                                                                                                                                                                                                                                                                                              |

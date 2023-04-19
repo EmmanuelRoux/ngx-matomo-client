@@ -57,6 +57,9 @@ function createMatomoFeature(kind: MatomoFeatureKind, providers: Provider[]): Ma
  *     )
  * ]
  *
+ * @param config Matomo configuration (or configuration factory, which can use `inject`)
+ * @param features Optional additional features to enable
+ *
  * @see MatomoConfiguration
  * @see withScriptFactory
  * @see withRouter
