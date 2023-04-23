@@ -1,18 +1,16 @@
-import { DOCUMENT } from '@angular/common';
-import { PLATFORM_ID, Provider } from '@angular/core';
+import { EnvironmentInjector, PLATFORM_ID, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { MatomoHolder } from '../holder';
+import { NgxMatomoModule } from '../ngx-matomo.module';
 import {
-  InternalMatomoConfiguration,
   MATOMO_CONFIGURATION,
   MatomoConfiguration,
   MatomoConsentMode,
   MatomoInitializationMode,
 } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
-import { MatomoHolder } from '../holder';
 import { MatomoInitializerService } from './matomo-initializer.service';
-import { MatomoTracker, NoopMatomoTracker } from './matomo-tracker.service';
-import { NgxMatomoModule } from '../ngx-matomo.module';
+import { MatomoTracker } from './matomo-tracker.service';
 import {
   createDefaultMatomoScriptElement,
   MATOMO_SCRIPT_FACTORY,
@@ -42,35 +40,32 @@ describe('MatomoInitializerService', () => {
   beforeEach(() => delete (window as Partial<MatomoHolder>)._paq);
 
   it('should register _paq global once', () => {
-    // Given
-    const tracker = new NoopMatomoTracker();
-    const doc = TestBed.inject(DOCUMENT);
-    let paq: MatomoHolder['_paq'];
-    expect(window._paq).toBeUndefined();
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: MATOMO_CONFIGURATION,
+          useValue: {},
+        },
+      ],
+    })
+      .inject(EnvironmentInjector)
+      .runInContext(() => {
+        // Given
+        let paq: MatomoHolder['_paq'];
+        expect(window._paq).toBeUndefined();
 
-    // When
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    new MatomoInitializerService(
-      {} as InternalMatomoConfiguration,
-      tracker,
-      createDefaultMatomoScriptElement,
-      doc
-    );
-    // Then
-    expect(window._paq).toEqual([]);
-    paq = window._paq;
+        // When
+        new MatomoInitializerService();
+        // Then
+        expect(window._paq).toEqual([]);
+        paq = window._paq;
 
-    // When
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    new MatomoInitializerService(
-      {} as InternalMatomoConfiguration,
-      tracker,
-      createDefaultMatomoScriptElement,
-      doc
-    );
-    // Then
-    expect(window._paq).toEqual([]);
-    expect(window._paq).toBe(paq); // should not
+        // When
+        new MatomoInitializerService();
+        // Then
+        expect(window._paq).toEqual([]);
+        expect(window._paq).toBe(paq);
+      });
   });
 
   it('should track initial page view with manual configuration', () => {

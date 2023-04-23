@@ -1,12 +1,11 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { initializeMatomoHolder } from '../holder';
 import { requireNonNull } from '../utils/coercion';
 import {
   AutoMatomoConfiguration,
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
-  InternalMatomoConfiguration,
   isAutoConfigurationMode,
   isEmbeddedTrackerConfiguration,
   isExplicitTrackerConfiguration,
@@ -16,7 +15,7 @@ import {
 } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoTracker } from './matomo-tracker.service';
-import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './script-factory';
+import { MATOMO_SCRIPT_FACTORY } from './script-factory';
 
 function coerceSiteId(siteId: number | string): string {
   return `${siteId}`;
@@ -36,16 +35,13 @@ function buildTrackerUrl(url: string, suffix: string | undefined): string {
 const DEFAULT_TRACKER_SUFFIX = 'matomo.php';
 const DEFAULT_SCRIPT_SUFFIX = 'matomo.js';
 
-export function createMatomoInitializer(
-  config: InternalMatomoConfiguration,
-  tracker: MatomoTracker,
-  scriptFactory: MatomoScriptFactory,
-  document: Document,
-  platformId: Object
-): MatomoInitializerService {
-  return config.disabled || !isPlatformBrowser(platformId)
+export function createMatomoInitializer(): MatomoInitializerService {
+  const disabled = inject(INTERNAL_MATOMO_CONFIGURATION).disabled;
+  const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  return disabled || !isBrowser
     ? (new NoopMatomoInitializer() as MatomoInitializerService)
-    : new MatomoInitializerService(config, tracker, scriptFactory, document);
+    : new MatomoInitializerService();
 }
 
 export class NoopMatomoInitializer
@@ -67,24 +63,17 @@ export class NoopMatomoInitializer
 @Injectable({
   providedIn: 'root',
   useFactory: createMatomoInitializer,
-  deps: [
-    INTERNAL_MATOMO_CONFIGURATION,
-    MatomoTracker,
-    MATOMO_SCRIPT_FACTORY,
-    DOCUMENT,
-    PLATFORM_ID,
-  ],
 })
 export class MatomoInitializerService {
+  private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
+  private readonly tracker = inject(MatomoTracker);
+  private readonly scriptFactory = inject(MATOMO_SCRIPT_FACTORY);
+  private readonly document = inject(DOCUMENT);
+
   private initialized = false;
   private injected = false;
 
-  constructor(
-    private readonly config: InternalMatomoConfiguration,
-    private readonly tracker: MatomoTracker,
-    @Inject(MATOMO_SCRIPT_FACTORY) private readonly scriptFactory: MatomoScriptFactory,
-    @Inject(DOCUMENT) private readonly document: Document
-  ) {
+  constructor() {
     initializeMatomoHolder();
   }
 
