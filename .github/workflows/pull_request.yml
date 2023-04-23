@@ -37,7 +37,7 @@ jobs:
           node-version: 16.13.2
           cache: npm
       - run: npm install
-      - run: npm run build:tracker
+      - run: npm run build:lib
       - run: npm run test:ci
       - uses: actions/upload-artifact@v2
         with:

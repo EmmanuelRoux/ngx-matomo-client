@@ -1,6 +1,6 @@
 const path = require('path');
 const { exec } = require('child_process');
-const { DIST_DIR } = require('./constants');
+const { DIST_DIR, LIB_DIR_NAME } = require('./constants');
 const { readPkgJson, getRegistry, getChannel } = require('./utils');
 const [version, channel] = process.argv.slice(2);
 
@@ -8,7 +8,7 @@ function getAddTagCmd(pkgName, distTag, registry, npmrc) {
   return `npm dist-tag add ${pkgName}@${version} ${distTag} --userconfig ${npmrc} --registry ${registry}`;
 }
 
-const baseDir = path.resolve(DIST_DIR, 'tracker');
+const baseDir = path.resolve(DIST_DIR, LIB_DIR_NAME);
 const npmrc = path.resolve(baseDir, '.npmrc');
 const pkg = readPkgJson(baseDir);
 const registry = getRegistry(baseDir);

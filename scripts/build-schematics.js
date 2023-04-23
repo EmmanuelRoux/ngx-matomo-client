@@ -2,11 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const { ncp } = require('ncp');
 const { execSync } = require('child_process');
-const { DIST_DIR, LOCAL_DIST_DIR, SOURCES_DIR } = require('./constants');
+const { DIST_DIR, LOCAL_DIST_DIR, SOURCES_DIR, LIB_DIR_NAME } = require('./constants');
 
 const isProd = process.argv.includes('--prod');
-const distDir = path.resolve(isProd ? DIST_DIR : LOCAL_DIST_DIR, 'tracker');
-const sourceDir = path.resolve(SOURCES_DIR, 'tracker');
+const distDir = path.resolve(isProd ? DIST_DIR : LOCAL_DIST_DIR, LIB_DIR_NAME);
+const sourceDir = path.resolve(SOURCES_DIR, LIB_DIR_NAME);
 const tsconfigPath = isProd ? 'tsconfig.schematics.prod.json' : 'tsconfig.schematics.json';
 
 function build() {

@@ -4,7 +4,7 @@
     "skipImport": {
       "type": "boolean",
       "default": false,
-      "description": "Do not import @ngx-matomo modules into the owning NgModule."
+      "description": "Do not import ngx-matomo-client module into the owning NgModule."
     },
     "skipLegacyPackageMigration": {
       "type": "boolean",
@@ -14,14 +14,14 @@
     "module": {
       "type": "string",
       "default": "app",
-      "description": "The declaring NgModule in which to import @ngx-matomo modules.",
+      "description": "The declaring NgModule in which to import ngx-matomo-client module.",
       "alias": "m",
       "subtype": "filepath"
     },
     "path": {
       "type": "string",
       "format": "path",
-      "description": "The path pointing to the module where @ngx-matomo modules will be imported.",
+      "description": "The path pointing to the module where ngx-matomo-client module will be imported.",
       "visible": false
     },
     "project": {

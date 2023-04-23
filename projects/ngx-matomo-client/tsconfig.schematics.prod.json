@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.schematics.json",
   "compilerOptions": {
-    "outDir": "../../dist-prod/tracker/schematics"
+    "outDir": "../../dist-prod/ngx-matomo-client/schematics"
   },
   "include": ["schematics/**/*"],
   "exclude": ["schematics/*/files/**/*"]

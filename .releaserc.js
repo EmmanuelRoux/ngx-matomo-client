@@ -55,8 +55,8 @@ module.exports = {
         assets: [
           'package.json',
           'package-lock.json',
-          'projects/tracker/package.json',
-          'projects/tracker/schematics/version.ts',
+          'projects/ngx-matomo-client/package.json',
+          'projects/ngx-matomo-client/schematics/version.ts',
           'projects/router/package.json',
           'CHANGELOG.md',
         ],

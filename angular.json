@@ -3,37 +3,40 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "tracker": {
+    "ngx-matomo-client": {
       "projectType": "library",
-      "root": "projects/tracker",
-      "sourceRoot": "projects/tracker/src",
+      "root": "projects/ngx-matomo-client",
+      "sourceRoot": "projects/ngx-matomo-client/src",
       "prefix": "matomo",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/tracker/tsconfig.lib.json",
-            "project": "projects/tracker/ng-package.json"
+            "tsConfig": "projects/ngx-matomo-client/tsconfig.lib.json",
+            "project": "projects/ngx-matomo-client/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/tracker/tsconfig.lib.prod.json",
-              "project": "projects/tracker/ng-package.prod.json"
+              "tsConfig": "projects/ngx-matomo-client/tsconfig.lib.prod.json",
+              "project": "projects/ngx-matomo-client/ng-package.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/tracker/src/test.ts",
-            "tsConfig": "projects/tracker/tsconfig.spec.json",
-            "karmaConfig": "projects/tracker/karma.conf.js"
+            "main": "projects/ngx-matomo-client/src/test.ts",
+            "tsConfig": "projects/ngx-matomo-client/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-matomo-client/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/tracker/**/*.ts", "projects/tracker/**/*.html"]
+            "lintFilePatterns": [
+              "projects/ngx-matomo-client/**/*.ts",
+              "projects/ngx-matomo-client/**/*.html"
+            ]
           }
         }
       }
