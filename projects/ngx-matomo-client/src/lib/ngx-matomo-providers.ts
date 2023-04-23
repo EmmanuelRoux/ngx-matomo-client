@@ -7,7 +7,12 @@ import {
   Type,
 } from '@angular/core';
 import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './router/configuration';
-import { MatomoRouterInterceptor, provideInterceptors } from './router/interceptor';
+import {
+  MatomoRouterInterceptor,
+  provideInterceptor,
+  provideInterceptors,
+} from './router/interceptor';
+import { MatomoRouteDataInterceptor } from './router/interceptors/route-data-interceptor';
 import { MatomoRouter } from './router/matomo-router.service';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
 import { MatomoInitializerService } from './tracker/matomo-initializer.service';
@@ -22,6 +27,7 @@ export const enum MatomoFeatureKind {
   ScriptFactory,
   Router,
   RouterInterceptors,
+  BuiltInRouteDataInterceptor,
 }
 
 export interface MatomoFeature {
@@ -64,6 +70,7 @@ function createMatomoFeature(kind: MatomoFeatureKind, providers: Provider[]): Ma
  * @see withScriptFactory
  * @see withRouter
  * @see withRouterInterceptors
+ * @see withRouteData
  */
 export function provideMatomo(
   config: MatomoConfiguration | (() => MatomoConfiguration),
@@ -97,13 +104,17 @@ export function provideMatomo(
     featuresKind.push(feature.kind);
   }
 
-  if (
-    featuresKind.includes(MatomoFeatureKind.RouterInterceptors) &&
-    !featuresKind.includes(MatomoFeatureKind.Router)
-  ) {
-    throw new Error(
-      'Matomo feature withRouterInterceptors() cannot be used without router feature! Did you forget to call withRouter()?'
-    );
+  const routerFeatures = [
+    [MatomoFeatureKind.RouterInterceptors, 'withRouterInterceptors()'],
+    [MatomoFeatureKind.BuiltInRouteDataInterceptor, 'withRouteData()'],
+  ] as const;
+
+  for (const [feature, providerName] of routerFeatures) {
+    if (featuresKind.includes(feature) && !featuresKind.includes(MatomoFeatureKind.Router)) {
+      throw new Error(
+        `Matomo feature ${providerName} cannot be used without router feature! Did you forget to call withRouter()?`
+      );
+    }
   }
 
   return makeEnvironmentProviders(providers);
@@ -144,4 +155,11 @@ export function withRouterInterceptors(
     MatomoFeatureKind.RouterInterceptors,
     provideInterceptors(interceptors)
   );
+}
+
+/** Enable retrieval of tracking information from route data */
+export function withRouteData(): MatomoFeature {
+  return createMatomoFeature(MatomoFeatureKind.BuiltInRouteDataInterceptor, [
+    provideInterceptor(MatomoRouteDataInterceptor),
+  ]);
 }
