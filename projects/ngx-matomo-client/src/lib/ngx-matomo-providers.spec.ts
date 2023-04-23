@@ -2,12 +2,14 @@ import { ApplicationInitStatus, InjectionToken } from '@angular/core';
 import { TestBed, TestModuleMetadata } from '@angular/core/testing';
 import {
   provideMatomo,
+  withRouteData,
   withRouter,
   withRouterInterceptors,
   withScriptFactory,
 } from './ngx-matomo-providers';
 import { MATOMO_ROUTER_CONFIGURATION } from './router/configuration';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './router/interceptor';
+import { MatomoRouteDataInterceptor } from './router/interceptors/route-data-interceptor';
 import { MatomoRouter } from './router/matomo-router.service';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
 import { MatomoInitializerService } from './tracker/matomo-initializer.service';
@@ -103,6 +105,20 @@ describe('providers', () => {
     expect(TestBed.inject(MATOMO_ROUTER_INTERCEPTORS)).toEqual([jasmine.any(MyInterceptor)]);
   });
 
+  it('should provide basic Matomo providers with router feature and route data retrieval', async () => {
+    await setUp([
+      provideMatomo(
+        { trackerUrl: 'my-tracker', siteId: 42 },
+        withRouter({ delay: 42 }),
+        withRouteData()
+      ),
+    ]);
+
+    expect(TestBed.inject(MATOMO_ROUTER_INTERCEPTORS)).toEqual([
+      jasmine.any(MatomoRouteDataInterceptor),
+    ]);
+  });
+
   it('should throw when using router features without withRouter()', () => {
     class MyInterceptor implements MatomoRouterInterceptor {
       readonly beforePageTrack = jasmine.createSpy('beforePageTrack');
@@ -113,6 +129,10 @@ describe('providers', () => {
         { trackerUrl: 'my-tracker', siteId: 42 },
         withRouterInterceptors([MyInterceptor])
       )
+    ).toThrow();
+
+    expect(() =>
+      provideMatomo({ trackerUrl: 'my-tracker', siteId: 42 }, withRouteData())
     ).toThrow();
   });
 });

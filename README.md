@@ -156,6 +156,51 @@ export class ExampleComponent implements OnInit {
 
 ### Adding info or customizing automatic page view tracking
 
+#### Using route data
+
+Add `withRouteData()` feature to ask `ngx-matomo-client` to read some configuration from route data under `matomo` key.
+
+```ts
+const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+    data: {
+      matomo: {
+        title: 'My Home Page Title',
+      } as MatomoRouteData,
+    },
+  },
+  {
+    path: 'hello',
+    component: HelloComponent,
+    data: {
+      matomo: {
+        title: 'My Home Page Title',
+        ecommerce: {
+          productSKU: '12345',
+          productName: 'French baguette',
+        },
+      } as MatomoRouteData,
+    },
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  providers: [
+    provideMatomo(
+      {}, // Your base configuration
+      withRouter(),
+      withRouteData() // Add this feature
+    ),
+  ],
+})
+export class AppModule {}
+```
+
+#### Using custom interceptor
+
 If you need custom logic to extract data, provide a custom interceptor implementation:
 
 ```typescript
