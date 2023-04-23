@@ -1337,6 +1337,13 @@ export abstract class MatomoTracker {
     this.push(['enableJSErrorTracking']);
   }
 
+  /**
+   * Enable tracking of file:// protocol actions. By default, the file:// protocol is not tracked.
+   */
+  enableFileTracking(): void {
+    this.push(['enableFileTracking']);
+  }
+
   /** Asynchronously call provided method name on matomo tracker instance */
   protected get<G extends Getters<MatomoInstance>>(
     getter: G
