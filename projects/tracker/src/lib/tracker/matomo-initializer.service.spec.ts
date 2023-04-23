@@ -1,7 +1,7 @@
 import { EnvironmentInjector, PLATFORM_ID, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatomoHolder } from '../holder';
-import { NgxMatomoModule } from '../ngx-matomo.module';
+import { provideMatomo, withScriptFactory } from '../ngx-matomo-providers';
 import {
   MATOMO_CONFIGURATION,
   MatomoConfiguration,
@@ -455,20 +455,20 @@ describe('MatomoInitializerService', () => {
     setUpScriptInjection(script => (injectedScript = script));
 
     TestBed.configureTestingModule({
-      imports: [
-        NgxMatomoModule.forRoot(
+      providers: [
+        provideMatomo(
           {
             siteId: 1,
             trackerUrl: '',
             scriptUrl: '/fake/script/url',
           } as MatomoConfiguration,
-          (scriptUrl, document) => {
+          withScriptFactory((scriptUrl, document) => {
             const script = createDefaultMatomoScriptElement(scriptUrl, document);
 
             script.setAttribute('data-cookieconsent', 'statistics');
 
             return script;
-          }
+          })
         ),
       ],
     });

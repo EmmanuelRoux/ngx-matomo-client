@@ -4,6 +4,12 @@
 
 export { NgxMatomoModule, NgxMatomoTrackerModule } from './lib/ngx-matomo.module';
 export {
+  provideMatomo,
+  withScriptFactory,
+  withRouter,
+  withRouterInterceptors,
+} from './lib/ngx-matomo-providers';
+export {
   MatomoTracker,
   MatomoECommerceItem,
   MatomoECommerceView,

@@ -17,6 +17,7 @@ Matomo (fka. Piwik) client for Angular applications
 <!-- toc -->
 
 - [Installation](#installation)
+- [Configuration](#configuration)
 - [Usage](#usage)
   * [Tracking page views with Angular Router](#tracking-page-views-with-angular-router)
   * [Tracking page views without Angular Router](#tracking-page-views-without-angular-router)
@@ -69,6 +70,30 @@ follow the [instructions described here](docs/manual-installation.md)._
 | 14.x        | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md)) | Matomo 3 or 4 |
 | 15.x        | 4.x                                                                         | Matomo 3 or 4 |
 | 16.x        | >= 4.1                                                                      | Matomo 3 or 4 |
+
+## Configuration
+
+If you installed the library using `ng add`, a basic configuration has been added for you in your app's root module.
+
+Matomo should be provided in the `providers` metadata of your app's main module:
+
+```typescript
+@NgModule({
+  // ...
+  providers: [
+    provideMatomo(
+      // Include the basic configuration:
+      { siteId: 1, trackerUrl: '...' },
+
+      // Optionally include additional features here:
+      withScriptFactory(/* your factory */),
+      withRouter(/* Matomo router config */),
+      withRouterInterceptors(/* Matomo router interceptors */)
+    ),
+  ],
+})
+export class AppModule {}
+```
 
 ## Usage
 
