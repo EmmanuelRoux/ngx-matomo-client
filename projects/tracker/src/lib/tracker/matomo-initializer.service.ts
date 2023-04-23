@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { EnvironmentInjector, inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { initializeMatomoHolder } from '../holder';
 import { requireNonNull } from '../utils/coercion';
 import {
@@ -68,6 +68,7 @@ export class MatomoInitializerService {
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
   private readonly tracker = inject(MatomoTracker);
   private readonly scriptFactory = inject(MATOMO_SCRIPT_FACTORY);
+  private readonly injector = inject(EnvironmentInjector);
   private readonly document = inject(DOCUMENT);
 
   private initialized = false;
@@ -149,7 +150,11 @@ export class MatomoInitializerService {
   }
 
   private injectDOMScript(scriptUrl: string): void {
-    const scriptElement = this.scriptFactory(scriptUrl, this.document);
+    // From ng v16, runInContext is deprecated in favor of runInInjectionContext
+    // In a future version, it will probably be necessary to do this (breaking) change
+    const scriptElement = this.injector.runInContext(() =>
+      this.scriptFactory(scriptUrl, this.document)
+    );
     const selfScript = requireNonNull(
       this.document.getElementsByTagName('script')[0],
       'no existing script found'
