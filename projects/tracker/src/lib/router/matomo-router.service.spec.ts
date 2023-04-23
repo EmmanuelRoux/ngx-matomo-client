@@ -91,7 +91,7 @@ describe('MatomoRouter', () => {
     });
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/');
     tick(); // Tracking is asynchronous by default
 
@@ -113,7 +113,7 @@ describe('MatomoRouter', () => {
     });
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/');
     // Then
     expect(tracker.setCustomUrl).not.toHaveBeenCalled();
@@ -141,7 +141,7 @@ describe('MatomoRouter', () => {
     });
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/');
 
     // Then
@@ -162,7 +162,7 @@ describe('MatomoRouter', () => {
     });
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/');
     tick(41);
     // Then
@@ -191,7 +191,7 @@ describe('MatomoRouter', () => {
     });
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/');
     tick(); // Tracking is asynchronous by default
 
@@ -216,7 +216,7 @@ describe('MatomoRouter', () => {
     urlProvider.getCurrentPageUrl.and.callFake(event => of(event.urlAfterRedirects));
 
     // When
-    service.init();
+    service.initialize();
     events.forEach(triggerEvent);
     tick(); // Tracking is asynchronous by default
 
@@ -262,7 +262,7 @@ describe('MatomoRouter', () => {
     const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/');
     tick(); // Tracking is asynchronous by default
 
@@ -295,7 +295,7 @@ describe('MatomoRouter', () => {
     const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/');
     // Then
     expect(tracker.trackPageView).not.toHaveBeenCalled();
@@ -373,7 +373,7 @@ describe('MatomoRouter', () => {
     );
 
     // When
-    service.init();
+    service.initialize();
     triggerEvent('/page1');
     triggerEvent('/page2');
     triggerEvent('/page3');
@@ -396,4 +396,17 @@ describe('MatomoRouter', () => {
     expect(slowInterceptor.beforePageTrack).toHaveBeenCalledTimes(3);
     expect(tracker.trackPageView).toHaveBeenCalledTimes(3);
   }));
+
+  it('should map deprecated init() method to initialize()', () => {
+    // Given
+    const service = instantiate({}, {});
+
+    spyOn(service, 'initialize');
+
+    // When
+    service.init();
+
+    // Then
+    expect(service.initialize).toHaveBeenCalledOnceWith();
+  });
 });

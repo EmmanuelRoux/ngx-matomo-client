@@ -22,12 +22,13 @@ import {
   tap,
 } from 'rxjs/operators';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
+import { runOnce } from '../utils/function';
 import {
   ExclusionConfig,
   INTERNAL_ROUTER_CONFIGURATION,
   InternalRouterConfiguration,
 } from './configuration';
-import { invalidInterceptorsProviderError } from './errors';
+import { invalidInterceptorsProviderError, ROUTER_ALREADY_INITIALIZED_ERROR } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
@@ -74,7 +75,12 @@ export class MatomoRouter {
     }
   }
 
+  /** @deprecated use {@link initialize initialize()} instead */
   init(): void {
+    this.initialize();
+  }
+
+  readonly initialize = runOnce(() => {
     if (this.config.disabled) {
       // Do not set-up router if globally disabled
       return;
@@ -103,7 +109,7 @@ export class MatomoRouter {
         )
       )
       .subscribe();
-  }
+  }, ROUTER_ALREADY_INITIALIZED_ERROR);
 
   private callInterceptors(event: NavigationEnd): Observable<void> {
     if (this.interceptors) {

@@ -2,6 +2,7 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { EnvironmentInjector, inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { initializeMatomoHolder } from '../holder';
 import { requireNonNull } from '../utils/coercion';
+import { runOnce } from '../utils/function';
 import {
   AutoMatomoConfiguration,
   getTrackersConfiguration,
@@ -71,9 +72,6 @@ export class MatomoInitializerService {
   private readonly injector = inject(EnvironmentInjector);
   private readonly document = inject(DOCUMENT);
 
-  private initialized = false;
-  private injected = false;
-
   constructor() {
     initializeMatomoHolder();
   }
@@ -83,54 +81,45 @@ export class MatomoInitializerService {
     this.initialize();
   }
 
-  initialize(): void {
-    if (this.initialized) {
-      throw new Error(ALREADY_INITIALIZED_ERROR);
-    }
-
+  readonly initialize = runOnce(() => {
     this.runPreInitTasks();
 
     if (isAutoConfigurationMode(this.config)) {
       this.injectMatomoScript(this.config);
     }
-
-    this.initialized = true;
-  }
+  }, ALREADY_INITIALIZED_ERROR);
 
   initializeTracker(config: AutoMatomoConfiguration<MatomoInitializationMode.AUTO_DEFERRED>): void {
     this.injectMatomoScript(config);
   }
 
-  private injectMatomoScript(
-    config: AutoMatomoConfiguration<
-      MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
-    >
-  ): void {
-    if (this.injected) {
-      throw new Error(ALREADY_INJECTED_ERROR);
-    }
+  private readonly injectMatomoScript = runOnce(
+    (
+      config: AutoMatomoConfiguration<
+        MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
+      >
+    ): void => {
+      if (isExplicitTrackerConfiguration(config)) {
+        const { scriptUrl: customScriptUrl } = config;
+        const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(config);
+        const scriptUrl =
+          customScriptUrl ?? appendTrailingSlash(mainTracker.trackerUrl) + DEFAULT_SCRIPT_SUFFIX;
 
-    if (isExplicitTrackerConfiguration(config)) {
-      const { scriptUrl: customScriptUrl } = config;
-      const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(config);
-      const scriptUrl =
-        customScriptUrl ?? appendTrailingSlash(mainTracker.trackerUrl) + DEFAULT_SCRIPT_SUFFIX;
+        this.registerMainTracker(mainTracker);
+        this.registerAdditionalTrackers(additionalTrackers);
+        this.injectDOMScript(scriptUrl);
+      } else if (isEmbeddedTrackerConfiguration(config)) {
+        const { scriptUrl, trackers: additionalTrackers } = {
+          trackers: [],
+          ...config,
+        };
 
-      this.registerMainTracker(mainTracker);
-      this.registerAdditionalTrackers(additionalTrackers);
-      this.injectDOMScript(scriptUrl);
-    } else if (isEmbeddedTrackerConfiguration(config)) {
-      const { scriptUrl, trackers: additionalTrackers } = {
-        trackers: [],
-        ...config,
-      };
-
-      this.registerAdditionalTrackers(additionalTrackers);
-      this.injectDOMScript(scriptUrl);
-    }
-
-    this.injected = true;
-  }
+        this.registerAdditionalTrackers(additionalTrackers);
+        this.injectDOMScript(scriptUrl);
+      }
+    },
+    ALREADY_INJECTED_ERROR
+  );
 
   private registerMainTracker(mainTracker: MatomoTrackerConfiguration): void {
     const mainTrackerUrl = buildTrackerUrl(mainTracker.trackerUrl, mainTracker.trackerUrlSuffix);
