@@ -41,6 +41,7 @@ function missingServerUrlError(): Error {
 @Component({
   selector: 'matomo-opt-out-form',
   templateUrl: './matomo-opt-out-form.component.html',
+  standalone: true,
 })
 export class MatomoOptOutFormComponent implements OnInit, OnChanges {
   private readonly _defaultServerUrl?: string;

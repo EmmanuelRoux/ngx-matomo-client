@@ -83,8 +83,8 @@ class HostWithoutLocaleComponent {}
 describe('MatomoOptOutFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [MatomoOptOutFormComponent],
       declarations: [
-        MatomoOptOutFormComponent,
         HostWithDefaultServerUrlAndLocaleComponent,
         HostWithCustomServerUrlAndLocaleComponent,
         HostWithoutServerUrlComponent,
