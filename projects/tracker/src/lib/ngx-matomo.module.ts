@@ -1,48 +1,38 @@
-import { ModuleWithProviders, NgModule, Optional, Provider, SkipSelf } from '@angular/core';
+import { EnvironmentProviders, ModuleWithProviders, NgModule } from '@angular/core';
 import { MatomoOptOutFormComponent } from './directives/matomo-opt-out-form.component';
 import { MatomoTrackClickDirective } from './directives/matomo-track-click.directive';
 import { MatomoTrackerDirective } from './directives/matomo-tracker.directive';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
-import { MatomoInitializerService } from './tracker/matomo-initializer.service';
-import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
+import { MatomoFeature, provideMatomo, withScriptFactory } from './ngx-matomo-providers';
+import { MatomoConfiguration } from './tracker/configuration';
+import { MatomoScriptFactory } from './tracker/script-factory';
 
 const DIRECTIVES = [MatomoTrackerDirective, MatomoTrackClickDirective, MatomoOptOutFormComponent];
 
 function buildProviders(
   config: MatomoConfiguration,
   scriptFactory?: MatomoScriptFactory
-): Provider[] {
-  const providers: Provider[] = [{ provide: MATOMO_CONFIGURATION, useValue: config }];
+): EnvironmentProviders {
+  const features: MatomoFeature[] = [];
 
   if (scriptFactory) {
-    providers.push({ provide: MATOMO_SCRIPT_FACTORY, useValue: scriptFactory });
+    features.push(withScriptFactory(scriptFactory));
   }
 
-  return providers;
+  return provideMatomo(config, ...features);
 }
 
 @NgModule({
-  declarations: DIRECTIVES,
+  imports: DIRECTIVES,
   exports: DIRECTIVES,
 })
 export class NgxMatomoModule {
-  constructor(
-    private readonly initializer: MatomoInitializerService,
-    @Optional() @SkipSelf() parent?: NgxMatomoModule
-  ) {
-    if (!parent) {
-      // Do not initialize if it is already (by a parent module)
-      this.initializer.initialize();
-    }
-  }
-
   static forRoot(
     config: MatomoConfiguration,
     scriptFactory?: MatomoScriptFactory
   ): ModuleWithProviders<NgxMatomoModule> {
     return {
       ngModule: NgxMatomoModule,
-      providers: buildProviders(config, scriptFactory),
+      providers: [buildProviders(config, scriptFactory)],
     };
   }
 }
@@ -61,7 +51,7 @@ export class NgxMatomoTrackerModule {
   ): ModuleWithProviders<NgxMatomoTrackerModule> {
     return {
       ngModule: NgxMatomoTrackerModule,
-      providers: buildProviders(config, scriptFactory),
+      providers: [buildProviders(config, scriptFactory)],
     };
   }
 }
