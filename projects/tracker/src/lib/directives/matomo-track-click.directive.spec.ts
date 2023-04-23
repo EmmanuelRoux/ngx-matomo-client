@@ -33,13 +33,14 @@ describe('MatomoTrackClickDirective', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [MatomoTrackClickDirective],
       providers: [
         {
           provide: MatomoTracker,
           useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
         },
       ],
-      declarations: [HostComponent, MatomoTrackClickDirective],
+      declarations: [HostComponent],
     }).compileComponents();
   }));
 

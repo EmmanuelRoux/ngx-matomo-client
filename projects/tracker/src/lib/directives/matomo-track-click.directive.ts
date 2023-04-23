@@ -4,6 +4,7 @@ import { requireNonNull } from '../utils/coercion';
 
 @Directive({
   selector: '[matomoClickCategory][matomoClickAction]',
+  standalone: true,
 })
 export class MatomoTrackClickDirective {
   @Input() matomoClickCategory?: string;

@@ -91,6 +91,7 @@ describe('MatomoTrackerDirective', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [MatomoTrackerDirective],
       providers: [
         {
           provide: MatomoTracker,
@@ -99,7 +100,6 @@ describe('MatomoTrackerDirective', () => {
       ],
       declarations: [
         HostWithInputEventsComponent,
-        MatomoTrackerDirective,
         HostWithCustomHandler1Component,
         HostWithCustomHandler2Component,
       ],
