@@ -4,7 +4,7 @@
   "compilerOptions": {
     "declarationMap": false,
     "paths": {
-      "ngx-matomo-client": ["dist-prod/tracker"]
+      "ngx-matomo-client": ["dist-prod/ngx-matomo-client"]
     }
   },
   "angularCompilerOptions": {

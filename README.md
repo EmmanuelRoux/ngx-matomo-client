@@ -19,7 +19,7 @@ Matomo (fka. Piwik) client for Angular applications
 Please update your code to replace any reference to old packages `@ngx-matomo/tracker` and `@ngx-matomo/router`
 with `ngx-matomo-client`.
 
-**A schematic is provided, so your code can be migrated automatically by just doing `ng add ngx-matomo-client`.**
+**Your code can be migrated automatically using `ng add ngx-matomo-client`.**
 [See details here](#migration-from-versions--4-to-v5-and-above)
 
 ---

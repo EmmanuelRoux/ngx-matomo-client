@@ -26,12 +26,12 @@ module.exports = function (config) {
       suppressAll: true, // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, '../../coverage/tracker'),
+      dir: require('path').join(__dirname, '../../coverage/ngx-matomo-client'),
       subdir: '.',
       reporters: [{ type: 'html' }, { type: 'lcovonly' }, { type: 'text-summary' }],
     },
     junitReporter: {
-      outputDir: require('path').join(__dirname, '../../test-reports/tracker'),
+      outputDir: require('path').join(__dirname, '../../test-reports/ngx-matomo-client'),
       useBrowserName: true, // add browser name to report and classes names
     },
     reporters: ['progress', 'kjhtml', 'junit'],

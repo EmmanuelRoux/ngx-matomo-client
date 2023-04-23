@@ -2,8 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { LIBRARIES, DIST_DIR, SOURCES_DIR, LIB_TRACKER } = require('./constants');
-const { readPkgJson, writePkgJson, getPkgName } = require('./utils');
+const { DIST_DIR, SOURCES_DIR, LIB_DIR_NAME, LIB_NAME } = require('./constants');
+const { readPkgJson, writePkgJson } = require('./utils');
 const [version] = process.argv.slice(2);
 
 function updatePkgVersion(pkgDir) {
@@ -11,13 +11,9 @@ function updatePkgVersion(pkgDir) {
 
   pkg.version = version;
 
-  LIBRARIES.forEach(libName => {
-    const pkgName = getPkgName(libName);
-
-    if (pkg.peerDependencies && pkg.peerDependencies[pkgName]) {
-      pkg.peerDependencies[pkgName] = version;
-    }
-  });
+  if (pkg.peerDependencies && pkg.peerDependencies[LIB_NAME]) {
+    pkg.peerDependencies[LIB_NAME] = version;
+  }
 
   console.log('Write version %s to package.json in %s', version, pkgDir);
   writePkgJson(pkgDir, pkg);
@@ -30,32 +26,30 @@ function updateSchematicsVersion(rootDir) {
   fs.writeFileSync(versionPath, `export const version = '${versionExpr}';\n`);
 }
 
-function updateLibVersion(libName) {
-  const sourceDir = path.resolve(SOURCES_DIR, libName);
-  const distDir = path.resolve(DIST_DIR, libName);
+function updateLibVersion() {
+  const sourceDir = path.resolve(SOURCES_DIR, LIB_DIR_NAME);
+  const distDir = path.resolve(DIST_DIR, LIB_DIR_NAME);
 
   updatePkgVersion(sourceDir);
   updatePkgVersion(distDir);
+  updateSchematicsVersion(sourceDir);
 
-  if (libName === LIB_TRACKER) {
-    updateSchematicsVersion(sourceDir);
-    // Schematics .ts file should be recompiled to .js (not as simple as overwriting version in dist .js file)
-    // So updateSchematicsVersion(distDir) would not be sufficient
-    execSync('npm run build:prod:schematics', { stdio: 'inherit' });
-  }
+  // Schematics .ts file should be recompiled to .js (not as simple as overwriting version in dist .js file)
+  // So updateSchematicsVersion(distDir) would not be sufficient
+  execSync('npm run build:prod:schematics', { stdio: 'inherit' });
 }
 
-function copyReadmeTo(libName) {
-  const target = path.resolve(DIST_DIR, libName, 'README.md');
+function copyReadme() {
+  const target = path.resolve(DIST_DIR, LIB_DIR_NAME, 'README.md');
 
-  console.log('Copy root README.md to tracker package at %s', target);
+  console.log('Copy root README.md to %s package at %s', LIB_DIR_NAME, target);
   fs.copyFileSync('README.md', target);
 }
 
 console.log('Preparing version %s of libraries', version);
 
 // Copy README to main library
-copyReadmeTo(LIB_TRACKER);
+copyReadme();
 
 // Update package.json version number
-LIBRARIES.forEach(updateLibVersion);
+updateLibVersion();
