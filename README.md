@@ -12,11 +12,24 @@ Matomo (fka. Piwik) client for Angular applications
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-limegreen.svg)](https://github.com/semantic-release/semantic-release)
 [![Sponsorship](https://img.shields.io/badge/-buy_me_a%C2%A0coffee-gray?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/emmanuelroux)
 
+---
+
+**Starting from version 5, this library is renamed to `ngx-matomo-client`.**
+
+Please update your code to replace any reference to old packages `@ngx-matomo/tracker` and `@ngx-matomo/router`
+with `ngx-matomo-client`.
+
+**A schematic is provided, so your code can be migrated automatically by just doing `ng add ngx-matomo-client`.**
+[See details here](#migration-from-versions--4-to-v5-and-above)
+
+---
+
 <!-- prettier-ignore-start -->
 
 <!-- toc -->
 
 - [Installation](#installation)
+- [Migration from versions <= 4 to v5 and above](#migration-from-versions--4-to-v5-and-above)
 - [Configuration](#configuration)
 - [Usage](#usage)
   * [Tracking page views with Angular Router](#tracking-page-views-with-angular-router)
@@ -39,20 +52,27 @@ Matomo (fka. Piwik) client for Angular applications
 
 <!-- prettier-ignore-end -->
 
+**Compatiblity table:**
+
+| Angular     | NgxMatomo                                                                   | Matomo        |
+| ----------- | --------------------------------------------------------------------------- | ------------- |
+| 9.x to 12.x | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/1.x/README.md)) | Matomo 3 or 4 |
+| 13.x        | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md)) | Matomo 3 or 4 |
+| 14.x        | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md)) | Matomo 3 or 4 |
+| 15.x        | 4.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.x/README.md)) | Matomo 3 or 4 |
+| 16.x        | 5.x                                                                         | Matomo 3 or 4 |
+
 ## Installation
 
-_The latest version supports Angular 15 and newer. If you need NgxMatomo for an older Angular version,
-see compatibility table below._
-
-`ng add ngx-matomo-client`
+Just run: `ng add ngx-matomo-client`
 
 This will prompt you for some information such as your Matomo's server address and site ID. You can find your site ID in
 Matomo admin panel.
 
 It will also ask if you want to enable automatic page views tracking. **This requires @angular/router to be installed.**
 
-This command will take care of importing `NgxMatomoTrackerModule` (and `NgxMatomoRouterModule` if needed), along with
-basic configuration, into your root `AppModule`. Use the `--module [module]` flag to specify a different root module.
+This command takes care of importing a basic configuration into your root `AppModule`. Use the `--module [module]` flag
+to specify a different root module.
 
 _Note #1: If you're not using Angular CLI, [follow instructions here](docs/installation-without-cli.md) instead._
 
@@ -61,15 +81,19 @@ _Note #2: NgxMatomo includes Matomo's tracking script for you.
 If for some reason you want to manually include the script tag yourself, install as described in previous sections then
 follow the [instructions described here](docs/manual-installation.md)._
 
-**Compatiblity table:**
+## Migration from versions <= 4 to v5 and above
 
-| Angular     | NgxMatomo                                                                   | Matomo        |
-| ----------- | --------------------------------------------------------------------------- | ------------- |
-| 9.x to 12.x | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/1.x/README.md)) | Matomo 3 or 4 |
-| 13.x        | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md)) | Matomo 3 or 4 |
-| 14.x        | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md)) | Matomo 3 or 4 |
-| 15.x        | 4.x                                                                         | Matomo 3 or 4 |
-| 16.x        | >= 4.1                                                                      | Matomo 3 or 4 |
+Starting from version 5, this library is distributed as a single package named `ngx-matomo-client` instead
+of `@ngx-matomo/tracker` and `@ngx-matomo/router`.
+
+If your app is using version <= 4 of previous packages, your code will be migrated automatically when
+running `ng add ngx-matomo-client`.
+
+If you want to migrate manually, just replace all imports from `@ngx-matomo/tracker` or `@ngx-matomo/router` with
+imports from `ngx-matomo-client` instead.
+
+Also, we encourage you to use the new way of providing Ngx-Matomo using the `provideMatomo()` function instead of
+importing `NgxMatomoTrackerModule` and `NgxMatomoRouterModule`.
 
 ## Configuration
 
