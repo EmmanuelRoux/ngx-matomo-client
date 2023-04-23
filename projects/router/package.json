@@ -10,9 +10,9 @@
     "analytics"
   ],
   "peerDependencies": {
-    "@angular/common": "^15.0.0",
-    "@angular/core": "^15.0.0",
-    "@angular/router": "^15.0.0",
+    "@angular/common": "^15.0.0 || ^16.0.0",
+    "@angular/core": "^15.0.0 || ^16.0.0",
+    "@angular/router": "^15.0.0 || ^16.0.0",
     "@ngx-matomo/tracker": "4.0.1"
   },
   "dependencies": {
