@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgxMatomoTrackerModule, NgxMatomoRouterModule } from 'ngx-matomo-client';
+import { NgxMatomoRouterModule, NgxMatomoTrackerModule } from 'ngx-matomo-client';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -44,7 +43,6 @@ import { TrackSimpleClickEventComponent } from './track-simple-click-event/track
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    FlexLayoutModule,
   ],
   bootstrap: [AppComponent],
 })
