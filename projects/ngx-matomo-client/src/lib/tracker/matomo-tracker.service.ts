@@ -1,8 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, NgZone, PLATFORM_ID } from '@angular/core';
-import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
 import { initializeMatomoHolder, MatomoHolder } from '../holder';
-import { Getters, RequireAtLeastOne } from '../utils/types';
+import { Getters, NonEmptyReadonlyArray, RequireAtLeastOne } from '../utils/types';
+import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
 
 declare var window: MatomoHolder;
 
@@ -101,6 +101,8 @@ export interface MatomoInstance {
   isUserOptedOut(): boolean;
 
   getCustomPagePerformanceTiming(): string;
+
+  getExcludedReferrers(): string[];
 }
 
 export function createMatomoTracker(
@@ -1348,6 +1350,27 @@ export abstract class MatomoTracker {
    */
   enableFileTracking(): void {
     this.push(['enableFileTracking']);
+  }
+
+  /**
+   * Set array of hostnames or domains that should be ignored as referrers.
+   *
+   * For wildcard subdomains, you can use: `setExcludedReferrers('.example.com');` or `setExcludedReferrers('*.example.com');`.
+   * You can also specify a path along a domain: `setExcludedReferrers('*.example.com/subsite1');`.
+   *
+   * This method is available as of Matomo 4.12.
+   */
+  setExcludedReferrers(...excludedReferrers: NonEmptyReadonlyArray<string | string[]>): void {
+    const flattened = excludedReferrers.flat();
+
+    this.push(['setExcludedReferrers', flattened]);
+  }
+
+  /**
+   * Returns the list of excluded referrers, which was previously set using setExcludedReferrers
+   */
+  getExcludedReferrers(): Promise<string[]> {
+    return this.get('getExcludedReferrers');
   }
 
   /** Asynchronously call provided method name on matomo tracker instance */
