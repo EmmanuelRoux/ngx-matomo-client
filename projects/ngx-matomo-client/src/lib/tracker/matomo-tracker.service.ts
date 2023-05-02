@@ -94,6 +94,8 @@ export interface MatomoInstance {
 
   getRememberedConsent(): number | string;
 
+  getRememberedCookieConsent(): number | string;
+
   isConsentRequired(): boolean;
 
   areCookiesEnabled(): boolean;
@@ -1126,6 +1128,10 @@ export abstract class MatomoTracker {
    */
   forgetCookieConsentGiven(): void {
     this.push(['forgetCookieConsentGiven']);
+  }
+
+  getRememberedCookieConsent(): Promise<number | string> {
+    return this.get('getRememberedCookieConsent');
   }
 
   /** Return whether cookies are currently enabled or disabled */
