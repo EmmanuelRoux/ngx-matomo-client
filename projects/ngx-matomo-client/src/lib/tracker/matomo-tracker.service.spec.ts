@@ -363,6 +363,18 @@ describe('MatomoTracker', () => {
 
   it('should forget cookie consent given', expectSimpleMethod('forgetCookieConsentGiven', []));
 
+  it('should return remembered cookie consent', done => {
+    expectGetter(
+      'getRememberedCookieConsent',
+      {
+        getRememberedCookieConsent() {
+          return 42;
+        },
+      },
+      42
+    ).then(done);
+  });
+
   it('should return whether cookies are enabled', done => {
     expectGetter(
       'areCookiesEnabled',
