@@ -702,6 +702,16 @@ describe('MatomoTracker', () => {
       .then(done);
   });
 
+  it(
+    'should disable browser feature detection',
+    expectSimpleMethod('disableBrowserFeatureDetection', [])
+  );
+
+  it(
+    'should enable browser feature detection',
+    expectSimpleMethod('enableBrowserFeatureDetection', [])
+  );
+
   it('should ignore calls when disabled', () => {
     // Given
     const tracker = createTracker({ disabled: true });

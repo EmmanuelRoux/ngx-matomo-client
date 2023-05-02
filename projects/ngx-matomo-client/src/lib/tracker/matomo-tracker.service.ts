@@ -1379,6 +1379,26 @@ export abstract class MatomoTracker {
     return this.get('getExcludedReferrers');
   }
 
+  /**
+   * By default, Matomo accesses information from the visitor's browser to detect the current browser resolution
+   * and what browser plugins (for example PDF and cookies) are supported.
+   *
+   * This information is used to show you reports on your visitor's browser resolution, supported browser plugins,
+   * and it is also used to generate a short-lived identifier for every visitor which we call the config_id.
+   * Some privacy regulations may only allow accessing information from a visitor's device after having consent.
+   * If this applies to you, call this method to no longer access this information.
+   *
+   * @see https://matomo.org/faq/how-do-i-disable-browser-feature-detection-completely/
+   */
+  disableBrowserFeatureDetection(): void {
+    this.push(['disableBrowserFeatureDetection']);
+  }
+
+  /** Enable the browser feature detection if you previously disabled it */
+  enableBrowserFeatureDetection(): void {
+    this.push(['enableBrowserFeatureDetection']);
+  }
+
   /** Asynchronously call provided method name on matomo tracker instance */
   protected get<G extends Getters<MatomoInstance>>(
     getter: G
