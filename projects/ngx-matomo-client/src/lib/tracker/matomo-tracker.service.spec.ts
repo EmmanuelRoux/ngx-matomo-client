@@ -1,13 +1,13 @@
 import { NgZone } from '@angular/core';
-import { InternalMatomoConfiguration } from './configuration';
 import { MatomoHolder } from '../holder';
+import { Getters, Methods } from '../utils/types';
+import { InternalMatomoConfiguration } from './configuration';
 import {
   createMatomoTracker,
   MatomoECommerceItem,
   MatomoInstance,
   MatomoTracker,
 } from './matomo-tracker.service';
-import { Getters, Methods } from '../utils/types';
 
 declare var window: MatomoHolder;
 
@@ -444,6 +444,20 @@ describe('MatomoTracker', () => {
 
   it('should enable file tracking', expectSimpleMethod('enableFileTracking', []));
 
+  it(
+    'should set excluded single referrer',
+    expectSimpleMethod('setExcludedReferrers', ['referrer'], [['referrer']])
+  );
+
+  it(
+    'should set multiple excluded referrers',
+    expectSimpleMethod(
+      'setExcludedReferrers',
+      ['referrer1', 'referrer2', ['referrer3']],
+      [['referrer1', 'referrer2', 'referrer3']]
+    )
+  );
+
   function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>, E extends T = T>(
     getter: G,
     mockInstance: Partial<MatomoInstance>,
@@ -649,6 +663,29 @@ describe('MatomoTracker', () => {
       .then(url => {
         // Then
         expect(url).toEqual('dim-42');
+      })
+      .then(done);
+  });
+
+  it('should get excluded referrers', done => {
+    // Given
+    const tracker = createTracker();
+    const mockInstance = {
+      getExcludedReferrers(...args: any[]): string[] {
+        return ['referrer1'];
+      },
+    } as Partial<MatomoInstance> as MatomoInstance;
+
+    spyOn(window._paq, 'push').and.callFake(((...args: any[]) => {
+      args[0][0].call(mockInstance);
+    }) as any);
+
+    // When
+    tracker
+      .getExcludedReferrers()
+      .then(excludedReferrers => {
+        // Then
+        expect(excludedReferrers).toEqual(['referrer1']);
       })
       .then(done);
   });
