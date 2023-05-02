@@ -55,6 +55,8 @@ function isECommerceItemView(
 export interface MatomoInstance {
   getMatomoUrl(): string;
 
+  getPiwikUrl(): string;
+
   getCurrentUrl(): string;
 
   getLinkTrackingTimer(): number;
@@ -422,6 +424,11 @@ export abstract class MatomoTracker {
    */
   getMatomoUrl(): Promise<string> {
     return this.get('getMatomoUrl');
+  }
+
+  /** @deprecated use `getMatomoUrl` instead */
+  getPiwikUrl(): Promise<string> {
+    return this.get('getPiwikUrl');
   }
 
   /**

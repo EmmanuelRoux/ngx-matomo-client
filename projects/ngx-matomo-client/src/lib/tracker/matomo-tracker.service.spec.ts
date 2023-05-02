@@ -501,6 +501,18 @@ describe('MatomoTracker', () => {
     ).then(done);
   });
 
+  it('should get Matomo url (deprecated)', done => {
+    expectGetter(
+      'getPiwikUrl',
+      {
+        getPiwikUrl(): string {
+          return 'http://fakeUrl';
+        },
+      },
+      'http://fakeUrl'
+    ).then(done);
+  });
+
   it('should get current url', done => {
     expectGetter(
       'getCurrentUrl',
