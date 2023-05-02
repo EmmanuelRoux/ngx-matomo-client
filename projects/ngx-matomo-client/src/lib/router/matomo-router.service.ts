@@ -144,7 +144,7 @@ export class MatomoRouter {
     this.tracker.trackPageView();
 
     if (this.config.enableLinkTracking) {
-      this.tracker.enableLinkTracking(true);
+      this.tracker.enableLinkTracking(this.config.enableLinkTracking === 'enable-pseudo');
     }
 
     // Set referrer for next page view

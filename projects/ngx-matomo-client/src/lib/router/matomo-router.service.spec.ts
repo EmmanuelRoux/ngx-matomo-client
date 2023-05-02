@@ -200,6 +200,29 @@ describe('MatomoRouter', () => {
     expect(tracker.setDocumentTitle).toHaveBeenCalledWith('Custom page title');
     expect(tracker.trackPageView).toHaveBeenCalled();
     expect(tracker.setReferrerUrl).toHaveBeenCalledWith('/custom-url');
+    expect(tracker.enableLinkTracking).toHaveBeenCalledWith(false);
+  }));
+
+  it('should track page view with link tracking using pseudo-clicks', fakeAsync(() => {
+    // Given
+    const service = instantiate({}, { enableLinkTracking: 'enable-pseudo' });
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // Referrer url should be called only AFTER trackPageView
+    tracker.setReferrerUrl.and.callFake(() => {
+      expect(tracker.trackPageView).toHaveBeenCalled();
+    });
+
+    // When
+    service.initialize();
+    triggerEvent('/');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.setCustomUrl).toHaveBeenCalledWith('/custom-url');
+    expect(tracker.setDocumentTitle).toHaveBeenCalledWith('Custom page title');
+    expect(tracker.trackPageView).toHaveBeenCalled();
+    expect(tracker.setReferrerUrl).toHaveBeenCalledWith('/custom-url');
     expect(tracker.enableLinkTracking).toHaveBeenCalledWith(true);
   }));
 

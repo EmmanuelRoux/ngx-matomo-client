@@ -80,10 +80,17 @@ export interface BaseMatomoConfiguration {
   trackAppInitialLoad?: boolean;
 
   /**
-   * Set to `false` to disable this Matomo feature (default `true`).
-   * Used when {@link trackAppInitialLoad} is `true` and by Router module.
+   * Configure link clicks tracking
+   *
+   * If `true` (the default value), enable link tracking, excluding middle-clicks and contextmenu events.
+   * If `enable-pseudo`, enable link tracking, including middle-clicks and contextmenu events.
+   * If `false`, to disable this Matomo feature (default `true`).
+   *
+   * Used when {@link trackAppInitialLoad} is `true` and when automatic page tracking is enabled.
+   *
+   * @see {@link MatomoTracker.enableLinkTracking} for more details
    */
-  enableLinkTracking?: boolean;
+  enableLinkTracking?: boolean | 'enable-pseudo';
 
   /** Set to `true` to not track users who opt out of tracking using <i>Do Not Track</i> setting */
   acceptDoNotTrack?: boolean;

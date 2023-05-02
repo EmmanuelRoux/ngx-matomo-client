@@ -101,7 +101,25 @@ describe('MatomoInitializerService', () => {
     service.initialize();
 
     // Then
-    expect(tracker.enableLinkTracking).toHaveBeenCalledOnceWith();
+    expect(tracker.enableLinkTracking).toHaveBeenCalledOnceWith(false);
+  });
+
+  it('should enable link tracking using pseudo-clicks with manual configuration', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.MANUAL,
+      trackAppInitialLoad: false,
+      enableLinkTracking: 'enable-pseudo',
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'enableLinkTracking');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.enableLinkTracking).toHaveBeenCalledOnceWith(true);
   });
 
   it('should set Do Not Track setting if enabled', () => {
