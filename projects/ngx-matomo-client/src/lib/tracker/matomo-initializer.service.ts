@@ -173,7 +173,7 @@ export class MatomoInitializerService {
     }
 
     if (this.config.enableLinkTracking) {
-      this.tracker.enableLinkTracking();
+      this.tracker.enableLinkTracking(this.config.enableLinkTracking === 'enable-pseudo');
     }
   }
 }
