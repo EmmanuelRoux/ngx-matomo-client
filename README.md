@@ -68,6 +68,7 @@ follow the [instructions described here](docs/manual-installation.md)._
 | 13.x        | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md)) | Matomo 3 or 4 |
 | 14.x        | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md)) | Matomo 3 or 4 |
 | 15.x        | 4.x                                                                         | Matomo 3 or 4 |
+| 16.x        | >= 4.1                                                                      | Matomo 3 or 4 |
 
 ## Usage
 
