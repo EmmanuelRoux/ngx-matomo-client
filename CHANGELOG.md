@@ -1,3 +1,17 @@
+# [4.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.0.1...v4.1.0) (2023-05-03)
+
+
+### Bug Fixes
+
+* **tracker:** perform initialization checks earlier to prevent running pre-init tasks multiple times ([771e24d](https://github.com/EmmanuelRoux/ngx-matomo/commit/771e24de2d447d15bcba244f37a91ab98ebf4210))
+
+
+### Features
+
+* add Angular 16 support ([c40cca8](https://github.com/EmmanuelRoux/ngx-matomo/commit/c40cca802ba8948ad1343aa8b1c79d827e03c54a))
+* **tracker:** add new method to enable file tracking ([b595d99](https://github.com/EmmanuelRoux/ngx-matomo/commit/b595d9923b9e145a44a2480cb99481b2ea419d2a))
+* **tracker:** add performance timings getter ([fc0674d](https://github.com/EmmanuelRoux/ngx-matomo/commit/fc0674dc222abcf97badfba02762632b7953b3f9))
+
 ## [4.0.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.0.0...v4.0.1) (2022-11-25)
 
 
