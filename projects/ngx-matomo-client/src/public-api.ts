@@ -8,6 +8,9 @@ export {
   withScriptFactory,
   withRouter,
   withRouterInterceptors,
+  withRouteData,
+  MatomoFeatureKind,
+  MatomoFeature,
 } from './lib/ngx-matomo-providers';
 export {
   MatomoTracker,
@@ -15,6 +18,7 @@ export {
   MatomoECommerceView,
   MatomoECommerceItemView,
   MatomoECommerceCategoryView,
+  PagePerformanceTimings,
 } from './lib/tracker/matomo-tracker.service';
 export { MatomoInitializerService } from './lib/tracker/matomo-initializer.service';
 export {
@@ -34,7 +38,6 @@ export {
 export { MatomoTrackerDirective } from './lib/directives/matomo-tracker.directive';
 export { MatomoTrackClickDirective } from './lib/directives/matomo-track-click.directive';
 export { MatomoOptOutFormComponent } from './lib/directives/matomo-opt-out-form.component';
-
 export { NgxMatomoRouterModule } from './lib/ngx-matomo-router.module';
 export {
   MatomoRouterConfiguration,
