@@ -24,9 +24,13 @@ const PRIVATE_MATOMO_PROVIDERS = Symbol('MATOMO_PROVIDERS');
  * Additional Matomo features kind
  */
 export const enum MatomoFeatureKind {
+  /** @see withScriptFactory */
   ScriptFactory,
+  /** @see withRouter */
   Router,
+  /** @see withRouterInterceptors */
   RouterInterceptors,
+  /** @see withRouteData */
   BuiltInRouteDataInterceptor,
 }
 
