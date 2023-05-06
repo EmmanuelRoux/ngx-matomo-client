@@ -1,1 +1,1 @@
-export const version = '^5.0.0-next.1';
+export const version = '^5.0.0-next.2';

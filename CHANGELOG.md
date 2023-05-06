@@ -1,3 +1,10 @@
+# [5.0.0-next.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.0-next.1...v5.0.0-next.2) (2023-05-06)
+
+
+### Bug Fixes
+
+* **tracker:** add missing public exports ([f72e9fe](https://github.com/EmmanuelRoux/ngx-matomo/commit/f72e9fea2a6742b72d1aacd8b190f28f3b9113f6))
+
 # [5.0.0-next.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.1.0...v5.0.0-next.1) (2023-05-06)
 
 
