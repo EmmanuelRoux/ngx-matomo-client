@@ -52,11 +52,7 @@ export class NoopMatomoInitializer
     // No-op
   }
 
-  initializeTracker(
-    _: AutoMatomoConfiguration<
-      MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
-    >
-  ): void {
+  initializeTracker(_: AutoMatomoConfiguration<MatomoInitializationMode.AUTO_DEFERRED>): void {
     // No-op
   }
 }
