@@ -39,7 +39,7 @@ export enum MatomoInitializationMode {
   /** Do not inject Matomo script. In this case, initialization script must be provided */
   MANUAL,
   /**
-   * Automatically inject matomo script when deferred tracker configuration is provided using `MatomoDeferredInitializerService.init`.
+   * Automatically inject matomo script when deferred tracker configuration is provided using `MatomoInitializerService.initializeTracker()`.
    */
   AUTO_DEFERRED,
 }
