@@ -220,7 +220,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
     }
 
     if (hasLegacyModuleDeclaration(source)) {
-      context.logger.warn(
+      context.logger.info(
         'Your configuration is using legacy configuration with NgModule imports. ' +
           'While this is still supported, it is recommended to migrate your code to use the new provideMatomo() setup (see README > Installation)'
       );
