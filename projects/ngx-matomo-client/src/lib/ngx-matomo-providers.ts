@@ -12,7 +12,10 @@ import {
   provideInterceptor,
   provideInterceptors,
 } from './router/interceptor';
-import { MatomoRouteDataInterceptor } from './router/interceptors/route-data-interceptor';
+import {
+  MATOMO_ROUTE_DATA_KEY,
+  MatomoRouteDataInterceptor,
+} from './router/interceptors/route-data-interceptor';
 import { MatomoRouter } from './router/matomo-router.service';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
 import { MatomoInitializerService } from './tracker/matomo-initializer.service';
@@ -161,9 +164,18 @@ export function withRouterInterceptors(
   );
 }
 
-/** Enable retrieval of tracking information from route data */
-export function withRouteData(): MatomoFeature {
-  return createMatomoFeature(MatomoFeatureKind.BuiltInRouteDataInterceptor, [
-    provideInterceptor(MatomoRouteDataInterceptor),
-  ]);
+/**
+ * Enable retrieval of tracking information from route data
+ *
+ * @see MatomoRouteData
+ * @param key A custom key to get lookup route data - default is 'matomo'
+ */
+export function withRouteData(key?: string): MatomoFeature {
+  const providers: Provider[] = [provideInterceptor(MatomoRouteDataInterceptor)];
+
+  if (key) {
+    providers.push({ provide: MATOMO_ROUTE_DATA_KEY, useValue: key });
+  }
+
+  return createMatomoFeature(MatomoFeatureKind.BuiltInRouteDataInterceptor, providers);
 }

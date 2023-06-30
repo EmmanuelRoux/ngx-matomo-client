@@ -9,7 +9,11 @@ import {
 } from './ngx-matomo-providers';
 import { MATOMO_ROUTER_CONFIGURATION } from './router/configuration';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './router/interceptor';
-import { MatomoRouteDataInterceptor } from './router/interceptors/route-data-interceptor';
+import {
+  DEFAULT_DATA_KEY,
+  MATOMO_ROUTE_DATA_KEY,
+  MatomoRouteDataInterceptor,
+} from './router/interceptors/route-data-interceptor';
 import { MatomoRouter } from './router/matomo-router.service';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
 import { MatomoInitializerService } from './tracker/matomo-initializer.service';
@@ -117,6 +121,22 @@ describe('providers', () => {
     expect(TestBed.inject(MATOMO_ROUTER_INTERCEPTORS)).toEqual([
       jasmine.any(MatomoRouteDataInterceptor),
     ]);
+    expect(TestBed.inject(MATOMO_ROUTE_DATA_KEY)).toEqual(DEFAULT_DATA_KEY);
+  });
+
+  it('should provide basic Matomo providers with router feature and route data retrieval with custom key', async () => {
+    await setUp([
+      provideMatomo(
+        { trackerUrl: 'my-tracker', siteId: 42 },
+        withRouter({ delay: 42 }),
+        withRouteData('myCustomKey')
+      ),
+    ]);
+
+    expect(TestBed.inject(MATOMO_ROUTER_INTERCEPTORS)).toEqual([
+      jasmine.any(MatomoRouteDataInterceptor),
+    ]);
+    expect(TestBed.inject(MATOMO_ROUTE_DATA_KEY)).toEqual('myCustomKey');
   });
 
   it('should throw when using router features without withRouter()', () => {

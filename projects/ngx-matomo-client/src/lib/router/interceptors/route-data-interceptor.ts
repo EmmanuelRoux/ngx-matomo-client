@@ -1,11 +1,18 @@
-import { inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { inject, Injectable, InjectionToken } from '@angular/core';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MatomoECommerceView, MatomoTracker } from '../../tracker/matomo-tracker.service';
 import { MatomoRouteInterceptorBase } from './route-interceptor-base';
 
 export const DEFAULT_DATA_KEY = 'matomo';
 
+/** Token to define the route's data key to be looked-up by `MatomoRouteDataInterceptor`  */
+export const MATOMO_ROUTE_DATA_KEY = new InjectionToken<string>('MATOMO_ROUTE_DATA_KEY', {
+  providedIn: 'root',
+  factory: () => DEFAULT_DATA_KEY,
+});
+
+/** Standard properties that may be read from route data */
 export interface MatomoRouteData {
   title?: string;
   ecommerce?: MatomoECommerceView;
@@ -59,14 +66,14 @@ export interface MatomoRouteData {
  * }),
  *
  * @see MatomoRouteInterceptorBase
+ * @see MatomoRouteData
  */
 @Injectable()
 export class MatomoRouteDataInterceptor extends MatomoRouteInterceptorBase<
   MatomoRouteData | undefined
 > {
   protected readonly tracker = inject(MatomoTracker);
-
-  protected readonly dataKey: string = DEFAULT_DATA_KEY;
+  protected readonly dataKey = inject(MATOMO_ROUTE_DATA_KEY);
 
   protected extractRouteData(route: ActivatedRouteSnapshot): MatomoRouteData | undefined {
     return route.data[this.dataKey];

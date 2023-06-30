@@ -57,4 +57,5 @@ export { MatomoRouteInterceptorBase } from './lib/router/interceptors/route-inte
 export {
   MatomoRouteData,
   MatomoRouteDataInterceptor,
+  MATOMO_ROUTE_DATA_KEY,
 } from './lib/router/interceptors/route-data-interceptor';
