@@ -32,7 +32,8 @@
     "semantic-release:prepare-ci": "chmod +x -R ./scripts/",
     "semantic-release:ci": "npm run semantic-release:prepare-ci && npm run semantic-release",
     "update:toc": "markdown-toc README.md -i --maxdepth=3 && markdown-toc CONTRIBUTING.md -i --maxdepth=3",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "dev:ng-add": "npm run build:lib && npm link ./dist/ngx-matomo-client && ng add ngx-matomo-client --project demo"
   },
   "dependencies": {
     "@angular/animations": "^15.0.1",
