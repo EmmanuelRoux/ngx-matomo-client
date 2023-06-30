@@ -1,30 +1,66 @@
-# <img src="https://static.matomo.org/wp-content/uploads/2018/11/DefaultIcon.png" alt="matomo-logo" style="height: 38px; vertical-align: middle;" /> ngx-matomo-client&nbsp;&nbsp;—&nbsp;&nbsp;Configuration reference
-
----
+# <img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/73fd7ede3ad8bc5adcce06d28bc45ec1f0c3810c/logo-small.png" alt="matomo-logo" style="height: 38px; vertical-align: middle;" /> ngx-matomo-client
 
 [← return to documentation](/README.md)
 
 ## Configuration reference
 
-The configuration should be provided in your application's root module providers using `provideMatomo(options, ...additionalFeatures)`:
+The configuration should be provided in your application's root module, either using `NgModule` or `provideMatomo(options, ...additionalFeatures)`:
 
+<table>
+<tr>
+<th>Classic apps</th>
+<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
+</tr>
+<tr>
+<td valign="top">
+
+<!-- prettier-ignore -->
 ```ts
-import { NgModule } from '@angular/core';
-import { provideMatomo, MatomoConfiguration } from 'ngx-matomo-client';
+import {
+  NgxMatomoModule,
+  NgxMatomoRouterModule,
+  MatomoRouteDataInterceptor,
+} from 'ngx-matomo-client';
+
+@NgModule({
+  imports: [
+    NgxMatomoModule.forRoot({
+      // Main options here
+      siteId: 42,
+      trackerUrl: 'http://...',
+    }),
+    NgxMatomoRouterModule.forRoot({
+      // Router options here
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+</td>
+<td valign="top">
+
+<!-- prettier-ignore -->
+```ts
+import {
+  provideMatomo,
+  withRouter,
+  withScriptFactory,
+  withRouterInterceptors,
+} from 'ngx-matomo-client';
 
 @NgModule({
   providers: [
     provideMatomo(
-      // Options:
+      // Main options here
       {
         siteId: 42,
         trackerUrl: 'http://...',
-        // Find all available MatomoConfiguration properties below
       },
 
       // Optionally add one or more features:
       withRouter({
-        // Find all available MatomoRouterConfiguration below
+        // Router options here
       }),
       withScriptFactory(),
       withRouterInterceptors()
@@ -34,9 +70,13 @@ import { provideMatomo, MatomoConfiguration } from 'ngx-matomo-client';
 export class AppModule {}
 ```
 
+</td>
+</tr>
+</table>
+
 ### Options
 
-Available options for `provideMatomo` are:
+Main configuration options (for `NgxMatomoModule.forRoot` or `provideMatomo`) are:
 
 | Option                | Type                                                                       | Default value                                                  | Description                                                                                                                                                                                                                                            | Available in `MANUAL` mode |
 | --------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
@@ -54,6 +94,15 @@ Available options for `provideMatomo` are:
 | requireConsent        | `MatomoConsentMode`                                                        | `MatomoConsentMode.NONE`                                       | Configure user consent requirement.                                                                                                                                                                                                                    | yes                        |
 | runOutsideAngularZone | `boolean`                                                                  | `false`                                                        | If set to `true`, will run matomo calls outside of angular's NgZone. This may help if the call causes the app to freeze.                                                                                                                               | yes                        |
 
+Router configuration options (for `NgxMatomoRouterModule.forRoot` or `withRouter`) are:
+
+| Option          | Type                                         | Default value                         | Description                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------- | -------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| prependBaseHref | `boolean`                                    | `true`                                | Set whether the application's <i>base href</i> should be prepended to current url when tracking page views. Set it to `false` to disable this behavior.                                                                                                                                                                                                                                 |
+| trackPageTitle  | `boolean`                                    | `true`                                | Set whether to detect page title when tracking views. <br>By default, page title is automatically detected from DOM document title. <br>Note that if set to `false`, Matomo is likely to still use the initial document title for all tracked page views.                                                                                                                               |
+| delay           | `number`<br>Set to `-1` to run synchronously | `0` (no delay but still asynchronous) | Set a delay after navigation event before page view is tracked. <br>If your document title is updated asynchronously after Router events, you may have to set a delay to correctly detect document title. <br>If set to `0`, tacking is still asynchronous. Set it to `-1` to execute tracking synchronously.<br>See also previous sections for more advanced page title customization. |
+| exclude         | `string`, `RegExp`, `string[]` or `RegExp[]` | `[]`                                  | Set some url patterns to exclude from page views tracking.                                                                                                                                                                                                                                                                                                                              |
+
 ### Additional features
 
 Available features for `provideMatomo` are:
@@ -62,14 +111,7 @@ Available features for `provideMatomo` are:
 
 Enable automatic page view tracking. This requires `@angular/router`.
 
-This feature accepts following optional options:
-
-| Option          | Type                                         | Default value                         | Description                                                                                                                                                                                                                                                                                                                                                                             |
-| --------------- | -------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| prependBaseHref | `boolean`                                    | `true`                                | Set whether the application's <i>base href</i> should be prepended to current url when tracking page views. Set it to `false` to disable this behavior.                                                                                                                                                                                                                                 |
-| trackPageTitle  | `boolean`                                    | `true`                                | Set whether to detect page title when tracking views. <br>By default, page title is automatically detected from DOM document title. <br>Note that if set to `false`, Matomo is likely to still use the initial document title for all tracked page views.                                                                                                                               |
-| delay           | `number`<br>Set to `-1` to run synchronously | `0` (no delay but still asynchronous) | Set a delay after navigation event before page view is tracked. <br>If your document title is updated asynchronously after Router events, you may have to set a delay to correctly detect document title. <br>If set to `0`, tacking is still asynchronous. Set it to `-1` to execute tracking synchronously.<br>See also previous sections for more advanced page title customization. |
-| exclude         | `string`, `RegExp`, `string[]` or `RegExp[]` | `[]`                                  | Set some url patterns to exclude from page views tracking.                                                                                                                                                                                                                                                                                                                              |
+See options for router configuration above.
 
 #### withRouteData
 

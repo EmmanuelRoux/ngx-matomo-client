@@ -1,1 +1,1 @@
-export const BASE_TITLE = 'ngx-matomo';
+export const BASE_TITLE = 'ngx-matomo-client';

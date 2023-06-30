@@ -1,4 +1,8 @@
-# Contributing to ngx-matomo
+# <img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/73fd7ede3ad8bc5adcce06d28bc45ec1f0c3810c/logo-small.png" alt="matomo-logo" style="height: 38px; vertical-align: middle;" /> ngx-matomo-client
+
+[← return to documentation](/README.md)
+
+## Contributing guide
 
 <!-- prettier-ignore-start -->
 

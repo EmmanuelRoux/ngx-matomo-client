@@ -2,7 +2,7 @@
   "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "ng-add": {
-      "description": "Add ngx-matomo tracker",
+      "description": "Add ngx-matomo-client library",
       "factory": "./ng-add/index#ngAdd",
       "schema": "./ng-add/schema.json"
     }
