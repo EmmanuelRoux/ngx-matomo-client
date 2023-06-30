@@ -9,7 +9,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatomoRouterModule } from '@ngx-matomo/router';
-import { NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
+import { MatomoConsentMode, NgxMatomoTrackerModule } from '@ngx-matomo/tracker';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -36,6 +36,7 @@ import { TrackSimpleClickEventComponent } from './track-simple-click-event/track
     NgxMatomoTrackerModule.forRoot({
       siteId: environment.matomoSiteId,
       trackerUrl: environment.matomoTrackerUrl,
+      requireConsent: MatomoConsentMode.COOKIE,
     }),
     NgxMatomoRouterModule.forRoot({
       exclude: /without-router$/,
