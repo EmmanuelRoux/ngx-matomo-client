@@ -6,24 +6,24 @@ import {
   Tree,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
-import {
-  addSymbolToNgModuleMetadata,
-  findNodes,
-  getDecoratorMetadata,
-  getMetadataField,
-  insertImport,
-} from '@schematics/angular/utility/ast-utils';
-import { applyToUpdateRecorder, Change, ReplaceChange } from '@schematics/angular/utility/change';
-import {
-  addPackageJsonDependency,
-  getPackageJsonDependency,
-  NodeDependencyType,
-} from '@schematics/angular/utility/dependencies';
-import { findModuleFromOptions } from '@schematics/angular/utility/find-module';
-import { createDefaultPath } from '@schematics/angular/utility/workspace';
 import * as ts from 'typescript';
 import { SyntaxKind } from 'typescript';
 import { escapeLiteral, readIntoSourceFile } from '../schematics-utils';
+import {
+  addPackageJsonDependency,
+  addSymbolToNgModuleMetadata,
+  applyToUpdateRecorder,
+  Change,
+  createDefaultPath,
+  findModuleFromOptions,
+  findNodes,
+  getDecoratorMetadata,
+  getMetadataField,
+  getPackageJsonDependency,
+  insertImport,
+  NodeDependencyType,
+  ReplaceChange,
+} from '../utils';
 import { version } from '../version';
 import { Schema as Options } from './schema';
 
