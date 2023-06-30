@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRouteSnapshot,
   Data,
@@ -31,7 +32,16 @@ describe('RouteDataInterceptor', () => {
     routerState = {};
     router = jasmine.createSpyObj<Router>([], { routerState: routerState as RouterState });
     tracker = jasmine.createSpyObj<MatomoTracker>(['setDocumentTitle', 'setEcommerceView']);
-    interceptor = new MatomoRouteDataInterceptor(tracker, router);
+
+    TestBed.configureTestingModule({
+      providers: [
+        MatomoRouteDataInterceptor,
+        { provide: Router, useValue: router },
+        { provide: MatomoTracker, useValue: tracker },
+      ],
+    });
+
+    interceptor = TestBed.inject(MatomoRouteDataInterceptor);
   });
 
   it('should set title through simple route data', () => {

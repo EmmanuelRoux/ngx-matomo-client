@@ -1,3 +1,4 @@
+import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationEnd, PRIMARY_OUTLET, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MatomoRouterInterceptor } from '../interceptor';
@@ -9,7 +10,7 @@ import { getLeafRoute } from './route-utils';
  * @see MatomoRouteDataInterceptor
  */
 export abstract class MatomoRouteInterceptorBase<D> implements MatomoRouterInterceptor {
-  protected constructor(protected readonly router: Router) {}
+  protected readonly router = inject(Router);
 
   beforePageTrack(event: NavigationEnd): Observable<void> | Promise<void> | void {
     const route = this.getRoute(event);

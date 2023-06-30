@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MatomoECommerceView, MatomoTracker } from '../../tracker/matomo-tracker.service';
@@ -64,11 +64,9 @@ export interface MatomoRouteData {
 export class MatomoRouteDataInterceptor extends MatomoRouteInterceptorBase<
   MatomoRouteData | undefined
 > {
-  protected readonly dataKey: string = DEFAULT_DATA_KEY;
+  protected readonly tracker = inject(MatomoTracker);
 
-  constructor(protected readonly tracker: MatomoTracker, router: Router) {
-    super(router);
-  }
+  protected readonly dataKey: string = DEFAULT_DATA_KEY;
 
   protected extractRouteData(route: ActivatedRouteSnapshot): MatomoRouteData | undefined {
     return route.data[this.dataKey];
