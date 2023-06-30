@@ -1,10 +1,8 @@
-# <img src="https://static.matomo.org/wp-content/uploads/2018/11/DefaultIcon.png" alt="matomo-logo" style="height: 38px; vertical-align: middle;" /> ngx-matomo-client&nbsp;&nbsp;—&nbsp;&nbsp;Matomo Analytics client for Angular
+# ngx-matomo-client&nbsp;&nbsp;—&nbsp;&nbsp;Matomo Analytics client for Angular
 
 <h3 align="center">
   <br>
-  <img src="https://static.matomo.org/wp-content/uploads/2020/03/matomo-logo-winner-mobile3-366x50.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" />
-  &nbsp;/&nbsp;
-  <img src="https://brandslogos.com/wp-content/uploads/images/large/angular-logo-1.png" style="height: 32px; vertical-align: middle;">
+  <img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/815c54b151feb69a73311ce420ddf7dcce08c573/logo-large.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" />
   <br>
 </h3>
 
@@ -464,15 +462,18 @@ As of Angular 14, and as long as you don't set `withRouter({ delay: -1})`, custo
 property of Angular route config is natively supported. See Angular tutorial
 here: [Setting the page title](https://angular.io/guide/router#setting-the-page-title).
 
-If you're not using automatic page view tracking, then call `tracker.setDocumentTitle(title)` or `tracker.trackPageView(title)`.
+If you're not using automatic page view tracking, then call `tracker.setDocumentTitle(title)`
+or `tracker.trackPageView(title)`.
 
 ### Should I include the tracking code provided by Matomo?
 
 No, by default `ngx-matomo-client` includes Matomo's tracking script for you, so **you don't need to copy/paste the
 tracking code into your application**.
 
-If you are not using the default configuration and set the initialization mode to `MatomoInitializationMode.MANUAL`, then
-you must include the tracking code yourself [as explained on official guide](https://developer.matomo.org/guides/tracking-javascript-guide).
+If you are not using the default configuration and set the initialization mode to `MatomoInitializationMode.MANUAL`,
+then
+you must include the tracking code
+yourself [as explained on official guide](https://developer.matomo.org/guides/tracking-javascript-guide).
 
 ### How to disable tracking in some environments?
 
