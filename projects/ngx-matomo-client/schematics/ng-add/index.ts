@@ -168,7 +168,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
     //
     // If no import is present, use the new providers-style setup.
     //
-    // Maybe in the future a schematics can be provided to migrate old NgModule
+    // Maybe in the future a schematics can be provided to migrate legacy NgModule
     // setup to new providers-style setup.
 
     const imports = findRelevantImports(source, isRelevantImportPath);
@@ -221,8 +221,8 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
 
     if (hasLegacyModuleDeclaration(source)) {
       context.logger.info(
-        'Your configuration is using legacy configuration with NgModule imports. ' +
-          'While this is still supported, it is recommended to migrate your code to use the new provideMatomo() setup (see README > Installation)'
+        'Your configuration is using classic configuration with NgModule imports. ' +
+          'While this is still fully supported, you may want to take a look at the new NgModule-free setup using provideMatomo() (see README > Installation)'
       );
 
       if (!mainModuleImported) {
@@ -279,7 +279,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
 function migrateAllLegacyImports(options: Options, context: SchematicContext): Rule {
   return (host: Tree) => {
     if (!options.skipLegacyPackageMigration) {
-      context.logger.info('Migrating imports from old @ngx-matomo/* packages...');
+      context.logger.info('Migrating imports from legacy @ngx-matomo/* packages...');
 
       host.visit(path => {
         // if (options.module && path.endsWith(options.module) && !options.skipImport) {
