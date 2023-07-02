@@ -2,7 +2,11 @@
  * Public API Surface of tracker
  */
 
-export { NgxMatomoModule, NgxMatomoTrackerModule } from './lib/ngx-matomo.module';
+export {
+  NgxMatomoModule,
+  NgxMatomoTrackerModule,
+  MATOMO_DIRECTIVES,
+} from './lib/ngx-matomo.module';
 export {
   provideMatomo,
   withScriptFactory,

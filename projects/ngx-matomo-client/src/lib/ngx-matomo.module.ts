@@ -6,7 +6,11 @@ import { MatomoFeature, provideMatomo, withScriptFactory } from './ngx-matomo-pr
 import { MatomoConfiguration } from './tracker/configuration';
 import { MatomoScriptFactory } from './tracker/script-factory';
 
-const DIRECTIVES = [MatomoTrackerDirective, MatomoTrackClickDirective, MatomoOptOutFormComponent];
+export const MATOMO_DIRECTIVES = [
+  MatomoTrackerDirective,
+  MatomoTrackClickDirective,
+  MatomoOptOutFormComponent,
+] as const;
 
 function buildProviders(
   config: MatomoConfiguration,
@@ -22,8 +26,8 @@ function buildProviders(
 }
 
 @NgModule({
-  imports: DIRECTIVES,
-  exports: DIRECTIVES,
+  imports: [...MATOMO_DIRECTIVES],
+  exports: [...MATOMO_DIRECTIVES],
 })
 export class NgxMatomoModule {
   static forRoot(
