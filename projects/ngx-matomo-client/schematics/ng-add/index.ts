@@ -22,6 +22,7 @@ import {
   getPackageJsonDependency,
   insertImport,
   NodeDependencyType,
+  removePackageJsonDependency,
   ReplaceChange,
 } from '../utils';
 import { version } from '../version';
@@ -56,6 +57,11 @@ function addPackageJsonDependencies(options: Options) {
       name: 'ngx-matomo-client',
       version,
     });
+
+    if (!options.skipLegacyPackageMigration) {
+      removePackageJsonDependency(host, '@ngx-matomo/tracker');
+      removePackageJsonDependency(host, '@ngx-matomo/router');
+    }
 
     if (options.router) {
       checkRequiredRouterDependency(host, context);
