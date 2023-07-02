@@ -4,6 +4,7 @@ import { MatomoHolder } from '../holder';
 import { provideMatomo, withScriptFactory } from '../ngx-matomo-providers';
 import {
   MATOMO_CONFIGURATION,
+  MATOMO_ROUTER_ENABLED,
   MatomoConfiguration,
   MatomoConsentMode,
   MatomoInitializationMode,
@@ -68,11 +69,10 @@ describe('MatomoInitializerService', () => {
       });
   });
 
-  it('should track initial page view with manual configuration', () => {
+  it('should track initial page view by default', () => {
     // Given
     const service = instantiate({
       mode: MatomoInitializationMode.MANUAL,
-      trackAppInitialLoad: true,
       enableLinkTracking: false,
     });
     const tracker = TestBed.inject(MatomoTracker);
@@ -84,6 +84,65 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+  });
+
+  it('should not track initial page view by default if router is enabled', () => {
+    // Given
+    const service = instantiate(
+      {
+        mode: MatomoInitializationMode.MANUAL,
+        enableLinkTracking: false,
+      },
+      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }]
+    );
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+  });
+
+  it('should manually force track initial page view no matter router is enabled', () => {
+    // Given
+    const service = instantiate(
+      {
+        mode: MatomoInitializationMode.MANUAL,
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      },
+      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }]
+    );
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+  });
+
+  it('should not track initial page view with manual configuration, no matter router enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.MANUAL,
+      enableLinkTracking: false,
+      trackAppInitialLoad: false,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
   });
 
   it('should enable link tracking with manual configuration', () => {

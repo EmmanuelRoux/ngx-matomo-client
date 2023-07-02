@@ -15,7 +15,11 @@ import {
   MatomoRouteDataInterceptor,
 } from './router/interceptors/route-data-interceptor';
 import { MatomoRouter } from './router/matomo-router.service';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
+import {
+  MATOMO_CONFIGURATION,
+  MATOMO_ROUTER_ENABLED,
+  MatomoConfiguration,
+} from './tracker/configuration';
 import { MatomoInitializerService } from './tracker/matomo-initializer.service';
 import { MatomoTracker } from './tracker/matomo-tracker.service';
 import { createDefaultMatomoScriptElement } from './tracker/script-factory';
@@ -91,6 +95,7 @@ describe('providers', () => {
     expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
     expect(TestBed.inject(MatomoRouter)).toEqual(jasmine.any(MatomoRouter));
     expect(TestBed.inject(MATOMO_ROUTER_CONFIGURATION)).toEqual({ delay: 42 });
+    expect(TestBed.inject(MATOMO_ROUTER_ENABLED)).toEqual(true);
   });
 
   it('should provide basic Matomo providers with router feature and additional interceptor', async () => {

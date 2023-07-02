@@ -4,6 +4,13 @@ import { requireNonNull } from '../utils/coercion';
 const CONFIG_NOT_FOUND =
   'No Matomo configuration found! Have you included Matomo module using NgxMatomoTrackerModule.forRoot() ?';
 
+/** Internal marker token to detect that router has been enabled */
+export const MATOMO_ROUTER_ENABLED = new InjectionToken<boolean>('MATOMO_ROUTER_ENABLED', {
+  factory() {
+    return false;
+  },
+});
+
 /** Injection token for {@link MatomoConfiguration} */
 export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MATOMO_CONFIGURATION');
 
@@ -18,7 +25,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
       ({
         disabled: false,
         enableLinkTracking: true,
-        trackAppInitialLoad: false,
+        trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
         requireConsent: MatomoConsentMode.NONE,
         enableJSErrorTracking: false,
         runOutsideAngularZone: false,

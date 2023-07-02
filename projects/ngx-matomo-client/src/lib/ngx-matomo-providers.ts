@@ -2,6 +2,7 @@ import {
   ENVIRONMENT_INITIALIZER,
   EnvironmentProviders,
   inject,
+  InjectionToken,
   makeEnvironmentProviders,
   Provider,
   Type,
@@ -17,7 +18,11 @@ import {
   MatomoRouteDataInterceptor,
 } from './router/interceptors/route-data-interceptor';
 import { MatomoRouter } from './router/matomo-router.service';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
+import {
+  MATOMO_CONFIGURATION,
+  MATOMO_ROUTER_ENABLED,
+  MatomoConfiguration,
+} from './tracker/configuration';
 import { MatomoInitializerService } from './tracker/matomo-initializer.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
 
@@ -143,6 +148,7 @@ export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
 
 export function provideRouterInternal(config?: MatomoRouterConfiguration): Provider[] {
   return [
+    { provide: MATOMO_ROUTER_ENABLED, useValue: true },
     { provide: MATOMO_ROUTER_CONFIGURATION, useValue: config },
     {
       provide: ENVIRONMENT_INITIALIZER,
