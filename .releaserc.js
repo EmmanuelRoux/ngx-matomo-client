@@ -14,7 +14,12 @@ module.exports = {
     },
   ],
   plugins: [
-    '@semantic-release/commit-analyzer',
+    [
+      '@semantic-release/commit-analyzer',
+      {
+        releaseRules: [{ type: 'chore', scope: 'force-release', release: 'patch' }],
+      },
+    ],
     [
       '@semantic-release/release-notes-generator',
       {

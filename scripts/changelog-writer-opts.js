@@ -20,6 +20,12 @@ module.exports = {
       discard = false;
     });
 
+    if (commit.type === 'chore' && commit.scope === 'force-release') {
+      commit.type = '';
+      commit.scope = '';
+      discard = false;
+    }
+
     if (commit.type === 'feat') {
       commit.type = 'Features';
     } else if (commit.type === 'fix') {
