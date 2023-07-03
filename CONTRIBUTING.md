@@ -1,4 +1,4 @@
-# <img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/73fd7ede3ad8bc5adcce06d28bc45ec1f0c3810c/logo-small.png" alt="matomo-logo" style="height: 38px; vertical-align: middle;" /> ngx-matomo-client
+# <img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-small.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" /> ngx-matomo-client
 
 [← return to documentation](/README.md)
 

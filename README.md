@@ -1,11 +1,11 @@
 <h1 align="center">
-  <p><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/73fd7ede3ad8bc5adcce06d28bc45ec1f0c3810c/logo-small.png" alt="matomo-logo" style="height: 38px; vertical-align: middle;" /> ngx-matomo-client</p>
+  <p><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-small.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" /> ngx-matomo-client</p>
 <p>Matomo Analytics client for Angular</p>
 </h1>
 
 <div align="center">
   <br>
- <div><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/73fd7ede3ad8bc5adcce06d28bc45ec1f0c3810c/logo-large.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" />
+ <div><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-large.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" />
  </div>
   <i>
     Matomo is the Google Analytics alternative that protects your data and your customers' privacy.
@@ -49,13 +49,13 @@ easily migrate.**
 
 **Compatibility table:**
 
-| Angular | ngx-matomo-client | @ngx-matomo/tracker <br> @ngx-matomo/router                                                 | Matomo        |
-| ------- | ----------------- | ------------------------------------------------------------------------------------------- | ------------- |
-| 9 to 12 |                   | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/1.x/README.md))                 | Matomo 3 or 4 |
-| 13      |                   | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md))                 | Matomo 3 or 4 |
-| 14      |                   | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md))                 | Matomo 3 or 4 |
-| 15      |                   | 4.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.x/README.md))                 | Matomo 3 or 4 |
-| 16      | 5.x               | 4.1+ ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.x/README.md)) _(deprecated)_ | Matomo 3 or 4 |
+| Angular | ngx-matomo-client | @ngx-matomo/tracker <br> @ngx-matomo/router                                                | Matomo        |
+| ------- | ----------------- | ------------------------------------------------------------------------------------------ | ------------- |
+| 9 to 12 |                   | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/1.x/README.md))                | Matomo 3 or 4 |
+| 13      |                   | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md))                | Matomo 3 or 4 |
+| 14      |                   | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md))                | Matomo 3 or 4 |
+| 15      |                   | 4.0.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.0.x/README.md))            | Matomo 3 or 4 |
+| 16      | 5.x               | 4.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.x/README.md)) _(deprecated)_ | Matomo 3 or 4 |
 
 [![build](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml)
 [![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml)
