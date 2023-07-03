@@ -1,3 +1,57 @@
+# [5.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.1.0...v5.0.0) (2023-07-03)
+
+
+### Bug Fixes
+
+* **schematics:** correctly remove legacy packages during install ([5cc6a8c](https://github.com/EmmanuelRoux/ngx-matomo/commit/5cc6a8c1924c07b1d597d5db0f20f69b9e93dd2a))
+* **tracker:** add missing public exports ([27973ca](https://github.com/EmmanuelRoux/ngx-matomo/commit/27973ca78a1f50c47a19ff819619077ec9773937))
+
+
+### Code Refactoring
+
+* merge `@ngx-matomo/router` into main package ([dca634a](https://github.com/EmmanuelRoux/ngx-matomo/commit/dca634aa3d2360d64e16f483ef0df298ad0e6dee))
+* rename library to `ngx-matomo-client` ([be8f65e](https://github.com/EmmanuelRoux/ngx-matomo/commit/be8f65e196c20aef01293ff117ada9e59d185a1a))
+* **router:** remove `MatomoRouteDataInterceptor` and `MatomoRouteInterceptorBase` constructor arguments ([5c5086d](https://github.com/EmmanuelRoux/ngx-matomo/commit/5c5086dcd08d787de0e3f3257159f9d91788cbb3))
+* **router:** replace `init()` method with `initialize()` for naming consistency ([f82c013](https://github.com/EmmanuelRoux/ngx-matomo/commit/f82c0131df663c814c1d1e5885a01df6228a544f))
+* **tracker:** rename `NgxMatomoTrackerModule` to `NgxMatomoModule` ([96c8f2e](https://github.com/EmmanuelRoux/ngx-matomo/commit/96c8f2ed351a4925690c4b1349fcf6ef7a78c494))
+
+
+### Features
+
+* add new `NgModule`-free providers ([2dbe82d](https://github.com/EmmanuelRoux/ngx-matomo/commit/2dbe82d2bb9c60501564c7ce39e4a6dcea5a23fe))
+* **router:** allow custom key for route data lookup ([936176d](https://github.com/EmmanuelRoux/ngx-matomo/commit/936176da56a84b7d427087f484352e29d374d546))
+* **schematics:** support new providers-style setup ([057223a](https://github.com/EmmanuelRoux/ngx-matomo/commit/057223a59f3fd185ad2f910a38632801ea4b2df7))
+* **tracker, router:** add support for pseudo-clicks with `enableLinkTracking` config property ([641a255](https://github.com/EmmanuelRoux/ngx-matomo/commit/641a255c3ab31b9e0fc0bb3fac9e404ae179b078))
+* **tracker:** add `disableBrowserFeatureDetection` and `enableBrowserFeatureDetection` methods ([d462941](https://github.com/EmmanuelRoux/ngx-matomo/commit/d462941c75a5b00a7850c17f8c8461ad5190b2a8))
+* **tracker:** add `getExcludedReferrers` and `setExcludedReferrers` methods ([b725de8](https://github.com/EmmanuelRoux/ngx-matomo/commit/b725de85ea7f733cca154d542a9378d7c9542f69))
+* **tracker:** add `getRememberedCookieConsent` method ([7504381](https://github.com/EmmanuelRoux/ngx-matomo/commit/7504381d89718f7247d314af9dede83eefd38e98))
+* **tracker:** add public export for `MATOMO_DIRECTIVES` ([f0362e9](https://github.com/EmmanuelRoux/ngx-matomo/commit/f0362e9542773f8ab54b79aab8ede93136908ae6))
+* **tracker:** allow `inject` calls in script factory ([bb2aae0](https://github.com/EmmanuelRoux/ngx-matomo/commit/bb2aae0eb3b4e29ba5d58d7c2f0dbd526890a686))
+* **tracker:** allow route tracking customization using route data ([480f30e](https://github.com/EmmanuelRoux/ngx-matomo/commit/480f30e931f69ed2d4a4e854da4dd573c379fc63))
+* **tracker:** automatically enable or disable initial page view tracking ([eeccb3e](https://github.com/EmmanuelRoux/ngx-matomo/commit/eeccb3e6a484b448fbd494716df848a0cea99210))
+* **tracker:** make Matomo directives standalone ([27c2ecc](https://github.com/EmmanuelRoux/ngx-matomo/commit/27c2ecc5366bd54dc61f4ec3ecb790e1ade0b0ca))
+
+
+### Breaking changes
+
+* **tracker:** Configuration option `trackAppInitialLoad` is now `true` by default, unless router feature is enabled (it previously was always `false` by default).
+For applications with router enabled, nothing changes. It can still be manually configured like before.
+This should not affect most applications, because tracking initial page view is not recommended when router feature is enabled.
+* **router:** `MatomoRouteDataInterceptor` and `MatomoRouteInterceptorBase` constructors are now argument-less. They now require to be instantiated in an injection context instead.
+* **tracker, router:** `enableLinkTracking` now don't enable pseudo-click tracking by default after each page view. This is consistent with the default Matomo behavior.
+To restore previous behavior, set `enableLinkTracking` configuration property to `'enable-pseudo'`.
+* Library's npm package has been renamed to `ngx-matomo-client`.
+Legacy packages should not be used anymore: please migrate all imports from `@ngx-matomo/tracker` and `@ngx-matomo/router` to `ngx-matomo-client` instead.
+* Package `@ngx-matomo/router` is no longer necessary.
+It should be removed from your project.
+  - `NgxMatomoRouterModule` is now available from the main library package
+  - All your imports should be migrated and imported from the main library package
+
+### Deprecations
+
+* **router:** Method `MatomoRouter.init()` has been deprecated, use `MatomoRouter.initialize()` instead
+* **tracker:** `NgxMatomoTrackerModule` is deprecated, use `NgxMatomoModule` instead
+
 # [4.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.0.1...v4.1.0) (2023-05-03)
 
 
