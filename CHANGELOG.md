@@ -1,3 +1,15 @@
+## [4.1.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.1.1...v4.1.2) (2023-07-03)
+
+
+### Bug Fixes
+
+* **README:** fix package link url ([2248798](https://github.com/EmmanuelRoux/ngx-matomo/commit/224879827a06ec7d4efa1a91c6c4d98f832deca7))
+
+
+### Deprecations
+
+* **README:** This library has been renamed to `ngx-matomo-client`, try it now!
+
 ## [4.1.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.1.0...v4.1.1) (2023-07-03)
 
 
