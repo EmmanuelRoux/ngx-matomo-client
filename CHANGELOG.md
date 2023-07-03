@@ -1,3 +1,13 @@
+## [4.1.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.1.0...v4.1.1) (2023-07-03)
+
+
+* add migration note ([1ed5ef8](https://github.com/EmmanuelRoux/ngx-matomo/commit/1ed5ef898731d375878205d37a5442e101278ac3))
+
+
+### Deprecations
+
+* This library has been renamed to `ngx-matomo-client`, try it now!
+
 # [4.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.0.1...v4.1.0) (2023-05-03)
 
 
