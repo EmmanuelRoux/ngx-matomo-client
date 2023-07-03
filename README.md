@@ -14,9 +14,14 @@ Matomo (fka. Piwik) client for Angular applications
 
 <hr>
 
-**Note: this library has been renamed to `ngx-matomo-client`, try it now!**
-
-[![NPM version](https://img.shields.io/npm/v/ngx-matomo-client/latest.svg?logo=npm&logoColor=fff&label=ngx-matomo-client&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
+<p align="center">
+  <strong>Note: this library has been renamed to <code>ngx-matomo-client</code>, try it now!</strong>
+  <br>
+  <br>
+  <a href="https://www.npmjs.com/package/ngx-matomo-client">
+    <img src="https://img.shields.io/npm/v/ngx-matomo-client/latest.svg?logo=npm&logoColor=fff&label=ngx-matomo-client&color=limegreen" alt="NPM latest version">
+  </a>
+</p>
 
 <hr>
 

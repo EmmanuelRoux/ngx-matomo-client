@@ -3,6 +3,8 @@ const writerOpts = require('./scripts/changelog-writer-opts.js');
 module.exports = {
   branches: [
     'main',
+    // Force 'latest' channel for @ngx-matomo/tracker@4.x
+    { name: '4.x', range: '4.x', channel: 'latest' },
     '+([0-9])?(.{+([0-9]),x}).x',
     {
       name: 'beta',
