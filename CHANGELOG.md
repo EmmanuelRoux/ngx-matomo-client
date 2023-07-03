@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.0...v5.0.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* **README:** fix legacy documentation link and images size ([ef38fda](https://github.com/EmmanuelRoux/ngx-matomo/commit/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80))
+
 # [5.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v4.1.0...v5.0.0) (2023-07-03)
 
 
