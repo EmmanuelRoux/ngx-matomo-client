@@ -1,7 +1,15 @@
 <h1 align="center">
-  <p><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-small.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" /> ngx-matomo-client</p>
-<p>Matomo Analytics client for Angular</p>
+  <div><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-small.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" /> ngx-matomo-client</div>
+  <div>Matomo Analytics client for Angular</div>
 </h1>
+
+<p align="center">
+  <a href="https://angular.io/"><img src="https://img.shields.io/badge/Angular-16-limegreen.svg?logo=angular" alt="Angular 16"></a>&nbsp;
+  <a href="https://www.npmjs.com/package/ngx-matomo-client"><img src="https://img.shields.io/npm/v/ngx-matomo-client/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen" alt="NPM latest version"></a>&nbsp;
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-limegreen.svg" alt="MIT license"></a>&nbsp;
+  <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-limegreen.svg" alt="semantic-release"></a>&nbsp;
+  <a href="https://www.buymeacoffee.com/emmanuelroux"><img src="https://img.shields.io/badge/-buy_me_a%C2%A0coffee-gray?logo=buy-me-a-coffee" alt="Sponsorship"></a>
+</p>
 
 <div align="center">
   <br>
@@ -16,26 +24,7 @@
     https://matomo.org/
   </i>
   <br>
-  <br>
 </div>
-
-<p align="center">
-  <a href="https://angular.io/">
-    <img src="https://img.shields.io/badge/Angular-16-limegreen.svg?logo=angular" alt="Angular 16">
-  </a>&nbsp;
-  <a href="https://www.npmjs.com/package/ngx-matomo-client">
-    <img src="https://img.shields.io/npm/v/ngx-matomo-client/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen" alt="NPM latest version">
-  </a>&nbsp;
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/License-MIT-limegreen.svg" alt="MIT license">
-  </a>&nbsp;
-  <a href="https://github.com/semantic-release/semantic-release">
-    <img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-limegreen.svg" alt="semantic-release">
-  </a>&nbsp;
-  <a href="https://www.buymeacoffee.com/emmanuelroux">
-    <img src="https://img.shields.io/badge/-buy_me_a%C2%A0coffee-gray?logo=buy-me-a-coffee" alt="Sponsorship">
-  </a>
-</p>
 
 <hr>
 
@@ -195,7 +184,7 @@ export class AppModule {}
 
 <!-- prettier-ignore -->
 ```ts
-import { 
+import {
   provideMatomo,
   withRouter
 } from 'ngx-matomo-client';
@@ -310,7 +299,7 @@ export class AppModule {}
 
 <!-- prettier-ignore -->
 ```ts
-import { 
+import {
   provideMatomo,
   withRouter,
   withRouteData
@@ -411,7 +400,7 @@ export class AppModule {}
 
 <!-- prettier-ignore -->
 ```typescript
-import { 
+import {
   withRouterInterceptors,
   MatomoRouterInterceptor
 } from 'ngx-matomo-client';
@@ -641,8 +630,7 @@ To manually migrate your code:
 2. In your `package.json`, remove `@ngx-matomo/router` dependency
 3. Replace all imports from `@ngx-matomo/tracker` or `@ngx-matomo/router` with imports from `ngx-matomo-client` instead.
 
-Also, feel free to use the new `NgModule`-free way of providing `ngx-matomo-client` using `provideMatomo()` function instead of
-importing `NgxMatomoModule` and `NgxMatomoRouterModule`.
+Also, feel free to use the new `NgModule`-free way of providing `ngx-matomo-client` using `provideMatomo()` function instead of importing `NgxMatomoModule` and `NgxMatomoRouterModule`.
 
 ## Configuration reference
 
@@ -778,7 +766,7 @@ And provide it to your application:
 
 <!-- prettier-ignore -->
 ```ts
-import { 
+import {
   MATOMO_SCRIPT_FACTORY
 } from 'ngx-matomo-client';
 
@@ -789,9 +777,9 @@ import {
     }),
   ],
   providers: [
-    { 
+    {
       provide: MATOMO_SCRIPT_FACTORY,
-      useValue: myScriptFactory 
+      useValue: myScriptFactory
     }
   ],
 })
