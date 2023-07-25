@@ -1,3 +1,10 @@
+## [5.0.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.1...v5.0.2) (2023-07-25)
+
+
+### Bug Fixes
+
+* **router:** fix `NgxMatomoRouterModule` not being correctly enabled without `.forRoot()` call ([61603b6](https://github.com/EmmanuelRoux/ngx-matomo/commit/61603b6758149bc6678f211bbd6053c395424cc9)), closes [#68](https://github.com/EmmanuelRoux/ngx-matomo/issues/68)
+
 ## [5.0.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.0...v5.0.1) (2023-07-03)
 
 
