@@ -2,7 +2,6 @@ import {
   ENVIRONMENT_INITIALIZER,
   EnvironmentProviders,
   inject,
-  InjectionToken,
   makeEnvironmentProviders,
   Provider,
   Type,
@@ -141,13 +140,7 @@ export function withScriptFactory(scriptFactory: MatomoScriptFactory): MatomoFea
 
 /** Enable automatic page views tracking */
 export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
-  const providers = provideRouterInternal(config);
-
-  return createMatomoFeature(MatomoFeatureKind.Router, providers);
-}
-
-export function provideRouterInternal(config?: MatomoRouterConfiguration): Provider[] {
-  return [
+  const providers = [
     { provide: MATOMO_ROUTER_ENABLED, useValue: true },
     { provide: MATOMO_ROUTER_CONFIGURATION, useValue: config },
     {
@@ -158,6 +151,8 @@ export function provideRouterInternal(config?: MatomoRouterConfiguration): Provi
       },
     },
   ];
+
+  return createMatomoFeature(MatomoFeatureKind.Router, providers);
 }
 
 /** Add some matomo router interceptors */
