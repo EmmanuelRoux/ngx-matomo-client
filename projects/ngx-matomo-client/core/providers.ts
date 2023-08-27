@@ -4,24 +4,8 @@ import {
   inject,
   makeEnvironmentProviders,
   Provider,
-  Type,
 } from '@angular/core';
-import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './router/configuration';
-import {
-  MatomoRouterInterceptor,
-  provideInterceptor,
-  provideInterceptors,
-} from './router/interceptor';
-import {
-  MATOMO_ROUTE_DATA_KEY,
-  MatomoRouteDataInterceptor,
-} from './router/interceptors/route-data-interceptor';
-import { MatomoRouter } from './router/matomo-router.service';
-import {
-  MATOMO_CONFIGURATION,
-  MATOMO_ROUTER_ENABLED,
-  MatomoConfiguration,
-} from './tracker/configuration';
+import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
 import { MatomoInitializerService } from './tracker/matomo-initializer.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
 
@@ -46,7 +30,7 @@ export interface MatomoFeature {
   [PRIVATE_MATOMO_PROVIDERS]: Provider[];
 }
 
-function createMatomoFeature(kind: MatomoFeatureKind, providers: Provider[]): MatomoFeature {
+export function createMatomoFeature(kind: MatomoFeatureKind, providers: Provider[]): MatomoFeature {
   return { kind, [PRIVATE_MATOMO_PROVIDERS]: providers };
 }
 
@@ -136,47 +120,4 @@ export function withScriptFactory(scriptFactory: MatomoScriptFactory): MatomoFea
   return createMatomoFeature(MatomoFeatureKind.ScriptFactory, [
     { provide: MATOMO_SCRIPT_FACTORY, useValue: scriptFactory },
   ]);
-}
-
-/** Enable automatic page views tracking */
-export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
-  const providers = [
-    { provide: MATOMO_ROUTER_ENABLED, useValue: true },
-    { provide: MATOMO_ROUTER_CONFIGURATION, useValue: config },
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue() {
-        inject(MatomoRouter).initialize();
-      },
-    },
-  ];
-
-  return createMatomoFeature(MatomoFeatureKind.Router, providers);
-}
-
-/** Add some matomo router interceptors */
-export function withRouterInterceptors(
-  interceptors: Type<MatomoRouterInterceptor>[]
-): MatomoFeature {
-  return createMatomoFeature(
-    MatomoFeatureKind.RouterInterceptors,
-    provideInterceptors(interceptors)
-  );
-}
-
-/**
- * Enable retrieval of tracking information from route data
- *
- * @see MatomoRouteData
- * @param key A custom key to get lookup route data - default is 'matomo'
- */
-export function withRouteData(key?: string): MatomoFeature {
-  const providers: Provider[] = [provideInterceptor(MatomoRouteDataInterceptor)];
-
-  if (key) {
-    providers.push({ provide: MATOMO_ROUTE_DATA_KEY, useValue: key });
-  }
-
-  return createMatomoFeature(MatomoFeatureKind.BuiltInRouteDataInterceptor, providers);
 }

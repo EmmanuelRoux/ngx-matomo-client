@@ -28,24 +28,15 @@ import {
 import { version } from '../version';
 import { Schema as Options } from './schema';
 
-/***********************************************************************************/
-/* Important note: this schematic depends on non-public API of @schematics/angular */
+function hasAngularRouterDependency(host: Tree): boolean {
+  return getPackageJsonDependency(host, '@angular/router') != null;
+}
 
-/***********************************************************************************/
-
-function checkRequiredRouterDependency(host: Tree, context: SchematicContext) {
-  const ngRouter = getPackageJsonDependency(host, '@angular/router');
-
-  if (!ngRouter) {
+function checkRequiredRouterDependency(host: Tree) {
+  if (!hasAngularRouterDependency(host)) {
     throw new SchematicsException(
       `You chose to automatically track page view, but this requires @angular/router as a dependency.\n` +
         `You can run "ng add @angular/router" to add it to your application.`
-    );
-  }
-
-  if (ngRouter.type !== NodeDependencyType.Default) {
-    context.logger.warn(
-      `You chose to automatically track page view, but @angular/router is listed as "${ngRouter.type}" dependency.`
     );
   }
 }
@@ -64,7 +55,7 @@ function addPackageJsonDependencies(options: Options) {
     }
 
     if (options.router) {
-      checkRequiredRouterDependency(host, context);
+      checkRequiredRouterDependency(host);
     }
 
     context.addTask(new NodePackageInstallTask());
@@ -118,7 +109,11 @@ function isLegacyImportPath(importPath: string): boolean {
 }
 
 function isRelevantImportPath(importPath: string): boolean {
-  return importPath === 'ngx-matomo-client' || isLegacyImportPath(importPath);
+  return (
+    importPath === 'ngx-matomo-client' ||
+    importPath.startsWith('ngx-matomo-client/') ||
+    isLegacyImportPath(importPath)
+  );
 }
 
 function findRelevantImports(
@@ -157,6 +152,20 @@ function hasLegacyModuleDeclaration(source: ts.SourceFile): boolean {
     .some(el => (el as ts.Identifier).getText().startsWith('NgxMatomo'));
 }
 
+function getImportEntryPoints(
+  host: Tree,
+  options: Options
+): {
+  core: string;
+  router: string;
+} {
+  const useSecondaryEntryPoint = !hasAngularRouterDependency(host) && !options.router;
+  const core = useSecondaryEntryPoint ? 'ngx-matomo-client/core' : 'ngx-matomo-client';
+  const router = useSecondaryEntryPoint ? 'ngx-matomo-client/router' : 'ngx-matomo-client';
+
+  return { core, router };
+}
+
 function addImportsToNgModule(options: Options, context: SchematicContext): Rule {
   return (host: Tree) => {
     const modulePath = options.module;
@@ -168,6 +177,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
     const changes: Change[] = [];
     const source = readIntoSourceFile(host, modulePath);
     const trackerConfig = buildTrackerConfig(options, context, modulePath);
+    const entryPoints = getImportEntryPoints(host, options);
 
     // If some Matomo imports are already present, use the legacy setup using
     // NgModule.
@@ -232,7 +242,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
       );
 
       if (!mainModuleImported) {
-        changes.push(insertImport(source, modulePath, mainModuleIdentifier, 'ngx-matomo-client'));
+        changes.push(insertImport(source, modulePath, mainModuleIdentifier, entryPoints.core));
       }
 
       changes.push(
@@ -247,7 +257,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
       if (options.router) {
         if (!routerModuleImported) {
           changes.push(
-            insertImport(source, modulePath, routerModuleIdentifier, 'ngx-matomo-client')
+            insertImport(source, modulePath, routerModuleIdentifier, entryPoints.router)
           );
         }
 
@@ -258,10 +268,10 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
     } else {
       const provideMatomoArgs = [trackerConfig];
 
-      changes.push(insertImport(source, modulePath, 'provideMatomo', 'ngx-matomo-client'));
+      changes.push(insertImport(source, modulePath, 'provideMatomo', entryPoints.core));
 
       if (options.router) {
-        changes.push(insertImport(source, modulePath, 'withRouter', 'ngx-matomo-client'));
+        changes.push(insertImport(source, modulePath, 'withRouter', entryPoints.router));
 
         provideMatomoArgs.push(`withRouter()`);
       }
@@ -297,6 +307,7 @@ function migrateAllLegacyImports(options: Options, context: SchematicContext): R
 
         if (!options.path || path.startsWith(options.path)) {
           const file = readIntoSourceFile(host, path);
+          const entryPoints = getImportEntryPoints(host, options);
           const changes: Change[] = [];
 
           file.forEachChild(node => {
@@ -307,9 +318,16 @@ function migrateAllLegacyImports(options: Options, context: SchematicContext): R
               const text = moduleSpecifier.text;
               const pos = moduleSpecifier.pos;
 
-              if (text?.startsWith('@ngx-matomo/')) {
+              if (text === '@ngx-matomo/tracker') {
                 // Be sure to keep any original spacings (contained in getFullText() only)
-                const newFullText = fullText.replace(text, 'ngx-matomo-client');
+                const newFullText = fullText.replace(text, entryPoints.core);
+
+                changes.push(new ReplaceChange(path, pos, fullText, newFullText));
+              }
+
+              if (text === '@ngx-matomo/router') {
+                // Be sure to keep any original spacings (contained in getFullText() only)
+                const newFullText = fullText.replace(text, entryPoints.router);
 
                 changes.push(new ReplaceChange(path, pos, fullText, newFullText));
               }

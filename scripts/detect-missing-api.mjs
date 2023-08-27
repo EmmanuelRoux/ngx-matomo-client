@@ -3,7 +3,7 @@ import * as cheerio from 'cheerio';
 import * as fs from 'fs/promises';
 
 const DOCUMENTATION_URL = 'https://developer.matomo.org/api-reference/tracking-javascript';
-const TRACKER_FILE_PATH = 'projects/ngx-matomo-client/src/lib/tracker/matomo-tracker.service.ts';
+const TRACKER_FILE_PATH = 'projects/ngx-matomo-client/core/tracker/matomo-tracker.service.ts';
 const GLOBAL_METHOD_PREFIX = 'Matomo.';
 const ACCEPTED_METHOD_PREFIXES = ['matomoTracker.', 'tracker.'];
 const EXCLUSIONS = /\//;
