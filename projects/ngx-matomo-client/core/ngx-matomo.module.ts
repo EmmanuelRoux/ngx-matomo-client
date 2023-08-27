@@ -2,7 +2,7 @@ import { EnvironmentProviders, ModuleWithProviders, NgModule } from '@angular/co
 import { MatomoOptOutFormComponent } from './directives/matomo-opt-out-form.component';
 import { MatomoTrackClickDirective } from './directives/matomo-track-click.directive';
 import { MatomoTrackerDirective } from './directives/matomo-tracker.directive';
-import { MatomoFeature, provideMatomo, withScriptFactory } from './ngx-matomo-providers';
+import { MatomoFeature, provideMatomo, withScriptFactory } from './providers';
 import { MatomoConfiguration } from './tracker/configuration';
 import { MatomoScriptFactory } from './tracker/script-factory';
 

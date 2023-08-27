@@ -1,7 +1,7 @@
 import { EnvironmentInjector, PLATFORM_ID, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatomoHolder } from '../holder';
-import { provideMatomo, withScriptFactory } from '../ngx-matomo-providers';
+import { provideMatomo, withScriptFactory } from '../providers';
 import {
   MATOMO_CONFIGURATION,
   MATOMO_ROUTER_ENABLED,

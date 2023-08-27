@@ -2,8 +2,7 @@ import { Provider } from '@angular/core';
 import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
-import { MATOMO_CONFIGURATION } from '../tracker/configuration';
-import { MatomoTracker } from '../tracker/matomo-tracker.service';
+import { MATOMO_CONFIGURATION, MatomoTracker } from 'ngx-matomo-client/core';
 import {
   InternalGlobalConfiguration,
   MATOMO_ROUTER_CONFIGURATION,

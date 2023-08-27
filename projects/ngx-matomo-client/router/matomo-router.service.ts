@@ -21,8 +21,7 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import { MatomoTracker } from '../tracker/matomo-tracker.service';
-import { runOnce } from '../utils/function';
+import { MatomoTracker, ɵrunOnce as runOnce } from 'ngx-matomo-client/core';
 import {
   ExclusionConfig,
   INTERNAL_ROUTER_CONFIGURATION,

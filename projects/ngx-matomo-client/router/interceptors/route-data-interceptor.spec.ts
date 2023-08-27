@@ -8,7 +8,7 @@ import {
   RouterState,
   RouterStateSnapshot,
 } from '@angular/router';
-import { MatomoECommerceItemView, MatomoTracker } from '../../tracker/matomo-tracker.service';
+import { MatomoECommerceItemView, MatomoTracker } from 'ngx-matomo-client/core';
 import {
   DEFAULT_DATA_KEY,
   MatomoRouteData,

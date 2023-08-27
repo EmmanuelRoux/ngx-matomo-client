@@ -28,8 +28,9 @@
 
 <hr>
 
-**Note: this library was previously distributed as `@ngx-matomo/tracker` and `@ngx-matomo/router` packages. Since version 5, it is now distributed as a single package `ngx-matomo-client`.
-Follow [instructions below](#migration-from-version--4-ngx-matomotracker-and-ngx-matomorouter) for how to
+**Note: this library was previously distributed as `@ngx-matomo/tracker` and `@ngx-matomo/router` packages. Since
+version 5, it is now distributed as a single package `ngx-matomo-client`.
+Follow [instructions below](#migration-from-ngx-matomotracker-and-ngx-matomorouter-version--4) for how to
 easily migrate.**
 
 [![NPM version](https://img.shields.io/npm/v/@ngx-matomo/tracker/latest.svg?logo=npm&logoColor=fff&label=Legacy+NPM+package&color=limegreen)](https://www.npmjs.com/package/@ngx-matomo/tracker)
@@ -65,6 +66,7 @@ easily migrate.**
 - [Migration from `@ngx-matomo/tracker` and `@ngx-matomo/router` (version <= 4)](#migration-from-ngx-matomotracker-and-ngx-matomorouter-version--4)
 - [Configuration reference](#configuration-reference)
 - [FAQ](#faq)
+  * [How to use `ngx-matomo-client` without `@angular/router`?](#how-to-use-ngx-matomo-client-without-angularrouter)
   * [How to set page title?](#how-to-set-page-title)
   * [Should I include the tracking code provided by Matomo?](#should-i-include-the-tracking-code-provided-by-matomo)
   * [How to disable tracking in some environments?](#how-to-disable-tracking-in-some-environments)
@@ -146,6 +148,12 @@ export class AppModule {}
 Take a look at [configuration reference](#configuration-reference) for all available configuration properties.
 
 </details>
+
+> **Note:** in this documentation, all code examples use imports from `ngx-matomo-client` because this is the most
+> common use case.
+> **If you don't have `@angular/router` in you application, you must import from `ngx-matomo-client/core` instead.**
+>
+> See [FAQ](#how-to-use-ngx-matomo-client-without-angularrouter) for more details.
 
 ## Usage
 
@@ -630,13 +638,28 @@ To manually migrate your code:
 2. In your `package.json`, remove `@ngx-matomo/router` dependency
 3. Replace all imports from `@ngx-matomo/tracker` or `@ngx-matomo/router` with imports from `ngx-matomo-client` instead.
 
-Also, feel free to use the new `NgModule`-free way of providing `ngx-matomo-client` using `provideMatomo()` function instead of importing `NgxMatomoModule` and `NgxMatomoRouterModule`.
+Also, feel free to use the new `NgModule`-free way of providing `ngx-matomo-client` using `provideMatomo()` function
+instead of importing `NgxMatomoModule` and `NgxMatomoRouterModule`.
 
 ## Configuration reference
 
 [Find all options and features here](docs/configuration-reference.md)
 
 ## FAQ
+
+### How to use `ngx-matomo-client` without `@angular/router`?
+
+If you don't have `@angular/router` in your application, you will encounter errors when declaring imports
+from `ngx-matomo-client`.
+
+**Instead, you must use imports from `ngx-matomo-client/core`.**
+
+> This is because `ngx-matomo-client` is composed of two entry points:
+>
+> - `ngx-matomo-client/core` which contains core features and doesn't depend on `@angular/router`
+> - `ngx-matomo-client/router` which brings router features and depends on `@angular/router`
+>
+> The global entrypoint `ngx-matomo-client` is simply a shorthand that re-exports all of them (thus depending on `@angular/router`).
 
 ### How to set page title?
 
@@ -803,7 +826,7 @@ import {
     )
   ],
 })
-export class AppModule { }
+export class AppModule {}
 ```
 
 </td>
