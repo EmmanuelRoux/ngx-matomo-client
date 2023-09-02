@@ -1,3 +1,15 @@
+## [5.0.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.2...v5.0.3) (2023-09-02)
+
+
+### Bug Fixes
+
+* add secondary entry points ([89f9344](https://github.com/EmmanuelRoux/ngx-matomo/commit/89f9344a2b69b569c4afb9b36d74930911641a6d))
+
+
+### Performance Improvements
+
+* optimize package size ([d3be36c](https://github.com/EmmanuelRoux/ngx-matomo/commit/d3be36cd6fed49e1c92aceaed12995ebd16910b2))
+
 ## [5.0.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.1...v5.0.2) (2023-07-25)
 
 
