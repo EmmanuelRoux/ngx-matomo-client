@@ -59,14 +59,14 @@ jobs:
       - run: npm install
       - run: npm run build:lib
       - run: npm run test:ci
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: tests-coverage
           path: coverage/
           if-no-files-found: error
-      - uses: coverallsapp/github-action@1.1.3
+      - uses: coverallsapp/github-action@2.2.1
         with:
-          path-to-lcov: ./coverage/ngx-matomo-client/lcov.info
+          file: ./coverage/ngx-matomo-client/lcov.info
           flag-name: ngx-matomo-client
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -94,7 +94,7 @@ jobs:
       - run: git config --global user.signingkey ${GPG_KEY_ID}
       - run: npm install
       - run: npm run build:prod:lib
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: dist-prod
           path: dist-prod
