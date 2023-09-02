@@ -64,7 +64,7 @@ jobs:
           name: tests-coverage
           path: coverage/
           if-no-files-found: error
-      - uses: coverallsapp/github-action@2.2.1
+      - uses: coverallsapp/github-action@v2
         with:
           file: ./coverage/ngx-matomo-client/lcov.info
           flag-name: ngx-matomo-client
