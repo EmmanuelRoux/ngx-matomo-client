@@ -1,5 +1,5 @@
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
-import { Inject, inject, InjectionToken, Optional } from '@angular/core';
+import { inject, InjectionToken } from '@angular/core';
 import { NavigationEnd } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { INTERNAL_ROUTER_CONFIGURATION, InternalRouterConfiguration } from './configuration';
@@ -26,10 +26,8 @@ function trimTrailingSlash(str: string): string {
 
 export class DefaultPageUrlProvider implements PageUrlProvider {
   constructor(
-    @Optional()
-    @Inject(INTERNAL_ROUTER_CONFIGURATION)
     private readonly config: InternalRouterConfiguration,
-    @Optional() @Inject(APP_BASE_HREF) private readonly baseHref: string | null,
+    private readonly baseHref: string | null,
     private readonly platformLocation: PlatformLocation
   ) {}
 
