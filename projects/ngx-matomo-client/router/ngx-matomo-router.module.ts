@@ -21,15 +21,18 @@ export class NgxMatomoRouterModule {
     }
   }
 
-  static forRoot({
-    interceptors,
-    ...config
-  }: MatomoRouterConfigurationWithInterceptors = {}): ModuleWithProviders<NgxMatomoRouterModule> {
+  static forRoot(
+    configWithInterceptors: MatomoRouterConfigurationWithInterceptors = {}
+  ): ModuleWithProviders<NgxMatomoRouterModule> {
+    // Note: not using "rest" syntax here, in order to avoid any dependency on tslib (and reduce package size)
+    // The only drawback of this is that MATOMO_ROUTER_CONFIGURATION will actually
+    // contain a reference to provided interceptors
     return {
       ngModule: NgxMatomoRouterModule,
+
       providers: [
-        { provide: MATOMO_ROUTER_CONFIGURATION, useValue: config },
-        provideInterceptors(interceptors),
+        { provide: MATOMO_ROUTER_CONFIGURATION, useValue: configWithInterceptors },
+        provideInterceptors(configWithInterceptors.interceptors),
       ],
     };
   }

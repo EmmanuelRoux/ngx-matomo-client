@@ -13,9 +13,7 @@
     "@angular/common": "^15.0.0 || ^16.0.0",
     "@angular/core": "^15.0.0 || ^16.0.0"
   },
-  "dependencies": {
-    "tslib": "^2.0.0"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/EmmanuelRoux/ngx-matomo.git",
@@ -33,5 +31,6 @@
   "schematics": "./schematics/collection.json",
   "ng-add": {
     "save": true
-  }
+  },
+  "sideEffects": false
 }
