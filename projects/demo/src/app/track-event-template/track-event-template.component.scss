@@ -1,3 +1,10 @@
+mat-form-field,
+button {
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
 section {
   display: flex;
   flex-direction: row;
@@ -5,10 +12,10 @@ section {
   > *:not(:last-child) {
     margin-right: 20px;
   }
-}
 
-mat-form-field {
-  min-width: 400px;
+  mat-form-field {
+    min-width: 400px;
+  }
 }
 
 pre {
