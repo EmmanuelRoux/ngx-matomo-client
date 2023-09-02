@@ -10,6 +10,7 @@ import { UpdateRecorder } from '@angular-devkit/schematics';
 
 export interface Host {
   write(path: string, content: string): Promise<void>;
+
   read(path: string): Promise<string>;
 }
 
@@ -35,6 +36,7 @@ export class NoopChange implements Change {
   description = 'No operation.';
   order = Infinity;
   path = null;
+
   apply() {
     return Promise.resolve();
   }

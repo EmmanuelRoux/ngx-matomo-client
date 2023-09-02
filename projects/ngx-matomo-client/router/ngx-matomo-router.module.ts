@@ -1,11 +1,11 @@
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED } from 'ngx-matomo-client/core';
 import {
   MATOMO_ROUTER_CONFIGURATION,
   MatomoRouterConfigurationWithInterceptors,
 } from './configuration';
 import { provideInterceptors } from './interceptor';
 import { MatomoRouter } from './matomo-router.service';
-import { ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED } from 'ngx-matomo-client/core';
 
 @NgModule({
   providers: [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],

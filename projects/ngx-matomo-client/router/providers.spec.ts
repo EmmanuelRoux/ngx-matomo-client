@@ -1,6 +1,10 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed, TestModuleMetadata } from '@angular/core/testing';
-import { withRouteData, withRouter, withRouterInterceptors } from './providers';
+import {
+  MatomoTracker,
+  provideMatomo,
+  ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED,
+} from 'ngx-matomo-client/core';
 import { MATOMO_ROUTER_CONFIGURATION } from './configuration';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
 import {
@@ -9,11 +13,7 @@ import {
   MatomoRouteDataInterceptor,
 } from './interceptors/route-data-interceptor';
 import { MatomoRouter } from './matomo-router.service';
-import {
-  MatomoTracker,
-  provideMatomo,
-  ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED,
-} from 'ngx-matomo-client/core';
+import { withRouteData, withRouter, withRouterInterceptors } from './providers';
 
 describe('providers', () => {
   async function setUp(providers: TestModuleMetadata['providers']): Promise<void> {
