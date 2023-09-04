@@ -1,3 +1,10 @@
+## [5.0.4](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.3...v5.0.4) (2023-09-04)
+
+
+### Bug Fixes
+
+* **README:** add missing Angular 15 compatibility statement to compatibility table ([182ad2b](https://github.com/EmmanuelRoux/ngx-matomo/commit/182ad2b7c9bfa8d97517cedac1702a7e5b699dfb))
+
 ## [5.0.3](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.2...v5.0.3) (2023-09-02)
 
 
