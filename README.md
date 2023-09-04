@@ -44,7 +44,7 @@ easily migrate.**
 | 9 to 12 |                   | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/1.x/README.md))                | Matomo 3 or 4 |
 | 13      |                   | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md))                | Matomo 3 or 4 |
 | 14      |                   | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md))                | Matomo 3 or 4 |
-| 15      |                   | 4.0.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.0.x/README.md))            | Matomo 3 or 4 |
+| 15      | 5.x               | 4.0.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.0.x/README.md))            | Matomo 3 or 4 |
 | 16      | 5.x               | 4.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.x/README.md)) _(deprecated)_ | Matomo 3 or 4 |
 
 [![build](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml)
