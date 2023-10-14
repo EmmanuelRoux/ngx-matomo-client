@@ -3,7 +3,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
-    "types": ["jasmine"]
+    "types": ["jasmine"],
+    /*
+      Use paths from sources instead of compiled dist, in order to have correct code coverage information
+    */
+    "paths": {
+      "ngx-matomo-client": ["projects/ngx-matomo-client/src"],
+      "ngx-matomo-client/*": ["projects/ngx-matomo-client/*"]
+    }
   },
   "files": ["test.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"]
