@@ -4,7 +4,12 @@
 
 export * from './private-api';
 
-export { NgxMatomoModule, NgxMatomoTrackerModule, MATOMO_DIRECTIVES } from './ngx-matomo.module';
+export {
+  NgxMatomoModule,
+  NgxMatomoTrackerModule,
+  MatomoModule,
+  MATOMO_DIRECTIVES,
+} from './matomo.module';
 export { provideMatomo, withScriptFactory, MatomoFeatureKind, MatomoFeature } from './providers';
 export {
   MatomoTracker,

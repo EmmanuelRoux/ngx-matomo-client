@@ -29,6 +29,26 @@ function buildProviders(
   imports: [...MATOMO_DIRECTIVES],
   exports: [...MATOMO_DIRECTIVES],
 })
+export class MatomoModule {
+  static forRoot(
+    config: MatomoConfiguration,
+    scriptFactory?: MatomoScriptFactory
+  ): ModuleWithProviders<MatomoModule> {
+    return {
+      ngModule: MatomoModule,
+      providers: [buildProviders(config, scriptFactory)],
+    };
+  }
+}
+
+/**
+ * @deprecated use MatomoModule instead
+ * @breaking-change 7.0.0
+ */
+@NgModule({
+  imports: [MatomoModule],
+  exports: [MatomoModule],
+})
 export class NgxMatomoModule {
   static forRoot(
     config: MatomoConfiguration,
@@ -42,7 +62,8 @@ export class NgxMatomoModule {
 }
 
 /**
- * @deprecated use NgxMatomoModule instead
+ * @deprecated use MatomoModule instead
+ * @breaking-change 7.0.0
  */
 @NgModule({
   imports: [NgxMatomoModule],
