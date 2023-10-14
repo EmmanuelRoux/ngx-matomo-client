@@ -35,10 +35,61 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
 );
 
 /**
+ * For internal use only. Injection token for deferred {@link InternalMatomoConfiguration}.
+ *
+ */
+export const DEFERRED_INTERNAL_MATOMO_CONFIGURATION =
+  new InjectionToken<DeferredInternalMatomoConfiguration>(
+    'DEFERRED_INTERNAL_MATOMO_CONFIGURATION',
+    {
+      factory: () => {
+        const base = inject(INTERNAL_MATOMO_CONFIGURATION);
+        let resolveFn: ((configuration: InternalMatomoConfiguration) => void) | undefined;
+        const configuration = new Promise<InternalMatomoConfiguration>(
+          resolve => (resolveFn = resolve)
+        );
+
+        return {
+          configuration,
+          markReady(configuration) {
+            requireNonNull(
+              resolveFn,
+              'resolveFn'
+            )({
+              ...base,
+              ...configuration,
+            } as InternalMatomoConfiguration);
+          },
+        };
+      },
+    }
+  );
+
+/**
+ * For internal use only. Injection token for fully loaded async {@link InternalMatomoConfiguration}.
+ *
+ */
+export const ASYNC_INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<
+  Promise<InternalMatomoConfiguration>
+>('ASYNC_INTERNAL_MATOMO_CONFIGURATION', {
+  factory: () => inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION).configuration,
+});
+
+/**
  * For internal use only. Module configuration merged with default values.
  *
  */
 export type InternalMatomoConfiguration = MatomoConfiguration & Required<BaseMatomoConfiguration>;
+
+export interface DeferredInternalMatomoConfiguration {
+  readonly configuration: Promise<InternalMatomoConfiguration>;
+
+  markReady(
+    configuration: AutoMatomoConfiguration<
+      MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
+    >
+  ): void;
+}
 
 export enum MatomoInitializationMode {
   /** Automatically inject matomo script using provided configuration */

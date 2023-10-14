@@ -1,13 +1,15 @@
 import { Component, LOCALE_ID } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
+  ASYNC_INTERNAL_MATOMO_CONFIGURATION,
   INTERNAL_MATOMO_CONFIGURATION,
   InternalMatomoConfiguration,
   MATOMO_CONFIGURATION,
   MatomoConfiguration,
   MatomoInitializationMode,
 } from '../tracker/configuration';
+import { MatomoInitializerService } from '../tracker/matomo-initializer.service';
 import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
 
 @Component({
@@ -65,6 +67,12 @@ class HostWithCustomServerUrlAndLocaleComponent {
         mode: MatomoInitializationMode.MANUAL,
       } as unknown as InternalMatomoConfiguration,
     },
+    {
+      provide: ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+      useValue: Promise.resolve({
+        mode: MatomoInitializationMode.MANUAL,
+      } as unknown as InternalMatomoConfiguration),
+    },
   ],
 })
 class HostWithoutServerUrlComponent {}
@@ -101,12 +109,15 @@ describe('MatomoOptOutFormComponent', () => {
         },
       ],
     }).compileComponents();
+
+    TestBed.inject(MatomoInitializerService).initialize();
   });
 
-  it('should create', () => {
+  it('should create', async () => {
     const fixture = TestBed.createComponent(HostWithDefaultServerUrlAndLocaleComponent);
 
     fixture.detectChanges();
+    await fixture.whenStable();
 
     const form = fixture.debugElement.query(By.directive(MatomoOptOutFormComponent));
 
@@ -114,11 +125,12 @@ describe('MatomoOptOutFormComponent', () => {
     expect(form.query(By.css('iframe'))).toBeTruthy();
   });
 
-  it('should update iframe style', () => {
+  it('should update iframe style', async () => {
     const fixture = TestBed.createComponent(HostWithDefaultServerUrlAndLocaleComponent);
     const component = fixture.componentInstance;
 
     fixture.detectChanges();
+    await fixture.whenStable();
 
     const iframe = fixture.debugElement.query(By.css('iframe'));
 
@@ -127,6 +139,7 @@ describe('MatomoOptOutFormComponent', () => {
     component.border = '1px solid red';
 
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(iframe.styles).toEqual(
       jasmine.objectContaining({
@@ -137,11 +150,12 @@ describe('MatomoOptOutFormComponent', () => {
     );
   });
 
-  it('should update iframe src with default server & locale', () => {
+  it('should update iframe src with default server & locale', async () => {
     const fixture = TestBed.createComponent(HostWithDefaultServerUrlAndLocaleComponent);
     const component = fixture.componentInstance;
 
     fixture.detectChanges();
+    await fixture.whenStable();
 
     const iframe = fixture.debugElement.query(By.css('iframe'));
 
@@ -151,6 +165,7 @@ describe('MatomoOptOutFormComponent', () => {
     component.fontFamily = 'Arial';
 
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(iframe.attributes).toEqual(
       jasmine.objectContaining({
@@ -159,12 +174,13 @@ describe('MatomoOptOutFormComponent', () => {
     );
   });
 
-  it('should update iframe src with custom server & locale', () => {
+  it('should update iframe src with custom server & locale', async () => {
     const fixture = TestBed.createComponent(HostWithCustomServerUrlAndLocaleComponent);
     const component = fixture.componentInstance;
     const sanitizer = TestBed.inject(DomSanitizer);
 
     fixture.detectChanges();
+    await fixture.whenStable();
 
     const iframe = fixture.debugElement.query(By.css('iframe'));
     const color = 'red';
@@ -182,6 +198,7 @@ describe('MatomoOptOutFormComponent', () => {
     component.locale = 'fr';
 
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(iframe.attributes).toEqual(
       jasmine.objectContaining({
@@ -195,14 +212,17 @@ describe('MatomoOptOutFormComponent', () => {
     );
   });
 
-  it('should throw an error when no server url is available', () => {
+  it('should throw an error when no server url is available', fakeAsync(() => {
     const fixture = TestBed.createComponent(HostWithoutServerUrlComponent);
     const component = fixture.debugElement.query(By.directive(MatomoOptOutFormComponent))
       ?.componentInstance as MatomoOptOutFormComponent;
 
     expect(component.serverUrl).toBeFalsy();
-    expect(() => fixture.detectChanges()).toThrow();
-  });
+    expect(() => {
+      fixture.detectChanges();
+      flush();
+    }).toThrow();
+  }));
 
   it('should not throw an error when no locale is available', () => {
     const fixture = TestBed.createComponent(HostWithoutLocaleComponent);

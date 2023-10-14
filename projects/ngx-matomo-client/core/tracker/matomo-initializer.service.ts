@@ -5,6 +5,7 @@ import { requireNonNull } from '../utils/coercion';
 import { runOnce } from '../utils/function';
 import {
   AutoMatomoConfiguration,
+  DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
   isAutoConfigurationMode,
@@ -63,6 +64,7 @@ export class NoopMatomoInitializer
 })
 export class MatomoInitializerService {
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
+  private readonly deferredConfig = inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION);
   private readonly tracker = inject(MatomoTracker);
   private readonly scriptFactory = inject(MATOMO_SCRIPT_FACTORY);
   private readonly injector = inject(EnvironmentInjector);
@@ -113,6 +115,8 @@ export class MatomoInitializerService {
         this.registerAdditionalTrackers(additionalTrackers);
         this.injectDOMScript(scriptUrl);
       }
+
+      this.deferredConfig.markReady(config);
     },
     ALREADY_INJECTED_ERROR
   );

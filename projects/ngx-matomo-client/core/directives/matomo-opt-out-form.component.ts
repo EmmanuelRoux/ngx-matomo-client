@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
+  ASYNC_INTERNAL_MATOMO_CONFIGURATION,
   getTrackersConfiguration,
-  INTERNAL_MATOMO_CONFIGURATION,
   InternalMatomoConfiguration,
   isAutoConfigurationMode,
   isExplicitTrackerConfiguration,
@@ -44,8 +44,8 @@ function missingServerUrlError(): Error {
   standalone: true,
 })
 export class MatomoOptOutFormComponent implements OnInit, OnChanges {
-  private readonly _defaultServerUrl?: string;
-
+  private _defaultServerUrl?: string;
+  private _defaultServerUrlInitialized = false;
   private _border: string = DEFAULT_BORDER;
   private _width: string = DEFAULT_WIDTH;
   private _height: string = DEFAULT_HEIGHT;
@@ -67,15 +67,12 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
 
   constructor(
     private readonly sanitizer: DomSanitizer,
-    @Inject(INTERNAL_MATOMO_CONFIGURATION) private readonly config: InternalMatomoConfiguration,
+    @Inject(ASYNC_INTERNAL_MATOMO_CONFIGURATION)
+    private readonly config: Promise<InternalMatomoConfiguration>,
     @Optional() @Inject(LOCALE_ID) locale: string = ''
   ) {
     // Set default locale
     this.locale = locale;
-
-    if (isAutoConfigurationMode(this.config) && isExplicitTrackerConfiguration(this.config)) {
-      this._defaultServerUrl = getTrackersConfiguration(this.config)[0].trackerUrl;
-    }
   }
 
   get serverUrl(): SafeResourceUrl | undefined {
@@ -128,6 +125,15 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.updateUrl();
+
+    this.config.then(config => {
+      if (isAutoConfigurationMode(config) && isExplicitTrackerConfiguration(config)) {
+        this._defaultServerUrl = getTrackersConfiguration(config)[0].trackerUrl;
+      }
+
+      this._defaultServerUrlInitialized = true;
+      this.updateUrl();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -151,7 +157,11 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
     }
 
     if (!serverUrl) {
-      throw missingServerUrlError();
+      if (this._defaultServerUrlInitialized) {
+        throw missingServerUrlError();
+      } else {
+        return;
+      }
     }
 
     const url = URL_PATTERN.replace('{SERVER}', serverUrl)
