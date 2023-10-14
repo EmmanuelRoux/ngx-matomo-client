@@ -3,7 +3,7 @@
  */
 
 export { withRouter, withRouterInterceptors, withRouteData } from './providers';
-export { NgxMatomoRouterModule } from './ngx-matomo-router.module';
+export { MatomoRouterModule, NgxMatomoRouterModule } from './matomo-router.module';
 export {
   MatomoRouterConfiguration,
   MATOMO_ROUTER_CONFIGURATION,
