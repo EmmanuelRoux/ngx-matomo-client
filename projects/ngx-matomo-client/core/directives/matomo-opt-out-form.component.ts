@@ -37,6 +37,11 @@ function missingServerUrlError(): Error {
  * <b>WARNING:</b> By default, this component assumes the tracker url set in MatomoConfiguration is
  * safe to be used as an iframe `src`. You have to make sure that this url is safe before using this
  * component!
+ *
+ * Note: This component relies on the matomo-generated opt-out form, which is deprecated
+ * since Matomo version 4.12.0. It will be marked as deprecated soon.
+ *
+ * @see https://developer.matomo.org/changelog#new-privacy-opt-out-options
  */
 @Component({
   selector: 'matomo-opt-out-form',
