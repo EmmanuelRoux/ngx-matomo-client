@@ -142,6 +142,10 @@
     "schematicCollections": ["@angular-eslint/schematics"]
   },
   "schematics": {
+    "@schematics/angular:directive": {
+      "standalone": true,
+      "flat": true
+    },
     "@angular-eslint/schematics:application": {
       "setParserOptionsProject": true
     },
