@@ -1,3 +1,33 @@
+# [6.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.4...v6.0.0) (2023-11-12)
+
+
+### Bug Fixes
+
+* `MatomoOptOutFormComponent` now waits for default server url from possibly deferred configuration ([c60b134](https://github.com/EmmanuelRoux/ngx-matomo/commit/c60b1343f1e8bb10c8f239e967188bb914c10cde))
+
+
+### Code Refactoring
+
+* rename `NgxMatomoModule` to `MatomoModule` ([eb70405](https://github.com/EmmanuelRoux/ngx-matomo/commit/eb70405e21b0e77dbf1e8420dd0efb1085e6b87e))
+* rename `NgxMatomoRouterModule` to `MatomoRouterModule` ([8795a05](https://github.com/EmmanuelRoux/ngx-matomo/commit/8795a0522752760ec9875c179267c37667d7f0ce))
+
+
+### Features
+
+* add `setPageViewId` and `getPageViewId` to tracker api ([b234a7b](https://github.com/EmmanuelRoux/ngx-matomo/commit/b234a7b9f3758c777f66c31c384eb3ed23087436))
+* compatibility with Matomo 5 ([35ad9e1](https://github.com/EmmanuelRoux/ngx-matomo/commit/35ad9e1ee25d95eb2a355126f299786049e5f8ab))
+* upgrade to Angular 17 ([9ac9a10](https://github.com/EmmanuelRoux/ngx-matomo/commit/9ac9a10e3fa64893b1f316cede484388fc32d533))
+
+
+### Breaking changes
+
+* Angular v17 is now required as peer dependency
+
+### Deprecations
+
+* `NgxMatomoRouterModule` has been deprecated, use `MatomoRouterModule` instead
+* `NgxMatomoModule` has been deprecated, use `MatomoModule` instead
+
 ## [5.0.4](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.3...v5.0.4) (2023-09-04)
 
 
