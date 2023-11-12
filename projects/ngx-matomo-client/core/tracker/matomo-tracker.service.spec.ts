@@ -221,6 +221,20 @@ describe('MatomoTracker', () => {
 
   it('should reset user id', expectSimpleMethod('resetUserId', []));
 
+  it('should set page view id', expectSimpleMethod('setPageViewId', ['my-id']));
+
+  it('should get page view id', done => {
+    expectGetter(
+      'getPageViewId',
+      {
+        getPageViewId(): string {
+          return 'fake-id';
+        },
+      },
+      'fake-id'
+    ).then(done);
+  });
+
   it(
     'should set custom variable',
     expectSimpleMethod('setCustomVariable', [1, 'name', 'value', 'page'])
