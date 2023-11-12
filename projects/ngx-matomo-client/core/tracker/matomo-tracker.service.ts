@@ -82,6 +82,8 @@ export interface MatomoInstance {
 
   getUserId(): string;
 
+  getPageViewId(): string;
+
   getCustomVariable(index: number, scope: string): string;
 
   getCustomDimension(customDimensionId: number): string;
@@ -746,6 +748,24 @@ export abstract class MatomoTracker {
    */
   resetUserId(): void {
     this.push(['resetUserId']);
+  }
+
+  /**
+   * Override PageView id for every use of logPageView() <b>THIS SHOULD PROBABLY NOT BE CALLED IN A SINGLE-PAGE APP!</b>
+   *
+   * Do not use this if you call trackPageView() multiple times during tracking (e.g. when tracking a single page application)
+   *
+   * @param pageView
+   */
+  setPageViewId(pageView: string): void {
+    this.push(['setPageViewId', pageView]);
+  }
+
+  /**
+   * Returns the PageView id. If not set manually using setPageViewId, this method will return the dynamic PageView id, used in the last tracked page view, or undefined if no page view was tracked yet
+   */
+  getPageViewId(): Promise<string> {
+    return this.get('getPageViewId');
   }
 
   /**
