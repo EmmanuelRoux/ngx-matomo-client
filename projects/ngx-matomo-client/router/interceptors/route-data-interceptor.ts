@@ -80,7 +80,7 @@ export class MatomoRouteDataInterceptor extends MatomoRouteInterceptorBase<
   }
 
   protected processRouteData(
-    data: MatomoRouteData | undefined
+    data: MatomoRouteData | undefined,
   ): Observable<void> | Promise<void> | void {
     if (!data) {
       return;

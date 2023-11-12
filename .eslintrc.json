@@ -10,7 +10,8 @@
       },
       "extends": [
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:@typescript-eslint/recommended"
       ],
       "rules": {
         "@angular-eslint/component-selector": [
@@ -28,7 +29,14 @@
             "style": "camelCase",
             "type": "attribute"
           }
-        ]
+        ],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_"
+          }
+        ],
+        "@typescript-eslint/no-explicit-any": ["off"]
       }
     },
     {

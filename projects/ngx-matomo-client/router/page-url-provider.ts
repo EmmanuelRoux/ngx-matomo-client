@@ -11,9 +11,9 @@ export const MATOMO_PAGE_URL_PROVIDER = new InjectionToken<PageUrlProvider>(
       new DefaultPageUrlProvider(
         inject(INTERNAL_ROUTER_CONFIGURATION),
         inject(APP_BASE_HREF, { optional: true }),
-        inject(PlatformLocation)
+        inject(PlatformLocation),
       ),
-  }
+  },
 );
 
 export interface PageUrlProvider {
@@ -28,7 +28,7 @@ export class DefaultPageUrlProvider implements PageUrlProvider {
   constructor(
     private readonly config: InternalRouterConfiguration,
     private readonly baseHref: string | null,
-    private readonly platformLocation: PlatformLocation
+    private readonly platformLocation: PlatformLocation,
   ) {}
 
   getCurrentPageUrl(event: NavigationEnd): Observable<string> {

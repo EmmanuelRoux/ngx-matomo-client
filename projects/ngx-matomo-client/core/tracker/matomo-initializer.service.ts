@@ -95,7 +95,7 @@ export class MatomoInitializerService {
     (
       config: AutoMatomoConfiguration<
         MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
-      >
+      >,
     ): void => {
       if (isExplicitTrackerConfiguration(config)) {
         const { scriptUrl: customScriptUrl } = config;
@@ -118,7 +118,7 @@ export class MatomoInitializerService {
 
       this.deferredConfig.markReady(config);
     },
-    ALREADY_INJECTED_ERROR
+    ALREADY_INJECTED_ERROR,
   );
 
   private registerMainTracker(mainTracker: MatomoTrackerConfiguration): void {
@@ -142,11 +142,11 @@ export class MatomoInitializerService {
     // From ng v16, runInContext is deprecated in favor of runInInjectionContext
     // In a future version, it will probably be necessary to do this (breaking) change
     const scriptElement = this.injector.runInContext(() =>
-      this.scriptFactory(scriptUrl, this.document)
+      this.scriptFactory(scriptUrl, this.document),
     );
     const selfScript = requireNonNull(
       this.document.getElementsByTagName('script')[0],
-      'no existing script found'
+      'no existing script found',
     );
     const parent = requireNonNull(selfScript.parentNode, "no script's parent node found");
 

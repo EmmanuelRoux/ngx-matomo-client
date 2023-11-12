@@ -45,7 +45,7 @@ describe('providers', () => {
       provideMatomo(
         { trackerUrl: 'my-tracker', siteId: 42 },
         withRouter({ delay: 42 }),
-        withRouterInterceptors([MyInterceptor])
+        withRouterInterceptors([MyInterceptor]),
       ),
     ]);
 
@@ -57,7 +57,7 @@ describe('providers', () => {
       provideMatomo(
         { trackerUrl: 'my-tracker', siteId: 42 },
         withRouter({ delay: 42 }),
-        withRouteData()
+        withRouteData(),
       ),
     ]);
 
@@ -72,7 +72,7 @@ describe('providers', () => {
       provideMatomo(
         { trackerUrl: 'my-tracker', siteId: 42 },
         withRouter({ delay: 42 }),
-        withRouteData('myCustomKey')
+        withRouteData('myCustomKey'),
       ),
     ]);
 
@@ -90,12 +90,12 @@ describe('providers', () => {
     expect(() =>
       provideMatomo(
         { trackerUrl: 'my-tracker', siteId: 42 },
-        withRouterInterceptors([MyInterceptor])
-      )
+        withRouterInterceptors([MyInterceptor]),
+      ),
     ).toThrow();
 
     expect(() =>
-      provideMatomo({ trackerUrl: 'my-tracker', siteId: 42 }, withRouteData())
+      provideMatomo({ trackerUrl: 'my-tracker', siteId: 42 }, withRouteData()),
     ).toThrow();
   });
 });

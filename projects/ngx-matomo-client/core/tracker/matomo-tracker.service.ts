@@ -4,7 +4,7 @@ import { initializeMatomoHolder, MatomoHolder } from '../holder';
 import { Getters, NonEmptyReadonlyArray, RequireAtLeastOne } from '../utils/types';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
 
-declare var window: MatomoHolder;
+declare let window: MatomoHolder;
 
 function trimTrailingUndefinedElements<T>(array: T[]): T[] {
   const trimmed = [...array];
@@ -38,7 +38,7 @@ export type PagePerformanceTimings = RequireAtLeastOne<{
 }>;
 
 function isECommerceCategoryView(
-  param: string | MatomoECommerceView
+  param: string | MatomoECommerceView,
 ): param is MatomoECommerceCategoryView {
   return (
     typeof param === 'object' && Object.keys(param).length === 1 && param.productCategory != null
@@ -46,7 +46,7 @@ function isECommerceCategoryView(
 }
 
 function isECommerceItemView(
-  param: string | MatomoECommerceView
+  param: string | MatomoECommerceView,
 ): param is MatomoECommerceItemView {
   return typeof param === 'object' && 'productSKU' in param;
 }
@@ -111,8 +111,9 @@ export interface MatomoInstance {
 
 export function createMatomoTracker(
   config: InternalMatomoConfiguration,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   platformId: Object,
-  ngZone: NgZone
+  ngZone: NgZone,
 ): MatomoTracker {
   return config.disabled || !isPlatformBrowser(platformId)
     ? new NoopMatomoTracker()
@@ -241,7 +242,7 @@ export abstract class MatomoTracker {
     contentInteraction: string,
     contentName: string,
     contentPiece: string,
-    contentTarget: string
+    contentTarget: string,
   ): void {
     this.push([
       'trackContentInteraction',
@@ -562,7 +563,7 @@ export abstract class MatomoTracker {
     transferTimeInMs?: number,
     domProcessingTimeInMs?: number,
     domCompletionTimeInMs?: number,
-    onloadTimeInMs?: number
+    onloadTimeInMs?: number,
   ): void;
   setPagePerformanceTiming(
     networkTimeInMsOrTimings: PagePerformanceTimings | number | undefined,
@@ -570,7 +571,7 @@ export abstract class MatomoTracker {
     transferTimeInMs?: number,
     domProcessingTimeInMs?: number,
     domCompletionTimeInMs?: number,
-    onloadTimeInMs?: number
+    onloadTimeInMs?: number,
   ): void {
     let networkTimeInMs: number | undefined;
 
@@ -761,7 +762,7 @@ export abstract class MatomoTracker {
     index: number,
     name: string,
     value: string,
-    scope: 'page' | 'visit' | 'event'
+    scope: 'page' | 'visit' | 'event',
   ): void {
     this.push(['setCustomVariable', index, name, value, scope]);
   }
@@ -881,7 +882,7 @@ export abstract class MatomoTracker {
     productSKU: string,
     productName?: string,
     productCategory?: string,
-    price?: number
+    price?: number,
   ): void;
 
   /**
@@ -909,7 +910,7 @@ export abstract class MatomoTracker {
     productOrSKU: string | MatomoECommerceView,
     productName?: string,
     productCategory?: string,
-    price?: number
+    price?: number,
   ): void {
     if (isECommerceCategoryView(productOrSKU)) {
       this.push(['setEcommerceView', false, false, productOrSKU.productCategory]);
@@ -941,7 +942,7 @@ export abstract class MatomoTracker {
     productName?: string,
     productCategory?: string,
     price?: number,
-    quantity?: number
+    quantity?: number,
   ): void;
 
   /**
@@ -955,7 +956,7 @@ export abstract class MatomoTracker {
     productName?: string,
     productCategory?: string,
     price?: number,
-    quantity?: number
+    quantity?: number,
   ): void {
     if (typeof productOrSKU === 'string') {
       this.push(['addEcommerceItem', productOrSKU, productName, productCategory, price, quantity]);
@@ -1028,7 +1029,7 @@ export abstract class MatomoTracker {
     subTotal?: number,
     tax?: number,
     shipping?: number,
-    discount?: number
+    discount?: number,
   ): void {
     this.push(['trackEcommerceOrder', orderId, grandTotal, subTotal, tax, shipping, discount]);
   }
@@ -1408,7 +1409,7 @@ export abstract class MatomoTracker {
 
   /** Asynchronously call provided method name on matomo tracker instance */
   protected get<G extends Getters<MatomoInstance>>(
-    getter: G
+    getter: G,
   ): Promise<ReturnType<MatomoInstance[G]>> {
     return this.pushFn(matomo => matomo[getter]() as ReturnType<MatomoInstance[G]>);
   }
@@ -1426,7 +1427,7 @@ export abstract class MatomoTracker {
 export class StandardMatomoTracker extends MatomoTracker {
   constructor(
     private readonly ngZone: NgZone,
-    private readonly config: InternalMatomoConfiguration
+    private readonly config: InternalMatomoConfiguration,
   ) {
     super();
     initializeMatomoHolder();
@@ -1454,11 +1455,11 @@ export class StandardMatomoTracker extends MatomoTracker {
 }
 
 export class NoopMatomoTracker extends MatomoTracker {
-  protected push(args: unknown[]): void {
+  protected push(_: unknown[]): void {
     // No-op
   }
 
-  protected pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
+  protected pushFn<T>(_: (matomo: MatomoInstance) => T): Promise<T> {
     return Promise.reject('MatomoTracker is disabled');
   }
 }

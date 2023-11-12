@@ -26,7 +26,10 @@ export type JSONPath = (string | number)[];
 export class JSONFile {
   content: string;
 
-  constructor(private readonly host: Tree, private readonly path: string) {
+  constructor(
+    private readonly host: Tree,
+    private readonly path: string,
+  ) {
     this.content = this.host.readText(this.path);
   }
 
@@ -43,8 +46,8 @@ export class JSONFile {
       const { error, offset } = errors[0];
       throw new Error(
         `Failed to parse "${this.path}" as JSON AST Object. ${printParseErrorCode(
-          error
-        )} at location: ${offset}.`
+          error,
+        )} at location: ${offset}.`,
       );
     }
 
@@ -69,7 +72,7 @@ export class JSONFile {
   modify(
     jsonPath: JSONPath,
     value: JsonValue | undefined,
-    insertInOrder?: InsertionIndex | false
+    insertInOrder?: InsertionIndex | false,
   ): void {
     let getInsertionIndex: InsertionIndex | undefined;
     if (insertInOrder === undefined) {

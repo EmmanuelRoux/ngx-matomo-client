@@ -3,7 +3,7 @@ import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from 'ngx-
 import { MatomoRouterInterceptor } from './interceptor';
 
 export const MATOMO_ROUTER_CONFIGURATION = new InjectionToken<MatomoRouterConfiguration>(
-  'MATOMO_ROUTER_CONFIGURATION'
+  'MATOMO_ROUTER_CONFIGURATION',
 );
 
 export type ExclusionConfig = string | RegExp | (string | RegExp)[];
@@ -78,5 +78,5 @@ export const INTERNAL_ROUTER_CONFIGURATION = new InjectionToken<InternalRouterCo
 
       return { ...DEFAULT_ROUTER_CONFIGURATION, ...routerConfig, enableLinkTracking, disabled };
     },
-  }
+  },
 );

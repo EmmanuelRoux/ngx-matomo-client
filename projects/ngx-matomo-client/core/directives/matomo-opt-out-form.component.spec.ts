@@ -150,7 +150,7 @@ describe('MatomoOptOutFormComponent', () => {
         width: '100%',
         height: '100%',
         border: '1px solid red',
-      })
+      }),
     );
   });
 
@@ -174,7 +174,7 @@ describe('MatomoOptOutFormComponent', () => {
     expect(iframe.attributes).toEqual(
       jasmine.objectContaining({
         src: 'http://localhost/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=blue&fontColor=red&fontSize=10px&fontFamily=Arial',
-      })
+      }),
     );
   });
 
@@ -197,7 +197,7 @@ describe('MatomoOptOutFormComponent', () => {
     component.fontSize = fontSize;
     component.fontFamily = fontFamily;
     component.serverUrl = sanitizer.bypassSecurityTrustResourceUrl(
-      'https://my.custom.server.url.localhost:42'
+      'https://my.custom.server.url.localhost:42',
     );
     component.locale = 'fr';
 
@@ -212,7 +212,7 @@ describe('MatomoOptOutFormComponent', () => {
           `&fontColor=${encodeURIComponent(color)}` +
           `&fontSize=${encodeURIComponent(fontSize)}` +
           `&fontFamily=${encodeURIComponent(fontFamily)}`,
-      })
+      }),
     );
   });
 

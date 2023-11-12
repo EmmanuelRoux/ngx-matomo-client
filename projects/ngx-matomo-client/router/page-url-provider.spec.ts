@@ -8,7 +8,7 @@ import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
 describe('PageUrlProvider', () => {
   function instantiate(
     config: MatomoRouterConfiguration | null,
-    baseHref: string | null
+    baseHref: string | null,
   ): PageUrlProvider {
     TestBed.configureTestingModule({
       providers: [
@@ -47,7 +47,7 @@ describe('PageUrlProvider', () => {
       {
         /* prependBaseHref: true */
       },
-      '/test/'
+      '/test/',
     );
 
     // When
@@ -63,7 +63,7 @@ describe('PageUrlProvider', () => {
       {
         /* prependBaseHref: true */
       },
-      null
+      null,
     );
     const platform = TestBed.inject(PlatformLocation);
 

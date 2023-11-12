@@ -67,7 +67,7 @@ export class MatomoRouter {
     private readonly tracker: MatomoTracker,
     @Optional()
     @Inject(MATOMO_ROUTER_INTERCEPTORS)
-    private readonly interceptors: MatomoRouterInterceptor[] | null
+    private readonly interceptors: MatomoRouterInterceptor[] | null,
   ) {
     if (interceptors && !Array.isArray(interceptors)) {
       throw invalidInterceptorsProviderError();
@@ -100,12 +100,12 @@ export class MatomoRouter {
         delayOp,
         // Set default page title & url
         switchMap(event =>
-          this.presetPageTitleAndUrl(event).pipe(map(({ pageUrl }) => ({ pageUrl, event })))
+          this.presetPageTitleAndUrl(event).pipe(map(({ pageUrl }) => ({ pageUrl, event }))),
         ),
         // Run interceptors then track page view
         concatMap(({ event, pageUrl }) =>
-          this.callInterceptors(event).pipe(tap(() => this.trackPageView(pageUrl)))
-        )
+          this.callInterceptors(event).pipe(tap(() => this.trackPageView(pageUrl))),
+        ),
       )
       .subscribe();
   }, ROUTER_ALREADY_INITIALIZED_ERROR);
@@ -119,7 +119,7 @@ export class MatomoRouter {
 
           // Must not be an empty observable (otherwise forkJoin would complete without waiting others)
           return result$.pipe(take(1), defaultIfEmpty(undefined as void));
-        })
+        }),
       ).pipe(mapTo(undefined), defaultIfEmpty(undefined as void));
     } else {
       return of(undefined);

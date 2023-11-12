@@ -13,7 +13,10 @@ export class TrackEventComponentComponent implements OnInit {
   name = '';
   value?: number;
 
-  constructor(private readonly tracker: MatomoTracker, private readonly title: Title) {}
+  constructor(
+    private readonly tracker: MatomoTracker,
+    private readonly title: Title,
+  ) {}
 
   ngOnInit(): void {
     this.title.setTitle(BASE_TITLE + ' | Track any event (from component)');

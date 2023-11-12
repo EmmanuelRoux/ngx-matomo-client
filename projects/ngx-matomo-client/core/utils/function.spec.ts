@@ -29,7 +29,7 @@ describe('function', () => {
       let handlerCount = 0;
       const fn = runOnce(
         () => count++,
-        () => handlerCount++
+        () => handlerCount++,
       );
 
       for (let i = 0; i < 10; i++) {

@@ -9,13 +9,13 @@ import {
 } from './interceptor';
 
 class FakeInterceptor1 implements MatomoRouterInterceptor {
-  beforePageTrack(event: NavigationEnd): Observable<void> | Promise<void> | void {
+  beforePageTrack(_: NavigationEnd): Observable<void> | Promise<void> | void {
     // Do nothing
   }
 }
 
 class FakeInterceptor2 implements MatomoRouterInterceptor {
-  beforePageTrack(event: NavigationEnd): Observable<void> | Promise<void> | void {
+  beforePageTrack(_: NavigationEnd): Observable<void> | Promise<void> | void {
     // Do nothing
   }
 }

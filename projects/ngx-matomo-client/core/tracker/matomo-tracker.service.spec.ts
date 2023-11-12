@@ -9,7 +9,7 @@ import {
   MatomoTracker,
 } from './matomo-tracker.service';
 
-declare var window: MatomoHolder;
+declare let window: MatomoHolder;
 
 // Extracted from https://github.com/angular/angular/blob/b66e479cdb1e474a29ff676f10a5fcc3d7eae799/packages/common/src/platform_id.ts
 const PLATFORM_BROWSER_ID = 'browser';
@@ -22,8 +22,9 @@ describe('MatomoTracker', () => {
 
   function createTracker(
     config: Partial<InternalMatomoConfiguration> = { disabled: false },
+    // eslint-disable-next-line @typescript-eslint/ban-types
     platform: Object = PLATFORM_BROWSER_ID,
-    ngZone: NgZone = createMockZone()
+    ngZone: NgZone = createMockZone(),
   ): MatomoTracker {
     return createMatomoTracker(config as InternalMatomoConfiguration, platform, ngZone);
   }
@@ -44,7 +45,7 @@ describe('MatomoTracker', () => {
   function expectSimpleMethod<M extends Methods<MatomoTracker>>(
     method: M,
     args: Parameters<MatomoTracker[M]>,
-    expectedArgs: unknown[] = args
+    expectedArgs: unknown[] = args,
   ): () => void {
     return expectPush(t => (t[method] as any)(...args), [[method, ...expectedArgs]]);
   }
@@ -53,22 +54,22 @@ describe('MatomoTracker', () => {
 
   it(
     'should track page view with custom title',
-    expectSimpleMethod('trackPageView', ['custom title'])
+    expectSimpleMethod('trackPageView', ['custom title']),
   );
 
   it(
     'should track event',
-    expectSimpleMethod('trackEvent', ['myCategory', 'myAction', 'myName', 42])
+    expectSimpleMethod('trackEvent', ['myCategory', 'myAction', 'myName', 42]),
   );
 
   it(
     'should track event without name/value',
-    expectSimpleMethod('trackEvent', ['myCategory', 'myAction'])
+    expectSimpleMethod('trackEvent', ['myCategory', 'myAction']),
   );
 
   it(
     'should track site search',
-    expectSimpleMethod('trackSiteSearch', ['myKeyword', 'myCategory', 0])
+    expectSimpleMethod('trackSiteSearch', ['myKeyword', 'myCategory', 0]),
   );
 
   it('should track goal', expectSimpleMethod('trackGoal', [1, 2]));
@@ -81,22 +82,22 @@ describe('MatomoTracker', () => {
 
   it(
     'should track visible content impressions',
-    expectSimpleMethod('trackVisibleContentImpressions', [true, 42])
+    expectSimpleMethod('trackVisibleContentImpressions', [true, 42]),
   );
 
   it(
     'should track content impressions within node',
-    expectSimpleMethod('trackContentImpressionsWithinNode', [document.createElement('div')])
+    expectSimpleMethod('trackContentImpressionsWithinNode', [document.createElement('div')]),
   );
 
   it(
     'should track content interaction with node',
-    expectSimpleMethod('trackContentInteractionNode', [document.createElement('div'), 'test'])
+    expectSimpleMethod('trackContentInteractionNode', [document.createElement('div'), 'test']),
   );
 
   it(
     'should track content impression',
-    expectSimpleMethod('trackContentImpression', ['myContentName', 'myPiece', 'myTarget'])
+    expectSimpleMethod('trackContentImpression', ['myContentName', 'myPiece', 'myTarget']),
   );
 
   it(
@@ -106,24 +107,24 @@ describe('MatomoTracker', () => {
       'myContentName',
       'myPiece',
       'myTarget',
-    ])
+    ]),
   );
 
   it(
     'should log all content blocks on page (for debugging purpose)',
-    expectSimpleMethod('logAllContentBlocksOnPage', [])
+    expectSimpleMethod('logAllContentBlocksOnPage', []),
   );
 
   it('should enable heartbeat timer', expectSimpleMethod('enableHeartBeatTimer', [42]));
 
   it(
     'should enable link tracking with pseudo-handler',
-    expectSimpleMethod('enableLinkTracking', [true])
+    expectSimpleMethod('enableLinkTracking', [true]),
   );
 
   it(
     'should enable link tracking with standard click handler',
-    expectSimpleMethod('enableLinkTracking', [], [false])
+    expectSimpleMethod('enableLinkTracking', [], [false]),
   );
 
   it('should disable performance tracking', expectSimpleMethod('disablePerformanceTracking', []));
@@ -132,7 +133,7 @@ describe('MatomoTracker', () => {
 
   it(
     'should set cross domain linking timeout',
-    expectSimpleMethod('setCrossDomainLinkingTimeout', [42])
+    expectSimpleMethod('setCrossDomainLinkingTimeout', [42]),
   );
 
   it('should get cross domain linking url parameter', done => {
@@ -143,7 +144,7 @@ describe('MatomoTracker', () => {
           return 'foo=bar';
         },
       },
-      'foo=bar'
+      'foo=bar',
     ).then(done);
   });
 
@@ -191,8 +192,8 @@ describe('MatomoTracker', () => {
       [
         ['setPagePerformanceTiming', 42, undefined, 100],
         ['setPagePerformanceTiming', 10, undefined, 20],
-      ]
-    )
+      ],
+    ),
   );
 
   it('should get performance timings', done => {
@@ -203,7 +204,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test'
+      'test',
     ).then(done);
   });
 
@@ -223,7 +224,7 @@ describe('MatomoTracker', () => {
 
   it(
     'should set custom variable',
-    expectSimpleMethod('setCustomVariable', [1, 'name', 'value', 'page'])
+    expectSimpleMethod('setCustomVariable', [1, 'name', 'value', 'page']),
   );
 
   it('should delete custom variable', expectSimpleMethod('deleteCustomVariable', [1, 'page']));
@@ -232,7 +233,7 @@ describe('MatomoTracker', () => {
 
   it(
     'should store custom variables in cookie',
-    expectSimpleMethod('storeCustomVariablesInCookie', [])
+    expectSimpleMethod('storeCustomVariablesInCookie', []),
   );
 
   it('should set custom dimension', expectSimpleMethod('setCustomDimension', [1, 'value']));
@@ -245,7 +246,7 @@ describe('MatomoTracker', () => {
 
   it(
     'should set conversion attribution first referrer',
-    expectSimpleMethod('setConversionAttributionFirstReferrer', [true])
+    expectSimpleMethod('setConversionAttributionFirstReferrer', [true]),
   );
 
   it(
@@ -267,8 +268,8 @@ describe('MatomoTracker', () => {
         ['setEcommerceView', 'sku1', 'name1', 'cat1', 42],
         ['setEcommerceView', 'sku2', 'name2', 'cat2', 42],
         ['setEcommerceView', false, false, 'cat3'],
-      ]
-    )
+      ],
+    ),
   );
 
   it(
@@ -287,8 +288,8 @@ describe('MatomoTracker', () => {
       [
         ['addEcommerceItem', 'sku1', 'name1', 'cat1', 42, 100],
         ['addEcommerceItem', 'sku2', 'name2', 'cat2', 42, 100],
-      ]
-    )
+      ],
+    ),
   );
 
   it('should remove ecommerce item', expectSimpleMethod('removeEcommerceItem', ['sku']));
@@ -303,7 +304,7 @@ describe('MatomoTracker', () => {
           return [{ productSKU: 'test' }];
         },
       },
-      [{ productSKU: 'test' }]
+      [{ productSKU: 'test' }],
     ).then(done);
   });
 
@@ -327,7 +328,7 @@ describe('MatomoTracker', () => {
           return true;
         },
       },
-      true
+      true,
     ).then(done);
   });
 
@@ -339,7 +340,7 @@ describe('MatomoTracker', () => {
           return 99999;
         },
       },
-      99999
+      99999,
     ).then(done);
   });
 
@@ -351,7 +352,7 @@ describe('MatomoTracker', () => {
           return true;
         },
       },
-      true
+      true,
     ).then(done);
   });
 
@@ -371,7 +372,7 @@ describe('MatomoTracker', () => {
           return 42;
         },
       },
-      42
+      42,
     ).then(done);
   });
 
@@ -383,7 +384,7 @@ describe('MatomoTracker', () => {
           return true;
         },
       },
-      true
+      true,
     ).then(done);
   });
 
@@ -399,7 +400,7 @@ describe('MatomoTracker', () => {
           return true;
         },
       },
-      true
+      true,
     ).then(done);
   });
 
@@ -427,19 +428,19 @@ describe('MatomoTracker', () => {
 
   it(
     'should add element click listener',
-    expectSimpleMethod('addListener', [document.createElement('div')])
+    expectSimpleMethod('addListener', [document.createElement('div')]),
   );
 
   it('should set request method', expectSimpleMethod('setRequestMethod', ['method']));
 
   it(
     'should set custom request processing',
-    expectSimpleMethod('setCustomRequestProcessing', [() => null])
+    expectSimpleMethod('setCustomRequestProcessing', [() => null]),
   );
 
   it(
     'should set request content type',
-    expectSimpleMethod('setRequestContentType', ['application/test'])
+    expectSimpleMethod('setRequestContentType', ['application/test']),
   );
 
   it('should disable sendBeacon', expectSimpleMethod('disableAlwaysUseSendBeacon', []));
@@ -458,7 +459,7 @@ describe('MatomoTracker', () => {
 
   it(
     'should set excluded single referrer',
-    expectSimpleMethod('setExcludedReferrers', ['referrer'], [['referrer']])
+    expectSimpleMethod('setExcludedReferrers', ['referrer'], [['referrer']]),
   );
 
   it(
@@ -466,14 +467,14 @@ describe('MatomoTracker', () => {
     expectSimpleMethod(
       'setExcludedReferrers',
       ['referrer1', 'referrer2', ['referrer3']],
-      [['referrer1', 'referrer2', 'referrer3']]
-    )
+      [['referrer1', 'referrer2', 'referrer3']],
+    ),
   );
 
   function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>, E extends T = T>(
     getter: G,
     mockInstance: Partial<MatomoInstance>,
-    expected: E
+    expected: E,
   ): Promise<void> {
     // Given
     const tracker = createTracker();
@@ -497,7 +498,7 @@ describe('MatomoTracker', () => {
           return 'http://fakeUrl';
         },
       },
-      'http://fakeUrl'
+      'http://fakeUrl',
     ).then(done);
   });
 
@@ -509,7 +510,7 @@ describe('MatomoTracker', () => {
           return 'http://fakeUrl';
         },
       },
-      'http://fakeUrl'
+      'http://fakeUrl',
     ).then(done);
   });
 
@@ -521,7 +522,7 @@ describe('MatomoTracker', () => {
           return 'http://fakeUrl';
         },
       },
-      'http://fakeUrl'
+      'http://fakeUrl',
     ).then(done);
   });
 
@@ -533,7 +534,7 @@ describe('MatomoTracker', () => {
           return 42;
         },
       },
-      42
+      42,
     ).then(done);
   });
 
@@ -545,7 +546,7 @@ describe('MatomoTracker', () => {
           return 'foo';
         },
       },
-      'foo'
+      'foo',
     ).then(done);
   });
 
@@ -557,7 +558,7 @@ describe('MatomoTracker', () => {
           return ['foo'];
         },
       },
-      ['foo'] as unknown[]
+      ['foo'] as unknown[],
     ).then(done);
   });
 
@@ -569,7 +570,7 @@ describe('MatomoTracker', () => {
           return ['foo'];
         },
       },
-      ['foo']
+      ['foo'],
     ).then(done);
   });
 
@@ -581,7 +582,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test'
+      'test',
     ).then(done);
   });
 
@@ -593,7 +594,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test'
+      'test',
     ).then(done);
   });
 
@@ -605,7 +606,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test'
+      'test',
     ).then(done);
   });
 
@@ -617,7 +618,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test'
+      'test',
     ).then(done);
   });
 
@@ -629,7 +630,7 @@ describe('MatomoTracker', () => {
           return 'test';
         },
       },
-      'test'
+      'test',
     ).then(done);
   });
 
@@ -641,7 +642,7 @@ describe('MatomoTracker', () => {
           return true;
         },
       },
-      true
+      true,
     ).then(done);
   });
 
@@ -695,7 +696,7 @@ describe('MatomoTracker', () => {
     // Given
     const tracker = createTracker();
     const mockInstance = {
-      getExcludedReferrers(...args: any[]): string[] {
+      getExcludedReferrers(..._: any[]): string[] {
         return ['referrer1'];
       },
     } as Partial<MatomoInstance> as MatomoInstance;
@@ -716,12 +717,12 @@ describe('MatomoTracker', () => {
 
   it(
     'should disable browser feature detection',
-    expectSimpleMethod('disableBrowserFeatureDetection', [])
+    expectSimpleMethod('disableBrowserFeatureDetection', []),
   );
 
   it(
     'should enable browser feature detection',
-    expectSimpleMethod('enableBrowserFeatureDetection', [])
+    expectSimpleMethod('enableBrowserFeatureDetection', []),
   );
 
   it('should ignore calls when disabled', () => {

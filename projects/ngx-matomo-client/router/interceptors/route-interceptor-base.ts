@@ -19,7 +19,7 @@ export abstract class MatomoRouteInterceptorBase<D> implements MatomoRouterInter
     return this.processRouteData(data);
   }
 
-  protected getRoute(event: NavigationEnd): ActivatedRouteSnapshot {
+  protected getRoute(_: NavigationEnd): ActivatedRouteSnapshot {
     return getLeafRoute(this.router.routerState.snapshot.root, PRIMARY_OUTLET);
   }
 

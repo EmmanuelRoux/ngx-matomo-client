@@ -185,7 +185,7 @@ describe('MatomoTrackerDirective', () => {
       'defaultCategory',
       'defaultAction',
       'defaultName',
-      99
+      99,
     );
 
     // When
@@ -197,7 +197,7 @@ describe('MatomoTrackerDirective', () => {
       'defaultCategory',
       'defaultAction',
       'myName',
-      undefined
+      undefined,
     );
 
     // When
@@ -209,7 +209,7 @@ describe('MatomoTrackerDirective', () => {
       'defaultCategory',
       'defaultAction',
       'myName',
-      42
+      42,
     );
   });
 
@@ -230,7 +230,7 @@ describe('MatomoTrackerDirective', () => {
       'defaultCategory',
       'defaultAction',
       'defaultName',
-      -1
+      -1,
     );
 
     // When

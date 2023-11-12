@@ -36,7 +36,7 @@ function checkRequiredRouterDependency(host: Tree) {
   if (!hasAngularRouterDependency(host)) {
     throw new SchematicsException(
       `You chose to automatically track page view, but this requires @angular/router as a dependency.\n` +
-        `You can run "ng add @angular/router" to add it to your application.`
+        `You can run "ng add @angular/router" to add it to your application.`,
     );
   }
 }
@@ -66,7 +66,7 @@ function addPackageJsonDependencies(options: Options) {
 function buildTrackerConfig(
   options: Options,
   context: SchematicContext,
-  modulePath: string
+  modulePath: string,
 ): string {
   const trackerUrl = escapeLiteral(options.serverUrl || '');
   const siteId = escapeLiteral(options.siteId || '');
@@ -88,7 +88,7 @@ function buildTrackerConfig(
         'Configuration properties "siteId" and "trackerUrl" are usually required. ' +
           'You will need to manually update your configuration in "' +
           modulePath +
-          "'. "
+          "'. ",
       );
     }
   }
@@ -118,12 +118,12 @@ function isRelevantImportPath(importPath: string): boolean {
 
 function findRelevantImports(
   source: ts.SourceFile,
-  predicate: (importPath: string) => boolean
+  predicate: (importPath: string) => boolean,
 ): ts.ImportDeclaration[] {
   const allImports = findNodes(source, ts.SyntaxKind.ImportDeclaration) as ts.ImportDeclaration[];
 
   return allImports.filter(
-    node => ts.isStringLiteral(node.moduleSpecifier) && predicate(node.moduleSpecifier.text)
+    node => ts.isStringLiteral(node.moduleSpecifier) && predicate(node.moduleSpecifier.text),
   );
 }
 
@@ -154,7 +154,7 @@ function hasLegacyModuleDeclaration(source: ts.SourceFile): boolean {
 
 function getImportEntryPoints(
   host: Tree,
-  options: Options
+  options: Options,
 ): {
   core: string;
   router: string;
@@ -238,7 +238,7 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
     if (hasLegacyModuleDeclaration(source)) {
       context.logger.info(
         'Your configuration is using classic configuration with NgModule imports. ' +
-          'While this is still fully supported, you may want to take a look at the new NgModule-free setup using provideMatomo() (see README > Installation)'
+          'While this is still fully supported, you may want to take a look at the new NgModule-free setup using provideMatomo() (see README > Installation)',
       );
 
       if (!mainModuleImported) {
@@ -250,19 +250,19 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
           source,
           modulePath,
           'imports',
-          `${mainModuleIdentifier}.forRoot(${trackerConfig})`
-        )
+          `${mainModuleIdentifier}.forRoot(${trackerConfig})`,
+        ),
       );
 
       if (options.router) {
         if (!routerModuleImported) {
           changes.push(
-            insertImport(source, modulePath, routerModuleIdentifier, entryPoints.router)
+            insertImport(source, modulePath, routerModuleIdentifier, entryPoints.router),
           );
         }
 
         changes.push(
-          ...addSymbolToNgModuleMetadata(source, modulePath, 'imports', routerModuleIdentifier)
+          ...addSymbolToNgModuleMetadata(source, modulePath, 'imports', routerModuleIdentifier),
         );
       }
     } else {
@@ -281,8 +281,8 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
           source,
           modulePath,
           'providers',
-          `provideMatomo(${provideMatomoArgs.join(', ')})`
-        )
+          `provideMatomo(${provideMatomoArgs.join(', ')})`,
+        ),
       );
     }
 

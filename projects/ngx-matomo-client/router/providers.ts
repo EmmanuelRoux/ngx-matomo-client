@@ -32,11 +32,11 @@ export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
 
 /** Add some matomo router interceptors */
 export function withRouterInterceptors(
-  interceptors: Type<MatomoRouterInterceptor>[]
+  interceptors: Type<MatomoRouterInterceptor>[],
 ): MatomoFeature {
   return createMatomoFeature(
     MatomoFeatureKind.RouterInterceptors,
-    provideInterceptors(interceptors)
+    provideInterceptors(interceptors),
   );
 }
 

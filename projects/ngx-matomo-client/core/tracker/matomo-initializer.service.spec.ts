@@ -18,12 +18,12 @@ import {
   MatomoScriptFactory,
 } from './script-factory';
 
-declare var window: MatomoHolder;
+declare let window: MatomoHolder;
 
 describe('MatomoInitializerService', () => {
   function instantiate(
     config: MatomoConfiguration,
-    providers: Provider[] = []
+    providers: Provider[] = [],
   ): MatomoInitializerService {
     TestBed.configureTestingModule({
       providers: [
@@ -52,14 +52,13 @@ describe('MatomoInitializerService', () => {
       .inject(EnvironmentInjector)
       .runInContext(() => {
         // Given
-        let paq: MatomoHolder['_paq'];
         expect(window._paq).toBeUndefined();
 
         // When
         new MatomoInitializerService();
         // Then
         expect(window._paq).toEqual([]);
-        paq = window._paq;
+        const paq = window._paq;
 
         // When
         new MatomoInitializerService();
@@ -93,7 +92,7 @@ describe('MatomoInitializerService', () => {
         mode: MatomoInitializationMode.MANUAL,
         enableLinkTracking: false,
       },
-      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }]
+      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
     );
     const tracker = TestBed.inject(MatomoTracker);
 
@@ -114,7 +113,7 @@ describe('MatomoInitializerService', () => {
         trackAppInitialLoad: true,
         enableLinkTracking: false,
       },
-      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }]
+      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
     );
     const tracker = TestBed.inject(MatomoTracker);
 
@@ -436,7 +435,7 @@ describe('MatomoInitializerService', () => {
     expect(tracker.setSiteId).toHaveBeenCalledOnceWith('site1');
     expect(tracker.addTracker).toHaveBeenCalledWith(
       'http://fakeTrackerUrl2/custom-tracker.php',
-      'site2'
+      'site2',
     );
     expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl3/matomo.php', 'site3');
     expect(tracker.addTracker).toHaveBeenCalledTimes(2);
@@ -473,7 +472,7 @@ describe('MatomoInitializerService', () => {
         siteId: 'fakeSiteId',
         trackerUrl: 'http://fakeTrackerUrl',
       },
-      [{ provide: PLATFORM_ID, useValue: serverPlatform }]
+      [{ provide: PLATFORM_ID, useValue: serverPlatform }],
     );
 
     setUpScriptInjection(script => (injectedScript = script));
@@ -545,7 +544,7 @@ describe('MatomoInitializerService', () => {
             script.setAttribute('data-cookieconsent', 'statistics');
 
             return script;
-          })
+          }),
         ),
       ],
     });
@@ -620,7 +619,7 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expect(() => service.initializeTracker({ trackerUrl: '', siteId: '' })).toThrowError(
-      ALREADY_INJECTED_ERROR
+      ALREADY_INJECTED_ERROR,
     );
   });
 

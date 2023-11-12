@@ -1,4 +1,4 @@
-declare var window: MatomoHolder;
+declare let window: MatomoHolder;
 
 export interface MatomoHolder extends Window {
   _paq: { push: Array<unknown>['push'] };

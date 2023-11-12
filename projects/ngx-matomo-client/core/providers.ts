@@ -107,7 +107,7 @@ export function provideMatomo(
   for (const [feature, providerName] of routerFeatures) {
     if (featuresKind.includes(feature) && !featuresKind.includes(MatomoFeatureKind.Router)) {
       throw new Error(
-        `Matomo feature ${providerName} cannot be used without router feature! Did you forget to call withRouter()?`
+        `Matomo feature ${providerName} cannot be used without router feature! Did you forget to call withRouter()?`,
       );
     }
   }

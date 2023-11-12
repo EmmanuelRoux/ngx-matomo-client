@@ -17,7 +17,7 @@ import {
 
 function createRouteSnapshot(
   data: Data,
-  children: ActivatedRouteSnapshot[] = []
+  children: ActivatedRouteSnapshot[] = [],
 ): ActivatedRouteSnapshot {
   return { data, children, outlet: PRIMARY_OUTLET } as ActivatedRouteSnapshot;
 }

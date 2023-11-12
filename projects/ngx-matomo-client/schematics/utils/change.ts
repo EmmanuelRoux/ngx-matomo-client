@@ -49,7 +49,11 @@ export class InsertChange implements Change {
   order: number;
   description: string;
 
-  constructor(public path: string, public pos: number, public toAdd: string) {
+  constructor(
+    public path: string,
+    public pos: number,
+    public toAdd: string,
+  ) {
     if (pos < 0) {
       throw new Error('Negative positions are invalid');
     }
@@ -77,7 +81,11 @@ export class RemoveChange implements Change {
   order: number;
   description: string;
 
-  constructor(public path: string, private pos: number, public toRemove: string) {
+  constructor(
+    public path: string,
+    private pos: number,
+    public toRemove: string,
+  ) {
     if (pos < 0) {
       throw new Error('Negative positions are invalid');
     }
@@ -107,7 +115,7 @@ export class ReplaceChange implements Change {
     public path: string,
     private pos: number,
     public oldText: string,
-    public newText: string
+    public newText: string,
   ) {
     if (pos < 0) {
       throw new Error('Negative positions are invalid');

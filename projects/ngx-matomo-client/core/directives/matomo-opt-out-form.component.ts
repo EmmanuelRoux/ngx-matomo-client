@@ -27,7 +27,7 @@ const URL_PATTERN =
 
 function missingServerUrlError(): Error {
   return new Error(
-    'It is required to set [serverUrl] when Matomo configuration mode is set to MANUAL'
+    'It is required to set [serverUrl] when Matomo configuration mode is set to MANUAL',
   );
 }
 
@@ -74,7 +74,7 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
     private readonly sanitizer: DomSanitizer,
     @Inject(ASYNC_INTERNAL_MATOMO_CONFIGURATION)
     private readonly config: Promise<InternalMatomoConfiguration>,
-    @Optional() @Inject(LOCALE_ID) locale: string = ''
+    @Optional() @Inject(LOCALE_ID) locale: string = '',
   ) {
     // Set default locale
     this.locale = locale;

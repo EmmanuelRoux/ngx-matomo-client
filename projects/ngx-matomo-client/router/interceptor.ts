@@ -3,7 +3,7 @@ import { NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
 
 export const MATOMO_ROUTER_INTERCEPTORS = new InjectionToken<MatomoRouterInterceptor[]>(
-  'MATOMO_ROUTER_INTERCEPTORS'
+  'MATOMO_ROUTER_INTERCEPTORS',
 );
 
 /** Interceptor used to hook into the page tracking process */
@@ -25,7 +25,7 @@ export function provideInterceptor(type: Type<MatomoRouterInterceptor>): Provide
 }
 
 export function provideInterceptors(
-  types: Type<MatomoRouterInterceptor>[] | undefined
+  types: Type<MatomoRouterInterceptor>[] | undefined,
 ): Provider[] {
   if (!types) {
     return [];

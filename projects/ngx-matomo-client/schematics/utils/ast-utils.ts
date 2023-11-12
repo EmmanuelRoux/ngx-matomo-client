@@ -26,7 +26,7 @@ export function insertImport(
   symbolName: string,
   fileName: string,
   isDefault = false,
-  alias?: string
+  alias?: string,
 ): Change {
   const rootNode = source;
   const allImports = findNodes(rootNode, ts.isImportDeclaration);
@@ -85,7 +85,7 @@ export function insertImport(
     toInsert,
     fileToEdit,
     fallbackPos,
-    ts.SyntaxKind.StringLiteral
+    ts.SyntaxKind.StringLiteral,
   );
 }
 
@@ -102,7 +102,7 @@ export function findNodes(
   node: ts.Node,
   kind: ts.SyntaxKind,
   max?: number,
-  recursive?: boolean
+  recursive?: boolean,
 ): ts.Node[];
 
 /**
@@ -118,14 +118,14 @@ export function findNodes<T extends ts.Node>(
   node: ts.Node,
   guard: (node: ts.Node) => node is T,
   max?: number,
-  recursive?: boolean
+  recursive?: boolean,
 ): T[];
 
 export function findNodes<T extends ts.Node>(
   node: ts.Node,
   kindOrGuard: ts.SyntaxKind | ((node: ts.Node) => node is T),
   max = Infinity,
-  recursive = false
+  recursive = false,
 ): T[] {
   if (!node || max == 0) {
     return [];
@@ -221,7 +221,7 @@ export function insertAfterLastOccurrence(
   toInsert: string,
   file: string,
   fallbackPos: number,
-  syntaxKind?: ts.SyntaxKind
+  syntaxKind?: ts.SyntaxKind,
 ): Change {
   let lastItem: ts.Node | undefined;
   for (const node of nodes) {
@@ -290,7 +290,7 @@ function _angularImportsFromNode(node: ts.ImportDeclaration): { [name: string]: 
 export function getDecoratorMetadata(
   source: ts.SourceFile,
   identifier: string,
-  module: string
+  module: string,
 ): ts.Node[] {
   const angularImports = findNodes(source, ts.isImportDeclaration)
     .map(node => _angularImportsFromNode(node))
@@ -332,14 +332,14 @@ export function getDecoratorMetadata(
       return false;
     })
     .filter(
-      expr => expr.arguments[0] && expr.arguments[0].kind == ts.SyntaxKind.ObjectLiteralExpression
+      expr => expr.arguments[0] && expr.arguments[0].kind == ts.SyntaxKind.ObjectLiteralExpression,
     )
     .map(expr => expr.arguments[0] as ts.ObjectLiteralExpression);
 }
 
 export function getMetadataField(
   node: ts.ObjectLiteralExpression,
-  metadataField: string
+  metadataField: string,
 ): ts.ObjectLiteralElement[] {
   return (
     node.properties
@@ -357,7 +357,7 @@ export function addSymbolToNgModuleMetadata(
   ngModulePath: string,
   metadataField: string,
   symbolName: string,
-  importPath: string | null = null
+  importPath: string | null = null,
 ): Change[] {
   const nodes = getDecoratorMetadata(source, 'NgModule', '@angular/core');
   const node = nodes[0];
@@ -460,14 +460,14 @@ export function addDeclarationToModule(
   source: ts.SourceFile,
   modulePath: string,
   classifiedName: string,
-  importPath: string
+  importPath: string,
 ): Change[] {
   return addSymbolToNgModuleMetadata(
     source,
     modulePath,
     'declarations',
     classifiedName,
-    importPath
+    importPath,
   );
 }
 
@@ -478,7 +478,7 @@ export function addImportToModule(
   source: ts.SourceFile,
   modulePath: string,
   classifiedName: string,
-  importPath: string
+  importPath: string,
 ): Change[] {
   return addSymbolToNgModuleMetadata(source, modulePath, 'imports', classifiedName, importPath);
 }
@@ -490,7 +490,7 @@ export function addProviderToModule(
   source: ts.SourceFile,
   modulePath: string,
   classifiedName: string,
-  importPath: string
+  importPath: string,
 ): Change[] {
   return addSymbolToNgModuleMetadata(source, modulePath, 'providers', classifiedName, importPath);
 }
@@ -502,7 +502,7 @@ export function addExportToModule(
   source: ts.SourceFile,
   modulePath: string,
   classifiedName: string,
-  importPath: string
+  importPath: string,
 ): Change[] {
   return addSymbolToNgModuleMetadata(source, modulePath, 'exports', classifiedName, importPath);
 }
@@ -514,7 +514,7 @@ export function addBootstrapToModule(
   source: ts.SourceFile,
   modulePath: string,
   classifiedName: string,
-  importPath: string
+  importPath: string,
 ): Change[] {
   return addSymbolToNgModuleMetadata(source, modulePath, 'bootstrap', classifiedName, importPath);
 }
@@ -525,20 +525,20 @@ export function addBootstrapToModule(
 export function isImported(
   source: ts.SourceFile,
   classifiedName: string,
-  importPath: string
+  importPath: string,
 ): boolean {
   const allNodes = getSourceNodes(source);
   const matchingNodes = allNodes
     .filter(ts.isImportDeclaration)
     .filter(
-      imp => ts.isStringLiteral(imp.moduleSpecifier) && imp.moduleSpecifier.text === importPath
+      imp => ts.isStringLiteral(imp.moduleSpecifier) && imp.moduleSpecifier.text === importPath,
     )
     .filter(imp => {
       if (!imp.importClause) {
         return false;
       }
       const nodes = findNodes(imp.importClause, ts.isImportSpecifier).filter(
-        n => n.getText() === classifiedName
+        n => n.getText() === classifiedName,
       );
 
       return nodes.length > 0;
@@ -581,20 +581,20 @@ export function getRouterModuleDeclaration(source: ts.SourceFile): ts.Expression
 export function addRouteDeclarationToModule(
   source: ts.SourceFile,
   fileToAdd: string,
-  routeLiteral: string
+  routeLiteral: string,
 ): Change {
   const routerModuleExpr = getRouterModuleDeclaration(source);
   if (!routerModuleExpr) {
     throw new Error(
       `Couldn't find a route declaration in ${fileToAdd}.\n` +
-        `Use the '--module' option to specify a different routing module.`
+        `Use the '--module' option to specify a different routing module.`,
     );
   }
   const scopeConfigMethodArgs = (routerModuleExpr as ts.CallExpression).arguments;
   if (!scopeConfigMethodArgs.length) {
     const { line } = source.getLineAndCharacterOfPosition(routerModuleExpr.getStart());
     throw new Error(
-      `The router module method doesn't have arguments ` + `at line ${line} in ${fileToAdd}`
+      `The router module method doesn't have arguments ` + `at line ${line} in ${fileToAdd}`,
     );
   }
 
@@ -618,14 +618,14 @@ export function addRouteDeclarationToModule(
       const { line } = source.getLineAndCharacterOfPosition(routesArg.getStart());
       throw new Error(
         `No route declaration array was found that corresponds ` +
-          `to router module at line ${line} in ${fileToAdd}`
+          `to router module at line ${line} in ${fileToAdd}`,
       );
     }
 
     routesArr = findNodes(
       routesVar,
       ts.SyntaxKind.ArrayLiteralExpression,
-      1
+      1,
     )[0] as ts.ArrayLiteralExpression;
   }
 
@@ -645,7 +645,7 @@ export function addRouteDeclarationToModule(
           ts.isIdentifier(n.name) &&
           n.name.text === 'path' &&
           ts.isStringLiteral(n.initializer) &&
-          n.initializer.text === '**'
+          n.initializer.text === '**',
       );
 
     const indentation = text.match(/\r?\n(\r?)\s*/) || [];
@@ -667,7 +667,7 @@ export function addRouteDeclarationToModule(
 
 /** Asserts if the specified node is a named declaration (e.g. class, interface). */
 function isNamedNode(
-  node: ts.Node & { name?: ts.Node }
+  node: ts.Node & { name?: ts.Node },
 ): node is ts.Node & { name: ts.Identifier } {
   return !!node.name && ts.isIdentifier(node.name);
 }
@@ -683,7 +683,7 @@ function isNamedNode(
 export function hasTopLevelIdentifier(
   sourceFile: ts.SourceFile,
   symbolName: string,
-  skipModule: string | null = null
+  skipModule: string | null = null,
 ): boolean {
   for (const node of sourceFile.statements) {
     if (isNamedNode(node) && node.name.text === symbolName) {

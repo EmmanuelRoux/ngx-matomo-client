@@ -14,7 +14,7 @@ export class MatomoRouterModule {
   constructor(
     private readonly router: MatomoRouter,
     @Optional() @SkipSelf() parent?: MatomoRouterModule,
-    @Optional() @SkipSelf() parentDeprecated?: NgxMatomoRouterModule
+    @Optional() @SkipSelf() parentDeprecated?: NgxMatomoRouterModule,
   ) {
     if (!parent && !parentDeprecated) {
       // Do not initialize if it is already (by a parent module)
@@ -23,7 +23,7 @@ export class MatomoRouterModule {
   }
 
   static forRoot(
-    configWithInterceptors: MatomoRouterConfigurationWithInterceptors = {}
+    configWithInterceptors: MatomoRouterConfigurationWithInterceptors = {},
   ): ModuleWithProviders<MatomoRouterModule> {
     // Note: not using "rest" syntax here, in order to avoid any dependency on tslib (and reduce package size)
     // The only drawback of this is that MATOMO_ROUTER_CONFIGURATION will actually
@@ -49,7 +49,7 @@ export class NgxMatomoRouterModule {
   constructor(
     private readonly router: MatomoRouter,
     @Optional() @SkipSelf() parent?: MatomoRouterModule,
-    @Optional() @SkipSelf() parentDeprecated?: NgxMatomoRouterModule
+    @Optional() @SkipSelf() parentDeprecated?: NgxMatomoRouterModule,
   ) {
     if (!parent && !parentDeprecated) {
       // Do not initialize if it is already (by a parent module)
@@ -58,7 +58,7 @@ export class NgxMatomoRouterModule {
   }
 
   static forRoot(
-    configWithInterceptors: MatomoRouterConfigurationWithInterceptors = {}
+    configWithInterceptors: MatomoRouterConfigurationWithInterceptors = {},
   ): ModuleWithProviders<NgxMatomoRouterModule> {
     // Note: not using "rest" syntax here, in order to avoid any dependency on tslib (and reduce package size)
     // The only drawback of this is that MATOMO_ROUTER_CONFIGURATION will actually

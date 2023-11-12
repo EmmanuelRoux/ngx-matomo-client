@@ -20,7 +20,7 @@ export class MatomoTrackClickDirective {
       requireNonNull(this.matomoClickCategory, 'matomo category is required'),
       requireNonNull(this.matomoClickAction, 'matomo action is required'),
       this.matomoClickName,
-      this.matomoClickValue
+      this.matomoClickValue,
     );
   }
 }

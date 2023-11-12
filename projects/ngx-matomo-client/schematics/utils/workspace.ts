@@ -56,7 +56,7 @@ class TreeWorkspaceHost implements workspaces.WorkspaceHost {
  * workspace. A {@link WorkspaceDefinition} is provided as the first argument to the function.
  */
 export function updateWorkspace(
-  updater: (workspace: WorkspaceDefinition) => void | Rule | PromiseLike<void | Rule>
+  updater: (workspace: WorkspaceDefinition) => void | Rule | PromiseLike<void | Rule>,
 ): Rule {
   return async (tree: Tree) => {
     const host = new TreeWorkspaceHost(tree);
@@ -83,7 +83,7 @@ export function updateWorkspace(
  */
 export async function getWorkspace(
   tree: Tree,
-  path = DEFAULT_WORKSPACE_PATH
+  path = DEFAULT_WORKSPACE_PATH,
 ): Promise<WorkspaceDefinition> {
   const host = new TreeWorkspaceHost(tree);
 
@@ -106,7 +106,7 @@ export async function getWorkspace(
 export async function writeWorkspace(
   tree: Tree,
   workspace: WorkspaceDefinition,
-  path?: string
+  path?: string,
 ): Promise<void> {
   const host = new TreeWorkspaceHost(tree);
 
@@ -136,7 +136,7 @@ export async function createDefaultPath(tree: Tree, projectName: string): Promis
 }
 
 export function* allWorkspaceTargets(
-  workspace: workspaces.WorkspaceDefinition
+  workspace: workspaces.WorkspaceDefinition,
 ): Iterable<[string, workspaces.TargetDefinition, string, workspaces.ProjectDefinition]> {
   for (const [projectName, project] of workspace.projects) {
     for (const [targetName, target] of project.targets) {
@@ -147,7 +147,7 @@ export function* allWorkspaceTargets(
 
 export function* allTargetOptions(
   target: workspaces.TargetDefinition,
-  skipBaseOptions = false
+  skipBaseOptions = false,
 ): Iterable<[string | undefined, Record<string, json.JsonValue | undefined>]> {
   if (!skipBaseOptions && target.options) {
     yield [undefined, target.options];

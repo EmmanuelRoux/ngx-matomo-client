@@ -74,7 +74,7 @@ module.exports = {
             }
 
             return `[@${username}](${context.host}/${username})`;
-          }
+          },
         );
       }
     }

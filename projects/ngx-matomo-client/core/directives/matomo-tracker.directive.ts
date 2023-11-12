@@ -38,7 +38,10 @@ export class MatomoTrackerDirective implements OnDestroy {
   /** Set the event value */
   @Input() matomoValue?: number;
 
-  constructor(private readonly tracker: MatomoTracker, private readonly elementRef: ElementRef) {}
+  constructor(
+    private readonly tracker: MatomoTracker,
+    private readonly elementRef: ElementRef,
+  ) {}
 
   /** Track a Matomo event whenever specified DOM event is triggered */
   @Input()
@@ -49,7 +52,7 @@ export class MatomoTrackerDirective implements OnDestroy {
 
     if (eventNames) {
       const handlers = eventNames.map(eventName =>
-        fromEvent(this.elementRef.nativeElement, eventName)
+        fromEvent(this.elementRef.nativeElement, eventName),
       );
 
       this.sub = merge(...handlers).subscribe(() => this.trackEvent());
@@ -103,7 +106,7 @@ export class MatomoTrackerDirective implements OnDestroy {
       requireNonNull(category, 'matomo category is required'),
       requireNonNull(action, 'matomo action is required'),
       name,
-      value
+      value,
     );
   }
 }

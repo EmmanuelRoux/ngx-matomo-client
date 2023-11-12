@@ -21,7 +21,7 @@ describe('MatomoRouter', () => {
   function instantiate(
     routerConfig: MatomoRouterConfiguration,
     config: Partial<InternalGlobalConfiguration>,
-    providers: Provider[] = []
+    providers: Provider[] = [],
   ): MatomoRouter {
     TestBed.configureTestingModule({
       providers: [
@@ -228,7 +228,7 @@ describe('MatomoRouter', () => {
   function expectExcludedUrls(
     config: MatomoRouterConfiguration['exclude'],
     events: string[],
-    expected: string[]
+    expected: string[],
   ): void {
     // Given
     const service = instantiate({ exclude: config }, { enableLinkTracking: true });
@@ -258,7 +258,7 @@ describe('MatomoRouter', () => {
     expectExcludedUrls(
       /^\/excluded-url$/,
       ['accepted-url-1', '/excluded-url', 'accepted-url-2'],
-      ['accepted-url-1', 'accepted-url-2']
+      ['accepted-url-1', 'accepted-url-2'],
     );
   }));
 
@@ -266,7 +266,7 @@ describe('MatomoRouter', () => {
     expectExcludedUrls(
       [/^\/excluded-url-1$/, '^/excluded-url-2$'],
       ['accepted-url-1', '/excluded-url-1', 'accepted-url-2', '/excluded-url-2'],
-      ['accepted-url-1', 'accepted-url-2']
+      ['accepted-url-1', 'accepted-url-2'],
     );
   }));
 
@@ -274,7 +274,7 @@ describe('MatomoRouter', () => {
     expectExcludedUrls(
       undefined,
       ['accepted-url-1', 'accepted-url-2'],
-      ['accepted-url-1', 'accepted-url-2']
+      ['accepted-url-1', 'accepted-url-2'],
     );
   }));
 
@@ -352,7 +352,7 @@ describe('MatomoRouter', () => {
           provide: MATOMO_ROUTER_INTERCEPTORS,
           useValue: interceptor,
         },
-      ])
+      ]),
     ).toThrowError(errorMessage);
     TestBed.resetTestingModule();
     expect(() =>
@@ -362,7 +362,7 @@ describe('MatomoRouter', () => {
           multi: true,
           useValue: interceptor,
         },
-      ])
+      ]),
     ).not.toThrow();
   }));
 
@@ -372,13 +372,13 @@ describe('MatomoRouter', () => {
     let slowInterceptorResolve2: () => void;
     let slowInterceptorResolve3: () => void;
     const slowInterceptorPromise1 = new Promise<void>(
-      resolve => (slowInterceptorResolve1 = resolve)
+      resolve => (slowInterceptorResolve1 = resolve),
     );
     const slowInterceptorPromise2 = new Promise<void>(
-      resolve => (slowInterceptorResolve2 = resolve)
+      resolve => (slowInterceptorResolve2 = resolve),
     );
     const slowInterceptorPromise3 = new Promise<void>(
-      resolve => (slowInterceptorResolve3 = resolve)
+      resolve => (slowInterceptorResolve3 = resolve),
     );
     const slowInterceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('slowInterceptor', [
       'beforePageTrack',
@@ -391,7 +391,7 @@ describe('MatomoRouter', () => {
     slowInterceptor.beforePageTrack.and.returnValues(
       slowInterceptorPromise1,
       slowInterceptorPromise2,
-      slowInterceptorPromise3
+      slowInterceptorPromise3,
     );
 
     // When

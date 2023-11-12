@@ -1,5 +1,5 @@
 function coerceErrorHandler<T, ARGS extends unknown[]>(
-  errorOrHandler: string | ((...args: ARGS) => T | never)
+  errorOrHandler: string | ((...args: ARGS) => T | never),
 ): (...args: ARGS) => T | never {
   return typeof errorOrHandler === 'string'
     ? () => {
@@ -10,16 +10,16 @@ function coerceErrorHandler<T, ARGS extends unknown[]>(
 
 /** Wrap a function to ensure it is called only once, ignoring all subsequent calls */
 export function runOnce<T, ARGS extends unknown[]>(
-  fn: (...args: ARGS) => T
+  fn: (...args: ARGS) => T,
 ): (...args: ARGS) => T | void;
 /** Wrap a function to ensure it is called only once, calling an error handler otherwise */
 export function runOnce<T, ARGS extends unknown[], U = T>(
   fn: (...args: ARGS) => T,
-  errorOrHandler: string | ((...args: ARGS) => U | never)
+  errorOrHandler: string | ((...args: ARGS) => U | never),
 ): (...args: ARGS) => T | U;
 export function runOnce<T, ARGS extends unknown[], U = T>(
   fn: (...args: ARGS) => T,
-  errorOrHandler?: string | ((...args: ARGS) => U | never)
+  errorOrHandler?: string | ((...args: ARGS) => U | never),
 ): (...args: ARGS) => T | U | void {
   const errorHandler = errorOrHandler ? coerceErrorHandler(errorOrHandler) : () => undefined;
   let run = false;

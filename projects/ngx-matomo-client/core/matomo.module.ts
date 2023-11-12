@@ -14,7 +14,7 @@ export const MATOMO_DIRECTIVES = [
 
 function buildProviders(
   config: MatomoConfiguration,
-  scriptFactory?: MatomoScriptFactory
+  scriptFactory?: MatomoScriptFactory,
 ): EnvironmentProviders {
   const features: MatomoFeature[] = [];
 
@@ -32,7 +32,7 @@ function buildProviders(
 export class MatomoModule {
   static forRoot(
     config: MatomoConfiguration,
-    scriptFactory?: MatomoScriptFactory
+    scriptFactory?: MatomoScriptFactory,
   ): ModuleWithProviders<MatomoModule> {
     return {
       ngModule: MatomoModule,
@@ -52,7 +52,7 @@ export class MatomoModule {
 export class NgxMatomoModule {
   static forRoot(
     config: MatomoConfiguration,
-    scriptFactory?: MatomoScriptFactory
+    scriptFactory?: MatomoScriptFactory,
   ): ModuleWithProviders<NgxMatomoModule> {
     return {
       ngModule: NgxMatomoModule,
@@ -72,7 +72,7 @@ export class NgxMatomoModule {
 export class NgxMatomoTrackerModule {
   static forRoot(
     config: MatomoConfiguration,
-    scriptFactory?: MatomoScriptFactory
+    scriptFactory?: MatomoScriptFactory,
   ): ModuleWithProviders<NgxMatomoTrackerModule> {
     return {
       ngModule: NgxMatomoTrackerModule,

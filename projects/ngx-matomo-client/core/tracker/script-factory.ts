@@ -18,5 +18,5 @@ export const MATOMO_SCRIPT_FACTORY = new InjectionToken<MatomoScriptFactory>(
   {
     providedIn: 'root',
     factory: () => createDefaultMatomoScriptElement,
-  }
+  },
 );

@@ -742,7 +742,7 @@ export class AppModule {}
       {}, // Your base configuration
       withRouter({
         exclude: [/some-pattern$/],
-      })
+      }),
     ),
   ],
 })

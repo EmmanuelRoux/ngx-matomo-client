@@ -34,7 +34,7 @@ const distTag = getChannel(channel);
 const publishCmd = getPublishCmd(npmrc, distTag, registry);
 
 console.log(
-  `Publishing version ${version} of ${LIB_DIR_NAME} to npm registry on dist-tag ${distTag}`
+  `Publishing version ${version} of ${LIB_DIR_NAME} to npm registry on dist-tag ${distTag}`,
 );
 
 setUpNpmAuth(baseDir, registry);

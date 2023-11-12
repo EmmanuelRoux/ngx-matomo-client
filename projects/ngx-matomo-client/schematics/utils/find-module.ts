@@ -55,7 +55,7 @@ export function findModuleFromOptions(host: Tree, options: ModuleOptions): Path 
     const candidatesDirs = [...candidateSet].sort((a, b) => b.length - a.length);
     for (const c of candidatesDirs) {
       const candidateFiles = ['', `${moduleBaseName}.ts`, `${moduleBaseName}${moduleExt}`].map(x =>
-        join(c, x)
+        join(c, x),
       );
 
       for (const sc of candidateFiles) {
@@ -67,7 +67,7 @@ export function findModuleFromOptions(host: Tree, options: ModuleOptions): Path 
 
     throw new Error(
       `Specified module '${options.module}' does not exist.\n` +
-        `Looked in the following directories:\n    ${candidatesDirs.join('\n    ')}`
+        `Looked in the following directories:\n    ${candidatesDirs.join('\n    ')}`,
     );
   }
 }
@@ -79,7 +79,7 @@ export function findModule(
   host: Tree,
   generateDir: string,
   moduleExt = MODULE_EXT,
-  routingModuleExt = ROUTING_MODULE_EXT
+  routingModuleExt = ROUTING_MODULE_EXT,
 ): Path {
   let dir: DirEntry | null = host.getDir('/' + generateDir);
   let foundRoutingModule = false;
@@ -95,7 +95,7 @@ export function findModule(
     } else if (filteredMatches.length > 1) {
       throw new Error(
         `More than one module matches. Use the '--skip-import' option to skip importing ` +
-          'the component into the closest module or use the module option to specify a module.'
+          'the component into the closest module or use the module option to specify a module.',
       );
     }
 
@@ -128,7 +128,7 @@ export function buildRelativePath(from: string, to: string): string {
 
   const relativePath = relative(
     normalize(fromParts.join('/') || '/'),
-    normalize(toParts.join('/') || '/')
+    normalize(toParts.join('/') || '/'),
   );
   let pathPrefix = '';
 
