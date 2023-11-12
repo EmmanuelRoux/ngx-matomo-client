@@ -6,6 +6,7 @@ import { MatomoTrackerDirective, TrackArgs } from './matomo-tracker.directive';
 type HTMLElementEvent = keyof HTMLElementEventMap;
 
 @Component({
+  selector: 'matomo-host-with-input-events',
   template: ` <input
     type="text"
     #input
@@ -31,6 +32,7 @@ class HostWithInputEventsComponent {
 }
 
 @Component({
+  selector: 'matomo-host-with-custom-handler-1',
   template: `<input
     type="text"
     #input
@@ -59,6 +61,7 @@ class HostWithCustomHandler1Component {
 }
 
 @Component({
+  selector: 'matomo-host-with-custom-handler-2',
   template: `<input
     type="text"
     #input

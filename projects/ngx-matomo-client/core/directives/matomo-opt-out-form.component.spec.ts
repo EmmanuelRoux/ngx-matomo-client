@@ -13,6 +13,7 @@ import { MatomoInitializerService } from '../tracker/matomo-initializer.service'
 import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
 
 @Component({
+  selector: 'matomo-host-with-default-server-url-and-locale',
   template: ` <matomo-opt-out-form
     [backgroundColor]="backgroundColor"
     [color]="color"
@@ -34,6 +35,7 @@ class HostWithDefaultServerUrlAndLocaleComponent {
 }
 
 @Component({
+  selector: 'matomo-host-with-custom-server-url-and-locale',
   template: ` <matomo-opt-out-form
     [backgroundColor]="backgroundColor"
     [color]="color"
@@ -59,6 +61,7 @@ class HostWithCustomServerUrlAndLocaleComponent {
 }
 
 @Component({
+  selector: 'matomo-host-without-server-url',
   template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
   providers: [
     {
@@ -78,6 +81,7 @@ class HostWithCustomServerUrlAndLocaleComponent {
 class HostWithoutServerUrlComponent {}
 
 @Component({
+  selector: 'matomo-host-without-locale',
   template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
   providers: [
     {
