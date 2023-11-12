@@ -23,11 +23,11 @@
 </button>
 
 <pre>
-@Component({{'{'}}
+&#64;Component({{'{'}}
   selector: 'app-track-event-component',
   templateUrl: './track-event-component.component.html',
   styleUrls: ['./track-event-component.component.scss'],
-})
+&#125;)
 export class TrackEventComponentComponent {{'{'}}
 
   category = '';
@@ -35,11 +35,11 @@ export class TrackEventComponentComponent {{'{'}}
   name = '';
   value?: number;
 
-  constructor(private readonly tracker: MatomoTracker) {{'{'}} }
+  constructor(private readonly tracker: MatomoTracker) {{'{'}} &#125;
 
   doTrack() {{'{'}}
     this.tracker.trackEvent(this.category, this.action, this.name, this.value);
-  }
+  &#125;
 
-}
+&#125;
 </pre>

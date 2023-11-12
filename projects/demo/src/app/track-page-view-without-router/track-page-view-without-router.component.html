@@ -4,20 +4,20 @@
 </p>
 
 <pre>
-@Component({{ '{' }}
+&#64;Component({{ '{' }}
   selector: 'app-track-page-view-without-router',
   template: '...',
-})
+&#125;)
 export class TrackPageViewWithoutRouterComponent implements OnInit {{ '{' }}
 
-  constructor(private readonly tracker: MatomoTracker) {{ '{' }} }
+  constructor(private readonly tracker: MatomoTracker) {{ '{' }} &#125;
 
   ngOnInit() {{ '{' }}
     this.tracker.trackPageView();
 
     // With custom page title
     this.tracker.trackPageView('My page title');
-  }
+  &#125;
 
-}
+&#125;
 </pre>
