@@ -13,7 +13,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.13.2
+          node-version: 18
           cache: npm
       - run: npm install
 
@@ -26,7 +26,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.13.2
+          node-version: 18
           cache: npm
       - run: npm install
       - run: npm run lint
@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.13.2
+          node-version: 18
           cache: npm
       - run: npm install
       - run: npm run check-missing-api
@@ -54,7 +54,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.13.2
+          node-version: 18
           cache: npm
       - run: npm install
       - run: npm run build:lib
@@ -84,7 +84,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.13.2
+          node-version: 18
           cache: npm
       - run: echo -n "${GPG_SECRET_KEY}" > git_gpg_key.asc
       - run: gpg --batch --yes --import git_gpg_key.asc
