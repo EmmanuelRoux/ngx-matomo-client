@@ -46,7 +46,6 @@
     "@angular/platform-browser": "^17.0.2",
     "@angular/platform-browser-dynamic": "^17.0.2",
     "@angular/router": "^17.0.2",
-    "ngx-matomo-client": "5.0.2",
     "rxjs": "~7.5.5",
     "tslib": "^2.4.1",
     "zone.js": "~0.14.2"
