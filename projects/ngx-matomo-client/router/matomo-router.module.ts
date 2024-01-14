@@ -1,4 +1,11 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import {
+  forwardRef,
+  Inject,
+  ModuleWithProviders,
+  NgModule,
+  Optional,
+  SkipSelf,
+} from '@angular/core';
 import { ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED } from 'ngx-matomo-client/core';
 import {
   MATOMO_ROUTER_CONFIGURATION,
@@ -14,7 +21,10 @@ export class MatomoRouterModule {
   constructor(
     private readonly router: MatomoRouter,
     @Optional() @SkipSelf() parent?: MatomoRouterModule,
-    @Optional() @SkipSelf() parentDeprecated?: NgxMatomoRouterModule,
+    @Inject(forwardRef(() => NgxMatomoRouterModule))
+    @Optional()
+    @SkipSelf()
+    parentDeprecated?: NgxMatomoRouterModule,
   ) {
     if (!parent && !parentDeprecated) {
       // Do not initialize if it is already (by a parent module)
@@ -49,7 +59,10 @@ export class NgxMatomoRouterModule {
   constructor(
     private readonly router: MatomoRouter,
     @Optional() @SkipSelf() parent?: MatomoRouterModule,
-    @Optional() @SkipSelf() parentDeprecated?: NgxMatomoRouterModule,
+    @Inject(forwardRef(() => NgxMatomoRouterModule))
+    @Optional()
+    @SkipSelf()
+    parentDeprecated?: NgxMatomoRouterModule,
   ) {
     if (!parent && !parentDeprecated) {
       // Do not initialize if it is already (by a parent module)
