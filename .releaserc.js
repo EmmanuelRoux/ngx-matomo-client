@@ -12,6 +12,10 @@ module.exports = {
       name: 'next',
       prerelease: true,
     },
+    {
+      name: 'fix-79',
+      prerelease: true,
+    },
   ],
   plugins: [
     '@semantic-release/commit-analyzer',
