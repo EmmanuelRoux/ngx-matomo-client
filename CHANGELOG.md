@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v6.0.0...v6.0.1) (2024-01-15)
+
+
+### Bug Fixes
+
+* **router:** fix router module constructor token declaration ([82e0aa2](https://github.com/EmmanuelRoux/ngx-matomo/commit/82e0aa2acd14d87027182411b6044d3f00b52956)), closes [#79](https://github.com/EmmanuelRoux/ngx-matomo/issues/79)
+
 # [6.0.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v5.0.4...v6.0.0) (2023-11-12)
 
 
