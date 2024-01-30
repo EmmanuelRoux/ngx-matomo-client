@@ -1,4 +1,4 @@
-import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
+import { APP_BASE_HREF, LocationStrategy } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { NavigationEnd } from '@angular/router';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from 'ngx-matomo-client/core';
@@ -57,7 +57,7 @@ describe('PageUrlProvider', () => {
     });
   });
 
-  it('should return page url prepended with DOM base href', () => {
+  it('should return page url prepended with LocationStrategy base href', () => {
     // Given
     const provider = instantiate(
       {
@@ -65,9 +65,9 @@ describe('PageUrlProvider', () => {
       },
       null,
     );
-    const platform = TestBed.inject(PlatformLocation);
+    const locationStrategy = TestBed.inject(LocationStrategy);
 
-    spyOn(platform, 'getBaseHrefFromDOM').and.returnValue('/test');
+    spyOn(locationStrategy, 'getBaseHref').and.returnValue('/test');
 
     // When
     provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
@@ -79,9 +79,9 @@ describe('PageUrlProvider', () => {
   it('should return page url without base href', () => {
     // Given
     const provider = instantiate({ prependBaseHref: false }, '/test/');
-    const platform = TestBed.inject(PlatformLocation);
+    const locationStrategy = TestBed.inject(LocationStrategy);
 
-    spyOn(platform, 'getBaseHrefFromDOM').and.returnValue('/test');
+    spyOn(locationStrategy, 'getBaseHref').and.returnValue('/test');
 
     // When
     provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {

@@ -1,4 +1,4 @@
-import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
+import { APP_BASE_HREF, LocationStrategy } from '@angular/common';
 import { inject, InjectionToken } from '@angular/core';
 import { NavigationEnd } from '@angular/router';
 import { Observable, of } from 'rxjs';
@@ -11,7 +11,7 @@ export const MATOMO_PAGE_URL_PROVIDER = new InjectionToken<PageUrlProvider>(
       new DefaultPageUrlProvider(
         inject(INTERNAL_ROUTER_CONFIGURATION),
         inject(APP_BASE_HREF, { optional: true }),
-        inject(PlatformLocation),
+        inject(LocationStrategy),
       ),
   },
 );
@@ -28,7 +28,7 @@ export class DefaultPageUrlProvider implements PageUrlProvider {
   constructor(
     private readonly config: InternalRouterConfiguration,
     private readonly baseHref: string | null,
-    private readonly platformLocation: PlatformLocation,
+    private readonly locationStrategy: LocationStrategy,
   ) {}
 
   getCurrentPageUrl(event: NavigationEnd): Observable<string> {
@@ -40,6 +40,6 @@ export class DefaultPageUrlProvider implements PageUrlProvider {
   }
 
   private getBaseHrefWithoutTrailingSlash(): string {
-    return trimTrailingSlash(this.baseHref ?? this.platformLocation.getBaseHrefFromDOM());
+    return trimTrailingSlash(this.baseHref ?? this.locationStrategy.getBaseHref());
   }
 }
