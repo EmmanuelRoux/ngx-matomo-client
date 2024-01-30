@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v6.0.1...v6.0.2) (2024-01-30)
+
+
+### Bug Fixes
+
+* **router:** retrieve Base Href from `LocationStrategy` and correctly handle nulls ([73e8442](https://github.com/EmmanuelRoux/ngx-matomo/commit/73e84424688cb17970a5c4404ae3b96eef0db4a9)), closes [#82](https://github.com/EmmanuelRoux/ngx-matomo/issues/82)
+
 ## [6.0.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v6.0.0...v6.0.1) (2024-01-15)
 
 
