@@ -40,6 +40,6 @@ export class DefaultPageUrlProvider implements PageUrlProvider {
   }
 
   private getBaseHrefWithoutTrailingSlash(): string {
-    return trimTrailingSlash(this.baseHref ?? this.locationStrategy.getBaseHref());
+    return trimTrailingSlash(this.baseHref ?? this.locationStrategy.getBaseHref() ?? '');
   }
 }

@@ -89,4 +89,24 @@ describe('PageUrlProvider', () => {
       expect(url).toEqual('/my-page');
     });
   });
+
+  it('should return page url when base href is null', () => {
+    // Given
+    const provider = instantiate(
+      {
+        /* prependBaseHref: true */
+      },
+      null,
+    );
+    const locationStrategy = TestBed.inject(LocationStrategy);
+
+    // @ts-expect-error Bug in angular in which sometimes a null value is returned despite typing
+    spyOn(locationStrategy, 'getBaseHref').and.returnValue(null);
+
+    // When
+    provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
+      // Then
+      expect(url).toEqual('/my-page');
+    });
+  });
 });
