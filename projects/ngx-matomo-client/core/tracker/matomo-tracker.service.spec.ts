@@ -1,44 +1,48 @@
-import { NgZone } from '@angular/core';
-import { MatomoHolder } from '../holder';
+import { TestBed } from '@angular/core/testing';
 import { Getters, Methods } from '../utils/types';
-import { InternalMatomoConfiguration } from './configuration';
-import {
-  createMatomoTracker,
-  MatomoECommerceItem,
-  MatomoInstance,
-  MatomoTracker,
-} from './matomo-tracker.service';
-
-declare let window: MatomoHolder;
-
-// Extracted from https://github.com/angular/angular/blob/b66e479cdb1e474a29ff676f10a5fcc3d7eae799/packages/common/src/platform_id.ts
-const PLATFORM_BROWSER_ID = 'browser';
-const PLATFORM_SERVER_ID = 'server';
+import { InternalMatomoTracker } from './internal-matomo-tracker.service';
+import { MatomoInstance, MatomoTracker } from './matomo-tracker.service';
 
 describe('MatomoTracker', () => {
-  function createMockZone(): jasmine.SpyObj<NgZone> {
-    return jasmine.createSpyObj<NgZone>(['runOutsideAngular']);
-  }
-
-  function createTracker(
-    config: Partial<InternalMatomoConfiguration> = { disabled: false },
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    platform: Object = PLATFORM_BROWSER_ID,
-    ngZone: NgZone = createMockZone(),
-  ): MatomoTracker {
-    return createMatomoTracker(config as InternalMatomoConfiguration, platform, ngZone);
-  }
+  let delegate: jasmine.SpyObj<InternalMatomoTracker<MatomoInstance>>;
+  let tracker: MatomoTracker;
 
   beforeEach(() => {
-    window._paq = [];
+    delegate = jasmine.createSpyObj<InternalMatomoTracker<MatomoInstance>>([
+      'get',
+      'push',
+      'pushFn',
+    ]);
+
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: InternalMatomoTracker,
+          useValue: delegate,
+        },
+      ],
+    });
+
+    tracker = TestBed.inject(MatomoTracker);
   });
 
   function expectPush(when: (tracker: MatomoTracker) => void, expected: unknown[][]): () => void {
     return () => {
       // When
-      when(createTracker());
+      when(tracker);
       // Then
-      expect(window._paq).toEqual(expected);
+      const allArgs = delegate.push.calls.allArgs();
+
+      expect(allArgs.length).toEqual(expected.length);
+
+      for (let callIndex = 0; callIndex < allArgs.length; callIndex++) {
+        const callArgs = allArgs[callIndex];
+        expect(callArgs).toHaveSize(1);
+
+        for (let argIndex = 0; argIndex < callArgs[0].length; argIndex++) {
+          expect(callArgs[0][argIndex]).toEqual(expected[callIndex][argIndex]);
+        }
+      }
     };
   }
 
@@ -48,6 +52,20 @@ describe('MatomoTracker', () => {
     expectedArgs: unknown[] = args,
   ): () => void {
     return expectPush(t => (t[method] as any)(...args), [[method, ...expectedArgs]]);
+  }
+
+  function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>, E extends T = T>(
+    getter: G,
+    expected: E,
+  ): Promise<void> {
+    // Given
+    delegate.get.and.returnValue(Promise.resolve(expected) as Promise<any>);
+
+    // When
+    return (tracker[getter]() as Promise<any>).then(url => {
+      // Then
+      expect(url).toEqual(expected);
+    });
   }
 
   it('should track page view', expectSimpleMethod('trackPageView', []));
@@ -137,15 +155,7 @@ describe('MatomoTracker', () => {
   );
 
   it('should get cross domain linking url parameter', done => {
-    expectGetter(
-      'getCrossDomainLinkingUrlParameter',
-      {
-        getCrossDomainLinkingUrlParameter(): string {
-          return 'foo=bar';
-        },
-      },
-      'foo=bar',
-    ).then(done);
+    expectGetter('getCrossDomainLinkingUrlParameter', 'foo=bar').then(done);
   });
 
   it('should set document title', expectSimpleMethod('setDocumentTitle', ['test']));
@@ -197,15 +207,7 @@ describe('MatomoTracker', () => {
   );
 
   it('should get performance timings', done => {
-    expectGetter(
-      'getCustomPagePerformanceTiming',
-      {
-        getCustomPagePerformanceTiming(): string {
-          return 'test';
-        },
-      },
-      'test',
-    ).then(done);
+    expectGetter('getCustomPagePerformanceTiming', 'test').then(done);
   });
 
   it('should append to tracking url', expectSimpleMethod('appendToTrackingUrl', ['?toAppend']));
@@ -225,15 +227,7 @@ describe('MatomoTracker', () => {
   it('should set page view id', expectSimpleMethod('setPageViewId', ['my-id']));
 
   it('should get page view id', done => {
-    expectGetter(
-      'getPageViewId',
-      {
-        getPageViewId(): string {
-          return 'fake-id';
-        },
-      },
-      'fake-id',
-    ).then(done);
+    expectGetter('getPageViewId', 'fake-id').then(done);
   });
 
   it(
@@ -311,15 +305,9 @@ describe('MatomoTracker', () => {
   it('should clear ecommerce cart', expectSimpleMethod('clearEcommerceCart', []));
 
   it('should get ecommerce items', done => {
-    expectGetter<unknown[], 'getEcommerceItems'>(
-      'getEcommerceItems',
-      {
-        getEcommerceItems(): MatomoECommerceItem[] {
-          return [{ productSKU: 'test' }];
-        },
-      },
-      [{ productSKU: 'test' }],
-    ).then(done);
+    expectGetter<unknown[], 'getEcommerceItems'>('getEcommerceItems', [
+      { productSKU: 'test' },
+    ]).then(done);
   });
 
   it('should track ecommerce cart update', expectSimpleMethod('trackEcommerceCartUpdate', [999]));
@@ -335,39 +323,15 @@ describe('MatomoTracker', () => {
   it('should forget consent given', expectSimpleMethod('forgetConsentGiven', []));
 
   it('should return whether has remembered consent', done => {
-    expectGetter(
-      'hasRememberedConsent',
-      {
-        hasRememberedConsent(): boolean {
-          return true;
-        },
-      },
-      true,
-    ).then(done);
+    expectGetter('hasRememberedConsent', true).then(done);
   });
 
   it('should return remembered consent', done => {
-    expectGetter(
-      'getRememberedConsent',
-      {
-        getRememberedConsent(): string | number {
-          return 99999;
-        },
-      },
-      99999,
-    ).then(done);
+    expectGetter('getRememberedConsent', 99999).then(done);
   });
 
   it('should return whether consent is required', done => {
-    expectGetter(
-      'isConsentRequired',
-      {
-        isConsentRequired(): boolean {
-          return true;
-        },
-      },
-      true,
-    ).then(done);
+    expectGetter('isConsentRequired', true).then(done);
   });
 
   it('should require cookie consent', expectSimpleMethod('requireCookieConsent', []));
@@ -379,43 +343,17 @@ describe('MatomoTracker', () => {
   it('should forget cookie consent given', expectSimpleMethod('forgetCookieConsentGiven', []));
 
   it('should return remembered cookie consent', done => {
-    expectGetter(
-      'getRememberedCookieConsent',
-      {
-        getRememberedCookieConsent() {
-          return 42;
-        },
-      },
-      42,
-    ).then(done);
+    expectGetter('getRememberedCookieConsent', 42).then(done);
   });
 
-  it('should return whether cookies are enabled', done => {
-    expectGetter(
-      'areCookiesEnabled',
-      {
-        areCookiesEnabled(): boolean {
-          return true;
-        },
-      },
-      true,
-    ).then(done);
-  });
+  it('should return whether cookies are enabled', () => expectGetter('areCookiesEnabled', true));
 
   it('should opt user out', expectSimpleMethod('optUserOut', []));
 
   it('should forget user opt out', expectSimpleMethod('forgetUserOptOut', []));
 
   it('should return whether user opted out', done => {
-    expectGetter(
-      'isUserOptedOut',
-      {
-        isUserOptedOut(): boolean {
-          return true;
-        },
-      },
-      true,
-    ).then(done);
+    expectGetter('isUserOptedOut', true).then(done);
   });
 
   it('should disable cookies', expectSimpleMethod('disableCookies', []));
@@ -485,249 +423,91 @@ describe('MatomoTracker', () => {
     ),
   );
 
-  function expectGetter<T, G extends Getters<MatomoTracker, Promise<T>>, E extends T = T>(
-    getter: G,
-    mockInstance: Partial<MatomoInstance>,
-    expected: E,
-  ): Promise<void> {
-    // Given
-    const tracker = createTracker();
-
-    spyOn(window._paq, 'push').and.callFake(((...args: any[]) => {
-      args[0][0].call(mockInstance);
-    }) as any);
-
-    // When
-    return (tracker[getter]() as Promise<any>).then(url => {
-      // Then
-      expect(url).toEqual(expected);
-    });
-  }
-
   it('should get Matomo url', done => {
-    expectGetter(
-      'getMatomoUrl',
-      {
-        getMatomoUrl(): string {
-          return 'http://fakeUrl';
-        },
-      },
-      'http://fakeUrl',
-    ).then(done);
+    expectGetter('getMatomoUrl', 'http://fakeUrl').then(done);
   });
 
   it('should get Matomo url (deprecated)', done => {
-    expectGetter(
-      'getPiwikUrl',
-      {
-        getPiwikUrl(): string {
-          return 'http://fakeUrl';
-        },
-      },
-      'http://fakeUrl',
-    ).then(done);
+    expectGetter('getPiwikUrl', 'http://fakeUrl').then(done);
   });
 
   it('should get current url', done => {
-    expectGetter(
-      'getCurrentUrl',
-      {
-        getCurrentUrl(): string {
-          return 'http://fakeUrl';
-        },
-      },
-      'http://fakeUrl',
-    ).then(done);
+    expectGetter('getCurrentUrl', 'http://fakeUrl').then(done);
   });
 
   it('should get link tracking timer', done => {
-    expectGetter(
-      'getLinkTrackingTimer',
-      {
-        getLinkTrackingTimer(): number {
-          return 42;
-        },
-      },
-      42,
-    ).then(done);
+    expectGetter('getLinkTrackingTimer', 42).then(done);
   });
 
   it('should get visitor id', done => {
-    expectGetter(
-      'getVisitorId',
-      {
-        getVisitorId(): string {
-          return 'foo';
-        },
-      },
-      'foo',
-    ).then(done);
+    expectGetter('getVisitorId', 'foo').then(done);
   });
 
   it('should get visitor info', done => {
-    expectGetter(
-      'getVisitorInfo',
-      {
-        getVisitorInfo(): unknown[] {
-          return ['foo'];
-        },
-      },
-      ['foo'] as unknown[],
-    ).then(done);
+    expectGetter('getVisitorInfo', ['foo'] as unknown[]).then(done);
   });
 
   it('should get attribution info', done => {
-    expectGetter(
-      'getAttributionInfo',
-      {
-        getAttributionInfo(): string[] {
-          return ['foo'];
-        },
-      },
-      ['foo'],
-    ).then(done);
+    expectGetter('getAttributionInfo', ['foo']).then(done);
   });
 
   it('should get attribution campaign name', done => {
-    expectGetter(
-      'getAttributionCampaignName',
-      {
-        getAttributionCampaignName(): string {
-          return 'test';
-        },
-      },
-      'test',
-    ).then(done);
+    expectGetter('getAttributionCampaignName', 'test').then(done);
   });
 
   it('should get attribution campaign keyword', done => {
-    expectGetter(
-      'getAttributionCampaignKeyword',
-      {
-        getAttributionCampaignKeyword(): string {
-          return 'test';
-        },
-      },
-      'test',
-    ).then(done);
+    expectGetter('getAttributionCampaignKeyword', 'test').then(done);
   });
 
   it('should get attribution referrer timestamp', done => {
-    expectGetter(
-      'getAttributionReferrerTimestamp',
-      {
-        getAttributionReferrerTimestamp(): string {
-          return 'test';
-        },
-      },
-      'test',
-    ).then(done);
+    expectGetter('getAttributionReferrerTimestamp', 'test').then(done);
   });
 
   it('should get attribution referrer url', done => {
-    expectGetter(
-      'getAttributionReferrerUrl',
-      {
-        getAttributionReferrerUrl(): string {
-          return 'test';
-        },
-      },
-      'test',
-    ).then(done);
+    expectGetter('getAttributionReferrerUrl', 'test').then(done);
   });
 
   it('should get user id', done => {
-    expectGetter(
-      'getUserId',
-      {
-        getUserId(): string {
-          return 'test';
-        },
-      },
-      'test',
-    ).then(done);
+    expectGetter('getUserId', 'test').then(done);
   });
 
   it('should get has cookies', done => {
-    expectGetter(
-      'hasCookies',
-      {
-        hasCookies(): boolean {
-          return true;
-        },
-      },
-      true,
-    ).then(done);
+    expectGetter('hasCookies', true).then(done);
   });
 
-  it('should get custom variable', done => {
+  it('should get custom variable', async () => {
     // Given
-    const tracker = createTracker();
     const mockInstance = {
       getCustomVariable(...args: any[]): string {
         return args.join('|');
       },
     } as Partial<MatomoInstance> as MatomoInstance;
 
-    spyOn(window._paq, 'push').and.callFake(((...args: any[]) => {
-      args[0][0].call(mockInstance);
-    }) as any);
+    delegate.pushFn.and.callFake(fn => Promise.resolve(fn(mockInstance)));
 
     // When
-    tracker
-      .getCustomVariable(0, 'page')
-      .then(url => {
-        // Then
-        expect(url).toEqual('0|page');
-      })
-      .then(done);
+    const result = await tracker.getCustomVariable(0, 'page');
+
+    expect(result).toEqual('0|page');
   });
 
-  it('should get custom variable', done => {
+  it('should get custom dimension', async () => {
     // Given
-    const tracker = createTracker();
     const mockInstance = {
       getCustomDimension(...args: any[]): string {
         return 'dim-' + args.join('|');
       },
     } as Partial<MatomoInstance> as MatomoInstance;
 
-    spyOn(window._paq, 'push').and.callFake(((...args: any[]) => {
-      args[0][0].call(mockInstance);
-    }) as any);
+    delegate.pushFn.and.callFake(fn => Promise.resolve(fn(mockInstance)));
 
     // When
-    tracker
-      .getCustomDimension(42)
-      .then(url => {
-        // Then
-        expect(url).toEqual('dim-42');
-      })
-      .then(done);
+    const result = await tracker.getCustomDimension(42);
+
+    expect(result).toEqual('dim-42');
   });
 
-  it('should get excluded referrers', done => {
-    // Given
-    const tracker = createTracker();
-    const mockInstance = {
-      getExcludedReferrers(..._: any[]): string[] {
-        return ['referrer1'];
-      },
-    } as Partial<MatomoInstance> as MatomoInstance;
-
-    spyOn(window._paq, 'push').and.callFake(((...args: any[]) => {
-      args[0][0].call(mockInstance);
-    }) as any);
-
-    // When
-    tracker
-      .getExcludedReferrers()
-      .then(excludedReferrers => {
-        // Then
-        expect(excludedReferrers).toEqual(['referrer1']);
-      })
-      .then(done);
-  });
+  it('should get excluded referrers', () => expectGetter('getExcludedReferrers', ['referrer1']));
 
   it(
     'should disable browser feature detection',
@@ -740,71 +520,4 @@ describe('MatomoTracker', () => {
   );
 
   it('should disable campaign parameters', expectSimpleMethod('disableCampaignParameters', []));
-
-  it('should ignore calls when disabled', () => {
-    // Given
-    const tracker = createTracker({ disabled: true });
-    (window as any)._paq = undefined;
-
-    // Then
-    expect(() => tracker.trackPageView()).not.toThrow();
-    expect(window._paq).toBeUndefined();
-  });
-
-  it('should reject all promises when disabled', done => {
-    // Given
-    const tracker = createTracker({ disabled: true });
-
-    // Then
-    tracker
-      .getCustomDimension(0)
-      .then(() => fail('rejected promise expected'))
-      .catch(() => {
-        expect().nothing();
-        done();
-      });
-  });
-
-  it('should ignore calls when platform is not browser', () => {
-    // Given
-    const tracker = createTracker({ disabled: false }, PLATFORM_SERVER_ID);
-    (window as any)._paq = undefined;
-
-    // Then
-    expect(() => tracker.trackPageView()).not.toThrow();
-    expect(window._paq).toBeUndefined();
-  });
-
-  it('should reject all promises when platform is not browser', done => {
-    // Given
-    const tracker = createTracker({ disabled: false }, PLATFORM_SERVER_ID);
-
-    // Then
-    tracker
-      .getCustomDimension(0)
-      .then(() => fail('rejected promise expected'))
-      .catch(() => {
-        expect().nothing();
-        done();
-      });
-  });
-
-  it('should run commands outside Angular Zone', () => {
-    // Given
-    const zone = createMockZone();
-    const tracker = createTracker({ runOutsideAngularZone: true }, PLATFORM_BROWSER_ID, zone);
-    let runOutside = false;
-
-    zone.runOutsideAngular.and.callFake(fn => {
-      runOutside = true;
-      return fn();
-    });
-
-    // When
-    tracker.ping();
-
-    // Then
-    expect(runOutside).toBeTrue();
-    expect(window._paq).toEqual([['ping']]);
-  });
 });

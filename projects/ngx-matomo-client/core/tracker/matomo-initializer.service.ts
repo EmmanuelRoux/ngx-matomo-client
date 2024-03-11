@@ -1,8 +1,10 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { EnvironmentInjector, inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { initializeMatomoHolder } from '../holder';
-import { requireNonNull } from '../utils/coercion';
 import { runOnce } from '../utils/function';
+import { ScriptInjector } from '../utils/script-injector';
+import { PublicInterface } from '../utils/types';
+import { appendTrailingSlash } from '../utils/url';
 import {
   AutoMatomoConfiguration,
   DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
@@ -17,14 +19,9 @@ import {
 } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoTracker } from './matomo-tracker.service';
-import { MATOMO_SCRIPT_FACTORY } from './script-factory';
 
 function coerceSiteId(siteId: number | string): string {
   return `${siteId}`;
-}
-
-function appendTrailingSlash(str: string): string {
-  return str.endsWith('/') ? str : `${str}/`;
 }
 
 function buildTrackerUrl(url: string, suffix: string | undefined): string {
@@ -37,19 +34,19 @@ function buildTrackerUrl(url: string, suffix: string | undefined): string {
 const DEFAULT_TRACKER_SUFFIX = 'matomo.php';
 const DEFAULT_SCRIPT_SUFFIX = 'matomo.js';
 
-export function createMatomoInitializer(): MatomoInitializerService {
+export function createMatomoInitializer(): PublicInterface<MatomoInitializerService> {
   const disabled = inject(INTERNAL_MATOMO_CONFIGURATION).disabled;
   const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  return disabled || !isBrowser
-    ? (new NoopMatomoInitializer() as MatomoInitializerService)
-    : new MatomoInitializerService();
+  return disabled || !isBrowser ? new NoopMatomoInitializer() : new MatomoInitializerService();
 }
 
-export class NoopMatomoInitializer
-  implements Pick<MatomoInitializerService, 'initialize' | 'initializeTracker'>
-{
+export class NoopMatomoInitializer implements PublicInterface<MatomoInitializerService> {
   initialize(): void {
+    // No-op
+  }
+
+  init(): void {
     // No-op
   }
 
@@ -66,15 +63,14 @@ export class MatomoInitializerService {
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
   private readonly deferredConfig = inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION);
   private readonly tracker = inject(MatomoTracker);
-  private readonly scriptFactory = inject(MATOMO_SCRIPT_FACTORY);
-  private readonly injector = inject(EnvironmentInjector);
-  private readonly document = inject(DOCUMENT);
+  private readonly scriptInjector = inject(ScriptInjector);
 
   constructor() {
     initializeMatomoHolder();
   }
 
-  /** @deprecated use {@link initialize initialize()} instead */
+  // TODO v7 remove
+  /** @deprecated Will be removed in v7+. Use {@link initialize initialize()} instead. */
   init(): void {
     this.initialize();
   }
@@ -105,7 +101,7 @@ export class MatomoInitializerService {
 
         this.registerMainTracker(mainTracker);
         this.registerAdditionalTrackers(additionalTrackers);
-        this.injectDOMScript(scriptUrl);
+        this.scriptInjector.injectDOMScript(scriptUrl);
       } else if (isEmbeddedTrackerConfiguration(config)) {
         const { scriptUrl, trackers: additionalTrackers } = {
           trackers: [],
@@ -113,7 +109,7 @@ export class MatomoInitializerService {
         };
 
         this.registerAdditionalTrackers(additionalTrackers);
-        this.injectDOMScript(scriptUrl);
+        this.scriptInjector.injectDOMScript(scriptUrl);
       }
 
       this.deferredConfig.markReady(config);
@@ -136,21 +132,6 @@ export class MatomoInitializerService {
 
       this.tracker.addTracker(additionalTrackerUrl, additionalTrackerSiteId);
     });
-  }
-
-  private injectDOMScript(scriptUrl: string): void {
-    // From ng v16, runInContext is deprecated in favor of runInInjectionContext
-    // In a future version, it will probably be necessary to do this (breaking) change
-    const scriptElement = this.injector.runInContext(() =>
-      this.scriptFactory(scriptUrl, this.document),
-    );
-    const selfScript = requireNonNull(
-      this.document.getElementsByTagName('script')[0],
-      'no existing script found',
-    );
-    const parent = requireNonNull(selfScript.parentNode, "no script's parent node found");
-
-    parent.insertBefore(scriptElement, selfScript);
   }
 
   private runPreInitTasks(): void {

@@ -18,3 +18,11 @@ export type RequireAtLeastOne<T> = {
 
 export type NonEmptyArray<T> = [T, ...T[]];
 export type NonEmptyReadonlyArray<T> = Readonly<NonEmptyArray<T>>;
+
+export type PublicInterface<T> = { [K in keyof T]: T[K] };
+
+export type Prefixed<S, PREFIX extends string> = S extends string ? `${PREFIX}${S}` : never;
+
+export type PrefixedType<MATOMO, PREFIX extends string> = {
+  [K in keyof MATOMO as Prefixed<K, PREFIX>]: MATOMO[K];
+};
