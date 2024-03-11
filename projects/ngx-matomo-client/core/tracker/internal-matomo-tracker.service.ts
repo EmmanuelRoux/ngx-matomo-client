@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { initializeMatomoHolder, MatomoHolder } from '../holder';
-import { Getters, PrefixedType } from '../utils/types';
+import { Getters, NonEmptyArray, PrefixedType } from '../utils/types';
 import { INTERNAL_MATOMO_CONFIGURATION } from './configuration';
 
 declare var window: MatomoHolder;
@@ -59,7 +59,7 @@ export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
     });
   }
 
-  push(args: unknown[]): void {
+  push(args: NonEmptyArray<unknown>): void {
     if (this.config.runOutsideAngularZone) {
       this.ngZone.runOutsideAngular(() => {
         window._paq.push(trimTrailingUndefinedElements(args));

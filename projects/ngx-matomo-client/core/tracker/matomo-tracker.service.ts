@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { NonEmptyReadonlyArray, RequireAtLeastOne } from '../utils/types';
 import { InternalMatomoTracker } from './internal-matomo-tracker.service';
@@ -107,6 +107,10 @@ export class MatomoTracker {
   private readonly _pageViewTracked = new Subject<void>();
 
   readonly pageViewTracked = this._pageViewTracked.asObservable();
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this._pageViewTracked.complete());
+  }
 
   /**
    * Logs a visit to this page.

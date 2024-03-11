@@ -65,6 +65,8 @@ easily migrate.**
   * [Tracking events](#tracking-events)
   * [Managing user consent: opt-in/opt-out for tracking & cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
   * [Low-level API](#low-level-api)
+- [Plugins](#plugins)
+  * [Form analytics](#form-analytics)
 - [Migration from `@ngx-matomo/tracker` and `@ngx-matomo/router` (version <= 4)](#migration-from-ngx-matomotracker-and-ngx-matomorouter-version--4)
 - [Configuration reference](#configuration-reference)
 - [FAQ](#faq)
@@ -633,6 +635,112 @@ export class ExampleComponent {
 Please note that some features (such as `setEcommerceView`) must be called **before**
 `trackPageView`! You may want to take a look
 at [how to use interceptors](#adding-info-or-customizing-automatic-page-view-tracking).
+
+## Plugins
+
+### Form analytics
+
+**Form Analytics support is currently experimental. [Please report any bugs](https://github.com/EmmanuelRoux/ngx-matomo-client/issues), and pull requests are highly appreciated!**
+
+#### Configuration
+
+Form analytics plugin is supported out-of-the-box. Just add `withFormAnalytics()` feature or `MatomoFormAnalyticsModule`
+to your application's root:
+
+<table>
+<tr>
+<th>Classic apps</th>
+<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
+</tr>
+<tr>
+<td valign="top">
+
+<!-- prettier-ignore -->
+```ts
+import {
+  MatomoFormAnalyticsModule
+} from 'ngx-matomo-client/form-analytics';
+
+@NgModule({
+  imports: [
+    NgxMatomoModule.forRoot({
+      // Your configuration
+    }),
+    MatomoFormAnalyticsModule,
+  ],
+})
+export class AppModule {}
+```
+
+</td>
+<td valign="top">
+
+<!-- prettier-ignore -->
+```ts
+import {
+  withFormAnalytics
+} from 'ngx-matomo-client/form-analytics';
+
+@NgModule({
+  providers: [
+    provideMatomo(
+      {}, // Your base configuration
+      withFormAnalytics() // Add this feature
+    ),
+  ],
+})
+export class AppModule {}
+```
+
+</td>
+</tr>
+</table>
+
+#### Usage
+
+Matomo client will automatically scan for forms in your pages after each page tracking.
+
+If some forms are dynamically added in your components on another timing, you can use `matomoTrackForm` or
+`matomoTrackForms` directives to track them:
+
+```html
+<!-- Adding matomoTrackForm directive will ensure the form is always tracked -->
+<form id="myForm" matomoTrackForm></form>
+```
+
+If the content of your form is dynamic, and you want to correctly track inner form controls, you will have to rescan the
+form after changes:
+
+```html
+<form id="myForm" matomoTrackForm>
+  <!-- Either add matomoTrackFormField directive to ensure the form is tracked -->
+  <input *ngIf="condition" matomoTrackFormField />
+
+  <!-- Or manually call .track() on the form -->
+  <button type="button" (click)="addControl(matomoTracker)"></button>
+</form>
+```
+
+If a _container_ is dynamically toggled, you can track multiple descendant forms at once by using `matomoTrackForms` (note the final _s_) on the container:
+
+```html
+<div *ngIf="showFormsCondition" matomoTrackForms>
+  <form id="myForm1">...</form>
+  <form id="myForm2">...</form>
+</div>
+```
+
+To automatically track a form submit when an element is clicked (for example a non-submit button), add `matomoTrackFormSubmit` on the button:
+
+```html
+<form id="myForm" matomoTrackForm>
+  <button type="button" matomoTrackFormSubmit>Non-native submit</button>
+</form>
+```
+
+You can also inject `MatomoFormAnalytics` and use low-level api directly.
+
+See official guide at https://developer.matomo.org/guides/form-analytics.
 
 ## Migration from `@ngx-matomo/tracker` and `@ngx-matomo/router` (version <= 4)
 
