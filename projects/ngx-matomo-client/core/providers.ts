@@ -10,28 +10,30 @@ import { MatomoInitializerService } from './tracker/matomo-initializer.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
 
 const PRIVATE_MATOMO_PROVIDERS = Symbol('MATOMO_PROVIDERS');
+const PRIVATE_MATOMO_CHECKS = Symbol('MATOMO_CHECKS');
+
+export type MatomoFeatureKind = unknown;
 
 /**
  * Additional Matomo features kind
  */
-export const enum MatomoFeatureKind {
+export const enum CoreMatomoFeatureKind {
   /** @see withScriptFactory */
-  ScriptFactory,
-  /** @see withRouter */
-  Router,
-  /** @see withRouterInterceptors */
-  RouterInterceptors,
-  /** @see withRouteData */
-  BuiltInRouteDataInterceptor,
+  ScriptFactory = 'ScriptFactory',
 }
 
 export interface MatomoFeature {
   readonly kind: MatomoFeatureKind;
   [PRIVATE_MATOMO_PROVIDERS]: Provider[];
+  [PRIVATE_MATOMO_CHECKS]?: (features: MatomoFeatureKind[]) => void;
 }
 
-export function createMatomoFeature(kind: MatomoFeatureKind, providers: Provider[]): MatomoFeature {
-  return { kind, [PRIVATE_MATOMO_PROVIDERS]: providers };
+export function createMatomoFeature(
+  kind: MatomoFeatureKind,
+  providers: Provider[],
+  checks?: (features: MatomoFeatureKind[]) => void,
+): MatomoFeature {
+  return { kind, [PRIVATE_MATOMO_PROVIDERS]: providers, [PRIVATE_MATOMO_CHECKS]: checks };
 }
 
 /**
@@ -99,17 +101,8 @@ export function provideMatomo(
     featuresKind.push(feature.kind);
   }
 
-  const routerFeatures = [
-    [MatomoFeatureKind.RouterInterceptors, 'withRouterInterceptors()'],
-    [MatomoFeatureKind.BuiltInRouteDataInterceptor, 'withRouteData()'],
-  ] as const;
-
-  for (const [feature, providerName] of routerFeatures) {
-    if (featuresKind.includes(feature) && !featuresKind.includes(MatomoFeatureKind.Router)) {
-      throw new Error(
-        `Matomo feature ${providerName} cannot be used without router feature! Did you forget to call withRouter()?`,
-      );
-    }
+  for (const feature of features) {
+    feature[PRIVATE_MATOMO_CHECKS]?.(featuresKind);
   }
 
   return makeEnvironmentProviders(providers);
@@ -117,7 +110,7 @@ export function provideMatomo(
 
 /** Add a custom script factory to use for Matomo's script element */
 export function withScriptFactory(scriptFactory: MatomoScriptFactory): MatomoFeature {
-  return createMatomoFeature(MatomoFeatureKind.ScriptFactory, [
+  return createMatomoFeature(CoreMatomoFeatureKind.ScriptFactory, [
     { provide: MATOMO_SCRIPT_FACTORY, useValue: scriptFactory },
   ]);
 }

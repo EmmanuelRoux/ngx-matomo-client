@@ -1,20 +1,7 @@
-import { isPlatformBrowser } from '@angular/common';
-import { Injectable, NgZone, PLATFORM_ID } from '@angular/core';
-import { initializeMatomoHolder, MatomoHolder } from '../holder';
-import { Getters, NonEmptyReadonlyArray, RequireAtLeastOne } from '../utils/types';
-import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from './configuration';
-
-declare let window: MatomoHolder;
-
-function trimTrailingUndefinedElements<T>(array: T[]): T[] {
-  const trimmed = [...array];
-
-  while (trimmed.length > 0 && trimmed[trimmed.length - 1] === undefined) {
-    trimmed.pop();
-  }
-
-  return trimmed;
-}
+import { inject, Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { NonEmptyReadonlyArray, RequireAtLeastOne } from '../utils/types';
+import { InternalMatomoTracker } from './internal-matomo-tracker.service';
 
 export interface MatomoECommerceItem {
   productSKU: string;
@@ -111,30 +98,24 @@ export interface MatomoInstance {
   getExcludedReferrers(): string[];
 }
 
-export function createMatomoTracker(
-  config: InternalMatomoConfiguration,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  platformId: Object,
-  ngZone: NgZone,
-): MatomoTracker {
-  return config.disabled || !isPlatformBrowser(platformId)
-    ? new NoopMatomoTracker()
-    : new StandardMatomoTracker(ngZone, config);
-}
-
 @Injectable({
   providedIn: 'root',
-  useFactory: createMatomoTracker,
-  deps: [INTERNAL_MATOMO_CONFIGURATION, PLATFORM_ID, NgZone],
 })
-export abstract class MatomoTracker {
+export class MatomoTracker {
+  private readonly delegate: InternalMatomoTracker<MatomoInstance> = inject(InternalMatomoTracker);
+
+  private readonly _pageViewTracked = new Subject<void>();
+
+  readonly pageViewTracked = this._pageViewTracked.asObservable();
+
   /**
    * Logs a visit to this page.
    *
    * @param [customTitle] Optional title of the visited page.
    */
   trackPageView(customTitle?: string): void {
-    this.push(['trackPageView', customTitle]);
+    this.delegate.push(['trackPageView', customTitle]);
+    this._pageViewTracked.next();
   }
 
   /**
@@ -147,7 +128,7 @@ export abstract class MatomoTracker {
    * @param [value] Optional value for the event.
    */
   trackEvent(category: string, action: string, name?: string, value?: number): void {
-    this.push(['trackEvent', category, action, name, value]);
+    this.delegate.push(['trackEvent', category, action, name, value]);
   }
 
   /**
@@ -159,7 +140,7 @@ export abstract class MatomoTracker {
    * @param [resultsCount] Optional number of results returned by the search query.
    */
   trackSiteSearch(keyword: string, category?: string, resultsCount?: number): void {
-    this.push(['trackSiteSearch', keyword, category, resultsCount]);
+    this.delegate.push(['trackSiteSearch', keyword, category, resultsCount]);
   }
 
   /**
@@ -169,7 +150,7 @@ export abstract class MatomoTracker {
    * @param [customRevenue] Optional custom revenue to log for the goal.
    */
   trackGoal(idGoal: number, customRevenue?: number): void {
-    this.push(['trackGoal', idGoal, customRevenue]);
+    this.delegate.push(['trackGoal', idGoal, customRevenue]);
   }
 
   /**
@@ -179,7 +160,7 @@ export abstract class MatomoTracker {
    * @param linkType Either 'link' for an outlink or 'download' for a download.
    */
   trackLink(url: string, linkType: 'link' | 'download'): void {
-    this.push(['trackLink', url, linkType]);
+    this.delegate.push(['trackLink', url, linkType]);
   }
 
   /**
@@ -187,7 +168,7 @@ export abstract class MatomoTracker {
    *
    */
   trackAllContentImpressions(): void {
-    this.push(['trackAllContentImpressions']);
+    this.delegate.push(['trackAllContentImpressions']);
   }
 
   /**
@@ -198,7 +179,7 @@ export abstract class MatomoTracker {
    * @param timeInterval Duration, in milliseconds, between two checks upon scroll.
    */
   trackVisibleContentImpressions(checkOnScroll: boolean, timeInterval: number): void {
-    this.push(['trackVisibleContentImpressions', checkOnScroll, timeInterval]);
+    this.delegate.push(['trackVisibleContentImpressions', checkOnScroll, timeInterval]);
   }
 
   /**
@@ -208,7 +189,7 @@ export abstract class MatomoTracker {
    * @param node DOM node in which to look for content blocks which have not been previously tracked.
    */
   trackContentImpressionsWithinNode(node: Node): void {
-    this.push(['trackContentImpressionsWithinNode', node]);
+    this.delegate.push(['trackContentImpressionsWithinNode', node]);
   }
 
   /**
@@ -218,7 +199,7 @@ export abstract class MatomoTracker {
    * @param contentInteraction Name of the content interaction.
    */
   trackContentInteractionNode(node: Node, contentInteraction: string): void {
-    this.push(['trackContentInteractionNode', node, contentInteraction]);
+    this.delegate.push(['trackContentInteractionNode', node, contentInteraction]);
   }
 
   /**
@@ -229,7 +210,7 @@ export abstract class MatomoTracker {
    * @param contentTarget Content target.
    */
   trackContentImpression(contentName: string, contentPiece: string, contentTarget: string): void {
-    this.push(['trackContentImpression', contentName, contentPiece, contentTarget]);
+    this.delegate.push(['trackContentImpression', contentName, contentPiece, contentTarget]);
   }
 
   /**
@@ -246,7 +227,7 @@ export abstract class MatomoTracker {
     contentPiece: string,
     contentTarget: string,
   ): void {
-    this.push([
+    this.delegate.push([
       'trackContentInteraction',
       contentInteraction,
       contentName,
@@ -259,7 +240,7 @@ export abstract class MatomoTracker {
    * Logs all found content blocks within a page to the console. This is useful to debug / test content tracking.
    */
   logAllContentBlocksOnPage(): void {
-    this.push(['logAllContentBlocksOnPage']);
+    this.delegate.push(['logAllContentBlocksOnPage']);
   }
 
   /**
@@ -273,7 +254,7 @@ export abstract class MatomoTracker {
    * @see enableHeartBeatTimer
    */
   ping(): void {
-    this.push(['ping']);
+    this.delegate.push(['ping']);
   }
 
   /**
@@ -285,7 +266,7 @@ export abstract class MatomoTracker {
    * @param delay Delay, in seconds, between two heart beats to the server.
    */
   enableHeartBeatTimer(delay: number): void {
-    this.push(['enableHeartBeatTimer', delay]);
+    this.delegate.push(['enableHeartBeatTimer', delay]);
   }
 
   /**
@@ -298,12 +279,12 @@ export abstract class MatomoTracker {
    * If "false" (default), nothing will be tracked on open context menu or middle click.
    */
   enableLinkTracking(usePseudoClickHandler = false): void {
-    this.push(['enableLinkTracking', usePseudoClickHandler]);
+    this.delegate.push(['enableLinkTracking', usePseudoClickHandler]);
   }
 
   /** Disables page performance tracking */
   disablePerformanceTracking(): void {
-    this.push(['disablePerformanceTracking']);
+    this.delegate.push(['disablePerformanceTracking']);
   }
 
   /**
@@ -317,7 +298,7 @@ export abstract class MatomoTracker {
    *
    */
   enableCrossDomainLinking(): void {
-    this.push(['enableCrossDomainLinking']);
+    this.delegate.push(['enableCrossDomainLinking']);
   }
 
   /**
@@ -327,7 +308,7 @@ export abstract class MatomoTracker {
    * @param timeout Timeout, in seconds, between two actions across two domains before creating a new visit.
    */
   setCrossDomainLinkingTimeout(timeout: number): void {
-    this.push(['setCrossDomainLinkingTimeout', timeout]);
+    this.delegate.push(['setCrossDomainLinkingTimeout', timeout]);
   }
 
   /**
@@ -336,7 +317,7 @@ export abstract class MatomoTracker {
    * Use this to add cross domain support for links that are added to the DOM dynamically
    */
   getCrossDomainLinkingUrlParameter(): Promise<string> {
-    return this.get('getCrossDomainLinkingUrlParameter');
+    return this.delegate.get('getCrossDomainLinkingUrlParameter');
   }
 
   /**
@@ -345,7 +326,7 @@ export abstract class MatomoTracker {
    * @param title Title of the document.
    */
   setDocumentTitle(title: string): void {
-    this.push(['setDocumentTitle', title]);
+    this.delegate.push(['setDocumentTitle', title]);
   }
 
   /**
@@ -356,7 +337,7 @@ export abstract class MatomoTracker {
    * @param domains List of hostnames or domains, with or without path, to be treated as local.
    */
   setDomains(domains: string[]): void {
-    this.push(['setDomains', domains]);
+    this.delegate.push(['setDomains', domains]);
   }
 
   /**
@@ -365,7 +346,7 @@ export abstract class MatomoTracker {
    * @param url URL to be reported for the page.
    */
   setCustomUrl(url: string): void {
-    this.push(['setCustomUrl', url]);
+    this.delegate.push(['setCustomUrl', url]);
   }
 
   /**
@@ -374,7 +355,7 @@ export abstract class MatomoTracker {
    * @param url URL to be reported for the referer.
    */
   setReferrerUrl(url: string): void {
-    this.push(['setReferrerUrl', url]);
+    this.delegate.push(['setReferrerUrl', url]);
   }
 
   /**
@@ -384,7 +365,7 @@ export abstract class MatomoTracker {
    * @param siteId Site ID for the tracker.
    */
   setSiteId(siteId: number | string): void {
-    this.push(['setSiteId', siteId]);
+    this.delegate.push(['setSiteId', siteId]);
   }
 
   /**
@@ -396,7 +377,7 @@ export abstract class MatomoTracker {
    * @param url URL for Matomo HTTP API endpoint.
    */
   setApiUrl(url: string): void {
-    this.push(['setApiUrl', url]);
+    this.delegate.push(['setApiUrl', url]);
   }
 
   /**
@@ -406,7 +387,7 @@ export abstract class MatomoTracker {
    * @param url URL for the Matomo server.
    */
   setTrackerUrl(url: string): void {
-    this.push(['setTrackerUrl', url]);
+    this.delegate.push(['setTrackerUrl', url]);
   }
 
   /**
@@ -417,7 +398,7 @@ export abstract class MatomoTracker {
    * @param siteId Site ID for the tracker
    */
   addTracker(url: string, siteId: number | string): void {
-    this.push(['addTracker', url, siteId]);
+    this.delegate.push(['addTracker', url, siteId]);
   }
 
   /**
@@ -426,12 +407,12 @@ export abstract class MatomoTracker {
    * @returns Promise for the Matomo server URL.
    */
   getMatomoUrl(): Promise<string> {
-    return this.get('getMatomoUrl');
+    return this.delegate.get('getMatomoUrl');
   }
 
   /** @deprecated use `getMatomoUrl` instead */
   getPiwikUrl(): Promise<string> {
-    return this.get('getPiwikUrl');
+    return this.delegate.get('getPiwikUrl');
   }
 
   /**
@@ -441,7 +422,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the URL of the current page.
    */
   getCurrentUrl(): Promise<string> {
-    return this.get('getCurrentUrl');
+    return this.delegate.get('getCurrentUrl');
   }
 
   /**
@@ -450,7 +431,7 @@ export abstract class MatomoTracker {
    * @param classes Class, or list of classes to be treated as downloads.
    */
   setDownloadClasses(classes: string | string[]): void {
-    this.push(['setDownloadClasses', classes]);
+    this.delegate.push(['setDownloadClasses', classes]);
   }
 
   /**
@@ -460,7 +441,7 @@ export abstract class MatomoTracker {
    * @param extensions Extension, or list of extensions to be recognized as downloads.
    */
   setDownloadExtensions(extensions: string | string[]): void {
-    this.push(['setDownloadExtensions', extensions]);
+    this.delegate.push(['setDownloadExtensions', extensions]);
   }
 
   /**
@@ -470,7 +451,7 @@ export abstract class MatomoTracker {
    * @param extensions Extension, or list of extensions to be recognized as downloads.
    */
   addDownloadExtensions(extensions: string | string[]): void {
-    this.push(['addDownloadExtensions', extensions]);
+    this.delegate.push(['addDownloadExtensions', extensions]);
   }
 
   /**
@@ -480,7 +461,7 @@ export abstract class MatomoTracker {
    * @param extensions Extension, or list of extensions not to be recognized as downloads.
    */
   removeDownloadExtensions(extensions: string | string[]): void {
-    this.push(['removeDownloadExtensions', extensions]);
+    this.delegate.push(['removeDownloadExtensions', extensions]);
   }
 
   /**
@@ -489,7 +470,7 @@ export abstract class MatomoTracker {
    * @param classes Class, or list of classes to be ignored if present in link.
    */
   setIgnoreClasses(classes: string | string[]): void {
-    this.push(['setIgnoreClasses', classes]);
+    this.delegate.push(['setIgnoreClasses', classes]);
   }
 
   /**
@@ -498,7 +479,7 @@ export abstract class MatomoTracker {
    * @param classes Class, or list of classes to be treated as outlinks.
    */
   setLinkClasses(classes: string | string[]): void {
-    this.push(['setLinkClasses', classes]);
+    this.delegate.push(['setLinkClasses', classes]);
   }
 
   /**
@@ -507,7 +488,7 @@ export abstract class MatomoTracker {
    * @param delay Delay, in milliseconds, for link tracking.
    */
   setLinkTrackingTimer(delay: number): void {
-    this.push(['setLinkTrackingTimer', delay]);
+    this.delegate.push(['setLinkTrackingTimer', delay]);
   }
 
   /**
@@ -516,7 +497,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the delay in milliseconds.
    */
   getLinkTrackingTimer(): Promise<number> {
-    return this.get('getLinkTrackingTimer');
+    return this.delegate.get('getLinkTrackingTimer');
   }
 
   /**
@@ -525,7 +506,7 @@ export abstract class MatomoTracker {
    * @param value If true, the hash tag portion of the URLs won't be recorded.
    */
   discardHashTag(value: boolean): void {
-    this.push(['discardHashTag', value]);
+    this.delegate.push(['discardHashTag', value]);
   }
 
   /**
@@ -537,7 +518,7 @@ export abstract class MatomoTracker {
    * @param generationTime Time, in milliseconds, of the page generation.
    */
   setGenerationTimeMs(generationTime: number): void {
-    this.push(['setGenerationTimeMs', generationTime]);
+    this.delegate.push(['setGenerationTimeMs', generationTime]);
   }
 
   /**
@@ -588,7 +569,7 @@ export abstract class MatomoTracker {
       networkTimeInMs = networkTimeInMsOrTimings;
     }
 
-    this.push([
+    this.delegate.push([
       'setPagePerformanceTiming',
       networkTimeInMs,
       serverTimeInMs,
@@ -600,7 +581,7 @@ export abstract class MatomoTracker {
   }
 
   getCustomPagePerformanceTiming(): Promise<string> {
-    return this.get('getCustomPagePerformanceTiming');
+    return this.delegate.get('getCustomPagePerformanceTiming');
   }
 
   /**
@@ -609,19 +590,19 @@ export abstract class MatomoTracker {
    * @param appendToUrl String to append to the end of the HTTP request to matomo.php.
    */
   appendToTrackingUrl(appendToUrl: string): void {
-    this.push(['appendToTrackingUrl', appendToUrl]);
+    this.delegate.push(['appendToTrackingUrl', appendToUrl]);
   }
 
   /** Set to `true` to not track users who opt out of tracking using <i>Do Not Track</i> setting */
   setDoNotTrack(doNotTrack: boolean): void {
-    this.push(['setDoNotTrack', doNotTrack]);
+    this.delegate.push(['setDoNotTrack', doNotTrack]);
   }
 
   /**
    * Enables a frame-buster to prevent the tracked web page from being framed/iframed.
    */
   killFrame(): void {
-    this.push(['killFrame']);
+    this.delegate.push(['killFrame']);
   }
 
   /**
@@ -631,7 +612,7 @@ export abstract class MatomoTracker {
    * @param url URL to track instead of file:// URLs.
    */
   redirectFile(url: string): void {
-    this.push(['redirectFile', url]);
+    this.delegate.push(['redirectFile', url]);
   }
 
   /**
@@ -642,7 +623,7 @@ export abstract class MatomoTracker {
    * @param heartBeatDelay Delay, in seconds, between two updates to the server.
    */
   setHeartBeatTimer(minimumVisitLength: number, heartBeatDelay: number): void {
-    this.push(['setHeartBeatTimer', minimumVisitLength, heartBeatDelay]);
+    this.delegate.push(['setHeartBeatTimer', minimumVisitLength, heartBeatDelay]);
   }
 
   /**
@@ -651,7 +632,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the the 16 characters ID for the visitor.
    */
   getVisitorId(): Promise<string> {
-    return this.get('getVisitorId');
+    return this.delegate.get('getVisitorId');
   }
 
   /**
@@ -663,7 +644,7 @@ export abstract class MatomoTracker {
    * @param visitorId a 16 digit hex string
    */
   setVisitorId(visitorId: string): void {
-    this.push(['setVisitorId', visitorId]);
+    this.delegate.push(['setVisitorId', visitorId]);
   }
 
   /**
@@ -674,7 +655,7 @@ export abstract class MatomoTracker {
    * TODO better return type
    */
   getVisitorInfo(): Promise<unknown[]> {
-    return this.get('getVisitorInfo');
+    return this.delegate.get('getVisitorInfo');
   }
 
   /**
@@ -685,7 +666,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the visitor attribution array (Referer information and/or Campaign name & keyword).
    */
   getAttributionInfo(): Promise<string[]> {
-    return this.get('getAttributionInfo');
+    return this.delegate.get('getAttributionInfo');
   }
 
   /**
@@ -694,7 +675,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the the attribution campaign name.
    */
   getAttributionCampaignName(): Promise<string> {
-    return this.get('getAttributionCampaignName');
+    return this.delegate.get('getAttributionCampaignName');
   }
 
   /**
@@ -703,7 +684,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the attribution campaign keyword.
    */
   getAttributionCampaignKeyword(): Promise<string> {
-    return this.get('getAttributionCampaignKeyword');
+    return this.delegate.get('getAttributionCampaignKeyword');
   }
 
   /**
@@ -712,7 +693,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the attribution referrer timestamp (as string).
    */
   getAttributionReferrerTimestamp(): Promise<string> {
-    return this.get('getAttributionReferrerTimestamp');
+    return this.delegate.get('getAttributionReferrerTimestamp');
   }
 
   /**
@@ -721,7 +702,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the attribution referrer URL
    */
   getAttributionReferrerUrl(): Promise<string> {
-    return this.get('getAttributionReferrerUrl');
+    return this.delegate.get('getAttributionReferrerUrl');
   }
 
   /**
@@ -730,7 +711,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the User ID for the visitor.
    */
   getUserId(): Promise<string> {
-    return this.get('getUserId');
+    return this.delegate.get('getUserId');
   }
 
   /**
@@ -739,7 +720,7 @@ export abstract class MatomoTracker {
    * @param userId User ID to set for the current visitor.
    */
   setUserId(userId: string): void {
-    this.push(['setUserId', userId]);
+    this.delegate.push(['setUserId', userId]);
   }
 
   /**
@@ -747,7 +728,7 @@ export abstract class MatomoTracker {
    *
    */
   resetUserId(): void {
-    this.push(['resetUserId']);
+    this.delegate.push(['resetUserId']);
   }
 
   /**
@@ -758,14 +739,14 @@ export abstract class MatomoTracker {
    * @param pageView
    */
   setPageViewId(pageView: string): void {
-    this.push(['setPageViewId', pageView]);
+    this.delegate.push(['setPageViewId', pageView]);
   }
 
   /**
    * Returns the PageView id. If not set manually using setPageViewId, this method will return the dynamic PageView id, used in the last tracked page view, or undefined if no page view was tracked yet
    */
   getPageViewId(): Promise<string> {
-    return this.get('getPageViewId');
+    return this.delegate.get('getPageViewId');
   }
 
   /**
@@ -784,7 +765,7 @@ export abstract class MatomoTracker {
     value: string,
     scope: 'page' | 'visit' | 'event',
   ): void {
-    this.push(['setCustomVariable', index, name, value, scope]);
+    this.delegate.push(['setCustomVariable', index, name, value, scope]);
   }
 
   /**
@@ -794,7 +775,7 @@ export abstract class MatomoTracker {
    * @param scope Scope of the custom variable to delete.
    */
   deleteCustomVariable(index: number, scope: 'page' | 'visit' | 'event'): void {
-    this.push(['deleteCustomVariable', index, scope]);
+    this.delegate.push(['deleteCustomVariable', index, scope]);
   }
 
   /**
@@ -803,7 +784,7 @@ export abstract class MatomoTracker {
    * @param scope Scope of the custom variables to delete.
    */
   deleteCustomVariables(scope: 'page' | 'visit' | 'event'): void {
-    this.push(['deleteCustomVariables', scope]);
+    this.delegate.push(['deleteCustomVariables', scope]);
   }
 
   /**
@@ -814,7 +795,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the value of custom variable.
    */
   getCustomVariable(index: number, scope: 'page' | 'visit' | 'event'): Promise<string> {
-    return this.pushFn(matomo => matomo.getCustomVariable(index, scope));
+    return this.delegate.pushFn(matomo => matomo.getCustomVariable(index, scope));
   }
 
   /**
@@ -825,7 +806,7 @@ export abstract class MatomoTracker {
    *
    */
   storeCustomVariablesInCookie(): void {
-    this.push(['storeCustomVariablesInCookie']);
+    this.delegate.push(['storeCustomVariablesInCookie']);
   }
 
   /**
@@ -836,7 +817,7 @@ export abstract class MatomoTracker {
    * @param customDimensionValue Value to be set.
    */
   setCustomDimension(customDimensionId: number, customDimensionValue: string): void {
-    this.push(['setCustomDimension', customDimensionId, customDimensionValue]);
+    this.delegate.push(['setCustomDimension', customDimensionId, customDimensionValue]);
   }
 
   /**
@@ -846,7 +827,7 @@ export abstract class MatomoTracker {
    * @param customDimensionId ID of the custom dimension to delete.
    */
   deleteCustomDimension(customDimensionId: number): void {
-    this.push(['deleteCustomDimension', customDimensionId]);
+    this.delegate.push(['deleteCustomDimension', customDimensionId]);
   }
 
   /**
@@ -857,7 +838,7 @@ export abstract class MatomoTracker {
    * @return Promise for the value for the requested custom dimension.
    */
   getCustomDimension(customDimensionId: number): Promise<string> {
-    return this.pushFn(matomo => matomo.getCustomDimension(customDimensionId));
+    return this.delegate.pushFn(matomo => matomo.getCustomDimension(customDimensionId));
   }
 
   /**
@@ -866,7 +847,7 @@ export abstract class MatomoTracker {
    * @param name Name of the campaign
    */
   setCampaignNameKey(name: string): void {
-    this.push(['setCampaignNameKey', name]);
+    this.delegate.push(['setCampaignNameKey', name]);
   }
 
   /**
@@ -875,7 +856,7 @@ export abstract class MatomoTracker {
    * @param keyword Keyword parameter(s) of the campaign.
    */
   setCampaignKeywordKey(keyword: string): void {
-    this.push(['setCampaignKeywordKey', keyword]);
+    this.delegate.push(['setCampaignKeywordKey', keyword]);
   }
 
   /**
@@ -886,7 +867,7 @@ export abstract class MatomoTracker {
    * instead of the last one.
    */
   setConversionAttributionFirstReferrer(conversionToFirstReferrer: boolean): void {
-    this.push(['setConversionAttributionFirstReferrer', conversionToFirstReferrer]);
+    this.delegate.push(['setConversionAttributionFirstReferrer', conversionToFirstReferrer]);
   }
 
   /**
@@ -933,9 +914,9 @@ export abstract class MatomoTracker {
     price?: number,
   ): void {
     if (isECommerceCategoryView(productOrSKU)) {
-      this.push(['setEcommerceView', false, false, productOrSKU.productCategory]);
+      this.delegate.push(['setEcommerceView', false, false, productOrSKU.productCategory]);
     } else if (isECommerceItemView(productOrSKU)) {
-      this.push([
+      this.delegate.push([
         'setEcommerceView',
         productOrSKU.productSKU,
         productOrSKU.productName,
@@ -943,7 +924,7 @@ export abstract class MatomoTracker {
         productOrSKU.price,
       ]);
     } else {
-      this.push(['setEcommerceView', productOrSKU, productName, productCategory, price]);
+      this.delegate.push(['setEcommerceView', productOrSKU, productName, productCategory, price]);
     }
   }
 
@@ -979,9 +960,16 @@ export abstract class MatomoTracker {
     quantity?: number,
   ): void {
     if (typeof productOrSKU === 'string') {
-      this.push(['addEcommerceItem', productOrSKU, productName, productCategory, price, quantity]);
+      this.delegate.push([
+        'addEcommerceItem',
+        productOrSKU,
+        productName,
+        productCategory,
+        price,
+        quantity,
+      ]);
     } else {
-      this.push([
+      this.delegate.push([
         'addEcommerceItem',
         productOrSKU.productSKU,
         productOrSKU.productName,
@@ -998,7 +986,7 @@ export abstract class MatomoTracker {
    * @param productSKU SKU of the product to remove.
    */
   removeEcommerceItem(productSKU: string): void {
-    this.push(['removeEcommerceItem', productSKU]);
+    this.delegate.push(['removeEcommerceItem', productSKU]);
   }
 
   /**
@@ -1007,7 +995,7 @@ export abstract class MatomoTracker {
    * Note: This is done automatically after {@link #trackEcommerceOrder trackEcommerceOrder()} is called
    */
   clearEcommerceCart(): void {
-    this.push(['clearEcommerceCart']);
+    this.delegate.push(['clearEcommerceCart']);
   }
 
   /**
@@ -1019,7 +1007,7 @@ export abstract class MatomoTracker {
    * Use this method to see what will be tracked before you track an order or cart update.
    */
   getEcommerceItems(): Promise<MatomoECommerceItem[]> {
-    return this.get('getEcommerceItems');
+    return this.delegate.get('getEcommerceItems');
   }
 
   /**
@@ -1029,7 +1017,7 @@ export abstract class MatomoTracker {
    * @param grandTotal Grand total of the shopping cart.
    */
   trackEcommerceCartUpdate(grandTotal: number): void {
-    this.push(['trackEcommerceCartUpdate', grandTotal]);
+    this.delegate.push(['trackEcommerceCartUpdate', grandTotal]);
   }
 
   /**
@@ -1051,7 +1039,15 @@ export abstract class MatomoTracker {
     shipping?: number,
     discount?: number,
   ): void {
-    this.push(['trackEcommerceOrder', orderId, grandTotal, subTotal, tax, shipping, discount]);
+    this.delegate.push([
+      'trackEcommerceOrder',
+      orderId,
+      grandTotal,
+      subTotal,
+      tax,
+      shipping,
+      discount,
+    ]);
   }
 
   /**
@@ -1062,7 +1058,7 @@ export abstract class MatomoTracker {
    * @see `requireConsent` module configuration property
    */
   requireConsent(): void {
-    this.push(['requireConsent']);
+    this.delegate.push(['requireConsent']);
   }
 
   /**
@@ -1072,7 +1068,7 @@ export abstract class MatomoTracker {
    * To remember consent, see {@link rememberConsentGiven}.
    */
   setConsentGiven(): void {
-    this.push(['setConsentGiven']);
+    this.delegate.push(['setConsentGiven']);
   }
 
   /**
@@ -1085,7 +1081,7 @@ export abstract class MatomoTracker {
    *                          for 30 years unless cookies are deleted by the user or the browser prior to this
    */
   rememberConsentGiven(hoursToExpire?: number): void {
-    this.push(['rememberConsentGiven', hoursToExpire]);
+    this.delegate.push(['rememberConsentGiven', hoursToExpire]);
   }
 
   /**
@@ -1094,12 +1090,12 @@ export abstract class MatomoTracker {
    * After calling this method, the user will have to consent again in order to be tracked.
    */
   forgetConsentGiven(): void {
-    this.push(['forgetConsentGiven']);
+    this.delegate.push(['forgetConsentGiven']);
   }
 
   /** Return whether the current visitor has given consent previously or not */
   hasRememberedConsent(): Promise<boolean> {
-    return this.get('hasRememberedConsent');
+    return this.delegate.get('hasRememberedConsent');
   }
 
   /**
@@ -1109,12 +1105,12 @@ export abstract class MatomoTracker {
    * The timestamp is the local timestamp which depends on the visitors time.
    */
   getRememberedConsent(): Promise<string | number> {
-    return this.get('getRememberedConsent');
+    return this.delegate.get('getRememberedConsent');
   }
 
   /** Return whether {@link requireConsent} was called previously */
   isConsentRequired(): Promise<boolean> {
-    return this.get('isConsentRequired');
+    return this.delegate.get('isConsentRequired');
   }
 
   /**
@@ -1123,7 +1119,7 @@ export abstract class MatomoTracker {
    * By default the Matomo tracker assumes consent to using cookies
    */
   requireCookieConsent(): void {
-    this.push(['requireCookieConsent']);
+    this.delegate.push(['requireCookieConsent']);
   }
 
   /**
@@ -1133,7 +1129,7 @@ export abstract class MatomoTracker {
    * To remember cookie consent, see {@link rememberCookieConsentGiven}.
    */
   setCookieConsentGiven(): void {
-    this.push(['setCookieConsentGiven']);
+    this.delegate.push(['setCookieConsentGiven']);
   }
 
   /**
@@ -1146,7 +1142,7 @@ export abstract class MatomoTracker {
    *                          for 30 years unless cookies are deleted by the user or the browser prior to this
    */
   rememberCookieConsentGiven(hoursToExpire?: number): void {
-    this.push(['rememberCookieConsentGiven', hoursToExpire]);
+    this.delegate.push(['rememberCookieConsentGiven', hoursToExpire]);
   }
 
   /**
@@ -1155,26 +1151,26 @@ export abstract class MatomoTracker {
    * After calling this method, the user will have to consent again in order for cookies to be used.
    */
   forgetCookieConsentGiven(): void {
-    this.push(['forgetCookieConsentGiven']);
+    this.delegate.push(['forgetCookieConsentGiven']);
   }
 
   getRememberedCookieConsent(): Promise<number | string> {
-    return this.get('getRememberedCookieConsent');
+    return this.delegate.get('getRememberedCookieConsent');
   }
 
   /** Return whether cookies are currently enabled or disabled */
   areCookiesEnabled(): Promise<boolean> {
-    return this.get('areCookiesEnabled');
+    return this.delegate.get('areCookiesEnabled');
   }
 
   /** After calling this function, the user will be opted out and no longer be tracked */
   optUserOut(): void {
-    this.push(['optUserOut']);
+    this.delegate.push(['optUserOut']);
   }
 
   /** After calling this method the user will be tracked again */
   forgetUserOptOut(): void {
-    this.push(['forgetUserOptOut']);
+    this.delegate.push(['forgetUserOptOut']);
   }
 
   /**
@@ -1183,7 +1179,7 @@ export abstract class MatomoTracker {
    * Note: This method might not return the correct value if you are using the opt out iframe.
    */
   isUserOptedOut(): Promise<boolean> {
-    return this.get('isUserOptedOut');
+    return this.delegate.get('isUserOptedOut');
   }
 
   /**
@@ -1191,14 +1187,14 @@ export abstract class MatomoTracker {
    * Existing Matomo cookies for this websites will be deleted on the next page view.
    */
   disableCookies(): void {
-    this.push(['disableCookies']);
+    this.delegate.push(['disableCookies']);
   }
 
   /**
    * Deletes the tracking cookies currently set (useful when creating new visits).
    */
   deleteCookies(): void {
-    this.push(['deleteCookies']);
+    this.delegate.push(['deleteCookies']);
   }
 
   /**
@@ -1207,7 +1203,7 @@ export abstract class MatomoTracker {
    * @returns Promise for the support and activation of cookies.
    */
   hasCookies(): Promise<boolean> {
-    return this.get('hasCookies');
+    return this.delegate.get('hasCookies');
   }
 
   /**
@@ -1217,7 +1213,7 @@ export abstract class MatomoTracker {
    * @param prefix Prefix for the tracking cookie names.
    */
   setCookieNamePrefix(prefix: string): void {
-    this.push(['setCookieNamePrefix', prefix]);
+    this.delegate.push(['setCookieNamePrefix', prefix]);
   }
 
   /**
@@ -1228,7 +1224,7 @@ export abstract class MatomoTracker {
    * @param domain Domain of the tracking cookies.
    */
   setCookieDomain(domain: string): void {
-    this.push(['setCookieDomain', domain]);
+    this.delegate.push(['setCookieDomain', domain]);
   }
 
   /**
@@ -1238,7 +1234,7 @@ export abstract class MatomoTracker {
    * @param path Path of the tracking cookies.
    */
   setCookiePath(path: string): void {
-    this.push(['setCookiePath', path]);
+    this.delegate.push(['setCookiePath', path]);
   }
 
   /**
@@ -1249,7 +1245,7 @@ export abstract class MatomoTracker {
    * @param secure If true, the secure cookie flag will be set on all first party cookies.
    */
   setSecureCookie(secure: boolean): void {
-    this.push(['setSecureCookie', secure]);
+    this.delegate.push(['setSecureCookie', secure]);
   }
 
   /**
@@ -1262,7 +1258,7 @@ export abstract class MatomoTracker {
    * Strict only works if your Matomo and the website runs on the very same domain.
    */
   setCookieSameSite(sameSite: 'Strict' | 'Lax' | 'None'): void {
-    this.push(['setCookieSameSite', sameSite]);
+    this.delegate.push(['setCookieSameSite', sameSite]);
   }
 
   /**
@@ -1272,7 +1268,7 @@ export abstract class MatomoTracker {
    * @param timeout Timeout, in seconds, for the visitor cookie timeout.
    */
   setVisitorCookieTimeout(timeout: number): void {
-    this.push(['setVisitorCookieTimeout', timeout]);
+    this.delegate.push(['setVisitorCookieTimeout', timeout]);
   }
 
   /**
@@ -1282,7 +1278,7 @@ export abstract class MatomoTracker {
    * @param timeout Timeout, in seconds, for the referral cookie timeout.
    */
   setReferralCookieTimeout(timeout: number): void {
-    this.push(['setReferralCookieTimeout', timeout]);
+    this.delegate.push(['setReferralCookieTimeout', timeout]);
   }
 
   /**
@@ -1292,7 +1288,7 @@ export abstract class MatomoTracker {
    * @param timeout Timeout, in seconds, for the session cookie timeout.
    */
   setSessionCookieTimeout(timeout: number): void {
-    this.push(['setSessionCookieTimeout', timeout]);
+    this.delegate.push(['setSessionCookieTimeout', timeout]);
   }
 
   /**
@@ -1302,7 +1298,7 @@ export abstract class MatomoTracker {
    * @param element Element on which to add a click listener.
    */
   addListener(element: Element): void {
-    this.push(['addListener', element]);
+    this.delegate.push(['addListener', element]);
   }
 
   /**
@@ -1314,7 +1310,7 @@ export abstract class MatomoTracker {
    * @param method HTTP method for sending information to the Matomo server.
    */
   setRequestMethod(method: string): void {
-    this.push(['setRequestMethod', method]);
+    this.delegate.push(['setRequestMethod', method]);
   }
 
   /**
@@ -1324,7 +1320,7 @@ export abstract class MatomoTracker {
    * @param callback Function that will process the request content.
    */
   setCustomRequestProcessing(callback: (queryParameters: string) => void): void {
-    this.push(['setCustomRequestProcessing', callback]);
+    this.delegate.push(['setCustomRequestProcessing', callback]);
   }
 
   /**
@@ -1334,7 +1330,7 @@ export abstract class MatomoTracker {
    * @param contentType Value for Content-Type HTTP header.
    */
   setRequestContentType(contentType: string): void {
-    this.push(['setRequestContentType', contentType]);
+    this.delegate.push(['setRequestContentType', contentType]);
   }
 
   /**
@@ -1345,7 +1341,7 @@ export abstract class MatomoTracker {
    * Matomo logs (otherwise a subset of the requests wouldn't be able to be replayed).
    */
   disableQueueRequest(): void {
-    this.push(['disableQueueRequest']);
+    this.delegate.push(['disableQueueRequest']);
   }
 
   /**
@@ -1356,17 +1352,17 @@ export abstract class MatomoTracker {
    * @param interval Interval in milliseconds, must be at least 1000, defaults to 2500
    */
   setRequestQueueInterval(interval: number): void {
-    this.push(['setRequestQueueInterval', interval]);
+    this.delegate.push(['setRequestQueueInterval', interval]);
   }
 
   /** Disable sending tracking requests using `navigator.sendBeacon` which is enabled by default */
   disableAlwaysUseSendBeacon(): void {
-    this.push(['disableAlwaysUseSendBeacon']);
+    this.delegate.push(['disableAlwaysUseSendBeacon']);
   }
 
   /** Enable sending tracking requests using `navigator.sendBeacon` (enabled by default) */
   alwaysUseSendBeacon(): void {
-    this.push(['alwaysUseSendBeacon']);
+    this.delegate.push(['alwaysUseSendBeacon']);
   }
 
   /**
@@ -1376,14 +1372,14 @@ export abstract class MatomoTracker {
    * @see https://matomo.org/faq/how-to/how-do-i-enable-basic-javascript-error-tracking-and-reporting-in-matomo-browser-console-error-messages/
    */
   enableJSErrorTracking(): void {
-    this.push(['enableJSErrorTracking']);
+    this.delegate.push(['enableJSErrorTracking']);
   }
 
   /**
    * Enable tracking of file:// protocol actions. By default, the file:// protocol is not tracked.
    */
   enableFileTracking(): void {
-    this.push(['enableFileTracking']);
+    this.delegate.push(['enableFileTracking']);
   }
 
   /**
@@ -1397,14 +1393,14 @@ export abstract class MatomoTracker {
   setExcludedReferrers(...excludedReferrers: NonEmptyReadonlyArray<string | string[]>): void {
     const flattened = excludedReferrers.flat();
 
-    this.push(['setExcludedReferrers', flattened]);
+    this.delegate.push(['setExcludedReferrers', flattened]);
   }
 
   /**
    * Returns the list of excluded referrers, which was previously set using setExcludedReferrers
    */
   getExcludedReferrers(): Promise<string[]> {
-    return this.get('getExcludedReferrers');
+    return this.delegate.get('getExcludedReferrers');
   }
 
   /**
@@ -1419,12 +1415,12 @@ export abstract class MatomoTracker {
    * @see https://matomo.org/faq/how-do-i-disable-browser-feature-detection-completely/
    */
   disableBrowserFeatureDetection(): void {
-    this.push(['disableBrowserFeatureDetection']);
+    this.delegate.push(['disableBrowserFeatureDetection']);
   }
 
   /** Enable the browser feature detection if you previously disabled it */
   enableBrowserFeatureDetection(): void {
-    this.push(['enableBrowserFeatureDetection']);
+    this.delegate.push(['enableBrowserFeatureDetection']);
   }
 
   /**
@@ -1435,62 +1431,6 @@ export abstract class MatomoTracker {
    * <b>This method is available as of Matomo 5.1.</b>
    */
   disableCampaignParameters(): void {
-    this.push(['disableCampaignParameters']);
-  }
-
-  /** Asynchronously call provided method name on matomo tracker instance */
-  protected get<G extends Getters<MatomoInstance>>(
-    getter: G,
-  ): Promise<ReturnType<MatomoInstance[G]>> {
-    return this.pushFn(matomo => matomo[getter]() as ReturnType<MatomoInstance[G]>);
-  }
-
-  /**
-   * Asynchronously call provided method with matomo tracker instance as argument
-   *
-   * @return Promise resolving to the return value of given method
-   */
-  protected abstract pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T>;
-
-  protected abstract push(args: unknown[]): void;
-}
-
-export class StandardMatomoTracker extends MatomoTracker {
-  constructor(
-    private readonly ngZone: NgZone,
-    private readonly config: InternalMatomoConfiguration,
-  ) {
-    super();
-    initializeMatomoHolder();
-  }
-
-  protected pushFn<T>(fn: (matomo: MatomoInstance) => T): Promise<T> {
-    return new Promise(resolve => {
-      this.push([
-        function (this: MatomoInstance): void {
-          resolve(fn(this));
-        },
-      ]);
-    });
-  }
-
-  protected push(args: unknown[]): void {
-    if (this.config.runOutsideAngularZone) {
-      this.ngZone.runOutsideAngular(() => {
-        window._paq.push(trimTrailingUndefinedElements(args));
-      });
-    } else {
-      window._paq.push(trimTrailingUndefinedElements(args));
-    }
-  }
-}
-
-export class NoopMatomoTracker extends MatomoTracker {
-  protected push(_: unknown[]): void {
-    // No-op
-  }
-
-  protected pushFn<T>(_: (matomo: MatomoInstance) => T): Promise<T> {
-    return Promise.reject('MatomoTracker is disabled');
+    this.delegate.push(['disableCampaignParameters']);
   }
 }
