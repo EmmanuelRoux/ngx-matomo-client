@@ -18,6 +18,7 @@ export {
   MatomoECommerceItemView,
   MatomoECommerceCategoryView,
   PagePerformanceTimings,
+  MatomoInstance,
 } from './tracker/matomo-tracker.service';
 export { MatomoInitializerService } from './tracker/matomo-initializer.service';
 export {
