@@ -1,5 +1,5 @@
 <h1 align="center">
-  <div><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-small.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" /> ngx-matomo-client</div>
+  <div><img src="https://github.com/EmmanuelRoux/ngx-matomo-client/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-small.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" /> ngx-matomo-client</div>
   <div>Matomo Analytics client for Angular</div>
 </h1>
 
@@ -13,7 +13,7 @@
 
 <div align="center">
   <br>
- <div><img src="https://github.com/EmmanuelRoux/ngx-matomo/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-large.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" />
+ <div><img src="https://github.com/EmmanuelRoux/ngx-matomo-client/blob/ef38fdae3a5e5b1d1cdb1c9ba9d3a753117b7d80/logo-large.png" alt="matomo-logo" style="height: 24px; vertical-align: middle;" />
  </div>
   <i>
     Matomo is the Google Analytics alternative that protects your data and your customers' privacy.
@@ -39,18 +39,18 @@ easily migrate.**
 
 **Compatibility table:**
 
-| Matomo    | Angular | ngx-matomo-client                                                           | @ngx-matomo/tracker <br> @ngx-matomo/router                                                |
-| --------- | ------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| 3 or 4    | 9 to 12 |                                                                             | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/1.x/README.md))                |
-| 3 or 4    | 13      |                                                                             | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/2.x/README.md))                |
-| 3 or 4    | 14      |                                                                             | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/3.x/README.md))                |
-| 3 or 4    | 15      | 5.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/5.x/README.md)) | 4.0.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.0.x/README.md))            |
-| 3, 4 or 5 | 16      | 5.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/5.x/README.md)) | 4.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo/blob/4.x/README.md)) _(deprecated)_ |
-| 3, 4 or 5 | 17      | 6.x                                                                         |                                                                                            |
+| Matomo    | Angular | ngx-matomo-client                                                                  | @ngx-matomo/tracker <br> @ngx-matomo/router                                                       |
+| --------- | ------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| 3 or 4    | 9 to 12 |                                                                                    | 1.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo-client/blob/1.x/README.md))                |
+| 3 or 4    | 13      |                                                                                    | 2.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo-client/blob/2.x/README.md))                |
+| 3 or 4    | 14      |                                                                                    | 3.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo-client/blob/3.x/README.md))                |
+| 3 or 4    | 15      | 5.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo-client/blob/5.x/README.md)) | 4.0.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo-client/blob/4.0.x/README.md))            |
+| 3, 4 or 5 | 16      | 5.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo-client/blob/5.x/README.md)) | 4.x ([docs](https://github.com/EmmanuelRoux/ngx-matomo-client/blob/4.x/README.md)) _(deprecated)_ |
+| 3, 4 or 5 | 17      | 6.x                                                                                |                                                                                                   |
 
-[![build](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/main.yml)
-[![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo/actions/workflows/codeql-analysis.yml)
-[![Coverage Status](https://coveralls.io/repos/github/EmmanuelRoux/ngx-matomo/badge.svg?branch=main)](https://coveralls.io/github/EmmanuelRoux/ngx-matomo?branch=main)
+[![build](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml)
+[![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/codeql-analysis.yml)
+[![Coverage Status](https://coveralls.io/repos/github/EmmanuelRoux/ngx-matomo-client/badge.svg?branch=main)](https://coveralls.io/github/EmmanuelRoux/ngx-matomo-client?branch=main)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-limegreen.svg?logo=prettier)](https://github.com/prettier/prettier)
 
 <!-- prettier-ignore-start -->
@@ -903,7 +903,7 @@ All tracking instructions before `initializeTracker` will be queued and sent onl
 **Don't forget to call it!**
 
 If you need to asynchronously load more configuration properties, then
-consider [the solution described in this issue](https://github.com/EmmanuelRoux/ngx-matomo/issues/31) instead (which has
+consider [the solution described in this issue](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/31) instead (which has
 some drawbacks, such as delaying the application startup).
 
 _Side note: only the **trackers** configuration can be deferred, not all configuration properties.

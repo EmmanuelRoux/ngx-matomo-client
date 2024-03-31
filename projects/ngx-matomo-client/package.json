@@ -16,14 +16,14 @@
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/EmmanuelRoux/ngx-matomo.git",
+    "url": "https://github.com/EmmanuelRoux/ngx-matomo-client.git",
     "directory": "projects/tracker"
   },
   "bugs": {
-    "url": "https://github.com/EmmanuelRoux/ngx-matomo/issues"
+    "url": "https://github.com/EmmanuelRoux/ngx-matomo-client/issues"
   },
   "license": "MIT",
-  "homepage": "https://github.com/EmmanuelRoux/ngx-matomo#readme",
+  "homepage": "https://github.com/EmmanuelRoux/ngx-matomo-client#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
