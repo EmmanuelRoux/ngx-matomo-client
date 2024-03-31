@@ -75,6 +75,7 @@ easily migrate.**
   * [Can I use `ngx-matomo-client` with Server-side rendering (SSR) / Angular Universal?](#can-i-use-ngx-matomo-client-with-server-side-rendering-ssr--angular-universal)
   * [Can I use `ngx-matomo-client` with Tag Manager?](#can-i-use-ngx-matomo-client-with-tag-manager)
   * [How to define configuration asynchronously? (HTTP fetch...)](#how-to-define-configuration-asynchronously-http-fetch)
+  * [How can I test my components which uses `MatomoTracker` or other Matomo features?](#how-can-i-test-my-components-which-uses-matomotracker-or-other-matomo-features)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [Launch demo app](#launch-demo-app)
@@ -184,7 +185,8 @@ import {
     NgxMatomoRouterModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -205,7 +207,8 @@ import {
     ),
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -299,7 +302,8 @@ import {
     }),
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -323,7 +327,8 @@ import {
     ),
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -400,7 +405,8 @@ import {
     }),
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -426,7 +432,8 @@ import {
     ),
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -806,7 +813,8 @@ import {
     }
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -821,12 +829,13 @@ import {
 @NgModule({
   providers: [
     provideMatomo(
-      { ... }, // Configuration
+      {...}, // Configuration
       withScriptFactory(myScriptFactory),
     )
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 </td>
@@ -900,6 +909,12 @@ _Side note: only the **trackers** configuration can be deferred, not all configu
 This is required because some properties require to be set **before** any other action is tracked: for
 example, `requireConsent` must be set before any other tracking call and `trackAppInitialLoad` should be set before
 any navigation occurs._
+
+### How can I test my components which uses `MatomoTracker` or other Matomo features?
+
+Matomo can be easily mocked and tested by declaring either `provideMatomoTesting()` providers or `MatomoTestingModule` in `TestBed`.
+
+All these symbols can be imported from `ngx-matomo-client/testing`.
 
 ## Roadmap
 
