@@ -1,3 +1,10 @@
+# [6.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v6.0.2...v6.1.0) (2024-03-31)
+
+
+### Features
+
+* provide testing implementation ([ef5d358](https://github.com/EmmanuelRoux/ngx-matomo/commit/ef5d358d151a35b94769d781701ff61c313d6497))
+
 ## [6.0.2](https://github.com/EmmanuelRoux/ngx-matomo/compare/v6.0.1...v6.0.2) (2024-01-30)
 
 
