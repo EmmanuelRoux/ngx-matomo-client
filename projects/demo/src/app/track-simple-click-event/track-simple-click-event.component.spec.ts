@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatomoConfiguration, NgxMatomoTrackerModule } from 'ngx-matomo-client';
+import { MatomoConfiguration, MatomoModule } from 'ngx-matomo-client';
 import { TrackSimpleClickEventComponent } from './track-simple-click-event.component';
 
 describe('TrackSimpleClickEventComponent', () => {
@@ -10,7 +10,7 @@ describe('TrackSimpleClickEventComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        NgxMatomoTrackerModule.forRoot({
+        MatomoModule.forRoot({
           trackerUrl: '',
           siteId: '',
         } as MatomoConfiguration),

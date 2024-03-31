@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatomoConfiguration, NgxMatomoTrackerModule } from 'ngx-matomo-client';
+import { MatomoConfiguration, MatomoModule } from 'ngx-matomo-client';
 import { TrackEventTemplateComponent } from './track-event-template.component';
 
 describe('TrackEventTemplateComponent', () => {
@@ -10,7 +10,7 @@ describe('TrackEventTemplateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        NgxMatomoTrackerModule.forRoot({
+        MatomoModule.forRoot({
           trackerUrl: '',
           siteId: '',
         } as MatomoConfiguration),
