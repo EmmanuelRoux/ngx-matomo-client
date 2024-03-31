@@ -36,7 +36,7 @@ export class MatomoTestingInstance implements MatomoInstance {
     return '';
   }
 
-  getCustomDimension(customDimensionId: number): string {
+  getCustomDimension(_customDimensionId: number): string {
     return '';
   }
 
@@ -44,7 +44,7 @@ export class MatomoTestingInstance implements MatomoInstance {
     return '';
   }
 
-  getCustomVariable(index: number, scope: string): string {
+  getCustomVariable(_index: number, _scope: string): string {
     return '';
   }
 
