@@ -1,3 +1,10 @@
+## [6.1.1](https://github.com/EmmanuelRoux/ngx-matomo/compare/v6.1.0...v6.1.1) (2024-03-31)
+
+
+### Bug Fixes
+
+* **release:** fix publish problem with 6.1.0 release ([f9b9ba2](https://github.com/EmmanuelRoux/ngx-matomo/commit/f9b9ba2bea762ef1d180d0a5dbb7bfab7546d5dd))
+
 # [6.1.0](https://github.com/EmmanuelRoux/ngx-matomo/compare/v6.0.2...v6.1.0) (2024-03-31)
 
 
