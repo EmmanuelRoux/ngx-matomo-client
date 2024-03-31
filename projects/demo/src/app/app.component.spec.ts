@@ -1,11 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-  MatomoConfiguration,
-  NgxMatomoRouterModule,
-  NgxMatomoTrackerModule,
-} from 'ngx-matomo-client';
+import { MatomoConfiguration, MatomoRouterModule, MatomoModule } from 'ngx-matomo-client';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -13,11 +9,11 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        NgxMatomoTrackerModule.forRoot({
+        MatomoModule.forRoot({
           trackerUrl: '',
           siteId: '',
         } as MatomoConfiguration),
-        NgxMatomoRouterModule,
+        MatomoRouterModule,
       ],
       declarations: [AppComponent],
       schemas: [NO_ERRORS_SCHEMA],

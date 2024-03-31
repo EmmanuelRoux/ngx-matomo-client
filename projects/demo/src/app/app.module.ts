@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgxMatomoRouterModule, NgxMatomoTrackerModule } from 'ngx-matomo-client';
+import { MatomoRouterModule, MatomoModule } from 'ngx-matomo-client';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -31,11 +31,11 @@ import { TrackSimpleClickEventComponent } from './track-simple-click-event/track
     BrowserAnimationsModule,
     FormsModule,
     AppRoutingModule,
-    NgxMatomoTrackerModule.forRoot({
+    MatomoModule.forRoot({
       siteId: environment.matomoSiteId,
       trackerUrl: environment.matomoTrackerUrl,
     }),
-    NgxMatomoRouterModule.forRoot({
+    MatomoRouterModule.forRoot({
       exclude: /without-router$/,
     }),
     MatTabsModule,

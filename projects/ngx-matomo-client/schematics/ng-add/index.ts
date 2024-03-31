@@ -149,7 +149,7 @@ function hasLegacyModuleDeclaration(source: ts.SourceFile): boolean {
 
   return arrLiteral.elements
     .filter(el => el.kind === ts.SyntaxKind.CallExpression)
-    .some(el => (el as ts.Identifier).getText().startsWith('NgxMatomo'));
+    .some(el => (el as ts.Identifier).getText().startsWith('Matomo'));
 }
 
 function getImportEntryPoints(
@@ -188,8 +188,8 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
     // setup to new providers-style setup.
 
     const imports = findRelevantImports(source, isRelevantImportPath);
-    let mainModuleIdentifier = 'NgxMatomoModule';
-    let routerModuleIdentifier = 'NgxMatomoRouterModule';
+    let mainModuleIdentifier = 'MatomoModule';
+    let routerModuleIdentifier = 'MatomoRouterModule';
     let asteriskAlias: string | undefined;
     let mainModuleImported = false;
     let routerModuleImported = false;
@@ -209,11 +209,11 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
         asteriskAlias = bindings.name.text;
 
         if (!mainModuleImported) {
-          mainModuleIdentifier = `${asteriskAlias}.NgxMatomoModule`;
+          mainModuleIdentifier = `${asteriskAlias}.MatomoModule`;
         }
 
         if (!routerModuleImported) {
-          routerModuleIdentifier = `${asteriskAlias}.NgxMatomoRouterModule`;
+          routerModuleIdentifier = `${asteriskAlias}.MatomoRouterModule`;
         }
 
         mainModuleImported = true;
@@ -221,11 +221,13 @@ function addImportsToNgModule(options: Options, context: SchematicContext): Rule
       } else {
         for (const specifier of bindings.elements) {
           switch (specifier.name.text) {
+            case 'MatomoModule':
             case 'NgxMatomoModule':
             case 'NgxMatomoTrackerModule':
               mainModuleImported = true;
               mainModuleIdentifier = specifier.name.text;
               break;
+            case 'MatomoRouterModule':
             case 'NgxMatomoRouterModule':
               routerModuleImported = true;
               routerModuleIdentifier = specifier.name.text;
