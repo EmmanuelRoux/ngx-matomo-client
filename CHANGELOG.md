@@ -1,3 +1,10 @@
+## [6.1.2](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.1.1...v6.1.2) (2024-03-31)
+
+
+### Bug Fixes
+
+* fix GitHub redirection problem after renaming project ([13ed0f1](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/13ed0f176a0dc46c9c4a16ec1d6ce3dab92179a0))
+
 ## [6.1.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.1.0...v6.1.1) (2024-03-31)
 
 
