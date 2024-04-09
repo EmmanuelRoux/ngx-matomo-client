@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { MatomoInstance, MatomoTracker } from 'ngx-matomo-client/core';
 import { MatomoTestingInstance } from './matomo-testing-instance';
 
@@ -10,6 +11,7 @@ import { MatomoTestingInstance } from './matomo-testing-instance';
  * All <i>getter</i> methods will immediately resolve to an <i>empty value</i>.
  * This can be customized by setting a custom Matomo instance with {@link setMatomoInstance setMatomoInstance()}.
  */
+@Injectable()
 export class MatomoTestingTracker extends MatomoTracker {
   #fakeInstance: MatomoInstance = new MatomoTestingInstance();
   #paq: unknown[][] = [];
