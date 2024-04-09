@@ -1,3 +1,10 @@
+## [6.1.3](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.1.2...v6.1.3) (2024-04-09)
+
+
+### Bug Fixes
+
+* add `Injectable` decorator to `MatomoTestingTracker` ([#86](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/86)) ([5e651eb](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/5e651eb8d39f6f06aba1deb17d4962a44252675f)), closes [#85](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/85)
+
 ## [6.1.2](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.1.1...v6.1.2) (2024-03-31)
 
 
