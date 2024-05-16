@@ -892,7 +892,6 @@ to `AUTO_DEFERRED` and manually call `MatomoInitializerService.initializeTracker
         return () =>
           http.get('/my-config').pipe(tap(config => matomoInitializer.initializeTracker(config)));
       },
-      deps: [HttpClient],
       multi: true,
     },
   ],
