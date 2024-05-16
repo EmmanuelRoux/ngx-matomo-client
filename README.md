@@ -174,16 +174,16 @@ Enable automatic page view tracking by adding following configuration:
 <!-- prettier-ignore -->
 ```ts
 import {
-  NgxMatomoModule,
-  NgxMatomoRouterModule
+  MatomoModule,
+  MatomoRouterModule
 } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
-    NgxMatomoModule.forRoot({
+    MatomoModule.forRoot({
       // Your configuration
     }),
-    NgxMatomoRouterModule,
+    MatomoRouterModule,
   ],
 })
 export class AppModule {
@@ -288,17 +288,17 @@ const routes: Routes = [
 <!-- prettier-ignore -->
 ```ts
 import {
-  NgxMatomoModule,
-  NgxMatomoRouterModule,
+  MatomoModule,
+  MatomoRouterModule,
   MatomoRouteDataInterceptor,
 } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
-    NgxMatomoModule.forRoot({
+    MatomoModule.forRoot({
       // Your configuration
     }),
-    NgxMatomoRouterModule.forRoot({
+    MatomoRouterModule.forRoot({
       interceptors: [MatomoRouteDataInterceptor],
     }),
   ],
@@ -387,17 +387,17 @@ And provide it in your application:
 <!-- prettier-ignore -->
 ```ts
 import {
-  NgxMatomoModule,
-  NgxMatomoRouterModule,
+  MatomoModule,
+  MatomoRouterModule,
   MatomoRouteDataInterceptor,
 } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
-    NgxMatomoModule.forRoot({
+    MatomoModule.forRoot({
       // Your configuration
     }),
-    NgxMatomoRouterModule.forRoot({
+    MatomoRouterModule.forRoot({
       // Add interceptors here:
       interceptors: [
         MySimpleInterceptor,
@@ -728,10 +728,10 @@ the `exclude` option of router configuration:
 ```ts
 @NgModule({
   imports: [
-    NgxMatomoModule.forRoot({
+    MatomoModule.forRoot({
       /* ... */
     }),
-    NgxMatomoRouterModule.forRoot({
+    MatomoRouterModule.forRoot({
       exclude: [/some-pattern$/],
     }),
   ],
@@ -803,7 +803,7 @@ import {
 
 @NgModule({
   imports: [
-    NgxMatomoModule.forRoot({
+    MatomoModule.forRoot({
       /* ... */
     }),
   ],
@@ -859,7 +859,7 @@ Your configuration may look like that:
 ```ts
 @NgModule({
   imports: [
-    NgxMatomoModule({
+    MatomoModule({
       /* ... */
       scriptUrl: 'YOUR_MATOMO_SCRIPT_URL', // your Matomo's script url
     }),
@@ -876,7 +876,7 @@ to `AUTO_DEFERRED` and manually call `MatomoInitializerService.initializeTracker
 ```ts
 @NgModule({
   imports: [
-    NgxMatomoModule.forRoot({
+    MatomoModule.forRoot({
       /* ... */
       mode: MatomoInitializationMode.AUTO_DEFERRED,
     }),
@@ -892,6 +892,7 @@ to `AUTO_DEFERRED` and manually call `MatomoInitializerService.initializeTracker
         return () =>
           http.get('/my-config').pipe(tap(config => matomoInitializer.initializeTracker(config)));
       },
+      deps: [HttpClient],
       multi: true,
     },
   ],
