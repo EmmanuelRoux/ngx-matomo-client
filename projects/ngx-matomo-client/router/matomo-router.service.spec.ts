@@ -295,6 +295,21 @@ describe('MatomoRouter', () => {
     expect(tracker.setReferrerUrl).not.toHaveBeenCalled();
   }));
 
+  it('should not track page view if navigated to the same url with query params', fakeAsync(() => {
+    // Given
+    const service = instantiate({}, { enableLinkTracking: false });
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.initialize();
+    triggerEvent('/test');
+    triggerEvent('/test?page=1');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(1);
+  }));
+
   it('should call interceptors if any and wait for them to resolve', fakeAsync(() => {
     // Given
     const interceptor1 = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor1', [

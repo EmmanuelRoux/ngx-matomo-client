@@ -14,7 +14,7 @@ import {
   concatMap,
   defaultIfEmpty,
   delay,
-  distinctUntilKeyChanged,
+  distinctUntilChanged,
   filter,
   map,
   mapTo,
@@ -52,6 +52,10 @@ function isNotExcluded(excludeConfig: ExclusionConfig): (event: NavigationEnd) =
   const exclusions = coerceRegExpArray(excludeConfig);
 
   return (event: NavigationEnd) => !exclusions.some(rx => event.urlAfterRedirects.match(rx));
+}
+
+function pathName(event: NavigationEnd) {
+  return event.urlAfterRedirects.split('?')[0];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -94,8 +98,8 @@ export class MatomoRouter {
         filter(isNavigationEnd),
         // Filter out excluded urls
         filter(isNotExcluded(this.config.exclude)),
-        // Distinct urls
-        distinctUntilKeyChanged('urlAfterRedirects'),
+        // Query param changes also trigger isNavigationEnd events filtering out those
+        distinctUntilChanged((prevEvent, currEvent) => pathName(prevEvent) === pathName(currEvent)),
         // Optionally add some delay
         delayOp,
         // Set default page title & url
