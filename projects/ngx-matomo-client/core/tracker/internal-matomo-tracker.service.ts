@@ -4,7 +4,7 @@ import { initializeMatomoHolder, MatomoHolder } from '../holder';
 import { Getters, NonEmptyArray, PrefixedType } from '../utils/types';
 import { INTERNAL_MATOMO_CONFIGURATION } from './configuration';
 
-declare var window: MatomoHolder;
+declare const window: MatomoHolder;
 
 type ReturnType<T> = T extends (...args: any) => infer R ? R : any;
 
