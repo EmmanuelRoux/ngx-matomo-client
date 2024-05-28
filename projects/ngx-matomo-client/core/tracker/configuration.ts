@@ -21,17 +21,17 @@ export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MAT
 export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>(
   'INTERNAL_MATOMO_CONFIGURATION',
   {
-    factory: () =>
-      ({
-        disabled: false,
-        enableLinkTracking: true,
-        trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
-        requireConsent: MatomoConsentMode.NONE,
-        enableJSErrorTracking: false,
-        runOutsideAngularZone: false,
-        acceptDoNotTrack: false,
-        ...requireNonNull(inject(MATOMO_CONFIGURATION, { optional: true }), CONFIG_NOT_FOUND),
-      }) as InternalMatomoConfiguration,
+    factory: (): InternalMatomoConfiguration => ({
+      disabled: false,
+      enableLinkTracking: true,
+      trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
+      requireConsent: MatomoConsentMode.NONE,
+      enableJSErrorTracking: false,
+      runOutsideAngularZone: false,
+      disableCampaignParameters: false,
+      acceptDoNotTrack: false,
+      ...requireNonNull(inject(MATOMO_CONFIGURATION, { optional: true }), CONFIG_NOT_FOUND),
+    }),
   },
 );
 
@@ -179,6 +179,16 @@ export interface BaseMatomoConfiguration {
 
   /** Set to `true` to run matomo calls outside of angular NgZone. This may fix angular freezes. */
   runOutsideAngularZone?: boolean;
+
+  /**
+   * Set to `true` to avoid sending campaign parameters
+   *
+   * By default, Matomo will send campaign parameters (mtm, utm, etc.) to the tracker and record that information.
+   * Some privacy regulations may not allow for this information to be collected.
+   *
+   * <b>This is available as of Matomo 5.1 only.</b>
+   */
+  disableCampaignParameters?: boolean;
 }
 
 export interface BaseAutoMatomoConfiguration<
