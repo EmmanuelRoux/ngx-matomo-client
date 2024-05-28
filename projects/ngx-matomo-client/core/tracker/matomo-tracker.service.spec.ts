@@ -739,6 +739,8 @@ describe('MatomoTracker', () => {
     expectSimpleMethod('enableBrowserFeatureDetection', []),
   );
 
+  it('should disable campaign parameters', expectSimpleMethod('disableCampaignParameters', []));
+
   it('should ignore calls when disabled', () => {
     // Given
     const tracker = createTracker({ disabled: true });
