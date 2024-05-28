@@ -1,3 +1,20 @@
+# [6.2.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.1.3...v6.2.0) (2024-05-28)
+
+
+### Bug Fixes
+
+* **tracker:** add default value for `acceptDoNotTrack` option ([243fc46](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/243fc46059fe964f7b54325732c3d98c8f98e6d6))
+* upgrade schematics to non-deprecated module names ([946ef9f](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/946ef9f79ce62fcfe020acee0c1ef7f44a2ce7dd))
+
+
+### Features
+
+* add compatibility with Angular 18 ([7828aed](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/7828aedcfe6f682603ccccfa6eabeca5c6d7ed64)), closes [#90](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/90)
+* add FormAnalytics support ([ccdcfac](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/ccdcfac316dacb177fe6205d55166b4befd1bdd2))
+* **router:** allow ignoring subsequent navigation to the same url ([#89](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/89)) ([1cb504c](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/1cb504c9df4369557757842ca49206a511b78f66)), closes [#72](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/72)
+* **tracker:** add new `disableCampaignParameters` configuration option ([88258fa](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/88258fa60c143de1107be7cba181f19c84346a3a))
+* **tracker:** add new `disableCampaignParameters` tracker method ([4cfda65](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/4cfda65f981e8f83c200975073048420390c304b))
+
 ## [6.1.3](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.1.2...v6.1.3) (2024-04-09)
 
 
