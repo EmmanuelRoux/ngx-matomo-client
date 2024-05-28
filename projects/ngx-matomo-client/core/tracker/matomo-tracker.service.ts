@@ -1427,6 +1427,17 @@ export abstract class MatomoTracker {
     this.push(['enableBrowserFeatureDetection']);
   }
 
+  /**
+   * By default, Matomo will send campaign parameters (mtm, utm, etc.) to the tracker and record that information.
+   * Some privacy regulations may not allow for this information to be collected.
+   * If this applies to you, call this method to prevent campaign parameters from being sent to the tracker.
+   *
+   * <b>This method is available as of Matomo 5.1.</b>
+   */
+  disableCampaignParameters(): void {
+    this.push(['disableCampaignParameters']);
+  }
+
   /** Asynchronously call provided method name on matomo tracker instance */
   protected get<G extends Getters<MatomoInstance>>(
     getter: G,
