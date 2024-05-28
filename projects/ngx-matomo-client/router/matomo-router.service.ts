@@ -14,7 +14,7 @@ import {
   concatMap,
   defaultIfEmpty,
   delay,
-  distinctUntilKeyChanged,
+  distinctUntilChanged,
   filter,
   map,
   mapTo,
@@ -26,6 +26,7 @@ import {
   ExclusionConfig,
   INTERNAL_ROUTER_CONFIGURATION,
   InternalRouterConfiguration,
+  NavigationEndComparator,
 } from './configuration';
 import { invalidInterceptorsProviderError, ROUTER_ALREADY_INITIALIZED_ERROR } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
@@ -52,6 +53,26 @@ function isNotExcluded(excludeConfig: ExclusionConfig): (event: NavigationEnd) =
   const exclusions = coerceRegExpArray(excludeConfig);
 
   return (event: NavigationEnd) => !exclusions.some(rx => event.urlAfterRedirects.match(rx));
+}
+
+function stripQueryParams(url: string): string {
+  return url.split('?')[0];
+}
+
+function defaultNavigationEndComparator(urlExtractor: (event: NavigationEnd) => string) {
+  return (eventA: NavigationEnd, eventB: NavigationEnd) =>
+    urlExtractor(eventA) === urlExtractor(eventB);
+}
+
+function getNavigationEndComparator(config: InternalRouterConfiguration): NavigationEndComparator {
+  switch (config.navigationEndComparator) {
+    case 'fullUrl':
+      return defaultNavigationEndComparator(event => event.urlAfterRedirects);
+    case 'ignoreQueryParams':
+      return defaultNavigationEndComparator(event => stripQueryParams(event.urlAfterRedirects));
+    default:
+      return config.navigationEndComparator;
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -87,6 +108,7 @@ export class MatomoRouter {
 
     const delayOp: MonoTypeOperatorFunction<NavigationEnd> =
       this.config.delay === -1 ? identity : delay(this.config.delay);
+    const navigationEndComparator = getNavigationEndComparator(this.config);
 
     this.router.events
       .pipe(
@@ -94,8 +116,8 @@ export class MatomoRouter {
         filter(isNavigationEnd),
         // Filter out excluded urls
         filter(isNotExcluded(this.config.exclude)),
-        // Distinct urls
-        distinctUntilKeyChanged('urlAfterRedirects'),
+        // Filter out NavigationEnd events to ignore, e.g. when url does not actually change (component reload)
+        distinctUntilChanged(navigationEndComparator),
         // Optionally add some delay
         delayOp,
         // Set default page title & url

@@ -7,6 +7,7 @@ import {
   InternalGlobalConfiguration,
   MATOMO_ROUTER_CONFIGURATION,
   MatomoRouterConfiguration,
+  NavigationEndComparator,
 } from './configuration';
 import { invalidInterceptorsProviderError } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
@@ -293,6 +294,80 @@ describe('MatomoRouter', () => {
     expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
     expect(tracker.trackPageView).not.toHaveBeenCalled();
     expect(tracker.setReferrerUrl).not.toHaveBeenCalled();
+  }));
+
+  it('should track page view if navigated to the same url with different query params', fakeAsync(() => {
+    // Given
+    const service = instantiate(
+      {
+        navigationEndComparator: 'fullUrl',
+      },
+      { enableLinkTracking: false },
+    );
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.initialize();
+    triggerEvent('/test');
+    triggerEvent('/test?page=1');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(2);
+  }));
+
+  it('should not track page view if navigated to the same url with query params', fakeAsync(() => {
+    // Given
+    const service = instantiate(
+      { navigationEndComparator: 'ignoreQueryParams' },
+      { enableLinkTracking: false },
+    );
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.initialize();
+    triggerEvent('/test');
+    triggerEvent('/test?page=1');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(1);
+  }));
+
+  it('should not track page view if navigated to the "same" url, as configured from custom NavigationEndComparator', fakeAsync(() => {
+    // Given
+    const isEvenPageParam = (url: string) => {
+      const params = new URL(url, 'http://localhost').searchParams;
+      const page = Number(params.get('page') ?? 0);
+
+      return page % 2 === 0;
+    };
+    const myCustomComparator: NavigationEndComparator = (
+      previousNavigationEnd,
+      currentNavigationEnd,
+    ) => {
+      return (
+        isEvenPageParam(previousNavigationEnd.urlAfterRedirects) ===
+        isEvenPageParam(currentNavigationEnd.urlAfterRedirects)
+      );
+    };
+    const service = instantiate(
+      {
+        navigationEndComparator: myCustomComparator,
+      },
+      { enableLinkTracking: false },
+    );
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.initialize();
+    triggerEvent('/test?page=1');
+    triggerEvent('/test?page=2');
+    triggerEvent('/test?page=4');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(2);
   }));
 
   it('should call interceptors if any and wait for them to resolve', fakeAsync(() => {

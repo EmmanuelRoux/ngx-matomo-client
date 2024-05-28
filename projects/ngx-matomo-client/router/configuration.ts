@@ -1,4 +1,5 @@
 import { inject, InjectionToken, Type } from '@angular/core';
+import { NavigationEnd } from '@angular/router';
 import { INTERNAL_MATOMO_CONFIGURATION, InternalMatomoConfiguration } from 'ngx-matomo-client/core';
 import { MatomoRouterInterceptor } from './interceptor';
 
@@ -7,6 +8,10 @@ export const MATOMO_ROUTER_CONFIGURATION = new InjectionToken<MatomoRouterConfig
 );
 
 export type ExclusionConfig = string | RegExp | (string | RegExp)[];
+export type NavigationEndComparator = (
+  previousNavigationEnd: NavigationEnd,
+  currentNavigationEnd: NavigationEnd,
+) => boolean;
 
 export interface MatomoRouterConfiguration {
   /**
@@ -43,6 +48,27 @@ export interface MatomoRouterConfiguration {
    * Optional, default is no url excluded
    */
   exclude?: ExclusionConfig;
+
+  /**
+   * Custom url comparator to detect url change between Angular route navigations.
+   *
+   * This may be useful, because by default all `NavigationEnd` events will trigger a page track and this may happen
+   * after query params change only (without url actually changing).
+   *
+   * You can define a custom comparator here to compare url by ignoring query params.
+   *
+   * Note: this is different from providing the url sent to Matomo for actual tracking. The url sent to Matomo will be
+   * the full page url, including any base href, and is configured using a {@link PageUrlProvider} (see
+   * `MATOMO_PAGE_URL_PROVIDER` token).
+   *
+   * Optional, default is to compare `NavigationEnd.urlAfterRedirects`
+   *
+   * Possible values:
+   * - `'fullUrl'` (or undefined): default value, compare using `NavigationEnd.urlAfterRedirects`
+   * - `'ignoreQueryParams'`: compare using `NavigationEnd.urlAfterRedirects` but ignoring query params
+   * - `NavigationEndComparator`: compare using a custom `NavigationEndComparator` function
+   */
+  navigationEndComparator?: NavigationEndComparator | 'ignoreQueryParams' | 'fullUrl';
 }
 
 export interface MatomoRouterConfigurationWithInterceptors extends MatomoRouterConfiguration {
@@ -60,6 +86,7 @@ export const DEFAULT_ROUTER_CONFIGURATION: Required<MatomoRouterConfiguration> =
   trackPageTitle: true,
   delay: 0,
   exclude: [],
+  navigationEndComparator: 'fullUrl',
 };
 
 export type InternalGlobalConfiguration = Pick<
