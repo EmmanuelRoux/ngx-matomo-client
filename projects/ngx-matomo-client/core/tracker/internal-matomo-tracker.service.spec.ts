@@ -11,7 +11,7 @@ import {
   InternalMatomoTracker,
 } from './internal-matomo-tracker.service';
 
-declare var window: MatomoHolder;
+declare const window: MatomoHolder;
 
 // Extracted from https://github.com/angular/angular/blob/b66e479cdb1e474a29ff676f10a5fcc3d7eae799/packages/common/src/platform_id.ts
 const PLATFORM_BROWSER_ID = 'browser';
@@ -28,6 +28,7 @@ describe('InternalMatomoTracker', () => {
 
   function createTracker(
     config: Partial<InternalMatomoConfiguration> = { disabled: false },
+    // eslint-disable-next-line @typescript-eslint/ban-types
     platform: Object = PLATFORM_BROWSER_ID,
     ngZone: NgZone = createMockZone(),
   ): InternalMatomoTracker<FakeMatomoInstance> {
