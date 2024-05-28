@@ -9,6 +9,7 @@ export {
   MATOMO_ROUTER_CONFIGURATION,
   ExclusionConfig,
   MatomoRouterConfigurationWithInterceptors,
+  NavigationEndComparator,
 } from './configuration';
 export { PageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER } from './page-title-providers';
 export { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from './page-url-provider';

@@ -26,6 +26,7 @@ import {
   ExclusionConfig,
   INTERNAL_ROUTER_CONFIGURATION,
   InternalRouterConfiguration,
+  NavigationEndComparator,
 } from './configuration';
 import { invalidInterceptorsProviderError, ROUTER_ALREADY_INITIALIZED_ERROR } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
@@ -54,8 +55,24 @@ function isNotExcluded(excludeConfig: ExclusionConfig): (event: NavigationEnd) =
   return (event: NavigationEnd) => !exclusions.some(rx => event.urlAfterRedirects.match(rx));
 }
 
-function pathName(event: NavigationEnd) {
-  return event.urlAfterRedirects.split('?')[0];
+function stripQueryParams(url: string): string {
+  return url.split('?')[0];
+}
+
+function defaultNavigationEndComparator(urlExtractor: (event: NavigationEnd) => string) {
+  return (eventA: NavigationEnd, eventB: NavigationEnd) =>
+    urlExtractor(eventA) === urlExtractor(eventB);
+}
+
+function getNavigationEndComparator(config: InternalRouterConfiguration): NavigationEndComparator {
+  switch (config.navigationEndComparator) {
+    case 'fullUrl':
+      return defaultNavigationEndComparator(event => event.urlAfterRedirects);
+    case 'ignoreQueryParams':
+      return defaultNavigationEndComparator(event => stripQueryParams(event.urlAfterRedirects));
+    default:
+      return config.navigationEndComparator;
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -91,6 +108,7 @@ export class MatomoRouter {
 
     const delayOp: MonoTypeOperatorFunction<NavigationEnd> =
       this.config.delay === -1 ? identity : delay(this.config.delay);
+    const navigationEndComparator = getNavigationEndComparator(this.config);
 
     this.router.events
       .pipe(
@@ -98,8 +116,8 @@ export class MatomoRouter {
         filter(isNavigationEnd),
         // Filter out excluded urls
         filter(isNotExcluded(this.config.exclude)),
-        // Query param changes also trigger isNavigationEnd events filtering out those
-        distinctUntilChanged((prevEvent, currEvent) => pathName(prevEvent) === pathName(currEvent)),
+        // Filter out NavigationEnd events to ignore, e.g. when url does not actually change (component reload)
+        distinctUntilChanged(navigationEndComparator),
         // Optionally add some delay
         delayOp,
         // Set default page title & url
