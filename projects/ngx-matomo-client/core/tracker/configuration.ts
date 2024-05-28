@@ -29,6 +29,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
         requireConsent: MatomoConsentMode.NONE,
         enableJSErrorTracking: false,
         runOutsideAngularZone: false,
+        acceptDoNotTrack: false,
         ...requireNonNull(inject(MATOMO_CONFIGURATION, { optional: true }), CONFIG_NOT_FOUND),
       }) as InternalMatomoConfiguration,
   },
