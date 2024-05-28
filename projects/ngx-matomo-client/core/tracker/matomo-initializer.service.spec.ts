@@ -202,6 +202,28 @@ describe('MatomoInitializerService', () => {
     expect(tracker.setDoNotTrack).toHaveBeenCalledBefore(tracker.trackPageView);
   });
 
+  it('should disable campaign parameters if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: MatomoInitializationMode.MANUAL,
+      disableCampaignParameters: true,
+      trackAppInitialLoad: true,
+      enableLinkTracking: false,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'disableCampaignParameters');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+    expect(tracker.disableCampaignParameters).toHaveBeenCalledTimes(1);
+    expect(tracker.disableCampaignParameters).toHaveBeenCalledBefore(tracker.trackPageView);
+  });
+
   it('should require tracking consent if setting if enabled', () => {
     // Given
     const service = instantiate({

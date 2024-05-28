@@ -168,6 +168,10 @@ export class MatomoInitializerService {
       this.tracker.enableJSErrorTracking();
     }
 
+    if (this.config.disableCampaignParameters) {
+      this.tracker.disableCampaignParameters();
+    }
+
     if (this.config.trackAppInitialLoad) {
       this.tracker.trackPageView();
     }
