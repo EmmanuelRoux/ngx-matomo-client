@@ -15,7 +15,10 @@ Matomo (fka. Piwik) client for Angular applications
 <hr>
 
 <p align="center">
-  <strong>Note: this library has been renamed to <code>ngx-matomo-client</code>, try it now!</strong>
+  <strong>Packages <code>@ngx-matomo/*</code> have been renamed to <code>ngx-matomo-client</code></strong>
+  <br>
+  <br>
+  <strong>→ FOR ANGULAR 16 OR ABOVE, PLEASE UPGRADE TO <code>ngx-matomo-client</code> ←</strong>
   <br>
   <br>
   <a href="https://www.npmjs.com/package/ngx-matomo-client">

@@ -27,7 +27,7 @@ module.exports = {
       {
         preset: 'angular',
         parserOpts: {
-          noteKeywords: ['BREAKING CHANGE', 'DEPRECATION'],
+          noteKeywords: ['BREAKING CHANGE', 'DEPRECATION', 'IMPORTANT'],
         },
         writerOpts: writerOpts,
       },

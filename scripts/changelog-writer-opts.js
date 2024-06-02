@@ -14,6 +14,8 @@ module.exports = {
     commit.notes.forEach(note => {
       if (note.title.toUpperCase().includes('DEPRECAT')) {
         note.title = 'Deprecations';
+      } else if (note.title.toUpperCase().includes('IMPORTANT')) {
+        note.title = 'Important';
       } else {
         note.title = 'Breaking changes';
       }
