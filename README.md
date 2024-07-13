@@ -64,7 +64,7 @@ easily migrate.**
   * [Adding info or customizing automatic page view tracking](#adding-info-or-customizing-automatic-page-view-tracking)
   * [Tracking events](#tracking-events)
   * [Managing user consent: opt-in/opt-out for tracking & cookies](#managing-user-consent-opt-inopt-out-for-tracking--cookies)
-  * [Low-level API](#low-level-api)
+  * [Tracker API](#tracker-api)
 - [Plugins](#plugins)
   * [Form analytics](#form-analytics)
 - [Migration from `@ngx-matomo/tracker` and `@ngx-matomo/router` (version <= 4)](#migration-from-ngx-matomotracker-and-ngx-matomorouter-version--4)
@@ -105,39 +105,27 @@ at [configuration reference](#configuration-reference) for fine-grained set-up.
 Run `npm install --save ngx-matomo-client` or `yarn add ngx-matomo-client` then
 manually import Matomo into your Angular application:
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
-
-```ts
-import { NgxMatomoModule } from 'ngx-matomo-client';
-
-@NgModule({
-  imports: [
-    NgxMatomoModule.forRoot({
-      // Your base configuration
-      siteId: 1,
-      trackerUrl: 'http://my-matomo-instance',
-    }),
-  ],
-})
-export class AppModule {}
-```
-
-</td>
-<td valign="top">
-
 ```ts
 import { provideMatomo } from 'ngx-matomo-client';
 
-@NgModule({
+await bootstrapApplication(RootComponent, {
   providers: [
     provideMatomo({
-      // Your base configuration
+      siteId: 1,
+      trackerUrl: 'http://my-matomo-instance',
+    }),
+  ],
+});
+```
+
+Or, if you use `@NgModule`:
+
+```ts
+import { MatomoModule } from 'ngx-matomo-client';
+
+@NgModule({
+  imports: [
+    MatomoModule.forRoot({
       siteId: 1,
       trackerUrl: 'http://my-matomo-instance',
     }),
@@ -145,10 +133,6 @@ import { provideMatomo } from 'ngx-matomo-client';
 })
 export class AppModule {}
 ```
-
-</td>
-</tr>
-</table>
 
 Take a look at [configuration reference](#configuration-reference) for all available configuration properties.
 
@@ -164,64 +148,47 @@ Take a look at [configuration reference](#configuration-reference) for all avail
 
 ### Tracking page views
 
-Enable automatic page view tracking by adding following configuration:
+Enable automatic page view tracking by adding `withRouter()` feature to `provideMatomo()`:
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
-
-<!-- prettier-ignore -->
 ```ts
-import {
-  MatomoModule,
-  MatomoRouterModule
-} from 'ngx-matomo-client';
+import { provideMatomo, withRouter } from 'ngx-matomo-client';
+
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {
+        siteId: 1,
+        trackerUrl: 'http://my-matomo-instance',
+      },
+      withRouter(),
+    ),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
+
+```ts
+import { MatomoModule, MatomoRouterModule } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
     MatomoModule.forRoot({
-      // Your configuration
+      siteId: 1,
+      trackerUrl: 'http://my-matomo-instance',
     }),
     MatomoRouterModule,
   ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
-</td>
-<td valign="top">
+</details>
 
-<!-- prettier-ignore -->
-```ts
-import {
-  provideMatomo,
-  withRouter
-} from 'ngx-matomo-client';
+This will track every page view using Angular Router.
 
-@NgModule({
-  providers: [
-    provideMatomo(
-      {}, // Your configuration
-      withRouter()
-    ),
-  ],
-})
-export class AppModule {
-}
-```
-
-</td>
-</tr>
-</table>
-
-This will track every page view (using Angular Router) with basic info such as page title and page url.
-
-If you wish to manually track page views instead, just inject `MatomoTracker` and call `trackPageView()` or other
+If you wish to manually track page views instead, inject `MatomoTracker` and call `trackPageView()` or other
 desired methods (`setCustomUrl`, `setReferrerUrl`...):
 
 ```typescript
@@ -236,11 +203,7 @@ export class ExampleComponent implements OnInit {
   private readonly tracker = inject(MatomoTracker);
 
   ngOnInit() {
-    // Using current page's title
     this.tracker.trackPageView();
-
-    // With custom page title
-    this.tracker.trackPageView('My page title');
   }
 }
 ```
@@ -280,73 +243,64 @@ const routes: Routes = [
 
 2. Then configure `ngx-matomo-client` as following:
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
-
-<!-- prettier-ignore -->
 ```ts
-import {
-  MatomoModule,
-  MatomoRouterModule,
-  MatomoRouteDataInterceptor,
-} from 'ngx-matomo-client';
+import { provideMatomo, withRouter, withRouteData } from 'ngx-matomo-client';
+
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {
+        /* ... */
+      },
+      withRouter(),
+      withRouteData(), // Add this feature
+    ),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
+
+```ts
+import { MatomoModule, MatomoRouterModule, MatomoRouteDataInterceptor } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
     MatomoModule.forRoot({
-      // Your configuration
+      /* ... */
     }),
     MatomoRouterModule.forRoot({
-      interceptors: [MatomoRouteDataInterceptor],
+      interceptors: [MatomoRouteDataInterceptor], // Add this configuration
     }),
   ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
-</td>
-<td valign="top">
-
-<!-- prettier-ignore -->
-```ts
-import {
-  provideMatomo,
-  withRouter,
-  withRouteData
-} from 'ngx-matomo-client';
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  providers: [
-    provideMatomo(
-      {}, // Your base configuration
-      withRouter(),
-      withRouteData() // Add this feature
-    ),
-  ],
-})
-export class AppModule {
-}
-```
-
-</td>
-</tr>
-</table>
+</details>
 
 #### Using custom interceptor
 
-If you need custom logic to extract data, define a custom interceptor implementation:
+If you need custom logic to extract data, define a custom interceptor implementation.
+An interceptor may be either a _function_ or a _class_:
 
 ```ts
-import { MatomoRouterInterceptor, MatomoRouteInterceptorBase } from 'ngx-matomo-client';
+import {
+  MatomoRouterInterceptor,
+  MatomoRouterInterceptorFn,
+  MatomoRouteInterceptorBase,
+} from 'ngx-matomo-client';
 
-/** An interceptor only needs to implement `MatomoRouterInterceptor` */
+/** A simple functional interceptor */
+const myInterceptorFn: MatomoRouterInterceptorFn = (event: NavigationEnd) => {
+  const tracker = inject(MatomoTracker);
+
+  tracker.setDocumentTitle('My title');
+  tracker.setEcommerceView(/* ... */);
+};
+
+/** A class interceptor must implement `MatomoRouterInterceptor` */
 @Injectable()
 export class MySimpleInterceptor implements MatomoRouterInterceptor {
   private readonly tracker = inject(MatomoTracker);
@@ -358,8 +312,8 @@ export class MySimpleInterceptor implements MatomoRouterInterceptor {
 }
 
 /**
- * It is also possible to extend `MatomoRouteInterceptorBase` for easy access
- * to activated route snapshot
+ * For interceptors that need access to ActivatedRouteSnapshot, you may extend
+ * `MatomoRouteInterceptorBase` built-in class.
  */
 @Injectable()
 export class MyAsyncInterceptor extends MatomoRouteInterceptorBase<string> {
@@ -379,74 +333,47 @@ export class MyAsyncInterceptor extends MatomoRouteInterceptorBase<string> {
 
 And provide it in your application:
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
+```typescript
+import { withRouterInterceptors, MatomoRouterInterceptor } from 'ngx-matomo-client';
 
-<!-- prettier-ignore -->
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {
+        /* ... */
+      },
+      withRouter(),
+
+      // Add interceptors here:
+      withRouterInterceptors([myInterceptorFn, MySimpleInterceptor, MyAsyncInterceptor]),
+    ),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
+
 ```ts
-import {
-  MatomoModule,
-  MatomoRouterModule,
-  MatomoRouteDataInterceptor,
-} from 'ngx-matomo-client';
-
 @NgModule({
   imports: [
     MatomoModule.forRoot({
-      // Your configuration
+      /* ... */
     }),
     MatomoRouterModule.forRoot({
       // Add interceptors here:
-      interceptors: [
-        MySimpleInterceptor,
-        MyAsyncInterceptor
-      ],
+      interceptors: [myInterceptorFn, MySimpleInterceptor, MyAsyncInterceptor],
     }),
   ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
-</td>
-<td valign="top">
-
-<!-- prettier-ignore -->
-```typescript
-import {
-  withRouterInterceptors,
-  MatomoRouterInterceptor
-} from 'ngx-matomo-client';
-
-@NgModule({
-  providers: [
-    provideMatomo(
-      {}, // Your base configuration
-      withRouter(),
-      // Add interceptors here:
-      withRouterInterceptors([
-        MySimpleInterceptor,
-        MyAsyncInterceptor
-      ])
-    ),
-  ],
-})
-export class AppModule {
-}
-```
-
-</td>
-</tr>
-</table>
+</details>
 
 ### Tracking events
 
-You can track click events directly from your templates:
+You can track click events in templates using `[matomoClickAction]` directive:
 
 ```html
 <button
@@ -461,7 +388,7 @@ You can track click events directly from your templates:
 <!-- Inputs [matomoClickName] and [matomoClickValue] are optional -->
 ```
 
-You can also track any other kind of events:
+You can also track any kind of events using `[matomoTracker]` directive:
 
 ```html
 <!-- Tracking "change" event on an input -->
@@ -483,7 +410,7 @@ You can also track any other kind of events:
   matomoName="myName"
 />
 
-<!-- For advanced usage, export directive as a variable and call its 'trackEvent()' method -->
+<!-- For advanced usage, you may export directive as a variable and call its 'trackEvent()' method -->
 <input
   type="text"
   matomoTracker
@@ -495,7 +422,7 @@ You can also track any other kind of events:
   (change)="tracker.trackEvent()"
 />
 
-<!-- This directive is very flexible: you may set default values and overwrite them in method call -->
+<!-- You may also set default values and overwrite them in method call -->
 <input
   type="text"
   matomoTracker
@@ -605,7 +532,7 @@ This example is adapted from
 [official guide](https://developer.matomo.org/guides/tracking-javascript-guide#optional-creating-a-custom-opt-out-form)
 about how to create a custom opt-out form
 
-### Low-level API
+### Tracker API
 
 All Matomo tracking features are available through `MatomoTracker` service. Please refer
 to [Matomo documentation](https://fr.matomo.org/docs) for details.
@@ -632,7 +559,7 @@ export class ExampleComponent {
 }
 ```
 
-Please note that some features (such as `setEcommerceView`) must be called **before**
+Please note that most features (such as `setEcommerceView`) must be called **before**
 `trackPageView`! You may want to take a look
 at [how to use interceptors](#adding-info-or-customizing-automatic-page-view-tracking).
 
@@ -644,27 +571,31 @@ at [how to use interceptors](#adding-info-or-customizing-automatic-page-view-tra
 
 #### Configuration
 
-Form analytics plugin is supported out-of-the-box. Just add `withFormAnalytics()` feature or `MatomoFormAnalyticsModule`
-to your application's root:
+Form analytics plugin is supported out-of-the-box. Add `withFormAnalytics()` feature to `provideMatomo()`:
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
-
-<!-- prettier-ignore -->
 ```ts
-import {
-  MatomoFormAnalyticsModule
-} from 'ngx-matomo-client/form-analytics';
+import { withFormAnalytics } from 'ngx-matomo-client/form-analytics';
+
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {}, // Your base configuration
+      withFormAnalytics(), // Add this feature
+    ),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
+
+```ts
+import { MatomoFormAnalyticsModule } from 'ngx-matomo-client/form-analytics';
 
 @NgModule({
   imports: [
     NgxMatomoModule.forRoot({
-      // Your configuration
+      /* ... */
     }),
     MatomoFormAnalyticsModule,
   ],
@@ -672,29 +603,7 @@ import {
 export class AppModule {}
 ```
 
-</td>
-<td valign="top">
-
-<!-- prettier-ignore -->
-```ts
-import {
-  withFormAnalytics
-} from 'ngx-matomo-client/form-analytics';
-
-@NgModule({
-  providers: [
-    provideMatomo(
-      {}, // Your base configuration
-      withFormAnalytics() // Add this feature
-    ),
-  ],
-})
-export class AppModule {}
-```
-
-</td>
-</tr>
-</table>
+</details>
 
 #### Usage
 
@@ -713,11 +622,8 @@ form after changes:
 
 ```html
 <form id="myForm" matomoTrackForm>
-  <!-- Either add matomoTrackFormField directive to ensure the form is tracked -->
+  <!-- Add matomoTrackFormField directive to ensure the form is tracked -->
   <input *ngIf="condition" matomoTrackFormField />
-
-  <!-- Or manually call .track() on the form -->
-  <button type="button" (click)="addControl(matomoTracker)"></button>
 </form>
 ```
 
@@ -738,7 +644,7 @@ To automatically track a form submit when an element is clicked (for example a n
 </form>
 ```
 
-You can also inject `MatomoFormAnalytics` and use low-level api directly.
+You can also inject `MatomoFormAnalytics` service in your components and use low-level api directly.
 
 See official guide at https://developer.matomo.org/guides/form-analytics.
 
@@ -776,18 +682,20 @@ from `ngx-matomo-client`.
 > - `ngx-matomo-client/core` which contains core features and doesn't depend on `@angular/router`
 > - `ngx-matomo-client/router` which brings router features and depends on `@angular/router`
 >
-> The global entrypoint `ngx-matomo-client` is simply a shorthand that re-exports all of them (thus depending on `@angular/router`).
+> For backward compatibility reasons, the global entrypoint `ngx-matomo-client` is a shorthand that re-exports both of them (thus depending on `@angular/router`).
 
 ### How to set page title?
 
 If automatic page view tracking is enabled, then you probably have nothing to do: the page title will be detected and
 sent to Matomo.
 
-As of Angular 14, and as long as you don't set router `delay` option to `-1`, customizing page title by setting `title`
-property of Angular route config is natively supported. See Angular tutorial
-here: [Setting the page title](https://angular.io/guide/router#setting-the-page-title).
+- Customizing page title by setting `title` property of Angular route config is natively supported.
+  See Angular tutorial here: [Setting the page title](https://angular.io/guide/router#setting-the-page-title).
+  Please note this will not work if you set Matomo router `delay` option to `-1`.
+- For more complex logic, you may also define an interceptor that will call `tracker.setDocumentTitle(title)`.
+  See [dedicated section](#adding-info-or-customizing-automatic-page-view-tracking).
 
-If you're not using automatic page view tracking, then call `tracker.setDocumentTitle(title)`
+If you're not using automatic page view tracking, then you should manually call `tracker.setDocumentTitle(title)`
 or `tracker.trackPageView(title)`.
 
 ### Should I include the tracking code provided by Matomo?
@@ -805,14 +713,26 @@ yourself [as explained on official guide](https://developer.matomo.org/guides/tr
 You may want to disable tracker in dev environments to avoid tracking some unwanted usage: local dev usage, end-to-end
 tests...
 
-To do so just set the `disabled` property to `true` in your main configuration.
+To do so just set the `disabled` property to `true` in your main configuration:
 
-For example:
+```typescript
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo({
+      /* ... */
+      disabled: !environment.production,
+    }),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
 
 ```typescript
 @NgModule({
   imports: [
-    NgxMatomoModule.forRoot({
+    MatomoModule.forRoot({
       /* ... */
       disabled: !environment.production,
     }),
@@ -821,18 +741,30 @@ For example:
 export class AppModule {}
 ```
 
+</details>
+
 ### How to exclude some routes from tracking
 
 If you are using automatic route tracking and want to ignore some routes, use
 the `exclude` option of router configuration:
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
+```ts
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {
+        /* ... */
+      },
+      withRouter({
+        exclude: [/some-pattern$/],
+      }),
+    ),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
 
 ```ts
 @NgModule({
@@ -848,67 +780,58 @@ the `exclude` option of router configuration:
 export class AppModule {}
 ```
 
-</td>
-<td valign="top">
-
-```ts
-@NgModule({
-  providers: [
-    provideMatomo(
-      {}, // Your base configuration
-      withRouter({
-        exclude: [/some-pattern$/],
-      }),
-    ),
-  ],
-})
-export class AppModule {}
-```
-
-</td>
-</tr>
-</table>
+</details>
 
 ### How can I customize the inserted script tag?
 
 By default, Matomo's script is injected using a basic script tag looking
 like `<script src="..." defer async type="text/javascript">`.
 
-To customize this script tag, define a custom factory function:
+To customize this script tag, define a custom script factory function:
 
 ```ts
 import { createDefaultMatomoScriptElement } from 'ngx-matomo-client';
 
-function myScriptFactory(scriptUrl: string, document: Document): HTMLScriptElement {
-  // Create using default factory...
+const myScriptFactory: MatomoScriptFactory = (
+  scriptUrl: string,
+  document: Document,
+): HTMLScriptElement => {
+  // Option 1: create using default built-in factory
   const script = createDefaultMatomoScriptElement(scriptUrl, document);
 
-  // ...or if you prefer do it yourself
-  // const script = document.createElement('script')
-  // script.url = scriptUrl;
+  // Option 2: Manually create a script element
+  const script = document.createElement('script');
+  script.url = scriptUrl;
 
   // Customize what you want
   script.setAttribute('data-cookieconsent', 'statistics');
 
   return script;
-}
+};
 ```
 
 And provide it to your application:
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
-
-<!-- prettier-ignore -->
 ```ts
-import {
-  MATOMO_SCRIPT_FACTORY
-} from 'ngx-matomo-client';
+import { withScriptFactory } from 'ngx-matomo-client';
+
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {
+        /* ... */
+      },
+      withScriptFactory(myScriptFactory),
+    ),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
+
+```ts
+import { MATOMO_SCRIPT_FACTORY } from 'ngx-matomo-client';
 
 @NgModule({
   imports: [
@@ -919,51 +842,43 @@ import {
   providers: [
     {
       provide: MATOMO_SCRIPT_FACTORY,
-      useValue: myScriptFactory
-    }
+      useValue: myScriptFactory,
+    },
   ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
-</td>
-<td valign="top">
-
-<!-- prettier-ignore -->
-```ts
-import {
-  withScriptFactory
-} from 'ngx-matomo-client';
-
-@NgModule({
-  providers: [
-    provideMatomo(
-      {...}, // Configuration
-      withScriptFactory(myScriptFactory),
-    )
-  ],
-})
-export class AppModule {
-}
-```
-
-</td>
-</tr>
-</table>
+</details>
 
 ### Can I use `ngx-matomo-client` with Server-side rendering (SSR) / Angular Universal?
 
-`ngx-matomo-client` cannot be used server-side and automatically disables itself on non-browser platforms.
+Yes. `ngx-matomo-client` automatically disables itself on non-browser platforms.
 
 ### Can I use `ngx-matomo-client` with Tag Manager?
 
-If your tracker configuration is embedded in JS client (e.g. from a Tag Manager _variable_), you don't have to set
-yourself the `trackerUrl` and `siteId`.
+Yes.
 
+In such case, you don't have to set yourself the `trackerUrl` and `siteId`.
 During install with `ng add`, leave `serverUrl` and `siteId` blank and provide a value for `scriptUrl`.
 
 Your configuration may look like that:
+
+```ts
+import { withScriptFactory } from 'ngx-matomo-client';
+
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo({
+      /* ... */
+      scriptUrl: 'YOUR_MATOMO_SCRIPT_URL', // your Matomo's script url
+    }),
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
 
 ```ts
 @NgModule({
@@ -977,10 +892,39 @@ Your configuration may look like that:
 export class AppModule {}
 ```
 
+</details>
+
 ### How to define configuration asynchronously? (HTTP fetch...)
 
 In some case, you may want to load your trackers configuration asynchronously. To do so, set the configuration mode
 to `AUTO_DEFERRED` and manually call `MatomoInitializerService.initializeTracker(config)` when you are ready:
+
+```ts
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo({
+      /* ... */
+      mode: MatomoInitializationMode.AUTO_DEFERRED,
+    }),
+
+    // Example: use an APP_INITIALIZER
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => {
+        const http = inject(HttpClient);
+        const matomoInitializer = inject(MatomoInitializerService);
+
+        return () =>
+          http.get('/my-config').pipe(tap(config => matomoInitializer.initializeTracker(config)));
+      },
+      multi: true,
+    },
+  ],
+});
+```
+
+<details>
+  <summary>See equivalent configuration with `@NgModule`</summary>
 
 ```ts
 @NgModule({
@@ -1008,16 +952,18 @@ to `AUTO_DEFERRED` and manually call `MatomoInitializerService.initializeTracker
 export class AppModule {}
 ```
 
-All tracking instructions before `initializeTracker` will be queued and sent only when this method is called.
+</details>
+
+All tracking instructions before `initializeTracker` will be queued locally and sent only when this method is called.
 **Don't forget to call it!**
 
 If you need to asynchronously load more configuration properties, then
 consider [the solution described in this issue](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/31) instead (which has
-some drawbacks, such as delaying the application startup).
+some drawbacks, such as delaying the whole application startup).
 
 _Side note: only the **trackers** configuration can be deferred, not all configuration properties.
-This is required because some properties require to be set **before** any other action is tracked: for
-example, `requireConsent` must be set before any other tracking call and `trackAppInitialLoad` should be set before
+This is required because some properties require to be set **before** any other action is tracked. For
+example: `requireConsent` must be set before any other tracking call, `trackAppInitialLoad` should be set before
 any navigation occurs._
 
 ### How can I test my components which uses `MatomoTracker` or other Matomo features?
