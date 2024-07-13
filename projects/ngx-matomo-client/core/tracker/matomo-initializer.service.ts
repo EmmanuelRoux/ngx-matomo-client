@@ -13,7 +13,6 @@ import {
   isAutoConfigurationMode,
   isEmbeddedTrackerConfiguration,
   isExplicitTrackerConfiguration,
-  MatomoConsentMode,
   MatomoTrackerConfiguration,
 } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
@@ -134,9 +133,9 @@ export class MatomoInitializerService {
       this.tracker.setDoNotTrack(true);
     }
 
-    if (this.config.requireConsent === MatomoConsentMode.COOKIE) {
+    if (this.config.requireConsent === 'cookie') {
       this.tracker.requireCookieConsent();
-    } else if (this.config.requireConsent === MatomoConsentMode.TRACKING) {
+    } else if (this.config.requireConsent === 'tracking') {
       this.tracker.requireConsent();
     }
 

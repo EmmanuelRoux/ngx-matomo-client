@@ -39,6 +39,7 @@ export {
   MatomoInitializationMode,
   MatomoInitializationBehavior,
   MatomoConsentMode,
+  MatomoConsentRequirement,
   InternalMatomoConfiguration,
 } from './tracker/configuration';
 export {

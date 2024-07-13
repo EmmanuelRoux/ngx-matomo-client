@@ -22,7 +22,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
   'INTERNAL_MATOMO_CONFIGURATION',
   {
     factory(): InternalMatomoConfiguration {
-      const { mode, ...restConfig } = requireNonNull(
+      const { mode, requireConsent, ...restConfig } = requireNonNull(
         inject(MATOMO_CONFIGURATION, { optional: true }),
         CONFIG_NOT_FOUND,
       );
@@ -32,7 +32,7 @@ export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoCo
         disabled: false,
         enableLinkTracking: true,
         trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
-        requireConsent: MatomoConsentMode.NONE,
+        requireConsent: requireConsent ? coerceConsentRequirement(requireConsent) : 'none',
         enableJSErrorTracking: false,
         runOutsideAngularZone: false,
         disableCampaignParameters: false,
@@ -88,9 +88,10 @@ export const ASYNC_INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<
  * For internal use only. Module configuration merged with default values.
  *
  */
-export type InternalMatomoConfiguration = Omit<MatomoConfiguration, 'mode'> &
-  Required<BaseMatomoConfiguration> & {
+export type InternalMatomoConfiguration = Omit<MatomoConfiguration, 'mode' | 'requireConsent'> &
+  Omit<Required<BaseMatomoConfiguration>, 'requireConsent'> & {
     mode?: MatomoInitializationBehavior;
+    requireConsent: MatomoConsentRequirement;
   };
 
 export interface DeferredInternalMatomoConfiguration {
@@ -143,6 +144,9 @@ export function coerceInitializationMode(
   }
 }
 
+export type MatomoConsentRequirement = 'none' | 'cookie' | 'tracking';
+
+/** @deprecated Use {@link MatomoConsentRequirement} instead */
 export enum MatomoConsentMode {
   /** Do not require any consent, always track users */
   NONE,
@@ -150,6 +154,21 @@ export enum MatomoConsentMode {
   COOKIE,
   /** Require tracking consent */
   TRACKING,
+}
+
+export function coerceConsentRequirement(
+  value: MatomoConsentMode | MatomoConsentRequirement,
+): MatomoConsentRequirement {
+  switch (value) {
+    case MatomoConsentMode.NONE:
+      return 'none';
+    case MatomoConsentMode.COOKIE:
+      return 'cookie';
+    case MatomoConsentMode.TRACKING:
+      return 'tracking';
+    default:
+      return value;
+  }
 }
 
 export interface MatomoTrackerConfiguration {
@@ -212,7 +231,7 @@ export interface BaseMatomoConfiguration {
    *
    * See Matomo guide: {@link https://developer.matomo.org/guides/tracking-consent}
    */
-  requireConsent?: MatomoConsentMode;
+  requireConsent?: MatomoConsentRequirement | MatomoConsentMode;
 
   /** Set to `true` to enable Javascript errors tracking as <i>events</i> (with category <i>JavaScript Errors</i>) */
   enableJSErrorTracking?: boolean;

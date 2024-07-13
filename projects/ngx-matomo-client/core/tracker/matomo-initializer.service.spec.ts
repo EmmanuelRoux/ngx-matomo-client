@@ -24,6 +24,7 @@ describe('MatomoInitializerService', () => {
     config: MatomoConfiguration,
     providers: Provider[] = [],
   ): MatomoInitializerService {
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         {
@@ -223,48 +224,77 @@ describe('MatomoInitializerService', () => {
     expect(tracker.disableCampaignParameters).toHaveBeenCalledBefore(tracker.trackPageView);
   });
 
-  it('should require tracking consent if setting if enabled', () => {
-    // Given
-    const service = instantiate({
-      mode: 'manual',
-      requireConsent: MatomoConsentMode.TRACKING,
-      trackAppInitialLoad: true,
-      enableLinkTracking: false,
-    });
-    const tracker = TestBed.inject(MatomoTracker);
+  it('should require tracking consent if setting is enabled', () => {
+    for (const value of ['tracking', MatomoConsentMode.TRACKING] as const) {
+      // Given
+      const service = instantiate({
+        mode: 'manual',
+        requireConsent: value,
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      });
+      const tracker = TestBed.inject(MatomoTracker);
 
-    spyOn(tracker, 'trackPageView');
-    spyOn(tracker, 'requireConsent');
+      spyOn(tracker, 'trackPageView');
+      spyOn(tracker, 'requireConsent');
 
-    // When
-    service.initialize();
+      // When
+      service.initialize();
 
-    // Then
-    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
-    expect(tracker.requireConsent).toHaveBeenCalledOnceWith();
-    expect(tracker.requireConsent).toHaveBeenCalledBefore(tracker.trackPageView);
+      // Then
+      expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+      expect(tracker.requireConsent).toHaveBeenCalledOnceWith();
+      expect(tracker.requireConsent).toHaveBeenCalledBefore(tracker.trackPageView);
+    }
   });
 
-  it('should require cookie consent if setting if enabled', () => {
-    // Given
-    const service = instantiate({
-      mode: 'manual',
-      requireConsent: MatomoConsentMode.COOKIE,
-      trackAppInitialLoad: true,
-      enableLinkTracking: false,
-    });
-    const tracker = TestBed.inject(MatomoTracker);
+  it('should require cookie consent if setting is enabled', () => {
+    for (const value of ['cookie', MatomoConsentMode.COOKIE] as const) {
+      // Given
+      const service = instantiate({
+        mode: 'manual',
+        requireConsent: value,
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      });
+      const tracker = TestBed.inject(MatomoTracker);
 
-    spyOn(tracker, 'trackPageView');
-    spyOn(tracker, 'requireCookieConsent');
+      spyOn(tracker, 'trackPageView');
+      spyOn(tracker, 'requireCookieConsent');
 
-    // When
-    service.initialize();
+      // When
+      service.initialize();
 
-    // Then
-    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
-    expect(tracker.requireCookieConsent).toHaveBeenCalledOnceWith();
-    expect(tracker.requireCookieConsent).toHaveBeenCalledBefore(tracker.trackPageView);
+      // Then
+      expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+      expect(tracker.requireCookieConsent).toHaveBeenCalledOnceWith();
+      expect(tracker.requireCookieConsent).toHaveBeenCalledBefore(tracker.trackPageView);
+    }
+  });
+
+  it('should not require any consent if setting is not enabled', () => {
+    for (const value of ['none', MatomoConsentMode.NONE, undefined] as const) {
+      // Given
+      const service = instantiate({
+        mode: 'manual',
+        requireConsent: value,
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      });
+      const tracker = TestBed.inject(MatomoTracker);
+
+      spyOn(tracker, 'trackPageView');
+      spyOn(tracker, 'requireCookieConsent');
+      spyOn(tracker, 'requireConsent');
+
+      // When
+      service.initialize();
+
+      // Then
+      expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+      expect(tracker.requireCookieConsent).not.toHaveBeenCalled();
+      expect(tracker.requireConsent).not.toHaveBeenCalled();
+    }
   });
 
   it('should enable JS errors tracking if enabled', () => {

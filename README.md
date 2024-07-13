@@ -459,9 +459,7 @@ your server-side configuration. In case users opt-in for _do-not-track_:
 
 #### Consent opt-in
 
-By default, no consent is required. To manage consent opt-in, first set dedicated configuration option `requireConsent`
-to either `MatomoConsentMode.COOKIE`
-or `MatomoConsentMode.TRACKING`:
+By default, no consent is required. To manage consent opt-in, first set dedicated configuration option `requireConsent` to either `'cookie'` or `'tracking'`:
 
 - In the context of <b>tracking consent</b> no cookies will be used and no tracking request will be sent unless consent
   was given. As soon as consent was given, tracking requests will be sent and cookies will be used.
