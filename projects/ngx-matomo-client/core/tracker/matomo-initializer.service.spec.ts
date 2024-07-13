@@ -7,7 +7,6 @@ import {
   MATOMO_ROUTER_ENABLED,
   MatomoConfiguration,
   MatomoConsentMode,
-  MatomoInitializationMode,
 } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoInitializerService } from './matomo-initializer.service';
@@ -71,7 +70,7 @@ describe('MatomoInitializerService', () => {
   it('should track initial page view by default', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       enableLinkTracking: false,
     });
     const tracker = TestBed.inject(MatomoTracker);
@@ -89,7 +88,7 @@ describe('MatomoInitializerService', () => {
     // Given
     const service = instantiate(
       {
-        mode: MatomoInitializationMode.MANUAL,
+        mode: 'manual',
         enableLinkTracking: false,
       },
       [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
@@ -109,7 +108,7 @@ describe('MatomoInitializerService', () => {
     // Given
     const service = instantiate(
       {
-        mode: MatomoInitializationMode.MANUAL,
+        mode: 'manual',
         trackAppInitialLoad: true,
         enableLinkTracking: false,
       },
@@ -129,7 +128,7 @@ describe('MatomoInitializerService', () => {
   it('should not track initial page view with manual configuration, no matter router enabled', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       enableLinkTracking: false,
       trackAppInitialLoad: false,
     });
@@ -147,7 +146,7 @@ describe('MatomoInitializerService', () => {
   it('should enable link tracking with manual configuration', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       trackAppInitialLoad: false,
       enableLinkTracking: true,
     });
@@ -165,7 +164,7 @@ describe('MatomoInitializerService', () => {
   it('should enable link tracking using pseudo-clicks with manual configuration', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       trackAppInitialLoad: false,
       enableLinkTracking: 'enable-pseudo',
     });
@@ -183,7 +182,7 @@ describe('MatomoInitializerService', () => {
   it('should set Do Not Track setting if enabled', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       acceptDoNotTrack: true,
       trackAppInitialLoad: true,
       enableLinkTracking: false,
@@ -205,7 +204,7 @@ describe('MatomoInitializerService', () => {
   it('should disable campaign parameters if enabled', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       disableCampaignParameters: true,
       trackAppInitialLoad: true,
       enableLinkTracking: false,
@@ -227,7 +226,7 @@ describe('MatomoInitializerService', () => {
   it('should require tracking consent if setting if enabled', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       requireConsent: MatomoConsentMode.TRACKING,
       trackAppInitialLoad: true,
       enableLinkTracking: false,
@@ -249,7 +248,7 @@ describe('MatomoInitializerService', () => {
   it('should require cookie consent if setting if enabled', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       requireConsent: MatomoConsentMode.COOKIE,
       trackAppInitialLoad: true,
       enableLinkTracking: false,
@@ -271,7 +270,7 @@ describe('MatomoInitializerService', () => {
   it('should enable JS errors tracking if enabled', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.MANUAL,
+      mode: 'manual',
       trackAppInitialLoad: true,
       enableJSErrorTracking: true,
     });
@@ -583,7 +582,7 @@ describe('MatomoInitializerService', () => {
     // Given
     let injectedScript: HTMLScriptElement | undefined;
     const service = instantiate({
-      mode: MatomoInitializationMode.AUTO_DEFERRED,
+      mode: 'deferred',
       trackAppInitialLoad: true,
     });
     const tracker = TestBed.inject(MatomoTracker);
@@ -633,7 +632,7 @@ describe('MatomoInitializerService', () => {
   it('should throw an error when initialized trackers more than once', () => {
     // Given
     const service = instantiate({
-      mode: MatomoInitializationMode.AUTO_DEFERRED,
+      mode: 'deferred',
     });
 
     // When

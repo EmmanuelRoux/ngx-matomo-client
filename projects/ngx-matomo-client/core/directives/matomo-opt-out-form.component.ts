@@ -27,7 +27,7 @@ const URL_PATTERN =
 
 function missingServerUrlError(): Error {
   return new Error(
-    'It is required to set [serverUrl] when Matomo configuration mode is set to MANUAL',
+    `It is required to set [serverUrl] when Matomo configuration mode is set to 'manual'`,
   );
 }
 

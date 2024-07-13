@@ -21,17 +21,25 @@ export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MAT
 export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>(
   'INTERNAL_MATOMO_CONFIGURATION',
   {
-    factory: (): InternalMatomoConfiguration => ({
-      disabled: false,
-      enableLinkTracking: true,
-      trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
-      requireConsent: MatomoConsentMode.NONE,
-      enableJSErrorTracking: false,
-      runOutsideAngularZone: false,
-      disableCampaignParameters: false,
-      acceptDoNotTrack: false,
-      ...requireNonNull(inject(MATOMO_CONFIGURATION, { optional: true }), CONFIG_NOT_FOUND),
-    }),
+    factory(): InternalMatomoConfiguration {
+      const { mode, ...restConfig } = requireNonNull(
+        inject(MATOMO_CONFIGURATION, { optional: true }),
+        CONFIG_NOT_FOUND,
+      );
+
+      return {
+        mode: mode ? coerceInitializationMode(mode) : undefined,
+        disabled: false,
+        enableLinkTracking: true,
+        trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
+        requireConsent: MatomoConsentMode.NONE,
+        enableJSErrorTracking: false,
+        runOutsideAngularZone: false,
+        disableCampaignParameters: false,
+        acceptDoNotTrack: false,
+        ...restConfig,
+      };
+    },
   },
 );
 
@@ -80,27 +88,59 @@ export const ASYNC_INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<
  * For internal use only. Module configuration merged with default values.
  *
  */
-export type InternalMatomoConfiguration = MatomoConfiguration & Required<BaseMatomoConfiguration>;
+export type InternalMatomoConfiguration = Omit<MatomoConfiguration, 'mode'> &
+  Required<BaseMatomoConfiguration> & {
+    mode?: MatomoInitializationBehavior;
+  };
 
 export interface DeferredInternalMatomoConfiguration {
   readonly configuration: Promise<InternalMatomoConfiguration>;
 
-  markReady(
-    configuration: AutoMatomoConfiguration<
-      MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
-    >,
-  ): void;
+  markReady(configuration: AutoMatomoConfiguration<'auto' | 'deferred'>): void;
 }
 
+/**
+ * - __auto__: automatically inject matomo script using provided configuration
+ * - __manual__: do not inject Matomo script. In this case, initialization script must be provided
+ * - __deferred__: automatically inject matomo script when deferred tracker configuration is provided using `MatomoInitializerService.initializeTracker()`.
+ */
+export type MatomoInitializationBehavior = 'auto' | 'manual' | 'deferred';
+
+/** @deprecated Use {@link MatomoInitializationBehavior} instead */
 export enum MatomoInitializationMode {
-  /** Automatically inject matomo script using provided configuration */
+  /**
+   * Automatically inject matomo script using provided configuration
+   *
+   * @deprecated Use `'auto'` instead
+   */
   AUTO,
-  /** Do not inject Matomo script. In this case, initialization script must be provided */
+  /**
+   * Do not inject Matomo script. In this case, initialization script must be provided
+   *
+   * @deprecated Use `'manual'` instead
+   */
   MANUAL,
   /**
    * Automatically inject matomo script when deferred tracker configuration is provided using `MatomoInitializerService.initializeTracker()`.
+   *
+   * @deprecated Use `'deferred'` instead
    */
   AUTO_DEFERRED,
+}
+
+export function coerceInitializationMode(
+  value: MatomoInitializationBehaviorInput,
+): MatomoInitializationBehavior {
+  switch (value) {
+    case MatomoInitializationMode.AUTO:
+      return 'auto';
+    case MatomoInitializationMode.MANUAL:
+      return 'manual';
+    case MatomoInitializationMode.AUTO_DEFERRED:
+      return 'deferred';
+    default:
+      return value;
+  }
 }
 
 export enum MatomoConsentMode {
@@ -191,16 +231,46 @@ export interface BaseMatomoConfiguration {
   disableCampaignParameters?: boolean;
 }
 
-export interface BaseAutoMatomoConfiguration<
-  M extends
-    | MatomoInitializationMode.AUTO
-    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO,
-> {
+/**
+ * Mapping type to extend input types with legacy `MatomoInitializationMode` type
+ *
+ * TODO remove when `MatomoInitializationMode` is removed
+ */
+export interface MatomoInitializationBehaviorInputMapping {
+  manual: MatomoInitializationMode.MANUAL;
+  auto: MatomoInitializationMode.AUTO;
+  deferred: MatomoInitializationMode.AUTO_DEFERRED;
+}
+
+/**
+ * Special type to map a `MatomoInitializationBehavior` to either itself or the legacy equivalent `MatomoInitializationMode`
+ *
+ * @example
+ * MatomoInitializationBehaviorInput<'auto'>
+ *   // Equivalent to:
+ * 'auto' | MatomoInitializationMode.AUTO
+ *
+ * MatomoInitializationBehaviorInput<'manual'>
+ *   // Equivalent to:
+ * 'manual' | MatomoInitializationMode.MANUAL
+ *
+ * MatomoInitializationBehaviorInput<'deferred'>
+ *   // Equivalent to:
+ * 'deferred' | MatomoInitializationMode.AUTO_DEFERRED
+ *
+ * TODO remove when `MatomoInitializationMode` is removed and use `MatomoInitializationBehavior` instead
+ */
+export type MatomoInitializationBehaviorInput<
+  T extends MatomoInitializationBehavior = MatomoInitializationBehavior,
+> = T | MatomoInitializationBehaviorInputMapping[T];
+
+export interface BaseAutoMatomoConfiguration<M extends 'auto' | 'deferred' = 'auto'> {
   /**
-   * Set the script initialization mode (default is `AUTO`)
+   * Set the script initialization mode (default is `'auto'`)
    *
+   * @see MatomoInitializationBehavior
    */
-  mode?: M;
+  mode?: MatomoInitializationBehaviorInput<M>;
 
   /** Matomo script url (default is `matomo.js` appended to main tracker url) */
   scriptUrl: string;
@@ -212,78 +282,73 @@ type XOR3<T, U, V> = XOR<T, XOR<U, V>>;
 
 export type ManualMatomoConfiguration = {
   /**
-   * Set the script initialization mode (default is `AUTO`)
+   * Set the script initialization mode (default is `'auto'`)
    *
+   * @see MatomoInitializationBehavior
    */
-  mode: MatomoInitializationMode.MANUAL;
+  mode: MatomoInitializationBehaviorInput<'manual'>;
 };
 
 export type DeferredMatomoConfiguration = {
   /**
-   * Set the script initialization mode (default is `AUTO`)
+   * Set the script initialization mode (default is `'auto'`)
    *
+   * @see MatomoInitializationBehavior
    */
-  mode: MatomoInitializationMode.AUTO_DEFERRED;
+  mode: MatomoInitializationBehaviorInput<'deferred'>;
 };
 
-export type ExplicitAutoConfiguration<
-  M extends
-    | MatomoInitializationMode.AUTO
-    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO,
-> = Partial<BaseAutoMatomoConfiguration<M>> &
+export type ExplicitAutoConfiguration<M extends 'auto' | 'deferred' = 'auto'> = Partial<
+  BaseAutoMatomoConfiguration<M>
+> &
   XOR<MatomoTrackerConfiguration, MultiTrackersConfiguration>;
-export type EmbeddedAutoConfiguration<
-  M extends
-    | MatomoInitializationMode.AUTO
-    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO,
-> = BaseAutoMatomoConfiguration<M> & Partial<MultiTrackersConfiguration>;
 
-export type AutoMatomoConfiguration<
-  M extends
-    | MatomoInitializationMode.AUTO
-    | MatomoInitializationMode.AUTO_DEFERRED = MatomoInitializationMode.AUTO,
-> = XOR<ExplicitAutoConfiguration<M>, EmbeddedAutoConfiguration<M>>;
+export type EmbeddedAutoConfiguration<M extends 'auto' | 'deferred' = 'auto'> =
+  BaseAutoMatomoConfiguration<M> & Partial<MultiTrackersConfiguration>;
+
+export type AutoMatomoConfiguration<M extends 'auto' | 'deferred' = 'auto'> = XOR<
+  ExplicitAutoConfiguration<M>,
+  EmbeddedAutoConfiguration<M>
+>;
 
 export type MatomoConfiguration = BaseMatomoConfiguration &
   XOR3<AutoMatomoConfiguration, ManualMatomoConfiguration, DeferredMatomoConfiguration>;
 
 export function isAutoConfigurationMode(
-  config: MatomoConfiguration,
+  config: MatomoConfiguration | InternalMatomoConfiguration,
 ): config is AutoMatomoConfiguration {
-  return config.mode == null || config.mode === MatomoInitializationMode.AUTO;
+  return (
+    config.mode == null || config.mode === 'auto' || config.mode === MatomoInitializationMode.AUTO
+  );
 }
 
-function hasMainTrackerConfiguration<
-  M extends MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED,
->(config: AutoMatomoConfiguration<M>): config is ExplicitAutoConfiguration<M> {
+function hasMainTrackerConfiguration<M extends 'auto' | 'deferred'>(
+  config: AutoMatomoConfiguration<M>,
+): config is ExplicitAutoConfiguration<M> {
   // If one is undefined, both should be
   return config.siteId != null && config.trackerUrl != null;
 }
 
-export function isEmbeddedTrackerConfiguration<
-  M extends MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED,
->(config: AutoMatomoConfiguration<M>): config is EmbeddedAutoConfiguration<M> {
+export function isEmbeddedTrackerConfiguration<M extends 'auto' | 'deferred'>(
+  config: AutoMatomoConfiguration<M>,
+): config is EmbeddedAutoConfiguration<M> {
   return config.scriptUrl != null && !hasMainTrackerConfiguration(config);
 }
 
-export function isExplicitTrackerConfiguration<
-  M extends MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED,
->(config: AutoMatomoConfiguration<M>): config is ExplicitAutoConfiguration<M> {
+export function isExplicitTrackerConfiguration<M extends 'auto' | 'deferred'>(
+  config: AutoMatomoConfiguration<M>,
+): config is ExplicitAutoConfiguration<M> {
   return hasMainTrackerConfiguration(config) || isMultiTrackerConfiguration(config);
 }
 
 export function isMultiTrackerConfiguration(
-  config: AutoMatomoConfiguration<
-    MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
-  >,
+  config: AutoMatomoConfiguration<'auto' | 'deferred'>,
 ): config is MultiTrackersConfiguration {
   return Array.isArray(config.trackers);
 }
 
 export function getTrackersConfiguration(
-  config: ExplicitAutoConfiguration<
-    MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
-  >,
+  config: ExplicitAutoConfiguration<'auto' | 'deferred'>,
 ): MatomoTrackerConfiguration[] {
   return isMultiTrackerConfiguration(config)
     ? config.trackers

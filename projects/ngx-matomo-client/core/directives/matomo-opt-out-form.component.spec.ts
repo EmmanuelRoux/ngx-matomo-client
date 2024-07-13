@@ -7,7 +7,6 @@ import {
   InternalMatomoConfiguration,
   MATOMO_CONFIGURATION,
   MatomoConfiguration,
-  MatomoInitializationMode,
 } from '../tracker/configuration';
 import { MatomoInitializerService } from '../tracker/matomo-initializer.service';
 import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
@@ -67,14 +66,14 @@ class HostWithCustomServerUrlAndLocaleComponent {
     {
       provide: INTERNAL_MATOMO_CONFIGURATION,
       useValue: {
-        mode: MatomoInitializationMode.MANUAL,
-      } as unknown as InternalMatomoConfiguration,
+        mode: 'manual',
+      } as InternalMatomoConfiguration,
     },
     {
       provide: ASYNC_INTERNAL_MATOMO_CONFIGURATION,
       useValue: Promise.resolve({
-        mode: MatomoInitializationMode.MANUAL,
-      } as unknown as InternalMatomoConfiguration),
+        mode: 'manual',
+      } as InternalMatomoConfiguration),
     },
   ],
 })

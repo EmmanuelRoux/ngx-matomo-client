@@ -4,7 +4,6 @@ import {
   AutoMatomoConfiguration,
   InternalMatomoConfiguration,
   MATOMO_CONFIGURATION,
-  MatomoInitializationMode,
   MatomoTracker,
   ɵASYNC_INTERNAL_MATOMO_CONFIGURATION as ASYNC_INTERNAL_MATOMO_CONFIGURATION,
   ɵDEFERRED_INTERNAL_MATOMO_CONFIGURATION as DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
@@ -137,7 +136,7 @@ describe('MatomoFormAnalyticsInitializer', () => {
         loadScript: true,
       },
       {
-        mode: MatomoInitializationMode.MANUAL,
+        mode: 'manual',
       },
     );
 

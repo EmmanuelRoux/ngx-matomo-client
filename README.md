@@ -703,10 +703,7 @@ or `tracker.trackPageView(title)`.
 No, by default `ngx-matomo-client` includes Matomo's tracking script for you, so **you don't need to copy/paste the
 tracking code into your application**.
 
-If you are not using the default configuration and set the initialization mode to `MatomoInitializationMode.MANUAL`,
-then
-you must include the tracking code
-yourself [as explained on official guide](https://developer.matomo.org/guides/tracking-javascript-guide).
+If you are not using the default configuration and set the initialization mode to `'manual'`, then you must include the tracking code yourself [as explained on official guide](https://developer.matomo.org/guides/tracking-javascript-guide).
 
 ### How to disable tracking in some environments?
 
@@ -897,14 +894,14 @@ export class AppModule {}
 ### How to define configuration asynchronously? (HTTP fetch...)
 
 In some case, you may want to load your trackers configuration asynchronously. To do so, set the configuration mode
-to `AUTO_DEFERRED` and manually call `MatomoInitializerService.initializeTracker(config)` when you are ready:
+to `'deferred'` and manually call `MatomoInitializerService.initializeTracker(config)` when you are ready:
 
 ```ts
 await bootstrapApplication(RootComponent, {
   providers: [
     provideMatomo({
       /* ... */
-      mode: MatomoInitializationMode.AUTO_DEFERRED,
+      mode: 'deferred',
     }),
 
     // Example: use an APP_INITIALIZER
@@ -931,7 +928,7 @@ await bootstrapApplication(RootComponent, {
   imports: [
     MatomoModule.forRoot({
       /* ... */
-      mode: MatomoInitializationMode.AUTO_DEFERRED,
+      mode: 'deferred',
     }),
   ],
   providers: [

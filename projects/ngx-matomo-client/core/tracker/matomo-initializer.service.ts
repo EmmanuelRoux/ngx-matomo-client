@@ -14,7 +14,6 @@ import {
   isEmbeddedTrackerConfiguration,
   isExplicitTrackerConfiguration,
   MatomoConsentMode,
-  MatomoInitializationMode,
   MatomoTrackerConfiguration,
 } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
@@ -50,7 +49,7 @@ export class NoopMatomoInitializer implements PublicInterface<MatomoInitializerS
     // No-op
   }
 
-  initializeTracker(_: AutoMatomoConfiguration<MatomoInitializationMode.AUTO_DEFERRED>): void {
+  initializeTracker(_: AutoMatomoConfiguration<'deferred'>): void {
     // No-op
   }
 }
@@ -83,16 +82,12 @@ export class MatomoInitializerService {
     }
   }, ALREADY_INITIALIZED_ERROR);
 
-  initializeTracker(config: AutoMatomoConfiguration<MatomoInitializationMode.AUTO_DEFERRED>): void {
+  initializeTracker(config: AutoMatomoConfiguration<'deferred'>): void {
     this.injectMatomoScript(config);
   }
 
   private readonly injectMatomoScript = runOnce(
-    (
-      config: AutoMatomoConfiguration<
-        MatomoInitializationMode.AUTO | MatomoInitializationMode.AUTO_DEFERRED
-      >,
-    ): void => {
+    (config: AutoMatomoConfiguration<'auto' | 'deferred'>): void => {
       if (isExplicitTrackerConfiguration(config)) {
         const { scriptUrl: customScriptUrl } = config;
         const [mainTracker, ...additionalTrackers] = getTrackersConfiguration(config);
