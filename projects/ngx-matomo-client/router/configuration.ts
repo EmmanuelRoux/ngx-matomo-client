@@ -4,7 +4,7 @@ import {
   InternalMatomoConfiguration,
   ɵINTERNAL_MATOMO_CONFIGURATION as INTERNAL_MATOMO_CONFIGURATION,
 } from 'ngx-matomo-client/core';
-import { MatomoRouterInterceptor } from './interceptor';
+import { MatomoRouterInterceptor, MatomoRouterInterceptorFn } from './interceptor';
 
 export const MATOMO_ROUTER_CONFIGURATION = new InjectionToken<MatomoRouterConfiguration>(
   'MATOMO_ROUTER_CONFIGURATION',
@@ -81,7 +81,7 @@ export interface MatomoRouterConfigurationWithInterceptors extends MatomoRouterC
    * For more complex scenarios, it is possible to configure any interceptor by
    * providing token `MATOMO_ROUTER_INTERCEPTORS` as `multi` provider(s).
    */
-  interceptors?: Type<MatomoRouterInterceptor>[];
+  interceptors?: (Type<MatomoRouterInterceptor> | MatomoRouterInterceptorFn)[];
 }
 
 export const DEFAULT_ROUTER_CONFIGURATION: Required<MatomoRouterConfiguration> = {

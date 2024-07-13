@@ -5,7 +5,12 @@ import {
   ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED,
 } from 'ngx-matomo-client/core';
 import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './configuration';
-import { MatomoRouterInterceptor, provideInterceptor, provideInterceptors } from './interceptor';
+import {
+  MatomoRouterInterceptor,
+  MatomoRouterInterceptorFn,
+  provideInterceptor,
+  provideInterceptors,
+} from './interceptor';
 import {
   MATOMO_ROUTE_DATA_KEY,
   MatomoRouteDataInterceptor,
@@ -43,7 +48,7 @@ export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
 
 /** Add some matomo router interceptors */
 export function withRouterInterceptors(
-  interceptors: Type<MatomoRouterInterceptor>[],
+  interceptors: (Type<MatomoRouterInterceptor> | MatomoRouterInterceptorFn)[],
 ): MatomoFeature {
   return createMatomoFeature(
     RouterMatomoFeatureKind.RouterInterceptors,

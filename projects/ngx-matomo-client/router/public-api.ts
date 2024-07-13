@@ -15,6 +15,7 @@ export { PageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER } from './page-title-prov
 export { PageUrlProvider, MATOMO_PAGE_URL_PROVIDER } from './page-url-provider';
 export {
   MatomoRouterInterceptor,
+  MatomoRouterInterceptorFn,
   MATOMO_ROUTER_INTERCEPTORS,
   provideInterceptor,
   provideInterceptors,

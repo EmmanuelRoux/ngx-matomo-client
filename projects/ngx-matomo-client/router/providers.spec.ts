@@ -1,12 +1,18 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed, TestModuleMetadata } from '@angular/core/testing';
+import { NavigationEnd } from '@angular/router';
 import {
   MatomoTracker,
   provideMatomo,
   ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED,
 } from 'ngx-matomo-client/core';
+import { Observable } from 'rxjs';
 import { MATOMO_ROUTER_CONFIGURATION } from './configuration';
-import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
+import {
+  MATOMO_ROUTER_INTERCEPTORS,
+  MatomoRouterInterceptor,
+  MatomoRouterInterceptorFn,
+} from './interceptor';
 import {
   DEFAULT_DATA_KEY,
   MATOMO_ROUTE_DATA_KEY,
@@ -36,9 +42,13 @@ describe('providers', () => {
     expect(TestBed.inject(MATOMO_ROUTER_ENABLED)).toEqual(true);
   });
 
-  it('should provide basic Matomo providers with router feature and additional interceptor', async () => {
+  it('should provide basic Matomo providers with router feature and additional class-based interceptor', async () => {
+    const calls: NavigationEnd[] = [];
+
     class MyInterceptor implements MatomoRouterInterceptor {
-      readonly beforePageTrack = jasmine.createSpy('beforePageTrack');
+      beforePageTrack(event: NavigationEnd): Observable<void> | Promise<void> | void {
+        calls.push(event);
+      }
     }
 
     await setUp([
@@ -49,7 +59,36 @@ describe('providers', () => {
       ),
     ]);
 
-    expect(TestBed.inject(MATOMO_ROUTER_INTERCEPTORS)).toEqual([jasmine.any(MyInterceptor)]);
+    const event = new NavigationEnd(0, '/', '/');
+
+    TestBed.inject(MATOMO_ROUTER_INTERCEPTORS).forEach(interceptor =>
+      interceptor.beforePageTrack(event),
+    );
+
+    expect(calls).toEqual([event]);
+  });
+
+  it('should provide basic Matomo providers with router feature and additional functional interceptor', async () => {
+    const calls: NavigationEnd[] = [];
+    const myInterceptor: MatomoRouterInterceptorFn = (event: NavigationEnd) => {
+      calls.push(event);
+    };
+
+    await setUp([
+      provideMatomo(
+        { trackerUrl: 'my-tracker', siteId: 42 },
+        withRouter({ delay: 42 }),
+        withRouterInterceptors([myInterceptor]),
+      ),
+    ]);
+
+    const event = new NavigationEnd(0, '/', '/');
+
+    TestBed.inject(MATOMO_ROUTER_INTERCEPTORS).forEach(interceptor =>
+      interceptor.beforePageTrack(event),
+    );
+
+    expect(calls).toEqual([event]);
   });
 
   it('should provide basic Matomo providers with router feature and route data retrieval', async () => {
