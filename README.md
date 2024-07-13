@@ -210,38 +210,11 @@ export class ExampleComponent implements OnInit {
 
 ### Adding info or customizing automatic page view tracking
 
+By default, Matomo detects page title and url. Page title is read from Angular's `Title` service (which itself is filled with route's `'title'` key) if available, or from document title. You may override defaults as described below.
+
 #### Using route data
 
-1. First, declare route data under `matomo` key:
-
-```ts
-const routes: Routes = [
-  {
-    path: '',
-    component: HomeComponent,
-    data: {
-      matomo: {
-        title: 'My Home Page Title',
-      } as MatomoRouteData,
-    },
-  },
-  {
-    path: 'hello',
-    component: HelloComponent,
-    data: {
-      matomo: {
-        title: 'My Home Page Title',
-        ecommerce: {
-          productSKU: '12345',
-          productName: 'French baguette',
-        },
-      } as MatomoRouteData,
-    },
-  },
-];
-```
-
-2. Then configure `ngx-matomo-client` as following:
+1. Configure `ngx-matomo-client` to read from route data:
 
 ```ts
 import { provideMatomo, withRouter, withRouteData } from 'ngx-matomo-client';
@@ -259,6 +232,29 @@ await bootstrapApplication(RootComponent, {
 });
 ```
 
+By default, Matomo properties are looked-up at `matomo` key of Angular route data.
+You may define another key by providing it as an argument to `withRouteData`:
+
+```ts
+// provideMatomo()
+withRouteData('myCustomKey');
+
+// Route data:
+const routes: Routes = [
+  {
+    path: 'hello',
+    component: HelloComponent,
+    data: {
+      myCustomKey: {
+        ecommerce: {
+          productSKU: '12345',
+        },
+      } as MatomoRouteData,
+    },
+  },
+];
+```
+
 <details>
   <summary>See equivalent configuration with `@NgModule`</summary>
 
@@ -274,11 +270,79 @@ import { MatomoModule, MatomoRouterModule, MatomoRouteDataInterceptor } from 'ng
       interceptors: [MatomoRouteDataInterceptor], // Add this configuration
     }),
   ],
+  providers: [
+    // Optionally, define another key to look-up at:
+    {
+      provide: MATOMO_ROUTE_DATA_KEY,
+      useValue: 'myCustomKey',
+    },
+  ],
 })
 export class AppModule {}
 ```
 
 </details>
+
+2. Then, declare route data under `matomo` key:
+
+```ts
+import { MatomoRouteData } from './route-data-interceptor';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+    title: 'My home page', // <-- Matomo will use this title by default, if available
+    data: {
+      matomo: {
+        title: 'My home page title for Matomo', // <-- You can override the title sent to Matomo
+      } as MatomoRouteData,
+    },
+  },
+  {
+    path: 'hello',
+    component: HelloComponent,
+    title: 'My home page', // <-- Matomo will use this title if available
+    data: {
+      matomo: {
+        ecommerce: {
+          productSKU: '12345',
+          productName: 'French baguette',
+        },
+      } as MatomoRouteData,
+    },
+  },
+
+  // Data can also be retrieve asynchronously using 'resolve':
+  {
+    path: ':productId',
+    component: ProductComponent,
+    resolve: {
+      matomo: async (route: ActivatedRouteSnapshot): Promise<MatomoRouteData> => {
+        // Load any asynchronous data
+        const product = await inject(MyProductService).loadProductData(route.params.productId);
+
+        return {
+          ecommerce: {
+            productSKU: product.sku,
+          },
+        };
+      },
+    },
+  },
+];
+```
+
+Following properties are available:
+
+| Property                    | Type     |
+| --------------------------- | -------- |
+| `title`                     | `string` |
+| `ecommerce.productSKU`      | `string` |
+| `ecommerce.productName`     | `string` |
+| `ecommerce.productCategory` | `string` |
+| `ecommerce.price`           | `number` |
+| `ecommerce.quantity`        | `number` |
 
 #### Using custom interceptor
 
