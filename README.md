@@ -167,7 +167,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 import { MatomoModule, MatomoRouterModule } from 'ngx-matomo-client';
@@ -256,7 +256,7 @@ const routes: Routes = [
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 import { MatomoModule, MatomoRouterModule, MatomoRouteDataInterceptor } from 'ngx-matomo-client';
@@ -416,7 +416,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 @NgModule({
@@ -649,7 +649,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 import { MatomoFormAnalyticsModule } from 'ngx-matomo-client/form-analytics';
@@ -786,7 +786,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```typescript
 @NgModule({
@@ -823,7 +823,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 @NgModule({
@@ -887,7 +887,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 import { MATOMO_SCRIPT_FACTORY } from 'ngx-matomo-client';
@@ -937,7 +937,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 @NgModule({
@@ -983,7 +983,7 @@ await bootstrapApplication(RootComponent, {
 ```
 
 <details>
-  <summary>See equivalent configuration with `@NgModule`</summary>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
 
 ```ts
 @NgModule({
