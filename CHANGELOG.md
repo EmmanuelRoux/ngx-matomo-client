@@ -1,3 +1,18 @@
+# [6.3.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.2.0...v6.3.0) (2024-07-18)
+
+
+### Features
+
+* **core:** introduce literal type `MatomoConsentRequirement` ([e517efd](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/e517efd5f922d2393d6e27889d3043ed24171142))
+* **core:** introduce literal type `MatomoInitializationBehavior` ([0cac720](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/0cac720066d6115ece75b55aded2c9b7096d8cf5))
+* **router:** add functional interceptors support ([6002d77](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/6002d778b011672c2e3f598718e6d8647a28ea43))
+
+
+### Deprecations
+
+* **core:** `MatomoConsentMode` enum is deprecated, use `MatomoConsentRequirement` instead.
+* **core:** `MatomoInitializationMode` enum is deprecated, use `MatomoInitializationBehavior` instead.
+
 # [6.2.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.1.3...v6.2.0) (2024-05-28)
 
 
