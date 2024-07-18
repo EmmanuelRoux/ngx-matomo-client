@@ -4,43 +4,8 @@
 
 ## Configuration reference
 
-The configuration should be provided in your application's root module, either using `NgModule` or `provideMatomo(options, ...additionalFeatures)`:
+Below are all configuration properties that you can use when you initialize Matomo (either using `provideMatomo(options, ...additionalFeatures)` or the classic `NgModule`):
 
-<table>
-<tr>
-<th>Classic apps</th>
-<th><a href="https://angular.io/guide/standalone-components">Standalone</a> apps</th>
-</tr>
-<tr>
-<td valign="top">
-
-<!-- prettier-ignore -->
-```ts
-import {
-  NgxMatomoModule,
-  NgxMatomoRouterModule,
-  MatomoRouteDataInterceptor,
-} from 'ngx-matomo-client';
-
-@NgModule({
-  imports: [
-    NgxMatomoModule.forRoot({
-      // Main options here
-      siteId: 42,
-      trackerUrl: 'http://...',
-    }),
-    NgxMatomoRouterModule.forRoot({
-      // Router options here
-    }),
-  ],
-})
-export class AppModule {}
-```
-
-</td>
-<td valign="top">
-
-<!-- prettier-ignore -->
 ```ts
 import {
   provideMatomo,
@@ -52,7 +17,7 @@ import {
 @NgModule({
   providers: [
     provideMatomo(
-      // Main options here
+      // Main options here:
       {
         siteId: 42,
         trackerUrl: 'http://...',
@@ -63,20 +28,39 @@ import {
         // Router options here
       }),
       withScriptFactory(),
-      withRouterInterceptors()
+      withRouterInterceptors(),
     ),
   ],
 })
 export class AppModule {}
 ```
 
-</td>
-</tr>
-</table>
+<details>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
+
+```ts
+import { MatomoModule, MatomoRouterModule, MatomoRouteDataInterceptor } from 'ngx-matomo-client';
+
+@NgModule({
+  imports: [
+    MatomoModule.forRoot({
+      // Main options here
+      siteId: 42,
+      trackerUrl: 'http://...',
+    }),
+    MatomoRouterModule.forRoot({
+      // Router options here
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+</details>
 
 ### Options
 
-Main configuration options (for `NgxMatomoModule.forRoot` or `provideMatomo`) are:
+Main configuration options (for `provideMatomo()` or `MatomoModule.forRoot()`) are:
 
 | Option                | Type                                                                       | Default value                                                  | Description                                                                                                                                                                                                                                            | Available in `'manual'` mode |
 | --------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
@@ -94,7 +78,7 @@ Main configuration options (for `NgxMatomoModule.forRoot` or `provideMatomo`) ar
 | requireConsent        | `MatomoConsentRequirement`                                                 | `'none'`                                                       | Configure user consent requirement.                                                                                                                                                                                                                    | yes                          |
 | runOutsideAngularZone | `boolean`                                                                  | `false`                                                        | If set to `true`, will run matomo calls outside of angular's NgZone. This may help if the call causes the app to freeze.                                                                                                                               | yes                          |
 
-Router configuration options (for `NgxMatomoRouterModule.forRoot` or `withRouter`) are:
+Router configuration options (for `withRouter()` or `MatomoRouterModule.forRoot()`) are:
 
 | Option          | Type                                         | Default value                         | Description                                                                                                                                                                                                                                                                                                                                                                             |
 | --------------- | -------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -105,7 +89,7 @@ Router configuration options (for `NgxMatomoRouterModule.forRoot` or `withRouter
 
 ### Additional features
 
-Available features for `provideMatomo` are:
+Available features for `provideMatomo()` are:
 
 #### withRouter
 
@@ -124,3 +108,7 @@ Add interceptors to hook into the automatic page view tracking. This requires `w
 #### withScriptFactory
 
 Allow to customize Matomo's script element creation. See [How can I customize the inserted script tag?](/README.md#how-can-i-customize-the-inserted-script-tag) in FAQ.
+
+#### withFormAnalytics
+
+Allow to use the Form Analytics plugin of Matomo. See [Plugins > Form Analytics](/README.md#form-analytics) in FAQ.
