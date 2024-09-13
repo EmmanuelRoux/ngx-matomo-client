@@ -1,4 +1,5 @@
-import { Inject, Injectable, Optional } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { MatomoTracker, ɵrunOnce as runOnce } from 'ngx-matomo-client/core';
 import {
@@ -79,6 +80,8 @@ function getNavigationEndComparator(config: InternalRouterConfiguration): Naviga
 export class MatomoRouter {
   constructor(
     private readonly router: Router,
+    @Inject(PLATFORM_ID)
+    private readonly platformId: object,
     @Inject(INTERNAL_ROUTER_CONFIGURATION)
     private readonly config: InternalRouterConfiguration,
     @Inject(MATOMO_PAGE_TITLE_PROVIDER)
@@ -101,8 +104,8 @@ export class MatomoRouter {
   }
 
   readonly initialize = runOnce(() => {
-    if (this.config.disabled) {
-      // Do not set-up router if globally disabled
+    if (this.config.disabled || !isPlatformBrowser(this.platformId)) {
+      // Do not set-up router if globally disabled or running on server
       return;
     }
 

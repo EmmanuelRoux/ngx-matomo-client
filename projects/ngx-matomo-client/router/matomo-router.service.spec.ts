@@ -1,4 +1,5 @@
-import { Provider } from '@angular/core';
+import { ɵPLATFORM_BROWSER_ID, ɵPLATFORM_SERVER_ID } from '@angular/common';
+import { PLATFORM_ID, Provider } from '@angular/core';
 import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { MATOMO_CONFIGURATION, MatomoTracker } from 'ngx-matomo-client/core';
@@ -294,6 +295,48 @@ describe('MatomoRouter', () => {
     expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
     expect(tracker.trackPageView).not.toHaveBeenCalled();
     expect(tracker.setReferrerUrl).not.toHaveBeenCalled();
+  }));
+
+  it('should track page view if in browser', fakeAsync(() => {
+    // Given
+    const interceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor', [
+      'beforePageTrack',
+    ]);
+    const service = instantiate({}, {}, [
+      { provide: PLATFORM_ID, useValue: ɵPLATFORM_BROWSER_ID },
+      { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor },
+    ]);
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.initialize();
+    triggerEvent('/');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalled();
+    expect(interceptor.beforePageTrack).toHaveBeenCalled();
+  }));
+
+  it('should not track page view if on server', fakeAsync(() => {
+    // Given
+    const interceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor', [
+      'beforePageTrack',
+    ]);
+    const service = instantiate({}, {}, [
+      { provide: PLATFORM_ID, useValue: ɵPLATFORM_SERVER_ID },
+      { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor },
+    ]);
+    const tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+
+    // When
+    service.initialize();
+    triggerEvent('/');
+    tick(); // Tracking is asynchronous by default
+
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+    expect(interceptor.beforePageTrack).not.toHaveBeenCalled();
   }));
 
   it('should track page view if navigated to the same url with different query params', fakeAsync(() => {
