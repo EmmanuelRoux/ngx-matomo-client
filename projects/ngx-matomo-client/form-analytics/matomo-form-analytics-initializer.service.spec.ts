@@ -1,4 +1,5 @@
-import { Provider } from '@angular/core';
+import { ɵPLATFORM_SERVER_ID } from '@angular/common';
+import { PLATFORM_ID, Provider } from '@angular/core';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import {
   AutoMatomoConfiguration,
@@ -214,5 +215,26 @@ describe('MatomoFormAnalyticsInitializer', () => {
 
     await initializer.initialize();
     expect(formAnalytics.disableFormAnalytics).toHaveBeenCalledTimes(1);
+  });
+
+  it('should implicitly disable form analytics when not running in browser', async () => {
+    // Given
+    const pageViewTracked = new Subject<void>();
+    const initializer = await instantiate(
+      {},
+      {},
+      [{ provide: PLATFORM_ID, useValue: ɵPLATFORM_SERVER_ID }],
+      pageViewTracked,
+    );
+    const formAnalytics = TestBed.inject(MatomoFormAnalytics);
+
+    await initializer.initialize();
+    expect(formAnalytics.scanForForms).not.toHaveBeenCalled();
+
+    // When
+    pageViewTracked.next();
+    // Then
+    expect(formAnalytics.scanForForms).not.toHaveBeenCalled();
+    expect(formAnalytics.disableFormAnalytics).not.toHaveBeenCalled();
   });
 });

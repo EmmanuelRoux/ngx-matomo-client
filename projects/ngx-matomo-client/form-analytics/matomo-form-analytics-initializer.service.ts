@@ -1,4 +1,5 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, OnDestroy, PLATFORM_ID } from '@angular/core';
 import {
   MatomoTracker,
   ɵappendTrailingSlash as appendTrailingSlash,
@@ -24,6 +25,7 @@ export class MatomoFormAnalyticsInitializer implements OnDestroy {
   private readonly scriptInjector = inject(ScriptInjector);
   private readonly tracker = inject(MatomoTracker);
   private readonly formAnalytics = inject(MatomoFormAnalytics);
+  private readonly platformId = inject(PLATFORM_ID);
 
   private pageTrackedSubscription: Subscription | undefined;
 
@@ -32,6 +34,11 @@ export class MatomoFormAnalyticsInitializer implements OnDestroy {
   }
 
   readonly initialize = runOnce(async () => {
+    // Do not set-up router if running on server
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     if (this.config.disabled) {
       this.formAnalytics.disableFormAnalytics();
       return;
