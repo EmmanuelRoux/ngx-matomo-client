@@ -1,3 +1,10 @@
+## [6.3.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.0...v6.3.1) (2024-09-15)
+
+
+### Bug Fixes
+
+* **router, form-analytics:** disable page tracking on server ([#94](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/94)) ([229083b](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/229083b0137080f385a5fae4b8a25e0a62bda5ad))
+
 # [6.3.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.2.0...v6.3.0) (2024-07-18)
 
 
