@@ -41,6 +41,7 @@ export class MatomoRouterModule {
     return {
       ngModule: MatomoRouterModule,
       providers: [
+        MatomoRouter,
         { provide: MATOMO_ROUTER_CONFIGURATION, useValue: configWithInterceptors },
         provideInterceptors(configWithInterceptors.interceptors),
       ],

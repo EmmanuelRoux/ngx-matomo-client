@@ -10,6 +10,7 @@ import {
   DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
+  InternalMatomoConfiguration,
   isAutoConfigurationMode,
   isEmbeddedTrackerConfiguration,
   isExplicitTrackerConfiguration,
@@ -53,10 +54,7 @@ export class NoopMatomoInitializer implements PublicInterface<MatomoInitializerS
   }
 }
 
-@Injectable({
-  providedIn: 'root',
-  useFactory: createMatomoInitializer,
-})
+@Injectable()
 export class MatomoInitializerService {
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
   private readonly deferredConfig = inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION);
@@ -78,6 +76,9 @@ export class MatomoInitializerService {
 
     if (isAutoConfigurationMode(this.config)) {
       this.injectMatomoScript(this.config);
+    } else {
+      // Mode is manual, immediately resolve deferred config
+      this.deferredConfig.markReady(this.config);
     }
   }, ALREADY_INITIALIZED_ERROR);
 
@@ -106,7 +107,7 @@ export class MatomoInitializerService {
         this.scriptInjector.injectDOMScript(scriptUrl);
       }
 
-      this.deferredConfig.markReady(config);
+      this.deferredConfig.markReady(config as InternalMatomoConfiguration);
     },
     ALREADY_INJECTED_ERROR,
   );
