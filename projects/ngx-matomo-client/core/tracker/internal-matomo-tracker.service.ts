@@ -30,10 +30,7 @@ export function createInternalMatomoTracker(): InternalMatomoTrackerType {
   return disabled || !isBrowser ? new NoopMatomoTracker() : new InternalMatomoTracker();
 }
 
-@Injectable({
-  providedIn: 'root',
-  useFactory: createInternalMatomoTracker,
-})
+@Injectable()
 export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
   private readonly ngZone = inject(NgZone);
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);

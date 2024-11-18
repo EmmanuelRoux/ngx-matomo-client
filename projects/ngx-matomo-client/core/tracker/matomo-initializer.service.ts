@@ -53,10 +53,7 @@ export class NoopMatomoInitializer implements PublicInterface<MatomoInitializerS
   }
 }
 
-@Injectable({
-  providedIn: 'root',
-  useFactory: createMatomoInitializer,
-})
+@Injectable()
 export class MatomoInitializerService {
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
   private readonly deferredConfig = inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION);
@@ -65,6 +62,7 @@ export class MatomoInitializerService {
 
   constructor() {
     initializeMatomoHolder();
+    this.initialize()
   }
 
   // TODO v7 remove

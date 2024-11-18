@@ -5,9 +5,17 @@ import {
   makeEnvironmentProviders,
   Provider,
 } from '@angular/core';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
-import { MatomoInitializerService } from './tracker/matomo-initializer.service';
+import { INTERNAL_MATOMO_CONFIGURATION, MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
+import { createMatomoInitializer, MatomoInitializerService } from './tracker/matomo-initializer.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
+
+import { createInternalMatomoTracker, InternalMatomoTracker } from './tracker/internal-matomo-tracker.service';
+import { MatomoTracker } from './tracker/matomo-tracker.service';
+import { ScriptInjector } from './utils/script-injector';
+
+// import { MatomoFormAnalyticsInitializer } from '../form-analytics/matomo-form-analytics-initializer.service';
+// import { MatomoFormAnalytics } from '../form-analytics';
+// import { MatomoRouter } from '../router/matomo-router.service';
 
 const PRIVATE_MATOMO_PROVIDERS = Symbol('MATOMO_PROVIDERS');
 const PRIVATE_MATOMO_CHECKS = Symbol('MATOMO_CHECKS');
@@ -73,20 +81,15 @@ export function provideMatomo(
   config: MatomoConfiguration | (() => MatomoConfiguration),
   ...features: MatomoFeature[]
 ): EnvironmentProviders {
-  const providers: Provider[] = [
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue() {
-        inject(MatomoInitializerService).initialize();
-      },
-    },
-  ];
-  const featuresKind: MatomoFeatureKind[] = [];
 
+  let providers: Provider[] = [];
   if (typeof config === 'function') {
     providers.push({
       provide: MATOMO_CONFIGURATION,
+      useFactory: config,
+    });
+    providers.push({
+      provide: INTERNAL_MATOMO_CONFIGURATION,
       useFactory: config,
     });
   } else {
@@ -94,8 +97,49 @@ export function provideMatomo(
       provide: MATOMO_CONFIGURATION,
       useValue: config,
     });
+    providers.push({
+      provide: INTERNAL_MATOMO_CONFIGURATION,
+      useValue: config,
+    });
   }
-
+  providers = providers.concat([
+    {
+      provide: MatomoInitializerService,
+      useFactory: createMatomoInitializer
+    },
+    // {
+    //   provide: ENVIRONMENT_INITIALIZER,
+    //   multi: true,
+    //   useValue() {
+    //     inject(MatomoInitializerService).initialize();
+    //   },
+    // },
+    {
+      provide: InternalMatomoTracker,
+      useFactory: createInternalMatomoTracker
+    },
+    {
+      provide: MatomoTracker,
+      useClass: MatomoTracker
+    },
+    {
+      provide: ScriptInjector,
+      useClass: ScriptInjector
+    },
+    // {
+    //   provide: MatomoFormAnalyticsInitializer,
+    //   useClass: MatomoFormAnalyticsInitializer
+    // },
+    // {
+    //   provide: MatomoFormAnalytics,
+    //   useClass: MatomoFormAnalytics
+    // },
+    // {
+    //   provide: MatomoRouter,
+    //   useClass: MatomoRouter
+    // }
+  ]);
+  const featuresKind: MatomoFeatureKind[] = [];
   for (const feature of features) {
     providers.push(...feature[PRIVATE_MATOMO_PROVIDERS]);
     featuresKind.push(feature.kind);

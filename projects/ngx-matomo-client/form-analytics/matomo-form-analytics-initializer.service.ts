@@ -16,14 +16,12 @@ import { MatomoFormAnalytics } from './matomo-form-analytics.service';
 
 const DEFAULT_SCRIPT_SUFFIX = 'plugins/FormAnalytics/tracker.min.js';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MatomoFormAnalyticsInitializer implements OnDestroy {
   private readonly config = inject(INTERNAL_MATOMO_FORM_ANALYTICS_CONFIGURATION);
   private readonly coreConfig = inject(ASYNC_INTERNAL_MATOMO_CONFIGURATION);
-  private readonly scriptInjector = inject(ScriptInjector);
-  private readonly tracker = inject(MatomoTracker);
+  private readonly scriptInjector: ScriptInjector = inject(ScriptInjector);
+  private readonly tracker: MatomoTracker = inject(MatomoTracker);
   private readonly formAnalytics = inject(MatomoFormAnalytics);
   private readonly platformId = inject(PLATFORM_ID);
 
