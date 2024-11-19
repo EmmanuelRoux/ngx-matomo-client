@@ -62,7 +62,6 @@ export class MatomoInitializerService {
 
   constructor() {
     initializeMatomoHolder();
-    this.initialize()
   }
 
   // TODO v7 remove

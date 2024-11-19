@@ -72,7 +72,7 @@ export interface MatomoRouteData {
 export class MatomoRouteDataInterceptor extends MatomoRouteInterceptorBase<
   MatomoRouteData | undefined
 > {
-  protected readonly tracker: MatomoTracker = inject(MatomoTracker);
+  protected readonly tracker = inject(MatomoTracker);
   protected readonly dataKey = inject(MATOMO_ROUTE_DATA_KEY);
 
   protected extractRouteData(route: ActivatedRouteSnapshot): MatomoRouteData | undefined {

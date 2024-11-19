@@ -18,7 +18,7 @@ function trimTrailingUndefinedElements<T>(array: T[]): T[] {
   return trimmed;
 }
 
-type InternalMatomoTrackerType = Pick<
+export type InternalMatomoTrackerType = Pick<
   InternalMatomoTracker<unknown, string>,
   'get' | 'push' | 'pushFn'
 >;
@@ -67,6 +67,7 @@ export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
   }
 }
 
+@Injectable()
 export class NoopMatomoTracker<MATOMO = unknown, PREFIX extends string = ''>
   implements InternalMatomoTrackerType
 {
