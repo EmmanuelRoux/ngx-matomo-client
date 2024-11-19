@@ -73,6 +73,7 @@ export class MatomoInitializerService {
   readonly initialize = runOnce(() => {
     this.runPreInitTasks();
 
+    console.log('initialize', { ...this.config });
     if (isAutoConfigurationMode(this.config)) {
       this.injectMatomoScript(this.config);
     }

@@ -12,6 +12,8 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+  AutoMatomoConfiguration,
+  ExplicitAutoConfiguration,
   getTrackersConfiguration,
   InternalMatomoConfiguration,
   isAutoConfigurationMode,
@@ -132,6 +134,11 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
     this.updateUrl();
 
     this.config.then(config => {
+      console.log(
+        'config',
+        config,
+        getTrackersConfiguration(config as ExplicitAutoConfiguration)[0].trackerUrl,
+      );
       if (isAutoConfigurationMode(config) && isExplicitTrackerConfiguration(config)) {
         this._defaultServerUrl = getTrackersConfiguration(config)[0].trackerUrl;
       }
@@ -160,6 +167,7 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
     if (this._serverUrlOverride) {
       serverUrl = this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this._serverUrlOverride);
     }
+    console.log('updateUrl', this._defaultServerUrl, serverUrl);
 
     if (!serverUrl) {
       if (this._defaultServerUrlInitialized) {

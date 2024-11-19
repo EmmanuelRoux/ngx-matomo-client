@@ -5,7 +5,15 @@ import {
   makeEnvironmentProviders,
   Provider,
 } from '@angular/core';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
+import {
+  ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+  createDeferredInternalMatomoConfiguration,
+  createInternalMatomoConfiguration,
+  DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
+  INTERNAL_MATOMO_CONFIGURATION,
+  MATOMO_CONFIGURATION,
+  MatomoConfiguration,
+} from './tracker/configuration';
 import {
   createInternalMatomoTracker,
   InternalMatomoTracker,
@@ -96,6 +104,18 @@ export function provideMatomo(
     {
       provide: MatomoInitializerService,
       useFactory: createMatomoInitializer,
+    },
+    {
+      provide: INTERNAL_MATOMO_CONFIGURATION,
+      useFactory: createInternalMatomoConfiguration,
+    },
+    {
+      provide: DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
+      useFactory: createDeferredInternalMatomoConfiguration,
+    },
+    {
+      provide: ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+      useFactory: () => inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION).configuration,
     },
     {
       provide: ENVIRONMENT_INITIALIZER,

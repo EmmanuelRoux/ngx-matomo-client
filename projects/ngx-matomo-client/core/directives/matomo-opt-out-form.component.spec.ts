@@ -1,6 +1,9 @@
-import { Component, LOCALE_ID } from '@angular/core';
+import { ApplicationInitStatus, Component, LOCALE_ID } from '@angular/core';
 import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { provideMatomoTesting } from '../../testing';
+import { provideMatomo } from '../providers';
+import { provideTestingTracker } from '../testing/testing-tracker';
 import {
   ASYNC_INTERNAL_MATOMO_CONFIGURATION,
   INTERNAL_MATOMO_CONFIGURATION,
@@ -102,18 +105,14 @@ describe('MatomoOptOutFormComponent', () => {
         HostWithoutLocaleComponent,
       ],
       providers: [
-        {
-          provide: MATOMO_CONFIGURATION,
-          useValue: { siteId: 1, trackerUrl: 'http://localhost' } as MatomoConfiguration,
-        },
+        provideMatomo({ siteId: 1, trackerUrl: 'http://localhost' }),
+        provideTestingTracker(),
         {
           provide: LOCALE_ID,
           useValue: 'en',
         },
       ],
     }).compileComponents();
-
-    TestBed.inject(MatomoInitializerService).initialize();
   });
 
   it('should create', async () => {
