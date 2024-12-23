@@ -5,9 +5,26 @@ import {
   makeEnvironmentProviders,
   Provider,
 } from '@angular/core';
-import { MATOMO_CONFIGURATION, MatomoConfiguration } from './tracker/configuration';
-import { MatomoInitializerService } from './tracker/matomo-initializer.service';
+import {
+  ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+  createDeferredInternalMatomoConfiguration,
+  createInternalMatomoConfiguration,
+  DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
+  INTERNAL_MATOMO_CONFIGURATION,
+  MATOMO_CONFIGURATION,
+  MatomoConfiguration,
+} from './tracker/configuration';
+import {
+  createInternalMatomoTracker,
+  InternalMatomoTracker,
+} from './tracker/internal-matomo-tracker.service';
+import {
+  createMatomoInitializer,
+  MatomoInitializerService,
+} from './tracker/matomo-initializer.service';
+import { MatomoTracker } from './tracker/matomo-tracker.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
+import { ScriptInjector } from './utils/script-injector';
 
 const PRIVATE_MATOMO_PROVIDERS = Symbol('MATOMO_PROVIDERS');
 const PRIVATE_MATOMO_CHECKS = Symbol('MATOMO_CHECKS');
@@ -74,6 +91,28 @@ export function provideMatomo(
   ...features: MatomoFeature[]
 ): EnvironmentProviders {
   const providers: Provider[] = [
+    MatomoTracker,
+    ScriptInjector,
+    {
+      provide: InternalMatomoTracker,
+      useFactory: createInternalMatomoTracker,
+    },
+    {
+      provide: MatomoInitializerService,
+      useFactory: createMatomoInitializer,
+    },
+    {
+      provide: INTERNAL_MATOMO_CONFIGURATION,
+      useFactory: createInternalMatomoConfiguration,
+    },
+    {
+      provide: DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
+      useFactory: createDeferredInternalMatomoConfiguration,
+    },
+    {
+      provide: ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+      useFactory: () => inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION).configuration,
+    },
     {
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,

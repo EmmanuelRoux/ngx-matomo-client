@@ -21,11 +21,11 @@ describe('providers', () => {
     const config: MatomoConfiguration = { trackerUrl: 'my-tracker', siteId: 42 };
 
     await setUp([
+      provideMatomo(config),
       {
         provide: MatomoInitializerService,
         useValue: fakeInitializer,
       },
-      provideMatomo(config),
     ]);
 
     expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
@@ -40,6 +40,7 @@ describe('providers', () => {
     const trackerUrlToken = new InjectionToken<string>('trackerUrl');
 
     await setUp([
+      provideMatomo(() => ({ trackerUrl: TestBed.inject(trackerUrlToken), siteId: 42 })),
       {
         provide: MatomoInitializerService,
         useValue: fakeInitializer,
@@ -48,7 +49,6 @@ describe('providers', () => {
         provide: trackerUrlToken,
         useValue: trackerUrl,
       },
-      provideMatomo(() => ({ trackerUrl: TestBed.inject(trackerUrlToken), siteId: 42 })),
     ]);
 
     expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));

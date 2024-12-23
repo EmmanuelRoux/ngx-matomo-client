@@ -12,4 +12,8 @@ export {
   isAutoConfigurationMode as ɵisAutoConfigurationMode,
 } from './tracker/configuration';
 export { InternalMatomoTracker as ɵInternalMatomoTracker } from './tracker/internal-matomo-tracker.service';
+export {
+  provideTestingTracker as ɵprovideTestingTracker,
+  MatomoTestingTracker as ɵMatomoTestingTracker,
+} from './testing/testing-tracker';
 export { createMatomoFeature as ɵcreateMatomoFeature } from './providers';

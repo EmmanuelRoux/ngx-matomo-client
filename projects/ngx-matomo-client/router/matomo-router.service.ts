@@ -76,7 +76,7 @@ function getNavigationEndComparator(config: InternalRouterConfiguration): Naviga
   }
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class MatomoRouter {
   constructor(
     private readonly router: Router,
