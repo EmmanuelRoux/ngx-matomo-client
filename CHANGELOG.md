@@ -1,3 +1,10 @@
+## [6.3.2-test.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.1...v6.3.2-test.1) (2024-12-23)
+
+
+### Bug Fixes
+
+* **lazyload:** move 'root' provider to provideMatomo ([9db0a6f](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/9db0a6f8f6b97f13ea6c31658bfe8df0be548ca5))
+
 ## [6.3.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.0...v6.3.1) (2024-09-15)
 
 
