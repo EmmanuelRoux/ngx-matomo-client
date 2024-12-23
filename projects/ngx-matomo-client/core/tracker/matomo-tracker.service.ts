@@ -140,9 +140,10 @@ export class MatomoTracker {
    * @param keyword Keywords of the search query.
    * @param [category] Optional category of the search query.
    * @param [resultsCount] Optional number of results returned by the search query.
+   * @param [customData] Optional custom data for the search query.
    */
-  trackSiteSearch(keyword: string, category?: string, resultsCount?: number): void {
-    this.delegate.push(['trackSiteSearch', keyword, category, resultsCount]);
+  trackSiteSearch(keyword: string, category?: string, resultsCount?: number, customData?: unknown): void {
+    this.delegate.push(['trackSiteSearch', keyword, category, resultsCount, customData]);
   }
 
   /**
