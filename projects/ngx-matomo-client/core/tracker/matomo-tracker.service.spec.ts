@@ -87,6 +87,11 @@ describe('MatomoTracker', () => {
   );
 
   it(
+    'should track event with custom data',
+    expectSimpleMethod('trackEvent', ['myCategory', 'myAction', 'name', 99, { customData: 'foo' }]),
+  );
+
+  it(
     'should track site search',
     expectSimpleMethod('trackSiteSearch', ['myKeyword', 'myCategory', 0, { customData: 'foo' }]),
   );

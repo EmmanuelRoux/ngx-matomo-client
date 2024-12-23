@@ -128,9 +128,16 @@ export class MatomoTracker {
    * @param action Action of the event.
    * @param [name] Optional name of the event.
    * @param [value] Optional value for the event.
+   * @param [customData] Optional custom data for the event.
    */
-  trackEvent(category: string, action: string, name?: string, value?: number): void {
-    this.delegate.push(['trackEvent', category, action, name, value]);
+  trackEvent(
+    category: string,
+    action: string,
+    name?: string,
+    value?: number,
+    customData?: unknown,
+  ): void {
+    this.delegate.push(['trackEvent', category, action, name, value, customData]);
   }
 
   /**
@@ -142,7 +149,12 @@ export class MatomoTracker {
    * @param [resultsCount] Optional number of results returned by the search query.
    * @param [customData] Optional custom data for the search query.
    */
-  trackSiteSearch(keyword: string, category?: string, resultsCount?: number, customData?: unknown): void {
+  trackSiteSearch(
+    keyword: string,
+    category?: string,
+    resultsCount?: number,
+    customData?: unknown,
+  ): void {
     this.delegate.push(['trackSiteSearch', keyword, category, resultsCount, customData]);
   }
 
