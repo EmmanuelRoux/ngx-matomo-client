@@ -1,3 +1,10 @@
+## [6.3.2-test.2](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.2-test.1...v6.3.2-test.2) (2024-12-23)
+
+
+### Bug Fixes
+
+* fix import paths ([887cd7a](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/887cd7a6c62dbaefb82357c16c350ca48fe33e44))
+
 ## [6.3.2-test.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.1...v6.3.2-test.1) (2024-12-23)
 
 
