@@ -243,6 +243,26 @@ describe('MatomoTracker', () => {
   });
 
   it(
+    'should set custom data by key/value',
+    expectPush(
+      tracker => {
+        tracker.setCustomData('customKey1', 'customValue1');
+        tracker.setCustomData('customKey2', 'customValue2');
+      },
+      [
+        ['setCustomData', 'customKey1', 'customValue1'],
+        ['setCustomData', 'customKey2', 'customValue2'],
+      ],
+    ),
+  );
+
+  it('should overwrite custom data', expectSimpleMethod('setCustomData', [{ foo: 'bar' }]));
+
+  it('should get custom data', done => {
+    expectGetter('getCustomData', { foo: 'bar' }).then(done);
+  });
+
+  it(
     'should set custom variable',
     expectSimpleMethod('setCustomVariable', [1, 'name', 'value', 'page']),
   );

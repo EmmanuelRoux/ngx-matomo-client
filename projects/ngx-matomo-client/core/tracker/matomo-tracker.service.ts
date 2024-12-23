@@ -71,6 +71,8 @@ export interface MatomoInstance {
 
   getPageViewId(): string;
 
+  getCustomData(): unknown;
+
   getCustomVariable(index: number, scope: string): string;
 
   getCustomDimension(customDimensionId: number): string;
@@ -764,6 +766,32 @@ export class MatomoTracker {
    */
   getPageViewId(): Promise<string> {
     return this.delegate.get('getPageViewId');
+  }
+
+  /**
+   * Set custom data for the next request
+   *
+   * @param key
+   * @param value
+   */
+  setCustomData(key: PropertyKey, value: unknown): void;
+  /**
+   * Overwrite custom data for the next request
+   *
+   * @param data
+   */
+  setCustomData(data: unknown): void;
+  setCustomData(...args: unknown[]): void {
+    this.delegate.push(['setCustomData', ...args]);
+  }
+
+  /**
+   * Retrieves custom data.
+   *
+   * @returns Promise for the value of custom data.
+   */
+  getCustomData(): Promise<unknown> {
+    return this.delegate.get('getCustomData');
   }
 
   /**
