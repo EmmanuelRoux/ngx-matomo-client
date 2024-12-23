@@ -23,11 +23,7 @@ import {
   MatomoInitializerService,
 } from './tracker/matomo-initializer.service';
 import { MatomoTracker } from './tracker/matomo-tracker.service';
-import {
-  createDefaultMatomoScriptElement,
-  MATOMO_SCRIPT_FACTORY,
-  MatomoScriptFactory,
-} from './tracker/script-factory';
+import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
 import { ScriptInjector } from './utils/script-injector';
 
 const PRIVATE_MATOMO_PROVIDERS = Symbol('MATOMO_PROVIDERS');

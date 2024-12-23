@@ -1,5 +1,4 @@
 import { ApplicationInitStatus, inject, Injectable, Provider } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
 import {
   InternalMatomoTracker,
   InternalMatomoTrackerType,
@@ -22,9 +21,12 @@ export class MatomoTestingTracker<MATOMO = unknown, PREFIX extends string = ''>
 {
   private readonly initStatus = inject(ApplicationInitStatus);
 
+  /** Get list of all calls until initialization */
   callsOnInit: unknown[][] = [];
+  /** Get list of all calls after initialization */
   callsAfterInit: unknown[][] = [];
 
+  /** Get a copy of all calls since application startup */
   get calls(): unknown[] {
     return [...this.callsOnInit, ...this.callsAfterInit];
   }

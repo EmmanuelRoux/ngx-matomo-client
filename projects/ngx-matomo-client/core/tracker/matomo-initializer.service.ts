@@ -10,6 +10,7 @@ import {
   DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
   getTrackersConfiguration,
   INTERNAL_MATOMO_CONFIGURATION,
+  InternalMatomoConfiguration,
   isAutoConfigurationMode,
   isEmbeddedTrackerConfiguration,
   isExplicitTrackerConfiguration,
@@ -73,9 +74,11 @@ export class MatomoInitializerService {
   readonly initialize = runOnce(() => {
     this.runPreInitTasks();
 
-    console.log('initialize', { ...this.config });
     if (isAutoConfigurationMode(this.config)) {
       this.injectMatomoScript(this.config);
+    } else {
+      // Mode is manual, immediately resolve deferred config
+      this.deferredConfig.markReady(this.config);
     }
   }, ALREADY_INITIALIZED_ERROR);
 
@@ -104,7 +107,7 @@ export class MatomoInitializerService {
         this.scriptInjector.injectDOMScript(scriptUrl);
       }
 
-      this.deferredConfig.markReady(config);
+      this.deferredConfig.markReady(config as InternalMatomoConfiguration);
     },
     ALREADY_INJECTED_ERROR,
   );

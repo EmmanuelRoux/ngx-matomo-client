@@ -1,17 +1,13 @@
-import { ApplicationInitStatus, Component, LOCALE_ID } from '@angular/core';
+import { Component, LOCALE_ID } from '@angular/core';
 import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { provideMatomoTesting } from '../../testing';
 import { provideMatomo } from '../providers';
 import { provideTestingTracker } from '../testing/testing-tracker';
 import {
   ASYNC_INTERNAL_MATOMO_CONFIGURATION,
   INTERNAL_MATOMO_CONFIGURATION,
   InternalMatomoConfiguration,
-  MATOMO_CONFIGURATION,
-  MatomoConfiguration,
 } from '../tracker/configuration';
-import { MatomoInitializerService } from '../tracker/matomo-initializer.service';
 import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
 
 @Component({

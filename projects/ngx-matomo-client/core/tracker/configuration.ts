@@ -63,7 +63,7 @@ export function createDeferredInternalMatomoConfiguration(): DeferredInternalMat
       )({
         ...base,
         ...configuration,
-      } as InternalMatomoConfiguration);
+      });
     },
   };
 }
@@ -89,7 +89,7 @@ export type InternalMatomoConfiguration = Omit<MatomoConfiguration, 'mode' | 're
 export interface DeferredInternalMatomoConfiguration {
   readonly configuration: Promise<InternalMatomoConfiguration>;
 
-  markReady(configuration: AutoMatomoConfiguration<'auto' | 'deferred'>): void;
+  markReady(configuration: InternalMatomoConfiguration): void;
 }
 
 /**

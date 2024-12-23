@@ -2,9 +2,13 @@ import { ɵPLATFORM_BROWSER_ID, ɵPLATFORM_SERVER_ID } from '@angular/common';
 import { PLATFORM_ID, Provider } from '@angular/core';
 import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { Event, NavigationEnd, Router } from '@angular/router';
-import { MatomoConfiguration, provideMatomo } from 'ngx-matomo-client/core';
+import {
+  MatomoConfiguration,
+  provideMatomo,
+  ɵMatomoTestingTracker as MatomoTestingTracker,
+  ɵprovideTestingTracker as provideTestingTracker,
+} from 'ngx-matomo-client/core';
 import { of, Subject } from 'rxjs';
-import { MatomoTestingTracker, provideTestingTracker } from '../core/testing/testing-tracker';
 import { MatomoRouterConfiguration, NavigationEndComparator } from './configuration';
 import { invalidInterceptorsProviderError } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
