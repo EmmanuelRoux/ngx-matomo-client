@@ -96,7 +96,7 @@ describe('MatomoTracker', () => {
     expectSimpleMethod('trackSiteSearch', ['myKeyword', 'myCategory', 0, { customData: 'foo' }]),
   );
 
-  it('should track goal', expectSimpleMethod('trackGoal', [1, 2]));
+  it('should track goal', expectSimpleMethod('trackGoal', [1, 2, { customData: 'foo' }]));
 
   it('should track link', expectSimpleMethod('trackLink', ['http://myUrl', 'link']));
 

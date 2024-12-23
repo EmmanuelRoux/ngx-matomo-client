@@ -163,9 +163,10 @@ export class MatomoTracker {
    *
    * @param idGoal numeric ID of the goal to log a conversion for.
    * @param [customRevenue] Optional custom revenue to log for the goal.
+   * @param [customData] Optional custom data for the goal.
    */
-  trackGoal(idGoal: number, customRevenue?: number): void {
-    this.delegate.push(['trackGoal', idGoal, customRevenue]);
+  trackGoal(idGoal: number, customRevenue?: number, customData?: unknown): void {
+    this.delegate.push(['trackGoal', idGoal, customRevenue, customData]);
   }
 
   /**
