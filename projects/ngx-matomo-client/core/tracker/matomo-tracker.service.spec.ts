@@ -98,9 +98,15 @@ describe('MatomoTracker', () => {
 
   it('should track goal', expectSimpleMethod('trackGoal', [1, 2, { customData: 'foo' }]));
 
-  it('should track link', expectSimpleMethod('trackLink', ['http://myUrl', 'link']));
+  it(
+    'should track link',
+    expectSimpleMethod('trackLink', ['http://myUrl', 'link', { customData: 'foo' }]),
+  );
 
-  it('should track download', expectSimpleMethod('trackLink', ['http://myUrl', 'download']));
+  it(
+    'should track download',
+    expectSimpleMethod('trackLink', ['http://myUrl', 'download', { customData: 'foo' }]),
+  );
 
   it('should track content impressions', expectSimpleMethod('trackAllContentImpressions', []));
 

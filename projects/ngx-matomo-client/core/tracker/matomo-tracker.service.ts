@@ -174,9 +174,10 @@ export class MatomoTracker {
    *
    * @param url Full URL which is to be tracked as a click.
    * @param linkType Either 'link' for an outlink or 'download' for a download.
+   * @param [customData] Optional custom data for the link.
    */
-  trackLink(url: string, linkType: 'link' | 'download'): void {
-    this.delegate.push(['trackLink', url, linkType]);
+  trackLink(url: string, linkType: 'link' | 'download', customData?: unknown): void {
+    this.delegate.push(['trackLink', url, linkType, customData]);
   }
 
   /**
