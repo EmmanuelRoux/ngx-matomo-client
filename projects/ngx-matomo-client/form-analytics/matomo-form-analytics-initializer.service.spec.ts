@@ -15,9 +15,10 @@ import {
   MatomoFeature,
   MatomoTracker,
   provideMatomo,
+  ɵMatomoTestingTracker as MatomoTestingTracker,
+  ɵprovideTestingTracker as provideTestingTracker,
 } from 'ngx-matomo-client/core';
 import { BehaviorSubject } from 'rxjs';
-import { MatomoTestingTracker, provideTestingTracker } from '../core/testing/testing-tracker';
 import { MatomoFormAnalyticsConfiguration } from './configuration';
 import { withFormAnalytics } from './providers';
 

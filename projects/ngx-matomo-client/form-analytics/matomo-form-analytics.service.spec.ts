@@ -5,8 +5,8 @@ import {
   ɵGetters as Getters,
   ɵMethods as Methods,
   ɵprovideTestingTracker as provideTestingTracker,
+  ɵMatomoTestingTracker as MatomoTestingTracker,
 } from 'ngx-matomo-client/core';
-import { MatomoTestingTracker } from '../core/testing/testing-tracker';
 import { MatomoFormAnalytics } from './matomo-form-analytics.service';
 import { withFormAnalytics } from './providers';
 
