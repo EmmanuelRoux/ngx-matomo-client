@@ -22,6 +22,7 @@ import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
     [width]="width"
     [height]="height"
   ></matomo-opt-out-form>`,
+  standalone: false,
 })
 class HostWithDefaultServerUrlAndLocaleComponent {
   color = '';
@@ -46,6 +47,7 @@ class HostWithDefaultServerUrlAndLocaleComponent {
     [serverUrl]="serverUrl"
     [locale]="locale"
   ></matomo-opt-out-form>`,
+  standalone: false,
 })
 class HostWithCustomServerUrlAndLocaleComponent {
   color = '';
@@ -76,6 +78,7 @@ class HostWithCustomServerUrlAndLocaleComponent {
       } as InternalMatomoConfiguration),
     },
   ],
+  standalone: false,
 })
 class HostWithoutServerUrlComponent {}
 
@@ -88,6 +91,7 @@ class HostWithoutServerUrlComponent {}
       useValue: undefined,
     },
   ],
+  standalone: false,
 })
 class HostWithoutLocaleComponent {}
 

@@ -8,7 +8,6 @@ import { TrackFormsDirective } from './track-forms.directive';
     <div #elRef></div>
   </div>`,
   imports: [TrackFormsDirective],
-  standalone: true,
 })
 class HostComponent {
   @ViewChild('containerRef', { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;

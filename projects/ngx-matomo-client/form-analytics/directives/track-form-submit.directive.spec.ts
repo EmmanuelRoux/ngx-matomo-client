@@ -16,7 +16,6 @@ import { TrackFormDirective } from './track-form.directive';
     ></button>
   </form>`,
   imports: [CommonModule, TrackFormDirective, TrackFormSubmitDirective],
-  standalone: true,
 })
 class HostComponent {
   @ViewChild(TrackFormDirective, { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;
@@ -31,7 +30,6 @@ class HostComponent {
 @Component({
   template: ` <button matomoTrackFormSubmit></button>`,
   imports: [TrackFormDirective, TrackFormSubmitDirective],
-  standalone: true,
 })
 class InvalidHostComponent {}
 

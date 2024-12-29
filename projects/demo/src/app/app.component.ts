@@ -5,6 +5,7 @@ import { MATOMO_CONFIGURATION, MatomoConfiguration } from 'ngx-matomo-client';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponent {
   invalid = false;
