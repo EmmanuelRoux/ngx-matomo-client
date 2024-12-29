@@ -52,11 +52,6 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.0.6",
-    "@angular-eslint/builder": "19.0.2",
-    "@angular-eslint/eslint-plugin": "19.0.2",
-    "@angular-eslint/eslint-plugin-template": "19.0.2",
-    "@angular-eslint/schematics": "19.0.2",
-    "@angular-eslint/template-parser": "19.0.2",
     "@angular/cli": "^19.0.6",
     "@angular/compiler-cli": "^19.0.5",
     "@commitlint/cli": "^17.0.1",
@@ -68,11 +63,10 @@
     "@types/jasmine": "~4.0.3",
     "@types/ncp": "^2.0.5",
     "@types/node": "^18.18.9",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
+    "angular-eslint": "^19.0.2",
     "cheerio": "^1.0.0-rc.12",
     "compare-func": "^2.0.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.0.0",
     "husky": "^9.1.7",
     "jasmine-core": "~4.1.0",
@@ -96,7 +90,8 @@
     "semantic-release": "^19.0.3",
     "semver": "^7.3.5",
     "ts-node": "~8.3.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "typescript-eslint": "^8.18.2"
   },
   "private": true,
   "repository": {
