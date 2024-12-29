@@ -32,7 +32,7 @@
     "semantic-release:prepare-ci": "chmod +x -R ./scripts/",
     "semantic-release:ci": "npm run semantic-release:prepare-ci && npm run semantic-release",
     "update:toc": "markdown-toc README.md -i --maxdepth=3 && markdown-toc CONTRIBUTING.md -i --maxdepth=3",
-    "prepare": "husky install",
+    "prepare": "husky",
     "dev:ng-add": "npm run build:lib && npm link ./dist/ngx-matomo-client && ng add ngx-matomo-client --project demo"
   },
   "dependencies": {
@@ -74,7 +74,7 @@
     "compare-func": "^2.0.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.0.0",
-    "husky": "^7.0.4",
+    "husky": "^9.1.7",
     "jasmine-core": "~4.1.0",
     "jasmine-spec-reporter": "~7.0.0",
     "jsonc-parser": "^3.2.0",
