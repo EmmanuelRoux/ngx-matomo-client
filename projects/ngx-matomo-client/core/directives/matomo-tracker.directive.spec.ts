@@ -16,6 +16,7 @@ type HTMLElementEvent = keyof HTMLElementEventMap;
     [matomoName]="defaultName"
     [matomoValue]="defaultValue"
   />`,
+  standalone: false,
 })
 class HostWithInputEventsComponent {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -44,6 +45,7 @@ class HostWithInputEventsComponent {
     [matomoValue]="defaultValue"
     (change)="tracker.trackEvent(arg1, arg2)"
   />`,
+  standalone: false,
 })
 class HostWithCustomHandler1Component {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -73,6 +75,7 @@ class HostWithCustomHandler1Component {
     [matomoValue]="defaultValue"
     (change)="tracker.trackEvent(customArgs)"
   />`,
+  standalone: false,
 })
 class HostWithCustomHandler2Component {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;

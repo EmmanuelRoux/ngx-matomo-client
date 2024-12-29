@@ -4,6 +4,7 @@ import { BASE_TITLE } from '../title';
 
 @Component({
   templateUrl: './home.component.html',
+  standalone: false,
 })
 export class HomeComponent implements OnInit {
   constructor(private readonly title: Title) {}

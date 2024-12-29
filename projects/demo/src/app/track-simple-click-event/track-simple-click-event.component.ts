@@ -5,6 +5,7 @@ import { BASE_TITLE } from '../title';
 @Component({
   templateUrl: './track-simple-click-event.component.html',
   styleUrls: ['./track-simple-click-event.component.scss'],
+  standalone: false,
 })
 export class TrackSimpleClickEventComponent implements OnInit {
   category = '';
