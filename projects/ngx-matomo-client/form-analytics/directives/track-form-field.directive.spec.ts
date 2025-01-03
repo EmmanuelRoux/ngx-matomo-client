@@ -10,7 +10,6 @@ import { TrackFormDirective } from './track-form.directive';
     <div *ngIf="showField" [matomoIgnore]="ignore" [matomoTrackFormField]="fieldName"></div>
   </form>`,
   imports: [CommonModule, TrackFormDirective, TrackFormFieldDirective],
-  standalone: true,
 })
 class HostComponent {
   @ViewChild(TrackFormDirective, { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;
@@ -26,7 +25,6 @@ class HostComponent {
 @Component({
   template: ` <div matomoTrackFormField></div>`,
   imports: [TrackFormDirective, TrackFormFieldDirective],
-  standalone: true,
 })
 class InvalidHostComponent {}
 

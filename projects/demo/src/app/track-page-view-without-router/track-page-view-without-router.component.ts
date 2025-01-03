@@ -4,6 +4,7 @@ import { BASE_TITLE } from '../title';
 
 @Component({
   templateUrl: './track-page-view-without-router.component.html',
+  standalone: false,
 })
 export class TrackPageViewWithoutRouterComponent implements OnInit {
   constructor(private readonly tracker: MatomoTracker) {}

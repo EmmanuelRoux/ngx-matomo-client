@@ -14,7 +14,6 @@ import { TrackFormDirective } from './track-form.directive';
     <button #submitButton></button>
   </form>`,
   imports: [TrackFormDirective],
-  standalone: true,
 })
 class HostComponent {
   @ViewChild('containerRef', { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;

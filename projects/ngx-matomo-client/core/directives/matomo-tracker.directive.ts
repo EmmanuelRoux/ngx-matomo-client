@@ -66,19 +66,15 @@ export class MatomoTrackerDirective implements OnDestroy {
   }
 
   /** Track an event using category, action, name and value set as @Input() */
-  // eslint-disable-next-line @typescript-eslint/unified-signatures
   trackEvent(): void;
 
   /** Track an event using category, action and name set as @Input() and provided value */
-  // eslint-disable-next-line @typescript-eslint/unified-signatures
   trackEvent(value: number): void;
 
   /** Track an event using category and action set as @Input() and provided name and value */
-  // eslint-disable-next-line @typescript-eslint/unified-signatures
   trackEvent(name: string, value?: number): void;
 
   /** Track an event using provided category, action, name and value (any @Input() is used as a default value) */
-  // eslint-disable-next-line @typescript-eslint/unified-signatures
   trackEvent(args: TrackArgs): void;
 
   trackEvent(arg1?: TrackArgs | string | number, arg2?: number): void {

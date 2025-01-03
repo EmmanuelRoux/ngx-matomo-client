@@ -11,13 +11,14 @@ body {
   cursor: default;
 }
 @include mat.all-component-typographies();
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
-$candy-app-primary: mat.define-palette(mat.$indigo-palette);
-$candy-app-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$candy-app-warn: mat.define-palette(mat.$red-palette);
+$candy-app-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
+$candy-app-accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$candy-app-warn: mat.m2-define-palette(mat.$m2-red-palette);
 
-$candy-app-theme: mat.define-light-theme(
+$candy-app-theme: mat.m2-define-light-theme(
   (
     color: (
       primary: $candy-app-primary,

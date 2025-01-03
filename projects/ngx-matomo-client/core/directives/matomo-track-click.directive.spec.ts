@@ -12,6 +12,7 @@ import { MatomoTrackClickDirective } from './matomo-track-click.directive';
     [matomoClickName]="name"
     [matomoClickValue]="value"
   ></button>`,
+  standalone: false,
 })
 class HostComponent {
   @ViewChild('button') buttonRef?: ElementRef<HTMLButtonElement>;
