@@ -50,7 +50,7 @@ easily migrate.**
 | 3, 4 or 5 | 18      | 6.2.x or above                                                                     |                                                                                                   |
 
 [![build](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml)
-[![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/codeql-analysis.yml)
+[![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/github-code-scanning/codeql)
 [![Coverage Status](https://coveralls.io/repos/github/EmmanuelRoux/ngx-matomo-client/badge.svg?branch=main)](https://coveralls.io/github/EmmanuelRoux/ngx-matomo-client?branch=main)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-limegreen.svg?logo=prettier)](https://github.com/prettier/prettier)
 
