@@ -1,14 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd } from '@angular/router';
+import { MatomoConfiguration, provideMatomo } from '../core';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
+import { withRouter } from './providers';
 
 describe('PageTitleProvider', () => {
   let titleService: Title;
   let provider: PageTitleProvider;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideMatomo({} as MatomoConfiguration, withRouter())],
+    });
 
     titleService = TestBed.inject(Title);
     provider = TestBed.inject(MATOMO_PAGE_TITLE_PROVIDER);

@@ -100,9 +100,7 @@ export interface MatomoInstance {
   getExcludedReferrers(): string[];
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MatomoTracker {
   private readonly delegate: InternalMatomoTracker<MatomoInstance> = inject(InternalMatomoTracker);
 

@@ -5,19 +5,28 @@ import {
   ɵcreateMatomoFeature as createMatomoFeature,
   ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED,
 } from 'ngx-matomo-client/core';
-import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './configuration';
+import {
+  createInternalRouterConfiguration,
+  INTERNAL_ROUTER_CONFIGURATION,
+  MATOMO_ROUTER_CONFIGURATION,
+  MatomoRouterConfiguration,
+} from './configuration';
 import {
   MatomoRouterInterceptor,
   MatomoRouterInterceptorFn,
   provideInterceptor,
   provideInterceptors,
 } from './interceptor';
-import {
-  MATOMO_ROUTE_DATA_KEY,
-  MatomoRouteDataInterceptor,
-} from './interceptors/route-data-interceptor';
+import { MATOMO_ROUTE_DATA_KEY, MatomoRouteDataInterceptor } from './interceptors/route-data-interceptor';
 import { MatomoRouter } from './matomo-router.service';
-import { PageUrlProvider, PageUrlProviderFn, providePageUrlProvider } from './page-url-provider';
+import { DefaultPageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER } from './page-title-providers';
+import {
+  createDefaultPageUrlProvider,
+  MATOMO_PAGE_URL_PROVIDER,
+  PageUrlProvider,
+  PageUrlProviderFn,
+  providePageUrlProvider,
+} from './page-url-provider';
 
 /**
  * Additional Matomo router features kind
@@ -34,9 +43,29 @@ export const enum RouterMatomoFeatureKind {
 
 /** Enable automatic page views tracking */
 export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
-  const providers = [
-    { provide: MATOMO_ROUTER_ENABLED, useValue: true },
-    { provide: MATOMO_ROUTER_CONFIGURATION, useValue: config },
+  const providers = buildInternalRouterProviders(config);
+
+  return createMatomoFeature(RouterMatomoFeatureKind.Router, providers);
+}
+
+export function buildInternalRouterProviders(config?: MatomoRouterConfiguration): Provider[] {
+  return [
+    MatomoRouter,
+    {provide: MATOMO_ROUTER_ENABLED, useValue: true},
+    {provide: MATOMO_ROUTER_CONFIGURATION, useValue: config},
+    {
+      provide: INTERNAL_ROUTER_CONFIGURATION,
+      useFactory: createInternalRouterConfiguration,
+    },
+    {
+      provide: MATOMO_PAGE_URL_PROVIDER,
+      useFactory: createDefaultPageUrlProvider,
+    },
+    {
+      provide: MATOMO_PAGE_TITLE_PROVIDER,
+      useClass: DefaultPageTitleProvider,
+    },
+    MatomoRouter,
     {
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
@@ -45,8 +74,6 @@ export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
       },
     },
   ];
-
-  return createMatomoFeature(RouterMatomoFeatureKind.Router, providers);
 }
 
 function requireRouterFeature(featureName: string) {
@@ -80,7 +107,7 @@ export function withRouteData(key?: string): MatomoFeature {
   const providers: Provider[] = [provideInterceptor(MatomoRouteDataInterceptor)];
 
   if (key) {
-    providers.push({ provide: MATOMO_ROUTE_DATA_KEY, useValue: key });
+    providers.push({provide: MATOMO_ROUTE_DATA_KEY, useValue: key});
   }
 
   return createMatomoFeature(

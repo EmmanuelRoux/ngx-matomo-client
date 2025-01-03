@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  ModuleWithProviders,
-  NgModule,
-  Optional,
-  SkipSelf,
-} from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED } from 'ngx-matomo-client/core';
 import {
   MATOMO_ROUTER_CONFIGURATION,
@@ -18,20 +11,6 @@ import { MatomoRouter } from './matomo-router.service';
   providers: [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
 })
 export class MatomoRouterModule {
-  constructor(
-    private readonly router: MatomoRouter,
-    @Optional() @SkipSelf() parent?: MatomoRouterModule,
-    @Inject(forwardRef(() => NgxMatomoRouterModule))
-    @Optional()
-    @SkipSelf()
-    parentDeprecated?: NgxMatomoRouterModule,
-  ) {
-    if (!parent && !parentDeprecated) {
-      // Do not initialize if it is already (by a parent module)
-      this.router.initialize();
-    }
-  }
-
   static forRoot(
     configWithInterceptors: MatomoRouterConfigurationWithInterceptors = {},
   ): ModuleWithProviders<MatomoRouterModule> {
@@ -41,6 +20,7 @@ export class MatomoRouterModule {
     return {
       ngModule: MatomoRouterModule,
       providers: [
+        MatomoRouter,
         { provide: MATOMO_ROUTER_CONFIGURATION, useValue: configWithInterceptors },
         provideInterceptors(configWithInterceptors.interceptors),
       ],
@@ -56,20 +36,6 @@ export class MatomoRouterModule {
   providers: [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
 })
 export class NgxMatomoRouterModule {
-  constructor(
-    private readonly router: MatomoRouter,
-    @Optional() @SkipSelf() parent?: MatomoRouterModule,
-    @Inject(forwardRef(() => NgxMatomoRouterModule))
-    @Optional()
-    @SkipSelf()
-    parentDeprecated?: NgxMatomoRouterModule,
-  ) {
-    if (!parent && !parentDeprecated) {
-      // Do not initialize if it is already (by a parent module)
-      this.router.initialize();
-    }
-  }
-
   static forRoot(
     configWithInterceptors: MatomoRouterConfigurationWithInterceptors = {},
   ): ModuleWithProviders<NgxMatomoRouterModule> {

@@ -1,7 +1,5 @@
 import { APP_BASE_HREF, LocationStrategy } from '@angular/common';
-import {
-  inject,
-  InjectionToken,
+import { inject, Injectable, InjectionToken,
   INJECTOR,
   Injector,
   Provider,
@@ -14,15 +12,15 @@ import { INTERNAL_ROUTER_CONFIGURATION, InternalRouterConfiguration } from './co
 
 export const MATOMO_PAGE_URL_PROVIDER = new InjectionToken<PageUrlProvider>(
   'MATOMO_PAGE_URL_PROVIDER',
-  {
-    factory: () =>
-      new DefaultPageUrlProvider(
-        inject(INTERNAL_ROUTER_CONFIGURATION),
-        inject(APP_BASE_HREF, { optional: true }),
-        inject(LocationStrategy),
-      ),
-  },
 );
+
+export function createDefaultPageUrlProvider() {
+  return new DefaultPageUrlProvider(
+    inject(INTERNAL_ROUTER_CONFIGURATION),
+    inject(APP_BASE_HREF, { optional: true }),
+    inject(LocationStrategy),
+  );
+}
 
 export interface PageUrlProvider {
   getCurrentPageUrl(event: NavigationEnd): Observable<string> | Promise<string>;

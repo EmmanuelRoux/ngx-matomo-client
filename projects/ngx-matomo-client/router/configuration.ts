@@ -101,12 +101,11 @@ export type InternalRouterConfiguration = Required<MatomoRouterConfiguration> &
 
 export const INTERNAL_ROUTER_CONFIGURATION = new InjectionToken<InternalRouterConfiguration>(
   'INTERNAL_ROUTER_CONFIGURATION',
-  {
-    factory: () => {
-      const { disabled, enableLinkTracking } = inject(INTERNAL_MATOMO_CONFIGURATION);
-      const routerConfig = inject(MATOMO_ROUTER_CONFIGURATION, { optional: true }) || {};
-
-      return { ...DEFAULT_ROUTER_CONFIGURATION, ...routerConfig, enableLinkTracking, disabled };
-    },
-  },
 );
+
+export function createInternalRouterConfiguration(): InternalRouterConfiguration {
+  const { disabled, enableLinkTracking } = inject(INTERNAL_MATOMO_CONFIGURATION);
+  const routerConfig = inject(MATOMO_ROUTER_CONFIGURATION, { optional: true }) || {};
+
+  return { ...DEFAULT_ROUTER_CONFIGURATION, ...routerConfig, enableLinkTracking, disabled };
+}
