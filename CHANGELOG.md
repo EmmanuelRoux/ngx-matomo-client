@@ -1,3 +1,20 @@
+# [6.4.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.1...v6.4.0) (2025-01-03)
+
+
+### Bug Fixes
+
+* correctly resolve deferred configuration when using `manual` initialization mode ([da82506](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/da82506d81738fd12b72b75967596e473d09951f)), closes [#102](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/102)
+
+
+### Features
+
+* add `getCustomData` and `setCustomData` tracker API methods ([e76564c](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/e76564c8f0a80926063e4f670f92a5f6d9eeadc6))
+* add optional _custom data_ parameter to event tracking ([0cdda40](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/0cdda4007773e1aaf308742e4a4bf4874fc89890))
+* add optional _custom data_ parameter to goal tracking ([6e21b91](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/6e21b91f98bed53414b17d3c89fc4e02a354d1b4))
+* add optional _custom data_ parameter to link tracking ([cfb42b1](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/cfb42b1cbc5718cdb3437ec32dd6d8a8547c305a))
+* add optional _custom data_ parameter to site search tracking ([fa35f1c](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/fa35f1c21474ab107562a6a1a55e5b97c4446f76)), closes [#96](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/96)
+* allow providing Matomo in lazy-loaded components/modules ([#98](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/98)) ([45a5a0e](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/45a5a0edef4756391e82588b97122d5f6ffa8695))
+
 ## [6.3.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.0...v6.3.1) (2024-09-15)
 
 
