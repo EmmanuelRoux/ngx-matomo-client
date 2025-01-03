@@ -68,6 +68,10 @@ export class MatomoTestingInstance implements MatomoInstance {
     return '';
   }
 
+  getCustomData(): unknown {
+    return undefined;
+  }
+
   getPiwikUrl(): string {
     return '';
   }
