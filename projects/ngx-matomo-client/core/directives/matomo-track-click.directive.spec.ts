@@ -12,7 +12,7 @@ import { MatomoTrackClickDirective } from './matomo-track-click.directive';
     [matomoClickName]="name"
     [matomoClickValue]="value"
   ></button>`,
-  standalone: false,
+  imports: [MatomoTrackClickDirective],
 })
 class HostComponent {
   @ViewChild('button') buttonRef?: ElementRef<HTMLButtonElement>;
@@ -34,14 +34,12 @@ describe('MatomoTrackClickDirective', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatomoTrackClickDirective],
       providers: [
         {
           provide: MatomoTracker,
           useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
         },
       ],
-      declarations: [HostComponent],
     }).compileComponents();
   }));
 

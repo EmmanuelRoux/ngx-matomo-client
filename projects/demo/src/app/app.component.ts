@@ -1,11 +1,22 @@
 import { Component, Inject } from '@angular/core';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from 'ngx-matomo-client';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NgIf } from '@angular/common';
+import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false,
+  imports: [
+    RouterLink,
+    NgIf,
+    MatTabNav,
+    MatTabLink,
+    RouterLinkActive,
+    MatTabNavPanel,
+    RouterOutlet,
+  ],
 })
 export class AppComponent {
   invalid = false;

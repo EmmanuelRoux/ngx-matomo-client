@@ -1,23 +1,24 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatomoConfiguration, MatomoModule } from 'ngx-matomo-client';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideMatomoTesting } from 'ngx-matomo-client/testing';
 import { TrackEventComponentComponent } from './track-event-component.component';
 
 describe('TrackEventComponentComponent', () => {
   let component: TrackEventComponentComponent;
   let fixture: ComponentFixture<TrackEventComponentComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        MatomoModule.forRoot({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [BrowserAnimationsModule, TrackEventComponentComponent],
+      providers: [
+        provideMatomoTesting({
           trackerUrl: '',
           siteId: '',
-        } as MatomoConfiguration),
+        }),
       ],
-      declarations: [TrackEventComponentComponent],
       schemas: [NO_ERRORS_SCHEMA],
-    }).compileComponents();
+    });
   });
 
   beforeEach(() => {

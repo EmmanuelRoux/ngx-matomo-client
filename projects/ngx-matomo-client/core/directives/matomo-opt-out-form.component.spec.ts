@@ -21,7 +21,7 @@ import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
     [width]="width"
     [height]="height"
   ></matomo-opt-out-form>`,
-  standalone: false,
+  imports: [MatomoOptOutFormComponent],
 })
 class HostWithDefaultServerUrlAndLocaleComponent {
   color = '';
@@ -46,7 +46,7 @@ class HostWithDefaultServerUrlAndLocaleComponent {
     [serverUrl]="serverUrl"
     [locale]="locale"
   ></matomo-opt-out-form>`,
-  standalone: false,
+  imports: [MatomoOptOutFormComponent],
 })
 class HostWithCustomServerUrlAndLocaleComponent {
   color = '';
@@ -63,6 +63,7 @@ class HostWithCustomServerUrlAndLocaleComponent {
 @Component({
   selector: 'matomo-host-without-server-url',
   template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
+  imports: [MatomoOptOutFormComponent],
   providers: [
     {
       provide: INTERNAL_MATOMO_CONFIGURATION,
@@ -77,20 +78,19 @@ class HostWithCustomServerUrlAndLocaleComponent {
       } as InternalMatomoConfiguration),
     },
   ],
-  standalone: false,
 })
 class HostWithoutServerUrlComponent {}
 
 @Component({
   selector: 'matomo-host-without-locale',
   template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
+  imports: [MatomoOptOutFormComponent],
   providers: [
     {
       provide: LOCALE_ID,
       useValue: undefined,
     },
   ],
-  standalone: false,
 })
 class HostWithoutLocaleComponent {}
 
@@ -98,12 +98,6 @@ describe('MatomoOptOutFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MatomoOptOutFormComponent],
-      declarations: [
-        HostWithDefaultServerUrlAndLocaleComponent,
-        HostWithCustomServerUrlAndLocaleComponent,
-        HostWithoutServerUrlComponent,
-        HostWithoutLocaleComponent,
-      ],
       providers: [
         provideMatomo({ siteId: 1, trackerUrl: 'http://localhost' }),
         provideTestingTracker(),

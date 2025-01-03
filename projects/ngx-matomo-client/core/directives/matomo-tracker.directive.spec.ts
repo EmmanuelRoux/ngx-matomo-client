@@ -16,7 +16,7 @@ type HTMLElementEvent = keyof HTMLElementEventMap;
     [matomoName]="defaultName"
     [matomoValue]="defaultValue"
   />`,
-  standalone: false,
+  imports: [MatomoTrackerDirective],
 })
 class HostWithInputEventsComponent {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -45,7 +45,7 @@ class HostWithInputEventsComponent {
     [matomoValue]="defaultValue"
     (change)="tracker.trackEvent(arg1, arg2)"
   />`,
-  standalone: false,
+  imports: [MatomoTrackerDirective],
 })
 class HostWithCustomHandler1Component {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -75,7 +75,7 @@ class HostWithCustomHandler1Component {
     [matomoValue]="defaultValue"
     (change)="tracker.trackEvent(customArgs)"
   />`,
-  standalone: false,
+  imports: [MatomoTrackerDirective],
 })
 class HostWithCustomHandler2Component {
   @ViewChild('input') inputRef?: ElementRef<HTMLInputElement>;
@@ -97,17 +97,11 @@ describe('MatomoTrackerDirective', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatomoTrackerDirective],
       providers: [
         {
           provide: MatomoTracker,
           useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
         },
-      ],
-      declarations: [
-        HostWithInputEventsComponent,
-        HostWithCustomHandler1Component,
-        HostWithCustomHandler2Component,
       ],
     }).compileComponents();
   }));
