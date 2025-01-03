@@ -158,14 +158,12 @@ describe('MatomoFormAnalyticsInitializer', () => {
     );
 
     // Then
-    // TODO change to expect error when #102 is fixed
-    await expectAsync(caughtError).toBePending();
-    // await expectAsync(caughtError).toBeResolvedTo(
-    //   new Error(
-    //     'Cannot resolve default matomo FormAnalytics plugin script url. ' +
-    //       'Please explicitly provide `loadScript` configuration property instead of `true`',
-    //   ),
-    // );
+    await expectAsync(caughtError).toBeResolvedTo(
+      new Error(
+        'Cannot resolve default matomo FormAnalytics plugin script url. ' +
+          'Please explicitly provide `loadScript` configuration property instead of `true`',
+      ),
+    );
     expectNoInjectedScript();
   });
 
