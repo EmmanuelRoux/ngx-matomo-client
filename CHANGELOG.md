@@ -1,3 +1,11 @@
+## [6.4.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.4.0...v6.4.1) (2025-01-14)
+
+
+### Reverts
+
+* feat: allow providing Matomo in lazy-loaded components/modules ([#98](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/98)) ([3c20676](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/3c206769524bfd50def32f4d23237c3e77af3011))
+* fix: correctly resolve deferred configuration when using `manual` initialization mode ([a2ca6c4](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/a2ca6c4ce4c60003b93390c553db28d08c34be79))
+
 # [6.4.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.3.1...v6.4.0) (2025-01-03)
 
 
