@@ -2,6 +2,7 @@ import { APP_BASE_HREF, LocationStrategy } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { NavigationEnd } from '@angular/router';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from 'ngx-matomo-client/core';
+import { from } from 'rxjs';
 import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './configuration';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
 
@@ -35,10 +36,12 @@ describe('PageUrlProvider', () => {
     const provider = instantiate(null, null);
 
     // When
-    provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
-      // Then
-      expect(url).toEqual('/my-page');
-    });
+    from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(
+      url => {
+        // Then
+        expect(url).toEqual('/my-page');
+      },
+    );
   });
 
   it('should return page url prepended with APP_BASE_HREF', () => {
@@ -51,10 +54,12 @@ describe('PageUrlProvider', () => {
     );
 
     // When
-    provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
-      // Then
-      expect(url).toEqual('/test/my-page');
-    });
+    from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(
+      url => {
+        // Then
+        expect(url).toEqual('/test/my-page');
+      },
+    );
   });
 
   it('should return page url prepended with LocationStrategy base href', () => {
@@ -70,10 +75,12 @@ describe('PageUrlProvider', () => {
     spyOn(locationStrategy, 'getBaseHref').and.returnValue('/test');
 
     // When
-    provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
-      // Then
-      expect(url).toEqual('/test/my-page');
-    });
+    from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(
+      url => {
+        // Then
+        expect(url).toEqual('/test/my-page');
+      },
+    );
   });
 
   it('should return page url without base href', () => {
@@ -84,10 +91,12 @@ describe('PageUrlProvider', () => {
     spyOn(locationStrategy, 'getBaseHref').and.returnValue('/test');
 
     // When
-    provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
-      // Then
-      expect(url).toEqual('/my-page');
-    });
+    from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(
+      url => {
+        // Then
+        expect(url).toEqual('/my-page');
+      },
+    );
   });
 
   it('should return page url when base href is null', () => {
@@ -104,9 +113,11 @@ describe('PageUrlProvider', () => {
     spyOn(locationStrategy, 'getBaseHref').and.returnValue(null);
 
     // When
-    provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page')).subscribe(url => {
-      // Then
-      expect(url).toEqual('/my-page');
-    });
+    from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(
+      url => {
+        // Then
+        expect(url).toEqual('/my-page');
+      },
+    );
   });
 });

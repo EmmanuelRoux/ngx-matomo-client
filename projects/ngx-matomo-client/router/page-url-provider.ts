@@ -17,7 +17,7 @@ export const MATOMO_PAGE_URL_PROVIDER = new InjectionToken<PageUrlProvider>(
 );
 
 export interface PageUrlProvider {
-  getCurrentPageUrl(event: NavigationEnd): Observable<string>;
+  getCurrentPageUrl(event: NavigationEnd): Observable<string> | Promise<string>;
 }
 
 function trimTrailingSlash(str: string): string {

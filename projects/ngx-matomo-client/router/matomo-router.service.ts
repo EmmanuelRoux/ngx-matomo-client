@@ -157,9 +157,9 @@ export class MatomoRouter {
           .getCurrentPageTitle(event)
           .pipe(tap(pageTitle => this.tracker.setDocumentTitle(pageTitle)))
       : of(undefined);
-    const url$ = this.pageUrlProvider
-      .getCurrentPageUrl(event)
-      .pipe(tap(pageUrl => this.tracker.setCustomUrl(pageUrl)));
+    const url$ = from(this.pageUrlProvider.getCurrentPageUrl(event)).pipe(
+      tap(pageUrl => this.tracker.setCustomUrl(pageUrl)),
+    );
 
     return combineLatest([title$, url$]).pipe(map(([_, pageUrl]) => ({ pageUrl })));
   }
