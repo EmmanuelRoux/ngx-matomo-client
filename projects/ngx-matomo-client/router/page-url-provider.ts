@@ -1,5 +1,7 @@
 import { APP_BASE_HREF, LocationStrategy } from '@angular/common';
-import { inject, Injectable, InjectionToken,
+import {
+  inject,
+  InjectionToken,
   INJECTOR,
   Injector,
   Provider,

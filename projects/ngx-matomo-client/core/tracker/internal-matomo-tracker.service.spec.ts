@@ -28,8 +28,7 @@ describe('InternalMatomoTracker', () => {
 
   function createTracker(
     config: Partial<InternalMatomoConfiguration> = { disabled: false },
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    platform: Object = PLATFORM_BROWSER_ID,
+    platform: unknown = PLATFORM_BROWSER_ID,
     ngZone: NgZone = createMockZone(),
   ): InternalMatomoTracker<FakeMatomoInstance> {
     const injector = Injector.create({

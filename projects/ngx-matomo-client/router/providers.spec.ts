@@ -152,7 +152,7 @@ describe('providers', () => {
   });
 
   it('should provide basic Matomo providers with custom url provider feature and additional functional interceptor', async () => {
-    const myProvider: PageUrlProviderFn = (event: NavigationEnd) => of('my/custom/url');
+    const myProvider: PageUrlProviderFn = (_event: NavigationEnd) => of('my/custom/url');
 
     await setUp([
       provideMatomo(

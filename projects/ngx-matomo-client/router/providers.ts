@@ -17,7 +17,10 @@ import {
   provideInterceptor,
   provideInterceptors,
 } from './interceptor';
-import { MATOMO_ROUTE_DATA_KEY, MatomoRouteDataInterceptor } from './interceptors/route-data-interceptor';
+import {
+  MATOMO_ROUTE_DATA_KEY,
+  MatomoRouteDataInterceptor,
+} from './interceptors/route-data-interceptor';
 import { MatomoRouter } from './matomo-router.service';
 import { DefaultPageTitleProvider, MATOMO_PAGE_TITLE_PROVIDER } from './page-title-providers';
 import {
@@ -51,8 +54,8 @@ export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
 export function buildInternalRouterProviders(config?: MatomoRouterConfiguration): Provider[] {
   return [
     MatomoRouter,
-    {provide: MATOMO_ROUTER_ENABLED, useValue: true},
-    {provide: MATOMO_ROUTER_CONFIGURATION, useValue: config},
+    { provide: MATOMO_ROUTER_ENABLED, useValue: true },
+    { provide: MATOMO_ROUTER_CONFIGURATION, useValue: config },
     {
       provide: INTERNAL_ROUTER_CONFIGURATION,
       useFactory: createInternalRouterConfiguration,
@@ -107,7 +110,7 @@ export function withRouteData(key?: string): MatomoFeature {
   const providers: Provider[] = [provideInterceptor(MatomoRouteDataInterceptor)];
 
   if (key) {
-    providers.push({provide: MATOMO_ROUTE_DATA_KEY, useValue: key});
+    providers.push({ provide: MATOMO_ROUTE_DATA_KEY, useValue: key });
   }
 
   return createMatomoFeature(
