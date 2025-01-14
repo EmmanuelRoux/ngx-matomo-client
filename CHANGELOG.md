@@ -1,3 +1,30 @@
+# [7.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.4.1...v7.0.0) (2025-01-14)
+
+
+### Bug Fixes
+
+* correctly inject legacy `MatomoRouterModule` and `NgxMatomoRouterModule` ([c2f7fda](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/c2f7fda1c2f34325a6212a8a22cdc0996902cf30)), closes [#105](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/105) [#104](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/104)
+* correctly resolve deferred configuration when using `manual` initialization mode ([f0bb6c1](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/f0bb6c125dd76c5656117c5e3689392bad2eb7f1)), closes [#102](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/102)
+* prepare testing api update ([0471e41](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/0471e4168236a29d31393106de1fbaf42bf462c7))
+
+
+### Features
+
+* add compatibility with Angular 19 (#101) ([bfae2b7](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/bfae2b75aafbb8a5ae71860e4652f9e8a7f9b938)), closes [#99](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/99) [#103](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/103)
+* add new `withPageUrlProvider` feature and allow functional-style provider ([3d002d8](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/3d002d80a48300888dc72f2a54b5481da4bd0c7a))
+* allow providing Matomo in lazy-loaded components/modules (#98) ([2982fc4](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/2982fc4bd7f609538517d126a9e405271ca9fcb4)), closes [#97](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/97)
+* allow providing page url as promise ([5bb76a4](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/5bb76a4daf99ed6e421410686705d8e86b423019))
+
+
+### Breaking changes
+
+* Angular v19 is now required as peer dependency
+* Some of your tests may be broken, you may need to provide Matomo in `TestBed` using `provideMatomoTesting()`.
+
+### Deprecations
+
+* `MatomoTestingTracker.setMatomoInstance` has been deprecated, provide a `MATOMO_TESTING_INSTANCE` DI token instead
+
 ## [6.4.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.4.0...v6.4.1) (2025-01-14)
 
 
