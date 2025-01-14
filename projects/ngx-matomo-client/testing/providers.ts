@@ -4,6 +4,8 @@ import {
   MatomoConfiguration,
   MatomoFeature,
   MatomoTracker,
+  provideMatomo,
+  ɵprovideTestingTracker as provideTestingTracker,
 } from 'ngx-matomo-client/core';
 import { MatomoTestingTracker } from './matomo-testing-tracker';
 
@@ -18,9 +20,11 @@ import { MatomoTestingTracker } from './matomo-testing-tracker';
  */
 export function provideMatomoTesting(
   config: Partial<MatomoConfiguration> | (() => Partial<MatomoConfiguration>) = {},
-  ..._ignored: MatomoFeature[]
+  ...features: MatomoFeature[]
 ): EnvironmentProviders {
-  const providers: Provider[] = [
+  const providers: (Provider | EnvironmentProviders)[] = [
+    provideMatomo(config as MatomoConfiguration | (() => MatomoConfiguration), ...features),
+    provideTestingTracker(),
     MatomoTestingTracker,
     {
       provide: MatomoTracker,
