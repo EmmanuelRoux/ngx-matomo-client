@@ -1,23 +1,24 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatomoConfiguration, MatomoModule } from 'ngx-matomo-client';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideMatomoTesting } from 'ngx-matomo-client/testing';
 import { TrackSimpleClickEventComponent } from './track-simple-click-event.component';
 
 describe('TrackSimpleClickEventComponent', () => {
   let component: TrackSimpleClickEventComponent;
   let fixture: ComponentFixture<TrackSimpleClickEventComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        MatomoModule.forRoot({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [BrowserAnimationsModule, TrackSimpleClickEventComponent],
+      providers: [
+        provideMatomoTesting({
           trackerUrl: '',
           siteId: '',
-        } as MatomoConfiguration),
+        }),
       ],
-      declarations: [TrackSimpleClickEventComponent],
       schemas: [NO_ERRORS_SCHEMA],
-    }).compileComponents();
+    });
   });
 
   beforeEach(() => {
