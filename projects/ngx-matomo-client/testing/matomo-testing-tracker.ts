@@ -1,6 +1,13 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import { MatomoInstance, MatomoTracker } from 'ngx-matomo-client/core';
 import { MatomoTestingInstance } from './matomo-testing-instance';
+
+export const MATOMO_TESTING_INSTANCE = new InjectionToken<MatomoInstance>(
+  'MATOMO_TESTING_INSTANCE',
+  {
+    factory: () => new MatomoTestingInstance(),
+  },
+);
 
 /**
  * No-op implementation of {@link MatomoTracker}
@@ -13,7 +20,7 @@ import { MatomoTestingInstance } from './matomo-testing-instance';
  */
 @Injectable()
 export class MatomoTestingTracker extends MatomoTracker {
-  #fakeInstance: MatomoInstance = new MatomoTestingInstance();
+  #fakeInstance: MatomoInstance = inject(MATOMO_TESTING_INSTANCE);
   #paq: unknown[][] = [];
 
   /** Retrieve the current Matomo instance */
@@ -21,7 +28,12 @@ export class MatomoTestingTracker extends MatomoTracker {
     return this.#fakeInstance;
   }
 
-  /** Set the current matomo instance */
+  /**
+   * Set the current matomo instance
+   *
+   * @deprecated will be removed in a future version and injected from DI token `MATOMO_TESTING_INSTANCE` instead
+   * @see MATOMO_TESTING_INSTANCE
+   */
   setMatomoInstance(instance: MatomoInstance) {
     this.#fakeInstance = instance;
   }
