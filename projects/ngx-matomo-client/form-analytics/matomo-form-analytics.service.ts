@@ -10,7 +10,9 @@ export interface MatomoFormAnalyticsInstance {
   setTrackingTimer(delayInMilliSeconds: number): void;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MatomoFormAnalytics {
   private readonly delegate: InternalMatomoTracker<MatomoFormAnalyticsInstance, 'FormAnalytics::'> =
     inject(InternalMatomoTracker);

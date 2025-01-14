@@ -20,53 +20,59 @@ export const MATOMO_CONFIGURATION = new InjectionToken<MatomoConfiguration>('MAT
  */
 export const INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<InternalMatomoConfiguration>(
   'INTERNAL_MATOMO_CONFIGURATION',
+  {
+    factory(): InternalMatomoConfiguration {
+      const { mode, requireConsent, ...restConfig } = requireNonNull(
+        inject(MATOMO_CONFIGURATION, { optional: true }),
+        CONFIG_NOT_FOUND,
+      );
+
+      return {
+        mode: mode ? coerceInitializationMode(mode) : undefined,
+        disabled: false,
+        enableLinkTracking: true,
+        trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
+        requireConsent: requireConsent ? coerceConsentRequirement(requireConsent) : 'none',
+        enableJSErrorTracking: false,
+        runOutsideAngularZone: false,
+        disableCampaignParameters: false,
+        acceptDoNotTrack: false,
+        ...restConfig,
+      };
+    },
+  },
 );
-
-export function createInternalMatomoConfiguration(): InternalMatomoConfiguration {
-  const { mode, requireConsent, ...restConfig } = requireNonNull(
-    inject(MATOMO_CONFIGURATION, { optional: true }),
-    CONFIG_NOT_FOUND,
-  );
-
-  return {
-    mode: mode ? coerceInitializationMode(mode) : undefined,
-    disabled: false,
-    enableLinkTracking: true,
-    trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
-    requireConsent: requireConsent ? coerceConsentRequirement(requireConsent) : 'none',
-    enableJSErrorTracking: false,
-    runOutsideAngularZone: false,
-    disableCampaignParameters: false,
-    acceptDoNotTrack: false,
-    ...restConfig,
-  };
-}
 
 /**
  * For internal use only. Injection token for deferred {@link InternalMatomoConfiguration}.
  *
  */
 export const DEFERRED_INTERNAL_MATOMO_CONFIGURATION =
-  new InjectionToken<DeferredInternalMatomoConfiguration>('DEFERRED_INTERNAL_MATOMO_CONFIGURATION');
+  new InjectionToken<DeferredInternalMatomoConfiguration>(
+    'DEFERRED_INTERNAL_MATOMO_CONFIGURATION',
+    {
+      factory: () => {
+        const base = inject(INTERNAL_MATOMO_CONFIGURATION);
+        let resolveFn: ((configuration: InternalMatomoConfiguration) => void) | undefined;
+        const configuration = new Promise<InternalMatomoConfiguration>(
+          resolve => (resolveFn = resolve),
+        );
 
-export function createDeferredInternalMatomoConfiguration(): DeferredInternalMatomoConfiguration {
-  const base = inject(INTERNAL_MATOMO_CONFIGURATION);
-  let resolveFn: ((configuration: InternalMatomoConfiguration) => void) | undefined;
-  const configuration = new Promise<InternalMatomoConfiguration>(resolve => (resolveFn = resolve));
-
-  return {
-    configuration,
-    markReady(configuration) {
-      requireNonNull(
-        resolveFn,
-        'resolveFn',
-      )({
-        ...base,
-        ...configuration,
-      });
+        return {
+          configuration,
+          markReady(configuration) {
+            requireNonNull(
+              resolveFn,
+              'resolveFn',
+            )({
+              ...base,
+              ...configuration,
+            } as InternalMatomoConfiguration);
+          },
+        };
+      },
     },
-  };
-}
+  );
 
 /**
  * For internal use only. Injection token for fully loaded async {@link InternalMatomoConfiguration}.
@@ -74,7 +80,9 @@ export function createDeferredInternalMatomoConfiguration(): DeferredInternalMat
  */
 export const ASYNC_INTERNAL_MATOMO_CONFIGURATION = new InjectionToken<
   Promise<InternalMatomoConfiguration>
->('ASYNC_INTERNAL_MATOMO_CONFIGURATION');
+>('ASYNC_INTERNAL_MATOMO_CONFIGURATION', {
+  factory: () => inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION).configuration,
+});
 
 /**
  * For internal use only. Module configuration merged with default values.
@@ -89,7 +97,7 @@ export type InternalMatomoConfiguration = Omit<MatomoConfiguration, 'mode' | 're
 export interface DeferredInternalMatomoConfiguration {
   readonly configuration: Promise<InternalMatomoConfiguration>;
 
-  markReady(configuration: InternalMatomoConfiguration): void;
+  markReady(configuration: AutoMatomoConfiguration<'auto' | 'deferred'>): void;
 }
 
 /**

@@ -1,10 +1,9 @@
 import { APP_BASE_HREF, LocationStrategy } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { NavigationEnd } from '@angular/router';
-import { MatomoConfiguration, provideMatomo } from 'ngx-matomo-client/core';
-import { MatomoRouterConfiguration } from './configuration';
+import { MATOMO_CONFIGURATION, MatomoConfiguration } from 'ngx-matomo-client/core';
+import { MATOMO_ROUTER_CONFIGURATION, MatomoRouterConfiguration } from './configuration';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
-import { withRouter } from './providers';
 
 describe('PageUrlProvider', () => {
   function instantiate(
@@ -13,7 +12,14 @@ describe('PageUrlProvider', () => {
   ): PageUrlProvider {
     TestBed.configureTestingModule({
       providers: [
-        provideMatomo({} as MatomoConfiguration, withRouter(config ?? {})),
+        {
+          provide: MATOMO_CONFIGURATION,
+          useValue: {} as MatomoConfiguration,
+        },
+        {
+          provide: MATOMO_ROUTER_CONFIGURATION,
+          useValue: config,
+        },
         {
           provide: APP_BASE_HREF,
           useValue: baseHref,

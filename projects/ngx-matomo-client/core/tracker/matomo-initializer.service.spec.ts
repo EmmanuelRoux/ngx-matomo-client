@@ -1,65 +1,322 @@
-import {
-  ApplicationInitStatus,
-  InjectionToken,
-  PLATFORM_ID,
-  Provider,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { EnvironmentInjector, PLATFORM_ID, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { BehaviorSubject } from 'rxjs';
 import { MatomoHolder } from '../holder';
-import { MatomoFeature, provideMatomo, withScriptFactory } from '../providers';
-import { MatomoTestingTracker, provideTestingTracker } from '../testing/testing-tracker';
-import { MATOMO_ROUTER_ENABLED, MatomoConfiguration, MatomoConsentMode } from './configuration';
+import { provideMatomo, withScriptFactory } from '../providers';
+import {
+  MATOMO_CONFIGURATION,
+  MATOMO_ROUTER_ENABLED,
+  MatomoConfiguration,
+  MatomoConsentMode,
+} from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoInitializerService } from './matomo-initializer.service';
-import { createDefaultMatomoScriptElement } from './script-factory';
+import { MatomoTracker } from './matomo-tracker.service';
+import {
+  createDefaultMatomoScriptElement,
+  MATOMO_SCRIPT_FACTORY,
+  MatomoScriptFactory,
+} from './script-factory';
 
 declare let window: MatomoHolder;
 
 describe('MatomoInitializerService', () => {
-  const injectedScriptSpyToken = new InjectionToken<WritableSignal<HTMLScriptElement | undefined>>(
-    'injectedScriptSpyToken',
-  );
-
-  async function setUp(
+  function instantiate(
     config: MatomoConfiguration,
     providers: Provider[] = [],
-    features: MatomoFeature[] = [],
-  ): Promise<{
-    tracker: MatomoTestingTracker;
-    service: MatomoInitializerService;
-    injectedScript: Signal<HTMLScriptElement | undefined>;
-  }> {
-    const injectedScript = new BehaviorSubject<HTMLScriptElement | undefined>(undefined);
-
+  ): MatomoInitializerService {
     TestBed.resetTestingModule();
-
     TestBed.configureTestingModule({
       providers: [
-        provideMatomo(config, ...features),
-        provideTestingTracker(),
-        ...providers,
         {
-          provide: injectedScriptSpyToken,
-          useFactory: () => toSignal(injectedScript),
+          provide: MATOMO_CONFIGURATION,
+          useValue: config,
         },
+        ...providers,
       ],
     });
 
-    setUpScriptInjection(script => injectedScript.next(script));
-
-    // https://github.com/angular/angular/issues/24218
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-
-    return {
-      service: TestBed.inject(MatomoInitializerService),
-      tracker: TestBed.inject(MatomoTestingTracker),
-      injectedScript: TestBed.inject(injectedScriptSpyToken),
-    };
+    return TestBed.inject(MatomoInitializerService);
   }
+
+  beforeEach(() => delete (window as Partial<MatomoHolder>)._paq);
+
+  it('should register _paq global once', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: MATOMO_CONFIGURATION,
+          useValue: {},
+        },
+      ],
+    })
+      .inject(EnvironmentInjector)
+      .runInContext(() => {
+        // Given
+        expect(window._paq).toBeUndefined();
+
+        // When
+        new MatomoInitializerService();
+        // Then
+        expect(window._paq).toEqual([]);
+        const paq = window._paq;
+
+        // When
+        new MatomoInitializerService();
+        // Then
+        expect(window._paq).toEqual([]);
+        expect(window._paq).toBe(paq);
+      });
+  });
+
+  it('should track initial page view by default', () => {
+    // Given
+    const service = instantiate({
+      mode: 'manual',
+      enableLinkTracking: false,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+  });
+
+  it('should not track initial page view by default if router is enabled', () => {
+    // Given
+    const service = instantiate(
+      {
+        mode: 'manual',
+        enableLinkTracking: false,
+      },
+      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
+    );
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+  });
+
+  it('should manually force track initial page view no matter router is enabled', () => {
+    // Given
+    const service = instantiate(
+      {
+        mode: 'manual',
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      },
+      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
+    );
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+  });
+
+  it('should not track initial page view with manual configuration, no matter router enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: 'manual',
+      enableLinkTracking: false,
+      trackAppInitialLoad: false,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).not.toHaveBeenCalled();
+  });
+
+  it('should enable link tracking with manual configuration', () => {
+    // Given
+    const service = instantiate({
+      mode: 'manual',
+      trackAppInitialLoad: false,
+      enableLinkTracking: true,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'enableLinkTracking');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.enableLinkTracking).toHaveBeenCalledOnceWith(false);
+  });
+
+  it('should enable link tracking using pseudo-clicks with manual configuration', () => {
+    // Given
+    const service = instantiate({
+      mode: 'manual',
+      trackAppInitialLoad: false,
+      enableLinkTracking: 'enable-pseudo',
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'enableLinkTracking');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.enableLinkTracking).toHaveBeenCalledOnceWith(true);
+  });
+
+  it('should set Do Not Track setting if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: 'manual',
+      acceptDoNotTrack: true,
+      trackAppInitialLoad: true,
+      enableLinkTracking: false,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'setDoNotTrack');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+    expect(tracker.setDoNotTrack).toHaveBeenCalledOnceWith(true);
+    expect(tracker.setDoNotTrack).toHaveBeenCalledBefore(tracker.trackPageView);
+  });
+
+  it('should disable campaign parameters if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: 'manual',
+      disableCampaignParameters: true,
+      trackAppInitialLoad: true,
+      enableLinkTracking: false,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'disableCampaignParameters');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+    expect(tracker.disableCampaignParameters).toHaveBeenCalledTimes(1);
+    expect(tracker.disableCampaignParameters).toHaveBeenCalledBefore(tracker.trackPageView);
+  });
+
+  it('should require tracking consent if setting is enabled', () => {
+    for (const value of ['tracking', MatomoConsentMode.TRACKING] as const) {
+      // Given
+      const service = instantiate({
+        mode: 'manual',
+        requireConsent: value,
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      });
+      const tracker = TestBed.inject(MatomoTracker);
+
+      spyOn(tracker, 'trackPageView');
+      spyOn(tracker, 'requireConsent');
+
+      // When
+      service.initialize();
+
+      // Then
+      expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+      expect(tracker.requireConsent).toHaveBeenCalledOnceWith();
+      expect(tracker.requireConsent).toHaveBeenCalledBefore(tracker.trackPageView);
+    }
+  });
+
+  it('should require cookie consent if setting is enabled', () => {
+    for (const value of ['cookie', MatomoConsentMode.COOKIE] as const) {
+      // Given
+      const service = instantiate({
+        mode: 'manual',
+        requireConsent: value,
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      });
+      const tracker = TestBed.inject(MatomoTracker);
+
+      spyOn(tracker, 'trackPageView');
+      spyOn(tracker, 'requireCookieConsent');
+
+      // When
+      service.initialize();
+
+      // Then
+      expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+      expect(tracker.requireCookieConsent).toHaveBeenCalledOnceWith();
+      expect(tracker.requireCookieConsent).toHaveBeenCalledBefore(tracker.trackPageView);
+    }
+  });
+
+  it('should not require any consent if setting is not enabled', () => {
+    for (const value of ['none', MatomoConsentMode.NONE, undefined] as const) {
+      // Given
+      const service = instantiate({
+        mode: 'manual',
+        requireConsent: value,
+        trackAppInitialLoad: true,
+        enableLinkTracking: false,
+      });
+      const tracker = TestBed.inject(MatomoTracker);
+
+      spyOn(tracker, 'trackPageView');
+      spyOn(tracker, 'requireCookieConsent');
+      spyOn(tracker, 'requireConsent');
+
+      // When
+      service.initialize();
+
+      // Then
+      expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
+      expect(tracker.requireCookieConsent).not.toHaveBeenCalled();
+      expect(tracker.requireConsent).not.toHaveBeenCalled();
+    }
+  });
+
+  it('should enable JS errors tracking if enabled', () => {
+    // Given
+    const service = instantiate({
+      mode: 'manual',
+      trackAppInitialLoad: true,
+      enableJSErrorTracking: true,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'trackPageView');
+    spyOn(tracker, 'enableJSErrorTracking');
+
+    // When
+    service.initialize();
+
+    // Then
+    expect(tracker.trackPageView).toHaveBeenCalledTimes(1);
+    expect(tracker.enableJSErrorTracking).toHaveBeenCalledTimes(1);
+    expect(tracker.enableJSErrorTracking).toHaveBeenCalledBefore(tracker.trackPageView);
+  });
 
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
     const mockContainer = jasmine.createSpyObj<HTMLElement>('FakeContainer', ['insertBefore']);
@@ -73,316 +330,136 @@ describe('MatomoInitializerService', () => {
       return script;
     });
 
-    const getElementsByTagNameSpy = jasmine.isSpy(window.document.getElementsByTagName)
-      ? (window.document.getElementsByTagName as jasmine.Spy<Document['getElementsByTagName']>)
-      : spyOn(window.document, 'getElementsByTagName');
-
-    // Not a perfect spy, as the actual returned value is an Array, not an HTMLCollection
-    getElementsByTagNameSpy.and.returnValue([
+    spyOn(window.document, 'getElementsByTagName').and.returnValue([
       mockExistingScript,
     ] as unknown as HTMLCollectionOf<Element>);
   }
 
-  function expectInjectedScript(expectedUrl: string): void {
-    const script = TestBed.inject(injectedScriptSpyToken)();
-
+  function expectInjectedScript(script: HTMLScriptElement | undefined, expectedUrl: string): void {
     expect(script).toBeTruthy();
     expect(script?.type).toEqual('text/javascript');
     expect(script?.async).toBeTrue();
     expect(script?.defer).toBeTrue();
-    expect(script?.src?.toLowerCase()).toMatch(expectedUrl.toLowerCase()); // script url may be lowercased by browser
+    expect(script?.src.toLowerCase()).toMatch(expectedUrl.toLowerCase()); // script url may be lowercased by browser
   }
 
-  function expectNoInjectedScript(): void {
-    const script = TestBed.inject(injectedScriptSpyToken)();
-
-    expect(script).toBeUndefined();
-  }
-
-  beforeEach(() => delete (window as Partial<MatomoHolder>)._paq);
-
-  it('should register _paq global once', async () => {
-    expect(window._paq).toBeUndefined();
-
-    await setUp({ mode: 'manual' });
-
-    const paq = window._paq;
-
-    expect(window._paq).toEqual([]);
-
-    await setUp({ mode: 'manual' });
-
-    expect(window._paq).toEqual([]);
-    expect(window._paq).toBe(paq);
-  });
-
-  it('should track initial page view by default', async () => {
+  it('should inject script automatically with simple configuration', () => {
     // Given
-    const { tracker } = await setUp({
-      mode: 'manual',
-      enableLinkTracking: false,
-    });
-
-    // Then
-    expect(tracker.calls).toEqual([['trackPageView', undefined]]);
-  });
-
-  it('should not track initial page view by default if router is enabled', async () => {
-    // Given
-    const { tracker } = await setUp(
-      {
-        mode: 'manual',
-        enableLinkTracking: false,
-      },
-      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
-    );
-
-    // Then
-    expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['trackPageView'])]),
-    );
-  });
-
-  it('should manually force track initial page view no matter router is enabled', async () => {
-    // Given
-    const { tracker } = await setUp(
-      {
-        mode: 'manual',
-        trackAppInitialLoad: true,
-        enableLinkTracking: false,
-      },
-      [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
-    );
-
-    // Then
-    expect(tracker.calls).toEqual([['trackPageView', undefined]]);
-  });
-
-  it('should not track initial page view with manual configuration, no matter router enabled', async () => {
-    // Given
-    const { tracker } = await setUp({
-      mode: 'manual',
-      enableLinkTracking: false,
-      trackAppInitialLoad: false,
-    });
-
-    // Then
-    expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['trackPageView'])]),
-    );
-  });
-
-  it('should enable link tracking with manual configuration', async () => {
-    // Given
-    const { tracker } = await setUp({
-      mode: 'manual',
-      trackAppInitialLoad: false,
-      enableLinkTracking: true,
-    });
-
-    // Then
-    expect(tracker.calls).toEqual([['enableLinkTracking', false]]);
-  });
-
-  it('should enable link tracking using pseudo-clicks with manual configuration', async () => {
-    // Given
-    const { tracker } = await setUp({
-      mode: 'manual',
-      trackAppInitialLoad: false,
-      enableLinkTracking: 'enable-pseudo',
-    });
-
-    // Then
-    expect(tracker.calls).toEqual([['enableLinkTracking', true]]);
-  });
-
-  it('should set Do Not Track setting if enabled', async () => {
-    // Given
-    const { tracker } = await setUp({
-      mode: 'manual',
-      acceptDoNotTrack: true,
-      trackAppInitialLoad: true,
-      enableLinkTracking: false,
-    });
-
-    // Then
-    // Note: 'setDoNotTrack' should be called BEFORE 'trackPageView'
-    expect(tracker.calls).toEqual([
-      ['setDoNotTrack', true],
-      ['trackPageView', undefined],
-    ]);
-  });
-
-  it('should disable campaign parameters if enabled', async () => {
-    // Given
-    const { tracker } = await setUp({
-      mode: 'manual',
-      disableCampaignParameters: true,
-      trackAppInitialLoad: true,
-      enableLinkTracking: false,
-    });
-
-    // Then
-    // Note: 'disableCampaignParameters' should be called BEFORE 'trackPageView'
-    expect(tracker.calls).toEqual([['disableCampaignParameters'], ['trackPageView', undefined]]);
-  });
-
-  (['tracking', MatomoConsentMode.TRACKING] as const).forEach(requireConsent => {
-    it('should require tracking consent if setting is enabled', async () => {
-      // Given
-      const { tracker } = await setUp({
-        mode: 'manual',
-        trackAppInitialLoad: true,
-        enableLinkTracking: false,
-        requireConsent,
-      });
-
-      // Then
-      // Note: 'requireConsent' should be called BEFORE 'trackPageView'
-      expect(tracker.calls).toEqual([['requireConsent'], ['trackPageView', undefined]]);
-    });
-  });
-
-  (['cookie', MatomoConsentMode.COOKIE] as const).forEach(requireConsent => {
-    it('should require cookie consent if setting is enabled', async () => {
-      // Given
-      const { tracker } = await setUp({
-        mode: 'manual',
-        trackAppInitialLoad: true,
-        enableLinkTracking: false,
-        requireConsent,
-      });
-
-      // Then
-      // Note: 'requireCookieConsent' should be called BEFORE 'trackPageView'
-      expect(tracker.calls).toEqual([['requireCookieConsent'], ['trackPageView', undefined]]);
-    });
-  });
-
-  (['none', MatomoConsentMode.NONE, undefined] as const).forEach(requireConsent => {
-    it(`should not require any consent if setting is not enabled (${requireConsent})`, async () => {
-      // Given
-      const { tracker } = await setUp({
-        mode: 'manual',
-        trackAppInitialLoad: true,
-        enableLinkTracking: false,
-        requireConsent,
-      });
-
-      // Then
-      // Note: 'requireConsent' should be called BEFORE 'trackPageView'
-      expect(tracker.calls).toEqual([['trackPageView', undefined]]);
-      expect(tracker.calls).not.toEqual(
-        jasmine.objectContaining([jasmine.arrayContaining(['requireConsent'])]),
-      );
-      expect(tracker.calls).not.toEqual(
-        jasmine.objectContaining([jasmine.arrayContaining(['requireCookieConsent'])]),
-      );
-    });
-  });
-
-  it('should enable JS errors tracking if enabled', async () => {
-    // Given
-    const { tracker } = await setUp({
-      mode: 'manual',
-      trackAppInitialLoad: true,
-      enableJSErrorTracking: true,
-      enableLinkTracking: false,
-    });
-
-    // Then
-    // Note: 'enableJSErrorTracking' should be called BEFORE 'trackPageView'
-    expect(tracker.calls).toEqual([['enableJSErrorTracking'], ['trackPageView', undefined]]);
-  });
-
-  it('should inject script automatically with simple configuration', async () => {
-    // Given
-    const { tracker } = await setUp({
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
       siteId: 'fakeSiteId',
       trackerUrl: 'http://fakeTrackerUrl',
-      enableLinkTracking: false,
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
 
     // Then
-    expectInjectedScript('http://fakeTrackerUrl/matomo.js');
-    expect(tracker.calls).toEqual([
-      ['trackPageView', undefined],
-      ['setTrackerUrl', 'http://fakeTrackerUrl/matomo.php'],
-      ['setSiteId', 'fakeSiteId'],
-    ]);
+    expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('fakeSiteId');
   });
 
-  it('should inject script automatically with site id as number', async () => {
+  it('should inject script automatically with site id as number', () => {
     // Given
-    const { tracker } = await setUp({
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
       siteId: 99,
       trackerUrl: 'http://fakeTrackerUrl',
-      enableLinkTracking: false,
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
 
     // Then
-    expectInjectedScript('http://fakeTrackerUrl/matomo.js');
-    expect(tracker.calls).toEqual([
-      ['trackPageView', undefined],
-      ['setTrackerUrl', 'http://fakeTrackerUrl/matomo.php'],
-      ['setSiteId', '99'],
-    ]);
+    expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('99');
   });
 
-  it('should inject script automatically with custom script url', async () => {
+  it('should inject script automatically with custom script url', () => {
     // Given
-    await setUp({
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
       siteId: 'fakeSiteId',
       trackerUrl: 'http://fakeTrackerUrl',
       scriptUrl: 'http://myCustomScriptUrl',
     });
 
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
+
     // Then
-    expectInjectedScript('http://myCustomScriptUrl');
+    expectInjectedScript(injectedScript, 'http://myCustomScriptUrl');
   });
 
-  it('should inject script with embedded tracker configuration', async () => {
+  it('should inject script with embedded tracker configuration', () => {
     // Given
-    const { tracker } = await setUp({
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
       scriptUrl: 'http://myCustomScript.js',
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
 
     // Then
-    expectInjectedScript('http://myCustomScript.js');
-    expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['setTrackerUrl'])]),
-    );
-    expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['setSiteId'])]),
-    );
+    expectInjectedScript(injectedScript, 'http://myCustomScript.js');
+    expect(tracker.setTrackerUrl).not.toHaveBeenCalled();
+    expect(tracker.setSiteId).not.toHaveBeenCalled();
   });
 
-  it('should inject script automatically with multiple trackers', async () => {
+  it('should inject script automatically with multiple trackers', () => {
     // Given
-    const { tracker } = await setUp({
-      enableLinkTracking: false,
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
       trackers: [
         { siteId: 'site1', trackerUrl: 'http://fakeTrackerUrl1' },
         { siteId: 'site2', trackerUrl: 'http://fakeTrackerUrl2/' }, // Should work with trailing slash
         { siteId: 'site3', trackerUrl: 'http://fakeTrackerUrl3' },
       ],
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    spyOn(tracker, 'addTracker');
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
 
     // Then
-    expectInjectedScript('http://fakeTrackerUrl1/matomo.js');
-    expect(tracker.calls).toEqual([
-      ['trackPageView', undefined],
-      ['setTrackerUrl', 'http://fakeTrackerUrl1/matomo.php'],
-      ['setSiteId', 'site1'],
-      ['addTracker', 'http://fakeTrackerUrl2/matomo.php', 'site2'],
-      ['addTracker', 'http://fakeTrackerUrl3/matomo.php', 'site3'],
-    ]);
+    expectInjectedScript(injectedScript, 'http://fakeTrackerUrl1/matomo.js');
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl1/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('site1');
+    expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl2/matomo.php', 'site2');
+    expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl3/matomo.php', 'site3');
+    expect(tracker.addTracker).toHaveBeenCalledTimes(2);
   });
 
-  it('should append custom tracker suffix if configured, matomo.php otherwise', async () => {
+  it('should append custom tracker suffix if configured, matomo.php otherwise', () => {
     // Given
-    const { tracker } = await setUp({
-      enableLinkTracking: false,
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
       trackers: [
         { siteId: 'site1', trackerUrl: 'http://fakeTrackerUrl1', trackerUrlSuffix: '' },
         {
@@ -393,41 +470,54 @@ describe('MatomoInitializerService', () => {
         { siteId: 'site3', trackerUrl: 'http://fakeTrackerUrl3' },
       ],
     });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    spyOn(tracker, 'addTracker');
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
 
     // Then
-    expectInjectedScript('http://fakeTrackerUrl1/matomo.js');
-
-    expect(tracker.calls).toEqual([
-      ['trackPageView', undefined],
-      ['setTrackerUrl', 'http://fakeTrackerUrl1'],
-      ['setSiteId', 'site1'],
-      ['addTracker', 'http://fakeTrackerUrl2/custom-tracker.php', 'site2'],
-      ['addTracker', 'http://fakeTrackerUrl3/matomo.php', 'site3'],
-    ]);
+    expectInjectedScript(injectedScript, 'http://fakeTrackerUrl1/matomo.js');
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl1');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('site1');
+    expect(tracker.addTracker).toHaveBeenCalledWith(
+      'http://fakeTrackerUrl2/custom-tracker.php',
+      'site2',
+    );
+    expect(tracker.addTracker).toHaveBeenCalledWith('http://fakeTrackerUrl3/matomo.php', 'site3');
+    expect(tracker.addTracker).toHaveBeenCalledTimes(2);
   });
 
-  it('should do nothing when disabled', async () => {
+  it('should do nothing when disabled', () => {
     // Given
-    const { service } = await setUp({
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
       disabled: true,
       siteId: 'fakeSiteId',
       trackerUrl: 'http://fakeTrackerUrl',
     });
 
+    setUpScriptInjection(script => (injectedScript = script));
+
     // When
+    service.initialize();
     service.initializeTracker({ trackerUrl: '', siteId: '' });
 
     // Then
-    expectNoInjectedScript();
+    expect(injectedScript).toBeUndefined();
     expect(window._paq).toBeUndefined();
   });
 
-  it('should do nothing when platform is not browser', async () => {
+  it('should do nothing when platform is not browser', () => {
     // Given
+    let injectedScript: HTMLScriptElement | undefined;
     // See here: https://github.com/angular/angular/blob/b66e479cdb1e474a29ff676f10a5fcc3d7eae799/packages/common/src/platform_id.ts
     const serverPlatform = 'server';
-
-    const { service } = await setUp(
+    const service = instantiate(
       {
         disabled: false,
         siteId: 'fakeSiteId',
@@ -436,75 +526,110 @@ describe('MatomoInitializerService', () => {
       [{ provide: PLATFORM_ID, useValue: serverPlatform }],
     );
 
+    setUpScriptInjection(script => (injectedScript = script));
+
     // When
-    service.initializeTracker({ trackerUrl: '', siteId: '' });
+    service.initialize();
 
     // Then
-    expectNoInjectedScript();
+    expect(injectedScript).toBeUndefined();
     expect(window._paq).toBeUndefined();
   });
 
-  it('should create custom script tag', async () => {
+  it('should create custom script tag', () => {
     // Given
-    const { injectedScript } = await setUp(
-      {
-        siteId: 1,
-        trackerUrl: '',
-        scriptUrl: '/fake/script/url',
-      },
-      [],
-      [
-        withScriptFactory((scriptUrl, document) => {
-          const script = createDefaultMatomoScriptElement(scriptUrl, document);
+    let injectedScript: HTMLScriptElement | undefined;
 
-          script.setAttribute('data-cookieconsent', 'statistics');
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: MATOMO_CONFIGURATION,
+          useValue: {
+            siteId: 1,
+            trackerUrl: '',
+            scriptUrl: '/fake/script/url',
+          } as MatomoConfiguration,
+        },
+        {
+          provide: MATOMO_SCRIPT_FACTORY,
+          useValue: ((scriptUrl, document) => {
+            const script = createDefaultMatomoScriptElement(scriptUrl, document);
 
-          return script;
-        }),
+            script.setAttribute('data-cookieconsent', 'statistics');
+
+            return script;
+          }) as MatomoScriptFactory,
+        },
       ],
-    );
-
-    // Then
-    expect(injectedScript()?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
-    expect(injectedScript()?.dataset.cookieconsent).toEqual('statistics');
-  });
-
-  it('should create custom script tag with forRoot factory', async () => {
-    // Given
-    const { injectedScript } = await setUp(
-      {
-        siteId: 1,
-        trackerUrl: '',
-        scriptUrl: '/fake/script/url',
-      },
-      [],
-      [
-        withScriptFactory((scriptUrl, document) => {
-          const script = createDefaultMatomoScriptElement(scriptUrl, document);
-
-          script.setAttribute('data-cookieconsent', 'statistics');
-
-          return script;
-        }),
-      ],
-    );
-
-    // Then
-    expect(injectedScript()?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
-    expect(injectedScript()?.dataset.cookieconsent).toEqual('statistics');
-  });
-
-  it('should defer script injection until tracker configuration is provided', async () => {
-    // Given
-    const { tracker, service } = await setUp({
-      mode: 'deferred',
-      trackAppInitialLoad: true,
-      enableLinkTracking: false,
     });
 
+    const service = TestBed.inject(MatomoInitializerService);
+
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
+
     // Then
-    expectNoInjectedScript();
-    expect(tracker.calls).toEqual([['trackPageView', undefined]]);
+    expect(injectedScript?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
+    expect(injectedScript?.dataset.cookieconsent).toEqual('statistics');
+  });
+
+  it('should create custom script tag with forRoot factory', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+
+    setUpScriptInjection(script => (injectedScript = script));
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideMatomo(
+          {
+            siteId: 1,
+            trackerUrl: '',
+            scriptUrl: '/fake/script/url',
+          } as MatomoConfiguration,
+          withScriptFactory((scriptUrl, document) => {
+            const script = createDefaultMatomoScriptElement(scriptUrl, document);
+
+            script.setAttribute('data-cookieconsent', 'statistics');
+
+            return script;
+          }),
+        ),
+      ],
+    });
+
+    // Inject service to trigger initialization on module init
+    TestBed.inject(MatomoInitializerService);
+
+    // Then
+    expect(injectedScript?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
+    expect(injectedScript?.dataset.cookieconsent).toEqual('statistics');
+  });
+
+  it('should defer script injection until tracker configuration is provided', () => {
+    // Given
+    let injectedScript: HTMLScriptElement | undefined;
+    const service = instantiate({
+      mode: 'deferred',
+      trackAppInitialLoad: true,
+    });
+    const tracker = TestBed.inject(MatomoTracker);
+
+    spyOn(tracker, 'setTrackerUrl');
+    spyOn(tracker, 'setSiteId');
+    spyOn(tracker, 'trackPageView');
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    service.initialize();
+    // Then
+    expect(injectedScript).toBeFalsy();
+    expect(tracker.setTrackerUrl).not.toHaveBeenCalled();
+    expect(tracker.setSiteId).not.toHaveBeenCalled();
+    // Pre-init actions must run
+    expect(tracker.trackPageView).toHaveBeenCalledOnceWith();
 
     // When
     service.initializeTracker({
@@ -513,17 +638,14 @@ describe('MatomoInitializerService', () => {
     });
 
     // Then
-    expectInjectedScript('http://fakeTrackerUrl/matomo.js');
-    expect(tracker.calls).toEqual([
-      ['trackPageView', undefined],
-      ['setTrackerUrl', 'http://fakeTrackerUrl/matomo.php'],
-      ['setSiteId', 'fakeSiteId'],
-    ]);
+    expectInjectedScript(injectedScript, 'http://fakeTrackerUrl/matomo.js');
+    expect(tracker.setTrackerUrl).toHaveBeenCalledOnceWith('http://fakeTrackerUrl/matomo.php');
+    expect(tracker.setSiteId).toHaveBeenCalledOnceWith('fakeSiteId');
   });
 
-  it('should map deprecated init() method to initialize()', async () => {
+  it('should map deprecated init() method to initialize()', () => {
     // Given
-    const { service } = await setUp({
+    const service = instantiate({
       trackerUrl: '',
       siteId: '',
     });
@@ -537,9 +659,9 @@ describe('MatomoInitializerService', () => {
     expect(service.initialize).toHaveBeenCalledOnceWith();
   });
 
-  it('should throw an error when initialized trackers more than once', async () => {
+  it('should throw an error when initialized trackers more than once', () => {
     // Given
-    const { service } = await setUp({
+    const service = instantiate({
       mode: 'deferred',
     });
 
@@ -552,12 +674,15 @@ describe('MatomoInitializerService', () => {
     );
   });
 
-  it('should throw an error when initialized more than once', async () => {
+  it('should throw an error when initialized more than once', () => {
     // Given
-    const { service } = await setUp({
+    const service = instantiate({
       trackerUrl: '',
       siteId: '',
     });
+
+    // When
+    service.initialize();
 
     // Then
     expect(() => service.initialize()).toThrowError(ALREADY_INITIALIZED_ERROR);

@@ -27,8 +27,7 @@
           "options": {
             "main": "projects/ngx-matomo-client/test.ts",
             "tsConfig": "projects/ngx-matomo-client/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-matomo-client/karma.conf.js",
-            "codeCoverageExclude": ["projects/ngx-matomo-client/core/testing/**"]
+            "karmaConfig": "projects/ngx-matomo-client/karma.conf.js"
           }
         },
         "lint": {

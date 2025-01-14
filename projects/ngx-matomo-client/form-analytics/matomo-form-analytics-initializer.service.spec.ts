@@ -1,68 +1,60 @@
 import { ɵPLATFORM_SERVER_ID } from '@angular/common';
-import {
-  ApplicationInitStatus,
-  ErrorHandler,
-  InjectionToken,
-  PLATFORM_ID,
-  Provider,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { PLATFORM_ID, Provider } from '@angular/core';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import {
-  MatomoConfiguration,
-  MatomoFeature,
+  AutoMatomoConfiguration,
+  InternalMatomoConfiguration,
+  MATOMO_CONFIGURATION,
   MatomoTracker,
-  provideMatomo,
-  ɵMatomoTestingTracker as MatomoTestingTracker,
-  ɵprovideTestingTracker as provideTestingTracker,
+  ɵASYNC_INTERNAL_MATOMO_CONFIGURATION as ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+  ɵDEFERRED_INTERNAL_MATOMO_CONFIGURATION as DEFERRED_INTERNAL_MATOMO_CONFIGURATION,
 } from 'ngx-matomo-client/core';
-import { BehaviorSubject } from 'rxjs';
-import { MatomoFormAnalyticsConfiguration } from './configuration';
-import { withFormAnalytics } from './providers';
+import { EMPTY, Observable, Subject } from 'rxjs';
+import {
+  MATOMO_FORM_ANALYTICS_CONFIGURATION,
+  MatomoFormAnalyticsConfiguration,
+} from './configuration';
+import { MatomoFormAnalyticsInitializer } from './matomo-form-analytics-initializer.service';
+import { MatomoFormAnalytics } from './matomo-form-analytics.service';
 
 describe('MatomoFormAnalyticsInitializer', () => {
-  const injectedScriptSpyToken = new InjectionToken<WritableSignal<HTMLScriptElement | undefined>>(
-    'injectedScriptSpyToken',
-  );
-
-  async function setUp(
+  async function instantiate(
     formAnalyticsConfig: MatomoFormAnalyticsConfiguration,
-    config: MatomoConfiguration,
+    config: Partial<InternalMatomoConfiguration>,
     providers: Provider[] = [],
-    features: MatomoFeature[] = [],
-  ): Promise<{
-    tracker: MatomoTestingTracker;
-    service: MatomoTracker;
-    injectedScript: Signal<HTMLScriptElement | undefined>;
-  }> {
-    const injectedScript = new BehaviorSubject<HTMLScriptElement | undefined>(undefined);
-
-    TestBed.resetTestingModule();
-
+    pageViewTracked: Observable<void> = EMPTY,
+  ): Promise<MatomoFormAnalyticsInitializer> {
     TestBed.configureTestingModule({
       providers: [
-        provideMatomo(config, withFormAnalytics(formAnalyticsConfig), ...features),
-        provideTestingTracker(),
-        ...providers,
         {
-          provide: injectedScriptSpyToken,
-          useFactory: () => toSignal(injectedScript),
+          provide: MATOMO_CONFIGURATION,
+          useValue: config,
         },
+        {
+          provide: MATOMO_FORM_ANALYTICS_CONFIGURATION,
+          useValue: formAnalyticsConfig,
+        },
+        {
+          provide: MatomoTracker,
+          useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', [], {
+            pageViewTracked,
+          }),
+        },
+        {
+          provide: MatomoFormAnalytics,
+          useValue: jasmine.createSpyObj<MatomoFormAnalytics>('MatomoFormAnalytics', [
+            'scanForForms',
+            'disableFormAnalytics',
+          ]),
+        },
+        ...providers,
       ],
     });
 
-    setUpScriptInjection(script => injectedScript.next(script));
+    TestBed.inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION).markReady({} as AutoMatomoConfiguration);
+    await TestBed.inject(ASYNC_INTERNAL_MATOMO_CONFIGURATION);
 
-    // https://github.com/angular/angular/issues/24218
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-
-    return {
-      service: TestBed.inject(MatomoTracker),
-      tracker: TestBed.inject(MatomoTestingTracker),
-      injectedScript: TestBed.inject(injectedScriptSpyToken),
-    };
+    return TestBed.inject(MatomoFormAnalyticsInitializer);
   }
 
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
@@ -77,35 +69,23 @@ describe('MatomoFormAnalyticsInitializer', () => {
       return script;
     });
 
-    const getElementsByTagNameSpy = jasmine.isSpy(window.document.getElementsByTagName)
-      ? (window.document.getElementsByTagName as jasmine.Spy<Document['getElementsByTagName']>)
-      : spyOn(window.document, 'getElementsByTagName');
-
-    // Not a perfect spy, as the actual returned value is an Array, not an HTMLCollection
-    getElementsByTagNameSpy.and.returnValue([
+    spyOn(window.document, 'getElementsByTagName').and.returnValue([
       mockExistingScript,
     ] as unknown as HTMLCollectionOf<Element>);
   }
 
-  function expectInjectedScript(expectedUrl: string): void {
-    const script = TestBed.inject(injectedScriptSpyToken)();
-
+  function expectInjectedScript(script: HTMLScriptElement | undefined, expectedUrl: string): void {
     expect(script).toBeTruthy();
     expect(script?.type).toEqual('text/javascript');
     expect(script?.async).toBeTrue();
     expect(script?.defer).toBeTrue();
-    expect(script?.src?.toLowerCase()).toMatch(expectedUrl.toLowerCase()); // script url may be lowercased by browser
-  }
-
-  function expectNoInjectedScript(): void {
-    const script = TestBed.inject(injectedScriptSpyToken)();
-
-    expect(script).toBeUndefined();
+    expect(script?.src.toLowerCase()).toMatch(expectedUrl.toLowerCase()); // script url may be lowercased by browser
   }
 
   it('should inject default script', async () => {
     // Given
-    await setUp(
+    let injectedScript: HTMLScriptElement | undefined;
+    const initializer = await instantiate(
       {
         loadScript: true,
       },
@@ -115,13 +95,22 @@ describe('MatomoFormAnalyticsInitializer', () => {
       },
     );
 
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    await initializer.initialize();
+
     // Then
-    expectInjectedScript('http://test.localhost/plugins/FormAnalytics/tracker.min.js');
+    expectInjectedScript(
+      injectedScript,
+      'http://test.localhost/plugins/FormAnalytics/tracker.min.js',
+    );
   });
 
   it('should inject script from custom url', async () => {
     // Given
-    await setUp(
+    let injectedScript: HTMLScriptElement | undefined;
+    const initializer = await instantiate(
       {
         loadScript: 'http://custom.test.url/script.js',
       },
@@ -131,124 +120,121 @@ describe('MatomoFormAnalyticsInitializer', () => {
       },
     );
 
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    await initializer.initialize();
+
     // Then
-    expectInjectedScript('http://custom.test.url/script.js');
+    expectInjectedScript(injectedScript, 'http://custom.test.url/script.js');
   });
 
   it('should throw when trying to inject default script without tracker configuration', async () => {
     // Given
-    let resolveCaughtError: (error: unknown) => void;
-    const caughtError = new Promise(resolve => (resolveCaughtError = resolve));
-
-    await setUp(
+    let injectedScript: HTMLScriptElement | undefined;
+    const initializer = await instantiate(
       {
         loadScript: true,
       },
       {
         mode: 'manual',
       },
-      [
-        {
-          provide: ErrorHandler,
-          useValue: {
-            handleError: error => resolveCaughtError(error),
-          } satisfies ErrorHandler,
-        },
-      ],
     );
 
+    setUpScriptInjection(script => (injectedScript = script));
+
+    // When
+    await expectAsync(initializer.initialize()).toBeRejected();
+
     // Then
-    // TODO change to expect error when #102 is fixed
-    await expectAsync(caughtError).toBePending();
-    // await expectAsync(caughtError).toBeResolvedTo(
-    //   new Error(
-    //     'Cannot resolve default matomo FormAnalytics plugin script url. ' +
-    //       'Please explicitly provide `loadScript` configuration property instead of `true`',
-    //   ),
-    // );
-    expectNoInjectedScript();
+    expect(injectedScript).toBeUndefined();
   });
 
   it('should rescan for forms after each page track', async () => {
     // Given
-    const { tracker, service } = await setUp({}, { mode: 'manual' });
+    const pageViewTracked = new Subject<void>();
+    const initializer = await instantiate({}, {}, [], pageViewTracked);
+    const formAnalytics = TestBed.inject(MatomoFormAnalytics);
 
-    expect(tracker.callsAfterInit).toEqual([]);
+    await initializer.initialize();
+    expect(formAnalytics.scanForForms).not.toHaveBeenCalled();
 
-    service.trackPageView();
+    // When
+    pageViewTracked.next();
+    // Then
+    expect(formAnalytics.scanForForms).toHaveBeenCalledTimes(1);
 
-    expect(tracker.callsAfterInit).toEqual([
-      ['trackPageView', undefined],
-      ['FormAnalytics::scanForForms', undefined],
-    ]);
-
-    service.trackPageView();
-
-    expect(tracker.callsAfterInit).toEqual([
-      ['trackPageView', undefined],
-      ['FormAnalytics::scanForForms', undefined],
-      ['trackPageView', undefined],
-      ['FormAnalytics::scanForForms', undefined],
-    ]);
+    // When
+    pageViewTracked.next();
+    // Then
+    expect(formAnalytics.scanForForms).toHaveBeenCalledTimes(2);
   });
 
   it('should rescan for forms after each page track with delay', fakeAsync(() => {
     // Given
-    setUp(
+    const pageViewTracked = new Subject<void>();
+    let initializer!: MatomoFormAnalyticsInitializer;
+    instantiate(
       {
         autoScanDelay: 42,
       },
-      { mode: 'manual' },
-    );
-
-    const tracker = TestBed.inject(MatomoTestingTracker);
-    const client = TestBed.inject(MatomoTracker);
+      {},
+      [],
+      pageViewTracked,
+    ).then(res => (initializer = res));
 
     tick();
-    expect(tracker!).toBeDefined();
+    expect(initializer).toBeDefined();
+
+    const formAnalytics = TestBed.inject(MatomoFormAnalytics);
+
+    initializer.initialize();
 
     // When
-    client.trackPageView();
+    pageViewTracked.next();
     tick();
     // Then
-    expect(tracker!.callsAfterInit).toEqual([['trackPageView', undefined]]);
+    expect(formAnalytics.scanForForms).not.toHaveBeenCalled();
 
     // When
     tick(42);
     // Then
-    expect(tracker!.callsAfterInit).toEqual([
-      ['trackPageView', undefined],
-      ['FormAnalytics::scanForForms', undefined],
-    ]);
+    expect(formAnalytics.scanForForms).toHaveBeenCalledTimes(1);
   }));
 
   it('should disable form analytics', async () => {
     // Given
-    const { tracker } = await setUp(
+    const initializer = await instantiate(
       {
         disabled: true,
       },
-      { mode: 'manual', enableLinkTracking: false },
+      {},
       [],
     );
+    const formAnalytics = TestBed.inject(MatomoFormAnalytics);
 
-    expect(tracker.calls).toEqual([
-      ['trackPageView', undefined],
-      ['FormAnalytics::disableFormAnalytics'],
-    ]);
+    await initializer.initialize();
+    expect(formAnalytics.disableFormAnalytics).toHaveBeenCalledTimes(1);
   });
 
   it('should implicitly disable form analytics when not running in browser', async () => {
     // Given
-    const { tracker, service } = await setUp({}, { mode: 'manual' }, [
-      { provide: PLATFORM_ID, useValue: ɵPLATFORM_SERVER_ID },
-    ]);
+    const pageViewTracked = new Subject<void>();
+    const initializer = await instantiate(
+      {},
+      {},
+      [{ provide: PLATFORM_ID, useValue: ɵPLATFORM_SERVER_ID }],
+      pageViewTracked,
+    );
+    const formAnalytics = TestBed.inject(MatomoFormAnalytics);
 
-    expect(tracker.calls).toEqual([]);
+    await initializer.initialize();
+    expect(formAnalytics.scanForForms).not.toHaveBeenCalled();
 
     // When
-    service.trackPageView();
+    pageViewTracked.next();
     // Then
-    expect(tracker.calls).toEqual([['trackPageView', undefined]]);
+    expect(formAnalytics.scanForForms).not.toHaveBeenCalled();
+    expect(formAnalytics.disableFormAnalytics).not.toHaveBeenCalled();
   });
 });

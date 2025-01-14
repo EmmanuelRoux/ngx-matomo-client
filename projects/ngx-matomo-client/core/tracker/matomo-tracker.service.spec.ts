@@ -16,7 +16,6 @@ describe('MatomoTracker', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        MatomoTracker,
         {
           provide: InternalMatomoTracker,
           useValue: delegate,

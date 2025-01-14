@@ -1,4 +1,4 @@
-import { ENVIRONMENT_INITIALIZER, ErrorHandler, inject } from '@angular/core';
+import { ENVIRONMENT_INITIALIZER, inject } from '@angular/core';
 import {
   MatomoFeature as MatomoFeature,
   ɵcreateMatomoFeature as createMatomoFeature,
@@ -8,7 +8,6 @@ import {
   MatomoFormAnalyticsConfiguration,
 } from './configuration';
 import { MatomoFormAnalyticsInitializer } from './matomo-form-analytics-initializer.service';
-import { MatomoFormAnalytics } from './matomo-form-analytics.service';
 
 /**
  * Additional Matomo router features kind
@@ -20,8 +19,6 @@ export const enum FormAnalyticsMatomoFeatureKind {
 /** Enable automatic page views tracking */
 export function withFormAnalytics(config?: MatomoFormAnalyticsConfiguration): MatomoFeature {
   const providers = [
-    MatomoFormAnalytics,
-    MatomoFormAnalyticsInitializer,
     {
       provide: MATOMO_FORM_ANALYTICS_CONFIGURATION,
       useValue: config,
@@ -30,13 +27,7 @@ export function withFormAnalytics(config?: MatomoFormAnalyticsConfiguration): Ma
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useValue() {
-        const errorHandler = inject(ErrorHandler);
-
-        // Do NOT wait here for initialization, because app startup should NOT be blocked until deferred config is resolved
-        // However, correctly propagate errors to error handler
-        Promise.resolve(inject(MatomoFormAnalyticsInitializer).initialize()).catch(error =>
-          errorHandler.handleError(error),
-        );
+        inject(MatomoFormAnalyticsInitializer).initialize();
       },
     },
   ];

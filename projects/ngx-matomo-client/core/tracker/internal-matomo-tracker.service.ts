@@ -18,7 +18,7 @@ function trimTrailingUndefinedElements<T>(array: T[]): T[] {
   return trimmed;
 }
 
-export type InternalMatomoTrackerType = Pick<
+type InternalMatomoTrackerType = Pick<
   InternalMatomoTracker<unknown, string>,
   'get' | 'push' | 'pushFn'
 >;
@@ -30,7 +30,10 @@ export function createInternalMatomoTracker(): InternalMatomoTrackerType {
   return disabled || !isBrowser ? new NoopMatomoTracker() : new InternalMatomoTracker();
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+  useFactory: createInternalMatomoTracker,
+})
 export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
   private readonly ngZone = inject(NgZone);
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
@@ -67,7 +70,6 @@ export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
   }
 }
 
-@Injectable()
 export class NoopMatomoTracker<MATOMO = unknown, PREFIX extends string = ''>
   implements InternalMatomoTrackerType
 {

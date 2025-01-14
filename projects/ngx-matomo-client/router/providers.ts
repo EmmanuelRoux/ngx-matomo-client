@@ -32,7 +32,6 @@ export const enum RouterMatomoFeatureKind {
 /** Enable automatic page views tracking */
 export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
   const providers = [
-    MatomoRouter,
     { provide: MATOMO_ROUTER_ENABLED, useValue: true },
     { provide: MATOMO_ROUTER_CONFIGURATION, useValue: config },
     {

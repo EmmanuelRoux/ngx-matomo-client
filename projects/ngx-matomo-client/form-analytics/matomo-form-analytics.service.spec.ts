@@ -1,28 +1,31 @@
 import { TestBed } from '@angular/core/testing';
 import {
-  MatomoConfiguration,
-  provideMatomo,
   ɵGetters as Getters,
+  ɵInternalMatomoTracker as InternalMatomoTracker,
   ɵMethods as Methods,
-  ɵprovideTestingTracker as provideTestingTracker,
-  ɵMatomoTestingTracker as MatomoTestingTracker,
 } from 'ngx-matomo-client/core';
-import { MatomoFormAnalytics } from './matomo-form-analytics.service';
-import { withFormAnalytics } from './providers';
+import { MatomoFormAnalytics, MatomoFormAnalyticsInstance } from './matomo-form-analytics.service';
 
 describe('MatomoFormAnalytics', () => {
+  let delegate: jasmine.SpyObj<
+    InternalMatomoTracker<MatomoFormAnalyticsInstance, 'FormAnalytics::'>
+  >;
   let formAnalytics: MatomoFormAnalytics;
-  let tracker: MatomoTestingTracker;
 
   beforeEach(() => {
+    delegate = jasmine.createSpyObj<
+      InternalMatomoTracker<MatomoFormAnalyticsInstance, 'FormAnalytics::'>
+    >(['get', 'push', 'pushFn']);
+
     TestBed.configureTestingModule({
       providers: [
-        provideMatomo({} as MatomoConfiguration, withFormAnalytics()),
-        provideTestingTracker(),
+        {
+          provide: InternalMatomoTracker,
+          useValue: delegate,
+        },
       ],
     });
 
-    tracker = TestBed.inject(MatomoTestingTracker);
     formAnalytics = TestBed.inject(MatomoFormAnalytics);
   });
 
@@ -34,15 +37,16 @@ describe('MatomoFormAnalytics', () => {
       // When
       when(formAnalytics);
       // Then
-      const allArgs = tracker.callsAfterInit;
+      const allArgs = delegate.push.calls.allArgs();
 
       expect(allArgs.length).toEqual(expected.length);
 
       for (let callIndex = 0; callIndex < allArgs.length; callIndex++) {
         const callArgs = allArgs[callIndex];
+        expect(callArgs).toHaveSize(1);
 
-        for (let argIndex = 0; argIndex < callArgs.length; argIndex++) {
-          expect(callArgs[argIndex]).toEqual(expected[callIndex][argIndex]);
+        for (let argIndex = 0; argIndex < callArgs[0].length; argIndex++) {
+          expect(callArgs[0][argIndex]).toEqual(expected[callIndex][argIndex]);
         }
       }
     };
@@ -64,7 +68,7 @@ describe('MatomoFormAnalytics', () => {
     expected: E,
   ): Promise<void> {
     // Given
-    spyOn(tracker, 'get').and.returnValue(Promise.resolve(expected) as Promise<any>);
+    delegate.get.and.returnValue(Promise.resolve(expected) as Promise<any>);
 
     // When
     return (formAnalytics[getter]() as Promise<any>).then(url => {
