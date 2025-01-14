@@ -1,5 +1,13 @@
 import { APP_BASE_HREF, LocationStrategy } from '@angular/common';
-import { inject, InjectionToken } from '@angular/core';
+import {
+  inject,
+  InjectionToken,
+  INJECTOR,
+  Injector,
+  Provider,
+  runInInjectionContext,
+  Type,
+} from '@angular/core';
 import { NavigationEnd } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { INTERNAL_ROUTER_CONFIGURATION, InternalRouterConfiguration } from './configuration';
@@ -18,6 +26,41 @@ export const MATOMO_PAGE_URL_PROVIDER = new InjectionToken<PageUrlProvider>(
 
 export interface PageUrlProvider {
   getCurrentPageUrl(event: NavigationEnd): Observable<string> | Promise<string>;
+}
+
+export type PageUrlProviderFn = (event: NavigationEnd) => Observable<string> | Promise<string>;
+
+function isPageUrlProviderFn(
+  type: Type<PageUrlProvider> | PageUrlProviderFn,
+): type is PageUrlProviderFn {
+  return typeof type.prototype?.getCurrentPageUrl !== 'function';
+}
+
+export class PageUrlProviderFnAdapter implements PageUrlProvider {
+  constructor(
+    private readonly fn: PageUrlProviderFn,
+    private readonly injector: Injector,
+  ) {}
+
+  getCurrentPageUrl(event: NavigationEnd): Observable<string> | Promise<string> {
+    return runInInjectionContext(this.injector, () => this.fn(event));
+  }
+}
+
+export function providePageUrlProvider(
+  typeOrFn: Type<PageUrlProvider> | PageUrlProviderFn,
+): Provider {
+  if (isPageUrlProviderFn(typeOrFn)) {
+    return {
+      provide: MATOMO_PAGE_URL_PROVIDER,
+      useFactory: () => new PageUrlProviderFnAdapter(typeOrFn, inject(INJECTOR)),
+    };
+  } else {
+    return {
+      provide: MATOMO_PAGE_URL_PROVIDER,
+      useClass: typeOrFn,
+    };
+  }
 }
 
 function trimTrailingSlash(str: string): string {

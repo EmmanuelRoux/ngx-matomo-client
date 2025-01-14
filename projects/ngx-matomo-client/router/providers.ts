@@ -1,6 +1,7 @@
 import { ENVIRONMENT_INITIALIZER, inject, Provider, Type } from '@angular/core';
 import {
   MatomoFeature as MatomoFeature,
+  MatomoFeatureKind,
   ɵcreateMatomoFeature as createMatomoFeature,
   ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED,
 } from 'ngx-matomo-client/core';
@@ -16,6 +17,7 @@ import {
   MatomoRouteDataInterceptor,
 } from './interceptors/route-data-interceptor';
 import { MatomoRouter } from './matomo-router.service';
+import { PageUrlProvider, PageUrlProviderFn, providePageUrlProvider } from './page-url-provider';
 
 /**
  * Additional Matomo router features kind
@@ -27,6 +29,7 @@ export const enum RouterMatomoFeatureKind {
   RouterInterceptors = 'RouterInterceptors',
   /** @see withRouteData */
   BuiltInRouteDataInterceptor = 'BuiltInRouteDataInterceptor',
+  PageUrlProvider = 'PageUrlProvider',
 }
 
 /** Enable automatic page views tracking */
@@ -46,6 +49,16 @@ export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
   return createMatomoFeature(RouterMatomoFeatureKind.Router, providers);
 }
 
+function requireRouterFeature(featureName: string) {
+  return (featuresKind: MatomoFeatureKind[]) => {
+    if (!featuresKind.includes(RouterMatomoFeatureKind.Router)) {
+      throw new Error(
+        `Matomo feature ${featureName} cannot be used without router feature! Did you forget to call withRouter()?`,
+      );
+    }
+  };
+}
+
 /** Add some matomo router interceptors */
 export function withRouterInterceptors(
   interceptors: (Type<MatomoRouterInterceptor> | MatomoRouterInterceptorFn)[],
@@ -53,13 +66,7 @@ export function withRouterInterceptors(
   return createMatomoFeature(
     RouterMatomoFeatureKind.RouterInterceptors,
     provideInterceptors(interceptors),
-    featuresKind => {
-      if (!featuresKind.includes(RouterMatomoFeatureKind.Router)) {
-        throw new Error(
-          `Matomo feature withRouterInterceptors() cannot be used without router feature! Did you forget to call withRouter()?`,
-        );
-      }
-    },
+    requireRouterFeature('withRouterInterceptors()'),
   );
 }
 
@@ -79,12 +86,16 @@ export function withRouteData(key?: string): MatomoFeature {
   return createMatomoFeature(
     RouterMatomoFeatureKind.BuiltInRouteDataInterceptor,
     providers,
-    featuresKind => {
-      if (!featuresKind.includes(RouterMatomoFeatureKind.Router)) {
-        throw new Error(
-          `Matomo feature withRouteData() cannot be used without router feature! Did you forget to call withRouter()?`,
-        );
-      }
-    },
+    requireRouterFeature('withRouteData()'),
+  );
+}
+
+export function withPageUrlProvider(
+  provider: Type<PageUrlProvider> | PageUrlProviderFn,
+): MatomoFeature {
+  return createMatomoFeature(
+    RouterMatomoFeatureKind.PageUrlProvider,
+    [providePageUrlProvider(provider)],
+    requireRouterFeature('withPageUrlProvider()'),
   );
 }

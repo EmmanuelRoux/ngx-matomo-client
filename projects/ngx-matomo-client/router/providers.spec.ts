@@ -6,7 +6,7 @@ import {
   provideMatomo,
   ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED,
 } from 'ngx-matomo-client/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, from, Observable, of } from 'rxjs';
 import { MATOMO_ROUTER_CONFIGURATION } from './configuration';
 import {
   MATOMO_ROUTER_INTERCEPTORS,
@@ -19,7 +19,13 @@ import {
   MatomoRouteDataInterceptor,
 } from './interceptors/route-data-interceptor';
 import { MatomoRouter } from './matomo-router.service';
-import { withRouteData, withRouter, withRouterInterceptors } from './providers';
+import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider, PageUrlProviderFn } from './page-url-provider';
+import {
+  withPageUrlProvider,
+  withRouteData,
+  withRouter,
+  withRouterInterceptors,
+} from './providers';
 
 describe('providers', () => {
   async function setUp(providers: TestModuleMetadata['providers']): Promise<void> {
@@ -121,6 +127,50 @@ describe('providers', () => {
     expect(TestBed.inject(MATOMO_ROUTE_DATA_KEY)).toEqual('myCustomKey');
   });
 
+  it('should provide basic Matomo providers with custom url provider feature and additional class-based interceptor', async () => {
+    class MyUrlProvider implements PageUrlProvider {
+      async getCurrentPageUrl(_event: NavigationEnd): Promise<string> {
+        return 'my/custom/url';
+      }
+    }
+
+    await setUp([
+      provideMatomo(
+        { trackerUrl: 'my-tracker', siteId: 42 },
+        withRouter({ delay: 42 }),
+        withPageUrlProvider(MyUrlProvider),
+      ),
+    ]);
+
+    const event = new NavigationEnd(0, '/', '/');
+
+    const pageUrl = await firstValueFrom(
+      from(TestBed.inject(MATOMO_PAGE_URL_PROVIDER).getCurrentPageUrl(event)),
+    );
+
+    expect(pageUrl).toEqual('my/custom/url');
+  });
+
+  it('should provide basic Matomo providers with custom url provider feature and additional functional interceptor', async () => {
+    const myProvider: PageUrlProviderFn = (event: NavigationEnd) => of('my/custom/url');
+
+    await setUp([
+      provideMatomo(
+        { trackerUrl: 'my-tracker', siteId: 42 },
+        withRouter({ delay: 42 }),
+        withPageUrlProvider(myProvider),
+      ),
+    ]);
+
+    const event = new NavigationEnd(0, '/', '/');
+
+    const pageUrl = await firstValueFrom(
+      from(TestBed.inject(MATOMO_PAGE_URL_PROVIDER).getCurrentPageUrl(event)),
+    );
+
+    expect(pageUrl).toEqual('my/custom/url');
+  });
+
   it('should throw when using router features without withRouter()', () => {
     class MyInterceptor implements MatomoRouterInterceptor {
       readonly beforePageTrack = jasmine.createSpy('beforePageTrack');
@@ -135,6 +185,13 @@ describe('providers', () => {
 
     expect(() =>
       provideMatomo({ trackerUrl: 'my-tracker', siteId: 42 }, withRouteData()),
+    ).toThrow();
+
+    expect(() =>
+      provideMatomo(
+        { trackerUrl: 'my-tracker', siteId: 42 },
+        withPageUrlProvider(() => Promise.resolve('')),
+      ),
     ).toThrow();
   });
 });
