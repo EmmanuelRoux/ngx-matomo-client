@@ -1,11 +1,8 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { ɵMATOMO_ROUTER_ENABLED as MATOMO_ROUTER_ENABLED } from 'ngx-matomo-client/core';
-import {
-  MATOMO_ROUTER_CONFIGURATION,
-  MatomoRouterConfigurationWithInterceptors,
-} from './configuration';
+import { MatomoRouterConfigurationWithInterceptors } from './configuration';
 import { provideInterceptors } from './interceptor';
-import { MatomoRouter } from './matomo-router.service';
+import { buildInternalRouterProviders } from './providers';
 
 @NgModule({
   providers: [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
@@ -20,8 +17,7 @@ export class MatomoRouterModule {
     return {
       ngModule: MatomoRouterModule,
       providers: [
-        MatomoRouter,
-        { provide: MATOMO_ROUTER_CONFIGURATION, useValue: configWithInterceptors },
+        buildInternalRouterProviders(configWithInterceptors),
         provideInterceptors(configWithInterceptors.interceptors),
       ],
     };
@@ -30,7 +26,7 @@ export class MatomoRouterModule {
 
 /**
  * @deprecated use MatomoRouterModule instead
- * @breaking-change 7.0.0
+ * @breaking-change 8.0.0
  */
 @NgModule({
   providers: [{ provide: MATOMO_ROUTER_ENABLED, useValue: true }],
@@ -45,7 +41,7 @@ export class NgxMatomoRouterModule {
     return {
       ngModule: NgxMatomoRouterModule,
       providers: [
-        { provide: MATOMO_ROUTER_CONFIGURATION, useValue: configWithInterceptors },
+        buildInternalRouterProviders(configWithInterceptors),
         provideInterceptors(configWithInterceptors.interceptors),
       ],
     };

@@ -43,7 +43,7 @@ export class MatomoModule {
 
 /**
  * @deprecated use MatomoModule instead
- * @breaking-change 7.0.0
+ * @breaking-change 8.0.0
  */
 @NgModule({
   imports: [MatomoModule],
@@ -63,7 +63,7 @@ export class NgxMatomoModule {
 
 /**
  * @deprecated use MatomoModule instead
- * @breaking-change 7.0.0
+ * @breaking-change 8.0.0
  */
 @NgModule({
   imports: [NgxMatomoModule],
