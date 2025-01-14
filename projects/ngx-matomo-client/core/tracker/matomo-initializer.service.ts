@@ -76,9 +76,6 @@ export class MatomoInitializerService {
 
     if (isAutoConfigurationMode(this.config)) {
       this.injectMatomoScript(this.config);
-    } else {
-      // Mode is manual, immediately resolve deferred config
-      this.deferredConfig.markReady(this.config);
     }
   }, ALREADY_INITIALIZED_ERROR);
 
