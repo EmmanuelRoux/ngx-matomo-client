@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v7.0.0...v7.0.1) (2025-01-15)
+
+
+### Bug Fixes
+
+* export `MATOMO_TESTING_INSTANCE` token ([81abc32](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/81abc32ec305368107347980b5982db121297569)), closes [#108](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/108)
+
 # [7.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v6.4.1...v7.0.0) (2025-01-14)
 
 
