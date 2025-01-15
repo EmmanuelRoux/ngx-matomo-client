@@ -1,4 +1,12 @@
+import { InjectionToken } from '@angular/core';
 import { MatomoECommerceItem, MatomoInstance } from 'ngx-matomo-client/core';
+
+export const MATOMO_TESTING_INSTANCE = new InjectionToken<MatomoInstance>(
+  'MATOMO_TESTING_INSTANCE',
+  {
+    factory: () => new MatomoTestingInstance(),
+  },
+);
 
 /**
  * No-op implementation of {@link MatomoInstance}

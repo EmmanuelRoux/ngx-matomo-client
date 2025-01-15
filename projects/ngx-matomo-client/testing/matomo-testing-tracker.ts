@@ -1,13 +1,6 @@
-import { inject, Injectable, InjectionToken } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatomoInstance, MatomoTracker } from 'ngx-matomo-client/core';
-import { MatomoTestingInstance } from './matomo-testing-instance';
-
-export const MATOMO_TESTING_INSTANCE = new InjectionToken<MatomoInstance>(
-  'MATOMO_TESTING_INSTANCE',
-  {
-    factory: () => new MatomoTestingInstance(),
-  },
-);
+import { MATOMO_TESTING_INSTANCE } from './matomo-testing-instance';
 
 /**
  * No-op implementation of {@link MatomoTracker}
