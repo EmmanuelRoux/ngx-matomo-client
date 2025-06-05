@@ -228,7 +228,7 @@ export interface BaseMatomoConfiguration {
   /** Set to `true` to enable Javascript errors tracking as <i>events</i> (with category <i>JavaScript Errors</i>) */
   enableJSErrorTracking?: boolean;
 
-  /** Set to `true` to run matomo calls outside of angular NgZone. This may fix angular freezes. */
+  /** Set to `true` to run matomo calls outside of angular NgZone. This may fix angular freezes. This has no effect in zoneless applications. */
   runOutsideAngularZone?: boolean;
 
   /**
