@@ -49,6 +49,7 @@ easily migrate.**
 | 3, 4 or 5 | 17      | 6.x                                                                                |                                                                                                   |
 | 3, 4 or 5 | 18      | 6.2.x or above                                                                     |                                                                                                   |
 | 3, 4 or 5 | 19      | 7.x                                                                                |                                                                                                   |
+| 3, 4 or 5 | 20      | 8.x                                                                                |                                                                                                   |
 
 [![build](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml)
 [![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/github-code-scanning/codeql)
