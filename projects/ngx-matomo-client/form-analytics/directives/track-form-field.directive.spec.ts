@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
@@ -7,9 +6,11 @@ import { TrackFormDirective } from './track-form.directive';
 
 @Component({
   template: ` <form (submit)="$event.preventDefault()" matomoTrackForm>
-    <div *ngIf="showField" [matomoIgnore]="ignore" [matomoTrackFormField]="fieldName"></div>
+    @if (showField) {
+      <div [matomoIgnore]="ignore" [matomoTrackFormField]="fieldName"></div>
+    }
   </form>`,
-  imports: [CommonModule, TrackFormDirective, TrackFormFieldDirective],
+  imports: [TrackFormDirective, TrackFormFieldDirective],
 })
 class HostComponent {
   @ViewChild(TrackFormDirective, { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;

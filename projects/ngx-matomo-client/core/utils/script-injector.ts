@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { inject, Injectable, INJECTOR, runInInjectionContext } from '@angular/core';
+import { inject, Injectable, INJECTOR, runInInjectionContext, DOCUMENT } from '@angular/core';
 import { MATOMO_SCRIPT_FACTORY } from '../tracker/script-factory';
 import { requireNonNull } from './coercion';
 
