@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
@@ -15,7 +14,7 @@ import { TrackFormDirective } from './track-form.directive';
       type="button"
     ></button>
   </form>`,
-  imports: [CommonModule, TrackFormDirective, TrackFormSubmitDirective],
+  imports: [TrackFormDirective, TrackFormSubmitDirective],
 })
 class HostComponent {
   @ViewChild(TrackFormDirective, { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;
