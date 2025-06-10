@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { BASE_TITLE } from '../title';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -12,12 +12,12 @@ import { MatomoTrackerDirective } from 'ngx-matomo-client';
   imports: [MatFormField, MatLabel, MatInput, FormsModule, MatomoTrackerDirective],
 })
 export class TrackEventTemplateComponent implements OnInit {
+  private readonly title = inject(Title);
+
   category = '';
   action = '';
   name = '';
   value?: number;
-
-  constructor(private readonly title: Title) {}
 
   ngOnInit(): void {
     this.title.setTitle(BASE_TITLE + ' | Track any event (from template)');

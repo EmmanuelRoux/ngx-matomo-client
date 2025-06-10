@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { MatomoTracker } from 'ngx-matomo-client';
 import { BASE_TITLE } from '../title';
@@ -13,15 +13,13 @@ import { MatButton } from '@angular/material/button';
   imports: [MatFormField, MatLabel, MatInput, FormsModule, MatButton],
 })
 export class TrackEventComponentComponent implements OnInit {
+  private readonly tracker = inject(MatomoTracker);
+  private readonly title = inject(Title);
+
   category = '';
   action = '';
   name = '';
   value?: number;
-
-  constructor(
-    private readonly tracker: MatomoTracker,
-    private readonly title: Title,
-  ) {}
 
   ngOnInit(): void {
     this.title.setTitle(BASE_TITLE + ' | Track any event (from component)');

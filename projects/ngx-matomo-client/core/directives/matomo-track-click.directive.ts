@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input } from '@angular/core';
+import { Directive, HostListener, Input, inject } from '@angular/core';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { requireNonNull } from '../utils/coercion';
 
@@ -7,12 +7,12 @@ import { requireNonNull } from '../utils/coercion';
   standalone: true,
 })
 export class MatomoTrackClickDirective {
+  private readonly tracker = inject(MatomoTracker);
+
   @Input() matomoClickCategory?: string;
   @Input() matomoClickAction?: string;
   @Input() matomoClickName?: string;
   @Input() matomoClickValue?: number;
-
-  constructor(private readonly tracker: MatomoTracker) {}
 
   @HostListener('click')
   onClick(): void {

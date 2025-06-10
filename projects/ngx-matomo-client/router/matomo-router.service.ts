@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { MatomoTracker, ɵrunOnce as runOnce } from 'ngx-matomo-client/core';
 import {
@@ -30,7 +30,7 @@ import {
   NavigationEndComparator,
 } from './configuration';
 import { invalidInterceptorsProviderError, ROUTER_ALREADY_INITIALIZED_ERROR } from './errors';
-import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
+import { MATOMO_ROUTER_INTERCEPTORS } from './interceptor';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
 
@@ -78,21 +78,17 @@ function getNavigationEndComparator(config: InternalRouterConfiguration): Naviga
 
 @Injectable()
 export class MatomoRouter {
-  constructor(
-    private readonly router: Router,
-    @Inject(PLATFORM_ID)
-    private readonly platformId: object,
-    @Inject(INTERNAL_ROUTER_CONFIGURATION)
-    private readonly config: InternalRouterConfiguration,
-    @Inject(MATOMO_PAGE_TITLE_PROVIDER)
-    private readonly pageTitleProvider: PageTitleProvider,
-    @Inject(MATOMO_PAGE_URL_PROVIDER)
-    private readonly pageUrlProvider: PageUrlProvider,
-    private readonly tracker: MatomoTracker,
-    @Optional()
-    @Inject(MATOMO_ROUTER_INTERCEPTORS)
-    private readonly interceptors: MatomoRouterInterceptor[] | null,
-  ) {
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly config = inject<InternalRouterConfiguration>(INTERNAL_ROUTER_CONFIGURATION);
+  private readonly pageTitleProvider = inject<PageTitleProvider>(MATOMO_PAGE_TITLE_PROVIDER);
+  private readonly pageUrlProvider = inject<PageUrlProvider>(MATOMO_PAGE_URL_PROVIDER);
+  private readonly tracker = inject(MatomoTracker);
+  private readonly interceptors = inject(MATOMO_ROUTER_INTERCEPTORS, { optional: true });
+
+  constructor() {
+    const interceptors = this.interceptors;
+
     if (interceptors && !Array.isArray(interceptors)) {
       throw invalidInterceptorsProviderError();
     }
