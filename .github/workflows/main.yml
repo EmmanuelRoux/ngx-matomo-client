@@ -59,7 +59,7 @@ jobs:
       - run: npm install
       - run: npm run build:lib
       - run: npm run test:ci
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: tests-coverage
           path: coverage/
@@ -94,7 +94,7 @@ jobs:
       - run: git config --global user.signingkey ${GPG_KEY_ID}
       - run: npm install
       - run: npm run build:prod:lib
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: dist-prod
           path: dist-prod
