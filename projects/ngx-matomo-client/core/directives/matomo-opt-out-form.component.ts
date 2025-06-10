@@ -1,13 +1,12 @@
 import {
   Component,
-  Inject,
   Input,
   LOCALE_ID,
   OnChanges,
   OnInit,
-  Optional,
   SecurityContext,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
@@ -49,6 +48,11 @@ function missingServerUrlError(): Error {
   standalone: true,
 })
 export class MatomoOptOutFormComponent implements OnInit, OnChanges {
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly config = inject<Promise<InternalMatomoConfiguration>>(
+    ASYNC_INTERNAL_MATOMO_CONFIGURATION,
+  );
+
   private _defaultServerUrl?: string;
   private _defaultServerUrlInitialized = false;
   private _border: string = DEFAULT_BORDER;
@@ -70,12 +74,9 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
   @Input() fontSize: string = '';
   @Input() fontFamily: string = '';
 
-  constructor(
-    private readonly sanitizer: DomSanitizer,
-    @Inject(ASYNC_INTERNAL_MATOMO_CONFIGURATION)
-    private readonly config: Promise<InternalMatomoConfiguration>,
-    @Optional() @Inject(LOCALE_ID) locale: string = '',
-  ) {
+  constructor() {
+    const locale = inject(LOCALE_ID, { optional: true }) ?? '';
+
     // Set default locale
     this.locale = locale;
   }

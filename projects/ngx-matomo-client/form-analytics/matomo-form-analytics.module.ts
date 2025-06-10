@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { ModuleWithProviders, NgModule, inject } from '@angular/core';
 import {
   MATOMO_FORM_ANALYTICS_CONFIGURATION,
   MatomoFormAnalyticsConfiguration,
@@ -19,10 +19,11 @@ export const MATOMO_FORM_ANALYTICS_DIRECTIVES = [
   exports: [...MATOMO_FORM_ANALYTICS_DIRECTIVES],
 })
 export class MatomoFormAnalyticsModule {
-  constructor(
-    private readonly formAnalytics: MatomoFormAnalyticsInitializer,
-    @Optional() @SkipSelf() parent?: MatomoFormAnalyticsModule,
-  ) {
+  private readonly formAnalytics = inject(MatomoFormAnalyticsInitializer);
+
+  constructor() {
+    const parent = inject(MatomoFormAnalyticsModule, { optional: true, skipSelf: true });
+
     if (!parent) {
       // Do not initialize if it is already (by a parent module)
       this.formAnalytics.initialize();
