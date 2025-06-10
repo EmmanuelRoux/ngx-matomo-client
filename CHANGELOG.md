@@ -1,3 +1,11 @@
+# [7.1.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v7.0.1...v7.1.0) (2025-06-10)
+
+
+### Features
+
+* add new `setIgnoreCampaignsForReferrers` and `getIgnoreCampaignsForReferrers` methods to tracker ([9da1812](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/9da1812ed8e397d0fb49ea1faeedb404c24c9bbf))
+* update docs for zoneless applications ([be579c7](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/be579c7a6a25cb8986c18a02a524efdc0d614566))
+
 ## [7.0.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v7.0.0...v7.0.1) (2025-01-15)
 
 
