@@ -170,6 +170,15 @@ describe('MatomoTracker', () => {
     expectGetter('getCrossDomainLinkingUrlParameter', 'foo=bar').then(done);
   });
 
+  it('should get ignore campaigns for referrers', done => {
+    expectGetter('getIgnoreCampaignsForReferrers', ['foo', 'bar']).then(done);
+  });
+
+  it(
+    'should set ignore campaigns for referrers',
+    expectSimpleMethod('setIgnoreCampaignsForReferrers', [['foo', 'bar']]),
+  );
+
   it('should set document title', expectSimpleMethod('setDocumentTitle', ['test']));
 
   it('should set domains', expectSimpleMethod('setDomains', [['domain1', 'domain2']]));

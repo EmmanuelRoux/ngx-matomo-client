@@ -98,6 +98,8 @@ export interface MatomoInstance {
   getCustomPagePerformanceTiming(): string;
 
   getExcludedReferrers(): string[];
+
+  getIgnoreCampaignsForReferrers(): string[];
 }
 
 @Injectable()
@@ -337,6 +339,20 @@ export class MatomoTracker {
    */
   getCrossDomainLinkingUrlParameter(): Promise<string> {
     return this.delegate.get('getCrossDomainLinkingUrlParameter');
+  }
+
+  /**
+   * Set array of referrers where campaign parameters should be ignored
+   */
+  setIgnoreCampaignsForReferrers(referrers: string | string[]): void {
+    this.delegate.push(['setIgnoreCampaignsForReferrers', referrers]);
+  }
+
+  /**
+   * Get array of referrers where campaign parameters should be ignored
+   */
+  getIgnoreCampaignsForReferrers(): Promise<string[]> {
+    return this.delegate.get('getIgnoreCampaignsForReferrers');
   }
 
   /**

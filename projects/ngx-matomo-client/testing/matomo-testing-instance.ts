@@ -119,4 +119,8 @@ export class MatomoTestingInstance implements MatomoInstance {
   isUserOptedOut(): boolean {
     return false;
   }
+
+  getIgnoreCampaignsForReferrers(): string[] {
+    return [];
+  }
 }
