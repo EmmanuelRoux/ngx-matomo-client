@@ -1,3 +1,17 @@
+# [8.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v7.1.0...v8.0.0) (2025-06-18)
+
+
+### Features
+
+* add compatibility with Angular 20 ([4fc5393](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/4fc5393a29db2872f06034ef31b3a3e470583ab4)), closes [#111](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/111)
+* improve support of moduleless applications with `ng add` schematics ([3d207f3](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/3d207f3e7bbbfd72a19d1e986dc4dc839fe3f535)), closes [#109](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/109)
+
+
+### Breaking changes
+
+* `ng add` schematics options `module` and `path` have been removed in favor of the simpler `useModuleImport` option
+* Angular v20 is now required as peer dependency
+
 # [7.1.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v7.0.1...v7.1.0) (2025-06-10)
 
 
