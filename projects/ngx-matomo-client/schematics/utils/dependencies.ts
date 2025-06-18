@@ -32,20 +32,6 @@ const ALL_DEPENDENCY_TYPE = [
   NodeDependencyType.Peer,
 ];
 
-export function addPackageJsonDependency(
-  tree: Tree,
-  dependency: NodeDependency,
-  pkgJsonPath = PKG_JSON_PATH,
-): void {
-  const json = new JSONFile(tree, pkgJsonPath);
-
-  const { overwrite, type, name, version } = dependency;
-  const path = [type, name];
-  if (overwrite || !json.get(path)) {
-    json.modify(path, version);
-  }
-}
-
 export function removePackageJsonDependency(
   tree: Tree,
   name: string,

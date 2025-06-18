@@ -1,8 +1,7 @@
 export interface Schema {
   skipImport?: boolean;
   skipLegacyPackageMigration?: boolean;
-  module?: string;
-  path?: string;
+  useModuleImport?: boolean;
   project?: string;
   serverUrl?: string;
   siteId?: string;

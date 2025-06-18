@@ -1,27 +1,28 @@
 import {
   chain,
+  noop,
   Rule,
   SchematicContext,
   SchematicsException,
   Tree,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
+import {
+  addDependency,
+  addRootImport,
+  addRootProvider,
+  DependencyType,
+  readWorkspace,
+  WorkspaceDefinition,
+} from '@schematics/angular/utility';
 import * as ts from 'typescript';
 import { SyntaxKind } from 'typescript';
-import { escapeLiteral, readIntoSourceFile } from '../schematics-utils';
 import {
-  addPackageJsonDependency,
-  addSymbolToNgModuleMetadata,
   applyToUpdateRecorder,
   Change,
-  createDefaultPath,
-  findModuleFromOptions,
-  findNodes,
-  getDecoratorMetadata,
-  getMetadataField,
+  escapeLiteral,
   getPackageJsonDependency,
-  insertImport,
-  NodeDependencyType,
+  readIntoSourceFile,
   removePackageJsonDependency,
   ReplaceChange,
 } from '../utils';
@@ -43,10 +44,8 @@ function checkRequiredRouterDependency(host: Tree) {
 
 function addPackageJsonDependencies(options: Options) {
   return (host: Tree, context: SchematicContext) => {
-    addPackageJsonDependency(host, {
-      type: NodeDependencyType.Default,
-      name: 'ngx-matomo-client',
-      version,
+    addDependency('ngx-matomo-client', version, {
+      type: DependencyType.Default,
     });
 
     if (!options.skipLegacyPackageMigration) {
@@ -63,11 +62,7 @@ function addPackageJsonDependencies(options: Options) {
   };
 }
 
-function buildTrackerConfig(
-  options: Options,
-  context: SchematicContext,
-  modulePath: string,
-): string {
+function buildTrackerConfig(options: Options, context: SchematicContext): string {
   const trackerUrl = escapeLiteral(options.serverUrl || '');
   const siteId = escapeLiteral(options.siteId || '');
   const scriptUrl = escapeLiteral(options.scriptUrl || '');
@@ -86,9 +81,7 @@ function buildTrackerConfig(
     if (!trackerUrl || !siteId) {
       context.logger.warn(
         'Configuration properties "siteId" and "trackerUrl" are usually required. ' +
-          'You will need to manually update your configuration in "' +
-          modulePath +
-          "'. ",
+          'You will need to manually update your configuration.',
       );
     }
   }
@@ -96,60 +89,90 @@ function buildTrackerConfig(
   return config;
 }
 
-function applyChanges(host: Tree, modulePath: string, changes: Change[]): void {
-  const recorder = host.beginUpdate(modulePath);
+function getDefaultProjectName(workspace: WorkspaceDefinition) {
+  const keys = Array.from(workspace.projects.keys());
 
-  applyToUpdateRecorder(recorder, changes);
-
-  host.commitUpdate(recorder);
-}
-
-function isLegacyImportPath(importPath: string): boolean {
-  return importPath.startsWith('@ngx-matomo/');
-}
-
-function isRelevantImportPath(importPath: string): boolean {
   return (
-    importPath === 'ngx-matomo-client' ||
-    importPath.startsWith('ngx-matomo-client/') ||
-    isLegacyImportPath(importPath)
+    keys.find(key => workspace.projects.get(key)?.extensions.projectType === 'application') ??
+    keys[0]
   );
 }
 
-function findRelevantImports(
-  source: ts.SourceFile,
-  predicate: (importPath: string) => boolean,
-): ts.ImportDeclaration[] {
-  const allImports = findNodes(source, ts.SyntaxKind.ImportDeclaration) as ts.ImportDeclaration[];
+async function getProjectName(options: Options, host: Tree) {
+  const workspace = await readWorkspace(host);
+  const projectName = options.project || getDefaultProjectName(workspace);
+  const project = workspace.projects.get(projectName);
 
-  return allImports.filter(
-    node => ts.isStringLiteral(node.moduleSpecifier) && predicate(node.moduleSpecifier.text),
-  );
+  if (!project) {
+    throw new SchematicsException(
+      options.project
+        ? `No project found with name "${options.project}"`
+        : `No project found in the workspace!`,
+    );
+  }
+
+  return projectName;
 }
 
-function hasLegacyModuleDeclaration(source: ts.SourceFile): boolean {
-  const result = getDecoratorMetadata(source, 'NgModule', '@angular/core');
-  const node = result[0];
-  if (!node || !ts.isObjectLiteralExpression(node)) {
-    return false;
+async function getProjectPath(options: Options, host: Tree) {
+  const workspace = await readWorkspace(host);
+  const projectName = options.project || Array.from(workspace.projects.keys())[0];
+  const project = workspace.projects.get(projectName);
+
+  if (!project) {
+    throw new SchematicsException(
+      options.project
+        ? `No project found with name "${options.project}"`
+        : `No project found in the workspace!`,
+    );
   }
 
-  const matchingProperties = getMetadataField(node, 'imports');
-  if (!matchingProperties) {
-    return false;
-  }
+  return `/${project.root}`;
+}
 
-  const assignment = matchingProperties[0] as ts.PropertyAssignment;
+function addProviders(options: Options, context: SchematicContext): Rule {
+  return async (host: Tree) => {
+    const projectName = await getProjectName(options, host);
+    const trackerConfig = buildTrackerConfig(options, context);
+    const entryPoints = getImportEntryPoints(host, options);
 
-  if (assignment.initializer.kind !== ts.SyntaxKind.ArrayLiteralExpression) {
-    return false;
-  }
+    return addRootProvider(projectName, ({ code, external }) => {
+      if (options.router) {
+        return code`${external('provideMatomo', entryPoints.core)}(
+  ${trackerConfig},
+  ${external('withRouter', entryPoints.router)}()
+)`;
+      } else {
+        return code`${external('provideMatomo', entryPoints.core)}(${trackerConfig})`;
+      }
+    });
+  };
+}
 
-  const arrLiteral = assignment.initializer as ts.ArrayLiteralExpression;
+function addImports(options: Options, context: SchematicContext): Rule {
+  return async (host: Tree) => {
+    const projectName = await getProjectName(options, host);
+    const trackerConfig = buildTrackerConfig(options, context);
+    const entryPoints = getImportEntryPoints(host, options);
+    const rules: Rule[] = [
+      addRootImport(
+        projectName,
+        ({ code, external }) =>
+          code`${external('MatomoModule', entryPoints.core)}.forRoot(${trackerConfig})`,
+      ),
+    ];
 
-  return arrLiteral.elements
-    .filter(el => el.kind === ts.SyntaxKind.CallExpression)
-    .some(el => (el as ts.Identifier).getText().startsWith('Matomo'));
+    if (options.router) {
+      rules.push(
+        addRootImport(
+          projectName,
+          ({ code, external }) => code`${external('MatomoRouterModule', entryPoints.router)}`,
+        ),
+      );
+    }
+
+    return chain(rules);
+  };
 }
 
 function getImportEntryPoints(
@@ -166,150 +189,20 @@ function getImportEntryPoints(
   return { core, router };
 }
 
-function addImportsToNgModule(options: Options, context: SchematicContext): Rule {
-  return (host: Tree) => {
-    const modulePath = options.module;
-
-    if (options.skipImport || !modulePath) {
-      return host;
-    }
-
-    const changes: Change[] = [];
-    const source = readIntoSourceFile(host, modulePath);
-    const trackerConfig = buildTrackerConfig(options, context, modulePath);
-    const entryPoints = getImportEntryPoints(host, options);
-
-    // If some Matomo imports are already present, use the legacy setup using
-    // NgModule.
-    //
-    // If no import is present, use the new providers-style setup.
-    //
-    // Maybe in the future a schematics can be provided to migrate legacy NgModule
-    // setup to new providers-style setup.
-
-    const imports = findRelevantImports(source, isRelevantImportPath);
-    let mainModuleIdentifier = 'MatomoModule';
-    let routerModuleIdentifier = 'MatomoRouterModule';
-    let asteriskAlias: string | undefined;
-    let mainModuleImported = false;
-    let routerModuleImported = false;
-
-    // Loop in reverse order and migrate if needed
-    for (let i = imports.length - 1; i >= 0; i--) {
-      const statement = imports[i];
-
-      if (!statement.importClause?.namedBindings) {
-        // Such statement should not exist because this lib has no side effect
-        return;
-      }
-
-      const bindings = statement.importClause.namedBindings;
-
-      if (ts.isNamespaceImport(bindings)) {
-        asteriskAlias = bindings.name.text;
-
-        if (!mainModuleImported) {
-          mainModuleIdentifier = `${asteriskAlias}.MatomoModule`;
-        }
-
-        if (!routerModuleImported) {
-          routerModuleIdentifier = `${asteriskAlias}.MatomoRouterModule`;
-        }
-
-        mainModuleImported = true;
-        routerModuleImported = true;
-      } else {
-        for (const specifier of bindings.elements) {
-          switch (specifier.name.text) {
-            case 'MatomoModule':
-            case 'NgxMatomoModule':
-            case 'NgxMatomoTrackerModule':
-              mainModuleImported = true;
-              mainModuleIdentifier = specifier.name.text;
-              break;
-            case 'MatomoRouterModule':
-            case 'NgxMatomoRouterModule':
-              routerModuleImported = true;
-              routerModuleIdentifier = specifier.name.text;
-              break;
-          }
-        }
-      }
-    }
-
-    if (hasLegacyModuleDeclaration(source)) {
-      context.logger.info(
-        'Your configuration is using classic configuration with NgModule imports. ' +
-          'While this is still fully supported, you may want to take a look at the new NgModule-free setup using provideMatomo() (see README > Installation)',
-      );
-
-      if (!mainModuleImported) {
-        changes.push(insertImport(source, modulePath, mainModuleIdentifier, entryPoints.core));
-      }
-
-      changes.push(
-        ...addSymbolToNgModuleMetadata(
-          source,
-          modulePath,
-          'imports',
-          `${mainModuleIdentifier}.forRoot(${trackerConfig})`,
-        ),
-      );
-
-      if (options.router) {
-        if (!routerModuleImported) {
-          changes.push(
-            insertImport(source, modulePath, routerModuleIdentifier, entryPoints.router),
-          );
-        }
-
-        changes.push(
-          ...addSymbolToNgModuleMetadata(source, modulePath, 'imports', routerModuleIdentifier),
-        );
-      }
-    } else {
-      const provideMatomoArgs = [trackerConfig];
-
-      changes.push(insertImport(source, modulePath, 'provideMatomo', entryPoints.core));
-
-      if (options.router) {
-        changes.push(insertImport(source, modulePath, 'withRouter', entryPoints.router));
-
-        provideMatomoArgs.push(`withRouter()`);
-      }
-
-      changes.push(
-        ...addSymbolToNgModuleMetadata(
-          source,
-          modulePath,
-          'providers',
-          `provideMatomo(${provideMatomoArgs.join(', ')})`,
-        ),
-      );
-    }
-
-    applyChanges(host, modulePath, changes);
-
-    return host;
-  };
-}
-
 function migrateAllLegacyImports(options: Options, context: SchematicContext): Rule {
-  return (host: Tree) => {
+  return async (host: Tree) => {
     if (!options.skipLegacyPackageMigration) {
-      context.logger.info('Migrating imports from legacy @ngx-matomo/* packages...');
+      const projectPath = await getProjectPath(options, host);
+      const migrationRoot = host.getDir(projectPath);
+      const entryPoints = getImportEntryPoints(host, options);
 
-      host.visit(path => {
-        // if (options.module && path.endsWith(options.module) && !options.skipImport) {
-        //   context.logger.info('Skip migration of "' + path + '"');
-        //   // If this is the main module path, handle migration directly in
-        //   // `addImportsToNgModule`
-        //   return;
-        // }
+      context.logger.info(
+        `Migrating imports from legacy @ngx-matomo/* packages at ${projectPath}...`,
+      );
 
-        if (!options.path || path.startsWith(options.path)) {
+      migrationRoot.visit(path => {
+        if (path.endsWith('.ts') && path.startsWith(projectPath)) {
           const file = readIntoSourceFile(host, path);
-          const entryPoints = getImportEntryPoints(host, options);
           const changes: Change[] = [];
 
           file.forEachChild(node => {
@@ -336,7 +229,11 @@ function migrateAllLegacyImports(options: Options, context: SchematicContext): R
             }
           });
 
-          applyChanges(host, path, changes);
+          const recorder = host.beginUpdate(path);
+
+          applyToUpdateRecorder(recorder, changes);
+
+          host.commitUpdate(recorder);
         }
       });
     }
@@ -345,23 +242,19 @@ function migrateAllLegacyImports(options: Options, context: SchematicContext): R
   };
 }
 
+function getImportRule(options: Options, context: SchematicContext) {
+  if (options.skipImport) {
+    return noop;
+  }
+
+  return options.useModuleImport ? addImports(options, context) : addProviders(options, context);
+}
+
 export function ngAdd(options: Options): Rule {
-  return async (host, context) => {
-    if (options.path === undefined) {
-      options.path = await createDefaultPath(host, options.project!);
-    }
-
-    options.module = findModuleFromOptions(host, {
-      skipImport: options.skipImport,
-      path: options.path,
-      module: options.module,
-      name: '',
-    });
-
-    return chain([
+  return async (_host, context) =>
+    chain([
       addPackageJsonDependencies(options),
-      addImportsToNgModule(options, context),
+      getImportRule(options, context),
       migrateAllLegacyImports(options, context),
     ]);
-  };
 }
