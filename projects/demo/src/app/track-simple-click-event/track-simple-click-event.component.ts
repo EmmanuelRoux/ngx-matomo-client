@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { BASE_TITLE } from '../title';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -13,12 +13,12 @@ import { MatomoTrackClickDirective } from 'ngx-matomo-client';
   imports: [MatFormField, MatLabel, MatInput, FormsModule, MatButton, MatomoTrackClickDirective],
 })
 export class TrackSimpleClickEventComponent implements OnInit {
+  private readonly title = inject(Title);
+
   category = '';
   action = '';
   name = '';
   value?: number;
-
-  constructor(private readonly title: Title) {}
 
   ngOnInit(): void {
     this.title.setTitle(BASE_TITLE + ' | Track simple click event');
