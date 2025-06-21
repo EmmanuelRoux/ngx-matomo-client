@@ -46,7 +46,7 @@
       "default": true,
       "description": "Specifies if automatic page views tracking should be set-up (requires @angular/router as a dependency)",
       "alias": "r",
-      "x-prompt": "Would you like to automatically track page views?"
+      "x-prompt": "Would you like to automatically track page views? (requires @angular/router as a dependency)"
     }
   }
 }

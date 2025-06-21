@@ -98,9 +98,9 @@ Run `ng add ngx-matomo-client`
 This will prompt you for some information such as your Matomo's server address and site ID. You can find your site ID in
 Matomo admin panel.
 
-This command will set up basic configuration into your root `AppModule`
-(use `ng add ngx-matomo-client --module [module]` to specify a different root module). You can then take a look
-at [configuration reference](#configuration-reference) for fine-grained set-up.
+This command will set up basic configuration into your application, typically in `main.ts`.
+Use `ng add ngx-matomo-client --project [project]` to specify project name in case you have a multi-project workspace.
+You can then take a look at [configuration reference](#configuration-reference) for fine-grained set-up.
 
 <details>
   <summary>If you're not using Angular CLI, follow these instructions instead</summary>
