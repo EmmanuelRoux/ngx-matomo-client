@@ -83,6 +83,7 @@ easily migrate.**
   * [How to define configuration asynchronously? (HTTP fetch...)](#how-to-define-configuration-asynchronously-http-fetch)
   * [How can I test my components which uses `MatomoTracker` or other Matomo features?](#how-can-i-test-my-components-which-uses-matomotracker-or-other-matomo-features)
   * [Can I use `ngx-matomo-client` in a zoneless Angular application?](#can-i-use-ngx-matomo-client-in-a-zoneless-angular-application)
+  * [My app freezes during route changes — how can I fix it?](#my-app-freezes-during-route-changes--how-can-i-fix-it)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [Launch demo app](#launch-demo-app)
@@ -1037,6 +1038,10 @@ All these symbols can be imported from `ngx-matomo-client/testing`.
 ### Can I use `ngx-matomo-client` in a zoneless Angular application?
 
 Matomo is fully compatible with zoneless applications out of the box.
+
+### My app freezes during route changes — how can I fix it?
+
+Set `runOutsideAngular: true` in the config to prevent tracking from triggering Angular change detection.
 
 ## Roadmap
 
