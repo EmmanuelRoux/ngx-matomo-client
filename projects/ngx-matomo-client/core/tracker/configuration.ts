@@ -35,7 +35,7 @@ export function createInternalMatomoConfiguration(): InternalMatomoConfiguration
     trackAppInitialLoad: !inject(MATOMO_ROUTER_ENABLED),
     requireConsent: requireConsent ? coerceConsentRequirement(requireConsent) : 'none',
     enableJSErrorTracking: false,
-    runOutsideAngularZone: false,
+    runOutsideAngularZone: true,
     disableCampaignParameters: false,
     acceptDoNotTrack: false,
     ...restConfig,
