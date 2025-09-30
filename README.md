@@ -181,7 +181,7 @@ import { MatomoModule, MatomoRouterModule } from 'ngx-matomo-client';
       siteId: 1,
       trackerUrl: 'http://my-matomo-instance',
     }),
-    MatomoRouterModule,
+    MatomoRouterModule.forRoot(),
   ],
 })
 export class AppModule {}
