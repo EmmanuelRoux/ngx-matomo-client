@@ -1,4 +1,4 @@
-import { Component, LOCALE_ID } from '@angular/core';
+import { Component, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { provideMatomo } from '../providers';
@@ -100,6 +100,7 @@ describe('MatomoOptOutFormComponent', () => {
       imports: [MatomoOptOutFormComponent],
       providers: [
         provideMatomo({ siteId: 1, trackerUrl: 'http://localhost' }),
+        provideZoneChangeDetection(),
         provideTestingTracker(),
         {
           provide: LOCALE_ID,

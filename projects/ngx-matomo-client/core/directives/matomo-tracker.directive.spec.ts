@@ -1,4 +1,4 @@
-import { Component, ElementRef, Type, ViewChild } from '@angular/core';
+import { Component, ElementRef, provideZoneChangeDetection, Type, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { MatomoTrackerDirective, TrackArgs } from './matomo-tracker.directive';
@@ -98,6 +98,7 @@ describe('MatomoTrackerDirective', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       providers: [
+        provideZoneChangeDetection(),
         {
           provide: MatomoTracker,
           useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),

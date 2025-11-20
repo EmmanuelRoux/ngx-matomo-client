@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, provideZoneChangeDetection, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 import { TrackFormFieldDirective } from './track-form-field.directive';
@@ -37,6 +37,7 @@ describe('TrackFormFieldDirective', () => {
     await TestBed.configureTestingModule({
       imports: [HostComponent, InvalidHostComponent, TrackFormDirective, TrackFormFieldDirective],
       providers: [
+        provideZoneChangeDetection(),
         {
           provide: MatomoFormAnalytics,
           useValue: jasmine.createSpyObj<MatomoFormAnalytics>('MatomoFormAnalytics', [
