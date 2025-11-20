@@ -36,7 +36,6 @@
     "dev:ng-add": "npm run build:lib && npm link ./dist/ngx-matomo-client && ng add ngx-matomo-client --project demo"
   },
   "dependencies": {
-    "@angular/animations": "^20.0.1",
     "@angular/cdk": "^20.0.2",
     "@angular/common": "^20.0.1",
     "@angular/compiler": "^20.0.1",
@@ -91,7 +90,7 @@
     "semantic-release": "^24.2.5",
     "semver": "^7.7.2",
     "ts-node": "~10.9.2",
-    "typescript": "~5.9.3",
+    "typescript": "~5.8.3",
     "typescript-eslint": "^8.33.1"
   },
   "private": true,

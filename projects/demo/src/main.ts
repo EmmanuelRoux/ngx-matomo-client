@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideMatomo, withRouter } from 'ngx-matomo-client';
 import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
@@ -29,7 +28,6 @@ bootstrapApplication(AppComponent, {
       MatButtonModule,
       MatIconModule,
     ),
-    provideAnimations(),
     provideMatomo(
       {
         siteId: environment.matomoSiteId,
