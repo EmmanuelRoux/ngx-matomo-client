@@ -104,7 +104,9 @@ export interface MatomoInstance {
 
 @Injectable()
 export class MatomoTracker {
-  private readonly delegate: InternalMatomoTracker<MatomoInstance> = inject(InternalMatomoTracker);
+  private readonly delegate: InternalMatomoTracker<MatomoInstance> = inject(
+    InternalMatomoTracker<MatomoInstance>,
+  );
 
   private readonly _pageViewTracked = new Subject<void>();
 

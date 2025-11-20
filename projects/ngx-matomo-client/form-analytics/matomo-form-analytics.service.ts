@@ -13,7 +13,7 @@ export interface MatomoFormAnalyticsInstance {
 @Injectable()
 export class MatomoFormAnalytics {
   private readonly delegate: InternalMatomoTracker<MatomoFormAnalyticsInstance, 'FormAnalytics::'> =
-    inject(InternalMatomoTracker);
+    inject(InternalMatomoTracker<MatomoFormAnalyticsInstance>);
 
   disableFormAnalytics(): void {
     this.delegate.push(['FormAnalytics::disableFormAnalytics']);
