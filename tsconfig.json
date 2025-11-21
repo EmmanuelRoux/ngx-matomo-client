@@ -16,7 +16,6 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "es2020",
-    "lib": ["es2019", "dom"],
     "paths": {
       "ngx-matomo-client": ["dist/ngx-matomo-client"],
       "ngx-matomo-client/*": ["dist/ngx-matomo-client/*"]
