@@ -1041,7 +1041,9 @@ Matomo is fully compatible with zoneless applications out of the box.
 
 ### My app freezes during route changes — how can I fix it?
 
-Set `runOutsideAngular: true` in the config to prevent tracking from triggering Angular change detection.
+Double-check that your config does not set `runOutsideAngularZone: false`.
+This option is now `true` by default so you may safely remove it.
+Only set it to `false` if you are experiencing issues regarding change detection.
 
 ## Roadmap
 
