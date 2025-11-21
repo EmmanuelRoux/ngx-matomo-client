@@ -15,6 +15,7 @@
 ### Breaking changes
 
 * Angular v21 is now required as peer dependency
+* Option `runOutsideAngularZone` is now `true` by default
 
 # [8.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v7.1.0...v8.0.0) (2025-06-18)
 
