@@ -419,6 +419,8 @@ describe('MatomoTracker', () => {
 
   it('should set session cookie timeout', expectSimpleMethod('setSessionCookieTimeout', [42]));
 
+  it('should set referrer url max length', expectSimpleMethod('setReferrerUrlMaxLength', [1024]));
+
   it(
     'should add element click listener',
     expectSimpleMethod('addListener', [document.createElement('div')]),

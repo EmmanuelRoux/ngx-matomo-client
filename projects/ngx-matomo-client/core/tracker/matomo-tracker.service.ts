@@ -1355,6 +1355,15 @@ export class MatomoTracker {
   }
 
   /**
+   * Allows adjusting the length limit used for storing the referrer url in tracking cookie. Defaults to 1024 chars.
+   *
+   * @param length
+   */
+  setReferrerUrlMaxLength(length: number): void {
+    this.delegate.push(['setReferrerUrlMaxLength', length]);
+  }
+
+  /**
    * Adds a click listener to a specific link element.<br />
    * When clicked, Matomo will log the click automatically.
    *
