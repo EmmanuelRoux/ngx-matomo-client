@@ -4,7 +4,7 @@
 </h1>
 
 <p align="center">
-  <a href="https://angular.io/"><img src="https://img.shields.io/badge/Angular-20-limegreen.svg?logo=angular" alt="Angular 20"></a>&nbsp;
+  <a href="https://angular.io/"><img src="https://img.shields.io/badge/Angular-21-limegreen.svg?logo=angular" alt="Angular 21"></a>&nbsp;
   <a href="https://www.npmjs.com/package/ngx-matomo-client"><img src="https://img.shields.io/npm/v/ngx-matomo-client/latest.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen" alt="NPM latest version"></a>&nbsp;
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-limegreen.svg" alt="MIT license"></a>&nbsp;
   <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-limegreen.svg" alt="semantic-release"></a>&nbsp;
@@ -50,6 +50,7 @@ easily migrate.**
 | 3, 4 or 5 | 18      | 6.2.x or above                                                                     |                                                                                                   |
 | 3, 4 or 5 | 19      | 7.x                                                                                |                                                                                                   |
 | 3, 4 or 5 | 20      | 8.x                                                                                |                                                                                                   |
+| 3, 4 or 5 | 21      | 9.x                                                                                |                                                                                                   |
 
 [![build](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/main.yml)
 [![CodeQL](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/EmmanuelRoux/ngx-matomo-client/actions/workflows/github-code-scanning/codeql)
