@@ -1,3 +1,21 @@
+# [9.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v8.0.0...v9.0.0) (2025-11-21)
+
+
+### Bug Fixes
+
+* run tracking outside Angular zone by default ([cf83717](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/cf837174e0867f1c910a25fb712896a3a34cf75d)), closes [#116](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/116)
+
+
+### Features
+
+* add compatibility with Angular 21 ([3aaf9e6](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/3aaf9e6c48a73f55a59df8e87f3118bff4d0f763)), closes [#122](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/122)
+* add new `setReferrerUrlMaxLength` method to tracker ([adde1ed](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/adde1ed9fe4fd87cd5cddb6ca85902834d28842e))
+
+
+### Breaking changes
+
+* Angular v21 is now required as peer dependency
+
 # [8.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v7.1.0...v8.0.0) (2025-06-18)
 
 
