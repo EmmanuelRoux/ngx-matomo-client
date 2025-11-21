@@ -1,9 +1,7 @@
 ## [9.0.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v9.0.0...v9.0.1) (2025-11-21)
 
 
-### Bug Fixes
-
-* update README ([897ce06](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/897ce061caa849d632879dda3df30e7dd93d8694))
+_No change_
 
 # [9.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v8.0.0...v9.0.0) (2025-11-21)
 
