@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  
+
 jobs:
   install:
     runs-on: ubuntu-latest
