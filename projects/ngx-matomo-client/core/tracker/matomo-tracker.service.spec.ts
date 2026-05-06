@@ -191,7 +191,12 @@ describe('MatomoTracker', () => {
 
   it('should set site id', expectSimpleMethod('setSiteId', [100]));
 
-  it('should set api url', expectSimpleMethod('setApiUrl', ['http://url']));
+  it(
+    'should set api url (deprecated)',
+    expectPush(t => t.setApiUrl('http://url'), [['setAPIUrl', 'http://url']]),
+  );
+
+  it('should set api url', expectSimpleMethod('setAPIUrl', ['http://url']));
 
   it('should set tracker url', expectSimpleMethod('setTrackerUrl', ['http://url']));
 

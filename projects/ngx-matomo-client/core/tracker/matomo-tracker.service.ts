@@ -416,14 +416,26 @@ export class MatomoTracker {
 
   /**
    * Specify the Matomo HTTP API URL endpoint. Points to the root directory of matomo,
-   * e.g. http://matomo.example.org/ or https://example.org/matomo/.<br />
-   * This function is only useful when the 'Overlay' report is not working.<br />
-   * By default, you do not need to use this function.
+   * e.g. https://matomo.example.org/ or https://example.org/matomo/.
    *
-   * @param url URL for Matomo HTTP API endpoint.
+   * This function is only useful when the 'Overlay' report is not working. By default, you do not need to use this function.
+   *
+   * @deprecated use `setAPIUrl` instead
    */
   setApiUrl(url: string): void {
-    this.delegate.push(['setApiUrl', url]);
+    this.setAPIUrl(url);
+  }
+
+  /**
+   * Set the URL of the Matomo API. It is used for Page Overlay.
+   *
+   * This method should only be called when the API URL differs from the tracker URL.
+   * By default, you do not need to use this function.
+   *
+   * @param url URL for the Matomo API.
+   */
+  setAPIUrl(url: string): void {
+    this.delegate.push(['setAPIUrl', url]);
   }
 
   /**
