@@ -293,6 +293,13 @@ export class MatomoTracker {
   }
 
   /**
+   * Disable heartbeat if it was previously activated
+   */
+  disableHeartBeatTimer(): void {
+    this.delegate.push(['disableHeartBeatTimer']);
+  }
+
+  /**
    * Installs link tracking on all applicable link elements.
    *
    * @param usePseudoClickHandler Set to `true` to use pseudo click-handler (treat middle click and open contextmenu as

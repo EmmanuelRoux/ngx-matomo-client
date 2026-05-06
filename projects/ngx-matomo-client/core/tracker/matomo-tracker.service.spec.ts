@@ -147,6 +147,8 @@ describe('MatomoTracker', () => {
 
   it('should enable heartbeat timer', expectSimpleMethod('enableHeartBeatTimer', [42]));
 
+  it('should disable heartbeat timer', expectSimpleMethod('disableHeartBeatTimer', []));
+
   it(
     'should enable link tracking with pseudo-handler',
     expectSimpleMethod('enableLinkTracking', [true]),
