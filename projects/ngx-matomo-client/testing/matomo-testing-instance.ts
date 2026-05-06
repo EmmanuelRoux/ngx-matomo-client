@@ -112,6 +112,10 @@ export class MatomoTestingInstance implements MatomoInstance {
     return false;
   }
 
+  hasConsent(): boolean {
+    return false;
+  }
+
   isConsentRequired(): boolean {
     return false;
   }

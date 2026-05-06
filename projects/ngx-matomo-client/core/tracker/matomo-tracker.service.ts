@@ -85,6 +85,8 @@ export interface MatomoInstance {
 
   hasRememberedConsent(): boolean;
 
+  hasConsent(): boolean;
+
   getRememberedConsent(): number | string;
 
   getRememberedCookieConsent(): number | string;
@@ -1166,6 +1168,11 @@ export class MatomoTracker {
   /** Return whether the current visitor has given consent previously or not */
   hasRememberedConsent(): Promise<boolean> {
     return this.delegate.get('hasRememberedConsent');
+  }
+
+  /** Return whether the current visitor has given consent or not */
+  hasConsent(): Promise<boolean> {
+    return this.delegate.get('hasConsent');
   }
 
   /**

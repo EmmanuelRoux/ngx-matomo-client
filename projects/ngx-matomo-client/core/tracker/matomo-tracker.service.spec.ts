@@ -369,6 +369,10 @@ describe('MatomoTracker', () => {
     expectGetter('hasRememberedConsent', true).then(done);
   });
 
+  it('should return whether has given consent', done => {
+    expectGetter('hasConsent', true).then(done);
+  });
+
   it('should return remembered consent', done => {
     expectGetter('getRememberedConsent', 99999).then(done);
   });
