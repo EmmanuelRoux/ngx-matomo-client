@@ -1364,6 +1364,15 @@ export class MatomoTracker {
   }
 
   /**
+   * Set an array of query parameters to be excluded if in the url
+   *
+   * @param excludedQueryParams
+   */
+  setExcludedQueryParams(...excludedQueryParams: string[] | string[][]): void {
+    this.delegate.push(['setExcludedQueryParams', excludedQueryParams.flat()]);
+  }
+
+  /**
    * Adds a click listener to a specific link element.<br />
    * When clicked, Matomo will log the click automatically.
    *

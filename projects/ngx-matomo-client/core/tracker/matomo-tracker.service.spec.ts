@@ -422,6 +422,11 @@ describe('MatomoTracker', () => {
   it('should set referrer url max length', expectSimpleMethod('setReferrerUrlMaxLength', [1024]));
 
   it(
+    'should set excluded query params',
+    expectSimpleMethod('setExcludedQueryParams', [['param1', 'param2']]),
+  );
+
+  it(
     'should add element click listener',
     expectSimpleMethod('addListener', [document.createElement('div')]),
   );
