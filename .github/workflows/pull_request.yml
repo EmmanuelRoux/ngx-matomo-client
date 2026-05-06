@@ -11,7 +11,7 @@ jobs:
   install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           registry-url: 'https://registry.npmjs.org'
@@ -23,7 +23,7 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           registry-url: 'https://registry.npmjs.org'
@@ -36,7 +36,7 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           registry-url: 'https://registry.npmjs.org'
@@ -45,7 +45,7 @@ jobs:
       - run: npm install
       - run: npm run build:lib
       - run: npm run test:ci
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: tests-coverage
           path: coverage/
