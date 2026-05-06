@@ -227,6 +227,23 @@ describe('MatomoInitializerService', () => {
     expect(tracker.calls).toEqual([['disableCampaignParameters'], ['trackPageView', undefined]]);
   });
 
+  it('should set excluded query params if provided', async () => {
+    // Given
+    const { tracker } = await setUp({
+      mode: 'manual',
+      excludedQueryParams: ['param1', 'param2'],
+      trackAppInitialLoad: true,
+      enableLinkTracking: false,
+    });
+
+    // Then
+    // Note: 'setExcludedQueryParams' should be called BEFORE 'trackPageView'
+    expect(tracker.calls).toEqual([
+      ['setExcludedQueryParams', ['param1', 'param2']],
+      ['trackPageView', undefined],
+    ]);
+  });
+
   (['tracking', MatomoConsentMode.TRACKING] as const).forEach(requireConsent => {
     it('should require tracking consent if setting is enabled', async () => {
       // Given

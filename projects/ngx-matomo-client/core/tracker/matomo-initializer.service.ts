@@ -148,6 +148,10 @@ export class MatomoInitializerService {
       this.tracker.disableCampaignParameters();
     }
 
+    if (this.config.excludedQueryParams.length > 0) {
+      this.tracker.setExcludedQueryParams(this.config.excludedQueryParams);
+    }
+
     if (this.config.trackAppInitialLoad) {
       this.tracker.trackPageView();
     }

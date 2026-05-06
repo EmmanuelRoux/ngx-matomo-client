@@ -38,6 +38,7 @@ export function createInternalMatomoConfiguration(): InternalMatomoConfiguration
     runOutsideAngularZone: true,
     disableCampaignParameters: false,
     acceptDoNotTrack: false,
+    excludedQueryParams: [],
     ...restConfig,
   };
 }
@@ -240,6 +241,9 @@ export interface BaseMatomoConfiguration {
    * <b>This is available as of Matomo 5.1 only.</b>
    */
   disableCampaignParameters?: boolean;
+
+  /** Set an array of query parameters to be excluded if in the url */
+  excludedQueryParams?: string[];
 }
 
 /**
