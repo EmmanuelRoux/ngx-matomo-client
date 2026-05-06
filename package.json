@@ -95,7 +95,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/EmmanuelRoux/ngx-matomo-client.git"
+    "url": "git+https://github.com/EmmanuelRoux/ngx-matomo-client.git"
   },
   "bugs": {
     "url": "https://github.com/EmmanuelRoux/ngx-matomo-client/issues"
