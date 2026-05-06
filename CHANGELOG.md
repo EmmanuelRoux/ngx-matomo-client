@@ -1,3 +1,23 @@
+# [9.1.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v9.0.1...v9.1.0) (2026-05-06)
+
+
+### Bug Fixes
+
+* fix `setAPIUrl` method name ([4e439a8](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/4e439a83c89f83ad969209833df4c82d25f980da))
+
+
+### Features
+
+* add new `disableHeartBeatTimer` method ([ac54190](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/ac541906b6b551b62987359126b9d261f1cbd29e))
+* add new `excludedQueryParams` configuration option ([6553eb3](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/6553eb3ba466e5b63edf1e92fcc73c3f40c779e2)), closes [#124](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/124)
+* add new `hasConsent` method ([f1c2cc4](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/f1c2cc4da9378dd115c7348ecf7f1e616fa41bc8))
+* add new `setExcludedQueryParams` method to tracker ([ab82e86](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/ab82e86aa54fffdd2ef4caf293aaa40650439d12))
+
+
+### Deprecations
+
+* `setApiUrl` method is deprecated, use `setAPIUrl` instead.
+
 ## [9.0.1](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v9.0.0...v9.0.1) (2025-11-21)
 
 
