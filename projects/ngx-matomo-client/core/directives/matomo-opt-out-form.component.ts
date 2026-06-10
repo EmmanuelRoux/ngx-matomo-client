@@ -7,6 +7,7 @@ import {
   SecurityContext,
   SimpleChanges,
   inject,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
@@ -45,6 +46,7 @@ function missingServerUrlError(): Error {
 @Component({
   selector: 'matomo-opt-out-form',
   templateUrl: './matomo-opt-out-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class MatomoOptOutFormComponent implements OnInit, OnChanges {

@@ -1,4 +1,9 @@
-import { Component, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import {
+  Component,
+  LOCALE_ID,
+  provideZoneChangeDetection,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { provideMatomo } from '../providers';
@@ -21,6 +26,7 @@ import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
     [width]="width"
     [height]="height"
   ></matomo-opt-out-form>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoOptOutFormComponent],
 })
 class HostWithDefaultServerUrlAndLocaleComponent {
@@ -46,6 +52,7 @@ class HostWithDefaultServerUrlAndLocaleComponent {
     [serverUrl]="serverUrl"
     [locale]="locale"
   ></matomo-opt-out-form>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoOptOutFormComponent],
 })
 class HostWithCustomServerUrlAndLocaleComponent {
@@ -64,6 +71,7 @@ class HostWithCustomServerUrlAndLocaleComponent {
   selector: 'matomo-host-without-server-url',
   template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
   imports: [MatomoOptOutFormComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: INTERNAL_MATOMO_CONFIGURATION,
@@ -85,6 +93,7 @@ class HostWithoutServerUrlComponent {}
   selector: 'matomo-host-without-locale',
   template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
   imports: [MatomoOptOutFormComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: LOCALE_ID,

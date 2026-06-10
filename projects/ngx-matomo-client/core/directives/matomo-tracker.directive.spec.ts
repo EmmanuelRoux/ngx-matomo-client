@@ -1,4 +1,11 @@
-import { Component, ElementRef, provideZoneChangeDetection, Type, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  provideZoneChangeDetection,
+  Type,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { MatomoTrackerDirective, TrackArgs } from './matomo-tracker.directive';
@@ -16,6 +23,7 @@ type HTMLElementEvent = keyof HTMLElementEventMap;
     [matomoName]="defaultName"
     [matomoValue]="defaultValue"
   />`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoTrackerDirective],
 })
 class HostWithInputEventsComponent {
@@ -45,6 +53,7 @@ class HostWithInputEventsComponent {
     [matomoValue]="defaultValue"
     (change)="tracker.trackEvent(arg1, arg2)"
   />`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoTrackerDirective],
 })
 class HostWithCustomHandler1Component {
@@ -75,6 +84,7 @@ class HostWithCustomHandler1Component {
     [matomoValue]="defaultValue"
     (change)="tracker.trackEvent(customArgs)"
   />`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoTrackerDirective],
 })
 class HostWithCustomHandler2Component {
