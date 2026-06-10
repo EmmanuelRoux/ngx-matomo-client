@@ -11,7 +11,6 @@ import { TrackFormDirective } from './track-form.directive';
 
 @Directive({
   selector: '[matomoTrackFormField]',
-  standalone: true,
   exportAs: 'matomoTrackFormField',
 })
 export class TrackFormFieldDirective implements AfterViewInit {

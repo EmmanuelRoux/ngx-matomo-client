@@ -47,7 +47,6 @@ function missingServerUrlError(): Error {
   selector: 'matomo-opt-out-form',
   templateUrl: './matomo-opt-out-form.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: true,
 })
 export class MatomoOptOutFormComponent implements OnInit, OnChanges {
   private readonly sanitizer = inject(DomSanitizer);

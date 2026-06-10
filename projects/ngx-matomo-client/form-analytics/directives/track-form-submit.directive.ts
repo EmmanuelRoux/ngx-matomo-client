@@ -11,7 +11,6 @@ import { TrackFormDirective } from './track-form.directive';
 
 @Directive({
   selector: '[matomoTrackFormSubmit]',
-  standalone: true,
 })
 export class TrackFormSubmitDirective {
   private readonly elementRef: ElementRef<Element> = inject(ElementRef);
