@@ -27,7 +27,6 @@ import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
     [height]="height"
   />`,
   changeDetection: ChangeDetectionStrategy.Eager,
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoOptOutFormComponent],
 })
 class HostWithDefaultServerUrlAndLocaleComponent {
@@ -53,7 +52,6 @@ class HostWithDefaultServerUrlAndLocaleComponent {
     [serverUrl]="serverUrl"
     [locale]="locale"
   />`,
-  changeDetection: ChangeDetectionStrategy.Eager,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoOptOutFormComponent],
 })
