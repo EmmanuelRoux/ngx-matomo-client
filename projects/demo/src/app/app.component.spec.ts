@@ -1,14 +1,15 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { provideMatomoTesting } from 'ngx-matomo-client/testing';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, AppComponent],
+      imports: [AppComponent],
       providers: [
+        provideRouter([]),
         provideMatomoTesting({
           trackerUrl: '',
           siteId: '',
