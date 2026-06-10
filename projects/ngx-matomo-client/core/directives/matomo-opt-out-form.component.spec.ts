@@ -223,10 +223,11 @@ describe('MatomoOptOutFormComponent', () => {
     const component = fixture.debugElement.query(By.directive(MatomoOptOutFormComponent))
       ?.componentInstance as MatomoOptOutFormComponent;
 
-    expect(component.serverUrl).toBeFalsy();
+    expect(component.serverUrl()).toBeFalsy();
     expect(() => {
       fixture.detectChanges();
       flush();
+      fixture.detectChanges();
     }).toThrow();
   }));
 
@@ -235,7 +236,7 @@ describe('MatomoOptOutFormComponent', () => {
     const component = fixture.debugElement.query(By.directive(MatomoOptOutFormComponent))
       ?.componentInstance as MatomoOptOutFormComponent;
 
-    expect(component.locale).toEqual('');
+    expect(component.locale()).toEqual('');
     expect(() => fixture.detectChanges()).not.toThrow();
   });
 });
