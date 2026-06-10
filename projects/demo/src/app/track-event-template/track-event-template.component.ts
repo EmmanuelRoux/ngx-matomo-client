@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { BASE_TITLE } from '../title';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -9,6 +9,7 @@ import { MatomoTrackerDirective } from 'ngx-matomo-client';
 @Component({
   templateUrl: './track-event-template.component.html',
   styleUrls: ['./track-event-template.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatFormField, MatLabel, MatInput, FormsModule, MatomoTrackerDirective],
 })
 export class TrackEventTemplateComponent implements OnInit {
