@@ -30,5 +30,22 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "references": [
+    {
+      "path": "./projects/demo/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/demo/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ngx-matomo-client/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ngx-matomo-client/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ngx-matomo-client/tsconfig.schematics.json"
+    }
+  ]
 }
