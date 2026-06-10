@@ -1,5 +1,6 @@
-import { Directive, ElementRef, OnDestroy, effect, inject, input } from '@angular/core';
-import { fromEvent, merge, Subscription } from 'rxjs';
+import { Directive, ElementRef, OnDestroy, inject, input } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { fromEvent, merge, switchMap, EMPTY } from 'rxjs';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { requireNonNull } from '../utils/coercion';
 
@@ -29,8 +30,6 @@ export class MatomoTrackerDirective implements OnDestroy {
   private readonly tracker = inject(MatomoTracker);
   private readonly elementRef = inject(ElementRef);
 
-  private sub?: Subscription;
-
   /** Set the event category */
   readonly matomoCategory = input<string | undefined>(undefined);
   /** Set the event action */
@@ -43,29 +42,19 @@ export class MatomoTrackerDirective implements OnDestroy {
   /** Track a Matomo event whenever specified DOM event is triggered */
   readonly matomoTracker = input<DOMEventInput>(undefined);
 
-  constructor() {
-    effect(onCleanup => {
-      const eventNames = coerceEventNames(this.matomoTracker());
-
-      this.sub?.unsubscribe();
-      this.sub = undefined;
-
-      if (eventNames) {
-        const handlers = eventNames.map(eventName =>
-          fromEvent(this.elementRef.nativeElement, eventName),
-        );
-        this.sub = merge(...handlers).subscribe(() => this.trackEvent());
-      }
-
-      onCleanup(() => {
-        this.sub?.unsubscribe();
-        this.sub = undefined;
-      });
-    });
-  }
+  private sub = toObservable(this.matomoTracker)
+    .pipe(
+      switchMap(input => {
+        const eventNames = coerceEventNames(input);
+        if (!eventNames) return EMPTY;
+        return merge(...eventNames.map(name => fromEvent(this.elementRef.nativeElement, name)));
+      }),
+      takeUntilDestroyed(),
+    )
+    .subscribe(() => this.trackEvent());
 
   ngOnDestroy(): void {
-    this.sub?.unsubscribe();
+    this.sub.unsubscribe();
   }
 
   /** Track an event using category, action, name and value set as input signals */
