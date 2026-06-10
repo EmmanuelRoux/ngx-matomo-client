@@ -59,12 +59,10 @@ export class MatomoTrackerDirective implements OnDestroy {
 
   /** Track an event using category, action, name and value set as input signals */
   trackEvent(): void;
-  /** Track an event using category, action and name set as inputs and provided value */
-  trackEvent(value: number): void;
-  /** Track an event using category and action set as inputs and provided name and value */
-  trackEvent(name: string, value?: number): void;
-  /** Track an event using provided category, action, name and value (any input signal is used as a default value) */
-  trackEvent(args: TrackArgs): void;
+  /** Track an event using provided name (string), value (number), or both, with input signals as defaults */
+  trackEvent(nameOrValue?: string | number, value?: number): void;
+  /** Track an event using provided args (any input signal is used as a default value) */
+  trackEvent(args?: TrackArgs): void;
 
   trackEvent(arg1?: TrackArgs | string | number, arg2?: number): void {
     let category = this.matomoCategory();
