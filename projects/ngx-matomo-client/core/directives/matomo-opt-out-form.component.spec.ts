@@ -25,7 +25,7 @@ import { MatomoOptOutFormComponent } from './matomo-opt-out-form.component';
     [border]="border"
     [width]="width"
     [height]="height"
-  ></matomo-opt-out-form>`,
+  />`,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoOptOutFormComponent],
 })
@@ -51,7 +51,7 @@ class HostWithDefaultServerUrlAndLocaleComponent {
     [height]="height"
     [serverUrl]="serverUrl"
     [locale]="locale"
-  ></matomo-opt-out-form>`,
+  />`,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoOptOutFormComponent],
 })
@@ -69,7 +69,7 @@ class HostWithCustomServerUrlAndLocaleComponent {
 
 @Component({
   selector: 'matomo-host-without-server-url',
-  template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
+  template: ` <matomo-opt-out-form />`,
   imports: [MatomoOptOutFormComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
@@ -91,7 +91,7 @@ class HostWithoutServerUrlComponent {}
 
 @Component({
   selector: 'matomo-host-without-locale',
-  template: ` <matomo-opt-out-form></matomo-opt-out-form>`,
+  template: ` <matomo-opt-out-form />`,
   imports: [MatomoOptOutFormComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
