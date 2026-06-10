@@ -22,7 +22,7 @@ import { MatomoTrackClickDirective } from './matomo-track-click.directive';
   imports: [MatomoTrackClickDirective],
 })
 class HostComponent {
-  readonly buttonRef = viewChild<ElementRef<HTMLButtonElement>>('button');
+  readonly buttonRef = viewChild.required<ElementRef<HTMLButtonElement>>('button');
 
   category?: string;
   action?: string;
@@ -30,7 +30,7 @@ class HostComponent {
   value?: number;
 
   clickButton(): void {
-    this.buttonRef()?.nativeElement.dispatchEvent(new MouseEvent('click'));
+    this.buttonRef().nativeElement.dispatchEvent(new MouseEvent('click'));
   }
 }
 
