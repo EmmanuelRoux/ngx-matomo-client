@@ -36,7 +36,7 @@ class HostComponent {
 @Component({
   template: ` <button matomoTrackFormSubmit></button>`,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [TrackFormDirective, TrackFormSubmitDirective],
+  imports: [TrackFormSubmitDirective],
 })
 class InvalidHostComponent {}
 
