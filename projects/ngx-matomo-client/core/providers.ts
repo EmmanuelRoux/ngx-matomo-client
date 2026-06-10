@@ -1,8 +1,8 @@
 import {
-  ENVIRONMENT_INITIALIZER,
   EnvironmentProviders,
   inject,
   makeEnvironmentProviders,
+  provideEnvironmentInitializer,
   Provider,
 } from '@angular/core';
 import {
@@ -90,7 +90,7 @@ export function provideMatomo(
   config: MatomoConfiguration | (() => MatomoConfiguration),
   ...features: MatomoFeature[]
 ): EnvironmentProviders {
-  const providers: Provider[] = [
+  const providers: (Provider | EnvironmentProviders)[] = [
     MatomoTracker,
     ScriptInjector,
     {
@@ -113,13 +113,7 @@ export function provideMatomo(
       provide: ASYNC_INTERNAL_MATOMO_CONFIGURATION,
       useFactory: () => inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION).configuration,
     },
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue() {
-        inject(MatomoInitializerService).initialize();
-      },
-    },
+    provideEnvironmentInitializer(() => inject(MatomoInitializerService).initialize()),
   ];
   const featuresKind: MatomoFeatureKind[] = [];
 
