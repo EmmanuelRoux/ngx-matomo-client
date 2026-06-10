@@ -1,31 +1,38 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { TrackEventComponentComponent } from './track-event-component/track-event-component.component';
-import { TrackEventTemplateComponent } from './track-event-template/track-event-template.component';
-import { TrackPageViewWithoutRouterComponent } from './track-page-view-without-router/track-page-view-without-router.component';
-import { TrackSimpleClickEventComponent } from './track-simple-click-event/track-simple-click-event.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent),
   },
   {
     path: 'without-router',
-    component: TrackPageViewWithoutRouterComponent,
+    loadComponent: () =>
+      import('./track-page-view-without-router/track-page-view-without-router.component').then(
+        m => m.TrackPageViewWithoutRouterComponent,
+      ),
   },
   {
     path: 'simple-click',
-    component: TrackSimpleClickEventComponent,
+    loadComponent: () =>
+      import('./track-simple-click-event/track-simple-click-event.component').then(
+        m => m.TrackSimpleClickEventComponent,
+      ),
   },
   {
     path: 'event-from-template',
-    component: TrackEventTemplateComponent,
+    loadComponent: () =>
+      import('./track-event-template/track-event-template.component').then(
+        m => m.TrackEventTemplateComponent,
+      ),
   },
   {
     path: 'event-from-component',
-    component: TrackEventComponentComponent,
+    loadComponent: () =>
+      import('./track-event-component/track-event-component.component').then(
+        m => m.TrackEventComponentComponent,
+      ),
   },
 ];
 
