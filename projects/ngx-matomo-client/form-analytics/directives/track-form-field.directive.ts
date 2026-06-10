@@ -2,9 +2,10 @@ import {
   AfterViewInit,
   booleanAttribute,
   Directive,
+  effect,
   ElementRef,
   inject,
-  Input,
+  input,
 } from '@angular/core';
 import { throwFormNotFoundError } from './errors';
 import { TrackFormDirective } from './track-form.directive';
@@ -20,25 +21,30 @@ export class TrackFormFieldDirective implements AfterViewInit {
     throwFormNotFoundError('[matomoTrackFormField]');
 
   private initialized = false;
+  readonly matomoIgnore = input<boolean>(undefined, { transform: booleanAttribute });
+  readonly matomoTrackFormField = input<string | null | undefined>();
 
-  @Input({ transform: booleanAttribute }) set matomoIgnore(ignore: boolean) {
-    if (ignore) {
-      this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
-    } else {
-      this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
-    }
-  }
+  constructor() {
+    effect(() => {
+      const ignore = this.matomoIgnore();
+      if (ignore) {
+        this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
+      } else {
+        this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
+      }
+    });
+    effect(() => {
+      const name = this.matomoTrackFormField();
+      if (name) {
+        this.elementRef.nativeElement.setAttribute('data-matomo-name', name);
+      } else {
+        this.elementRef.nativeElement.removeAttribute('data-matomo-name');
+      }
 
-  @Input() set matomoTrackFormField(name: string | null | undefined) {
-    if (name) {
-      this.elementRef.nativeElement.setAttribute('data-matomo-name', name);
-    } else {
-      this.elementRef.nativeElement.removeAttribute('data-matomo-name');
-    }
-
-    if (this.initialized) {
-      this.track();
-    }
+      if (this.initialized) {
+        this.track();
+      }
+    });
   }
 
   ngAfterViewInit(): void {
