@@ -2,7 +2,7 @@ import {
   Component,
   ElementRef,
   provideZoneChangeDetection,
-  ViewChild,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
@@ -22,7 +22,7 @@ import { MatomoTrackClickDirective } from './matomo-track-click.directive';
   imports: [MatomoTrackClickDirective],
 })
 class HostComponent {
-  @ViewChild('button') buttonRef?: ElementRef<HTMLButtonElement>;
+  readonly buttonRef = viewChild<ElementRef<HTMLButtonElement>>('button');
 
   category?: string;
   action?: string;
@@ -30,7 +30,7 @@ class HostComponent {
   value?: number;
 
   clickButton(): void {
-    this.buttonRef?.nativeElement.dispatchEvent(new MouseEvent('click'));
+    this.buttonRef()?.nativeElement.dispatchEvent(new MouseEvent('click'));
   }
 }
 
