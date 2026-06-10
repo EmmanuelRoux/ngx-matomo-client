@@ -16,9 +16,10 @@ export function provideTestingTracker(): Provider[] {
 }
 
 @Injectable()
-export class MatomoTestingTracker<MATOMO = unknown, PREFIX extends string = ''>
-  implements InternalMatomoTrackerType
-{
+export class MatomoTestingTracker<
+  MATOMO = unknown,
+  PREFIX extends string = '',
+> implements InternalMatomoTrackerType {
   private readonly initStatus = inject(ApplicationInitStatus);
 
   /** Get list of all calls until initialization */
