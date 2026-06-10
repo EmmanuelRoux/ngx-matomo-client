@@ -8,8 +8,12 @@
       Use paths from sources instead of compiled dist, in order to have correct code coverage information
     */
     "paths": {
-      "ngx-matomo-client": ["projects/ngx-matomo-client/src"],
-      "ngx-matomo-client/*": ["projects/ngx-matomo-client/*"]
+      "ngx-matomo-client": ["./src/public-api.ts"],
+      "ngx-matomo-client/core": ["./core/public-api.ts"],
+      "ngx-matomo-client/router": ["./router/public-api.ts"],
+      "ngx-matomo-client/testing": ["./testing/public-api.ts"],
+      "ngx-matomo-client/form-analytics": ["./form-analytics/public-api.ts"],
+      "ngx-matomo-client/*": ["./*"]
     }
   },
   "files": ["test.ts"],
