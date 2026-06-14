@@ -41,13 +41,13 @@ export const enum CoreMatomoFeatureKind {
 
 export interface MatomoFeature {
   readonly kind: MatomoFeatureKind;
-  [PRIVATE_MATOMO_PROVIDERS]: Provider[];
+  [PRIVATE_MATOMO_PROVIDERS]: (Provider | EnvironmentProviders)[];
   [PRIVATE_MATOMO_CHECKS]?: (features: MatomoFeatureKind[]) => void;
 }
 
 export function createMatomoFeature(
   kind: MatomoFeatureKind,
-  providers: Provider[],
+  providers: (Provider | EnvironmentProviders)[],
   checks?: (features: MatomoFeatureKind[]) => void,
 ): MatomoFeature {
   return { kind, [PRIVATE_MATOMO_PROVIDERS]: providers, [PRIVATE_MATOMO_CHECKS]: checks };

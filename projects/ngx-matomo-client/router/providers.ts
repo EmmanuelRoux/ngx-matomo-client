@@ -1,4 +1,10 @@
-import { ENVIRONMENT_INITIALIZER, inject, Provider, Type } from '@angular/core';
+import {
+  EnvironmentProviders,
+  inject,
+  Provider,
+  Type,
+  provideEnvironmentInitializer,
+} from '@angular/core';
 import {
   MatomoFeature as MatomoFeature,
   MatomoFeatureKind,
@@ -51,7 +57,9 @@ export function withRouter(config?: MatomoRouterConfiguration): MatomoFeature {
   return createMatomoFeature(RouterMatomoFeatureKind.Router, providers);
 }
 
-export function buildInternalRouterProviders(config?: MatomoRouterConfiguration): Provider[] {
+export function buildInternalRouterProviders(
+  config?: MatomoRouterConfiguration,
+): (Provider | EnvironmentProviders)[] {
   return [
     MatomoRouter,
     { provide: MATOMO_ROUTER_ENABLED, useValue: true },
@@ -69,13 +77,7 @@ export function buildInternalRouterProviders(config?: MatomoRouterConfiguration)
       useClass: DefaultPageTitleProvider,
     },
     MatomoRouter,
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue() {
-        inject(MatomoRouter).initialize();
-      },
-    },
+    provideEnvironmentInitializer(() => inject(MatomoRouter).initialize()),
   ];
 }
 
