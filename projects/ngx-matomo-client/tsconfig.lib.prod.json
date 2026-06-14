@@ -2,10 +2,7 @@
 {
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
-    "declarationMap": false,
-    "paths": {
-      "ngx-matomo-client": ["dist-prod/ngx-matomo-client"]
-    }
+    "declarationMap": false
   },
   "angularCompilerOptions": {
     "compilationMode": "partial"
