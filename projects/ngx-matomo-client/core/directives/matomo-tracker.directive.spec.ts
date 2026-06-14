@@ -27,7 +27,7 @@ type HTMLElementEvent = keyof HTMLElementEventMap;
   imports: [MatomoTrackerDirective],
 })
 class HostWithInputEventsComponent {
-  readonly inputRef = viewChild<ElementRef<HTMLInputElement>>('input');
+  readonly inputRef = viewChild.required<ElementRef<HTMLInputElement>>('input');
 
   events?: HTMLElementEvent | HTMLElementEvent[] | string | string[];
   defaultCategory?: string;
@@ -36,7 +36,7 @@ class HostWithInputEventsComponent {
   defaultValue?: number;
 
   triggerEvent(event: Event): void {
-    this.inputRef()?.nativeElement.dispatchEvent(event);
+    this.inputRef().nativeElement.dispatchEvent(event);
   }
 }
 
@@ -57,7 +57,7 @@ class HostWithInputEventsComponent {
   imports: [MatomoTrackerDirective],
 })
 class HostWithCustomHandler1Component {
-  readonly inputRef = viewChild<ElementRef<HTMLInputElement>>('input');
+  readonly inputRef = viewChild.required<ElementRef<HTMLInputElement>>('input');
 
   defaultCategory?: string;
   defaultAction?: string;
@@ -67,7 +67,7 @@ class HostWithCustomHandler1Component {
   arg2?: number;
 
   triggerEvent(event: Event): void {
-    this.inputRef()?.nativeElement.dispatchEvent(event);
+    this.inputRef().nativeElement.dispatchEvent(event);
   }
 }
 
@@ -88,7 +88,7 @@ class HostWithCustomHandler1Component {
   imports: [MatomoTrackerDirective],
 })
 class HostWithCustomHandler2Component {
-  readonly inputRef = viewChild<ElementRef<HTMLInputElement>>('input');
+  readonly inputRef = viewChild.required<ElementRef<HTMLInputElement>>('input');
 
   defaultCategory?: string;
   defaultAction?: string;
@@ -98,7 +98,7 @@ class HostWithCustomHandler2Component {
   customArgs?: TrackArgs;
 
   triggerEvent(event: Event): void {
-    this.inputRef()?.nativeElement.dispatchEvent(event);
+    this.inputRef().nativeElement.dispatchEvent(event);
   }
 }
 
