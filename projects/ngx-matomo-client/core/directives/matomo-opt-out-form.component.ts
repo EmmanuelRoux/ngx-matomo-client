@@ -3,7 +3,8 @@ import {
   input,
   LOCALE_ID,
   computed,
-  signal,
+  resource,
+  linkedSignal,
   SecurityContext,
   inject,
   ChangeDetectionStrategy,
@@ -52,9 +53,15 @@ export class MatomoOptOutFormComponent {
   private readonly config = inject<Promise<InternalMatomoConfiguration>>(
     ASYNC_INTERNAL_MATOMO_CONFIGURATION,
   );
+  private readonly configResource = resource({ loader: () => this.config });
 
-  private readonly defaultServerUrl = signal<string | undefined>(undefined);
-  private readonly configInitialized = signal(false);
+  private readonly defaultServerUrl = linkedSignal(() => {
+    const config = this.configResource.value();
+    if (config && isAutoConfigurationMode(config) && isExplicitTrackerConfiguration(config)) {
+      return getTrackersConfiguration(config)[0].trackerUrl;
+    }
+    return undefined;
+  });
   readonly border = input(DEFAULT_BORDER, { transform: coerceCssSizeBinding });
   readonly width = input(DEFAULT_WIDTH, { transform: coerceCssSizeBinding });
   readonly height = input(DEFAULT_HEIGHT, { transform: coerceCssSizeBinding });
@@ -83,7 +90,7 @@ export class MatomoOptOutFormComponent {
   readonly iframeSrc = computed<SafeResourceUrl>(() => {
     const serverUrlOverride = this.serverUrl();
     const defaultServerUrl = this.defaultServerUrl();
-    const initialized = this.configInitialized();
+    const initialized = this.configResource.hasValue();
 
     let serverUrl: string | null | undefined;
 
@@ -109,15 +116,6 @@ export class MatomoOptOutFormComponent {
 
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
-
-  constructor() {
-    this.config.then(config => {
-      if (isAutoConfigurationMode(config) && isExplicitTrackerConfiguration(config)) {
-        this.defaultServerUrl.set(getTrackersConfiguration(config)[0].trackerUrl);
-      }
-      this.configInitialized.set(true);
-    });
-  }
 
   static ngAcceptInputType_border: CssSizeInput;
   static ngAcceptInputType_width: CssSizeInput;
