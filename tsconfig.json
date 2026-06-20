@@ -2,7 +2,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
@@ -17,8 +16,12 @@
     "target": "ES2022",
     "module": "es2020",
     "paths": {
-      "ngx-matomo-client": ["dist/ngx-matomo-client"],
-      "ngx-matomo-client/*": ["dist/ngx-matomo-client/*"]
+      "ngx-matomo-client": ["./dist/ngx-matomo-client"],
+      "ngx-matomo-client/core": ["./dist/ngx-matomo-client/core"],
+      "ngx-matomo-client/router": ["./dist/ngx-matomo-client/router"],
+      "ngx-matomo-client/testing": ["./dist/ngx-matomo-client/testing"],
+      "ngx-matomo-client/form-analytics": ["./dist/ngx-matomo-client/form-analytics"],
+      "ngx-matomo-client/*": ["./dist/ngx-matomo-client/*"]
     },
     "useDefineForClassFields": false
   },
@@ -27,5 +30,22 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "references": [
+    {
+      "path": "./projects/demo/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/demo/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ngx-matomo-client/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ngx-matomo-client/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ngx-matomo-client/tsconfig.schematics.json"
+    }
+  ]
 }

@@ -1,4 +1,10 @@
-import { Component, ElementRef, provideZoneChangeDetection, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  provideZoneChangeDetection,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 import { TrackFormFieldDirective } from './track-form-field.directive';
@@ -14,6 +20,7 @@ import { TrackFormDirective } from './track-form.directive';
       type="button"
     ></button>
   </form>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TrackFormDirective, TrackFormSubmitDirective],
 })
 class HostComponent {
@@ -28,7 +35,8 @@ class HostComponent {
 
 @Component({
   template: ` <button matomoTrackFormSubmit></button>`,
-  imports: [TrackFormDirective, TrackFormSubmitDirective],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [TrackFormSubmitDirective],
 })
 class InvalidHostComponent {}
 

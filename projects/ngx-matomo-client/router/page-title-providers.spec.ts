@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd } from '@angular/router';
-import { MatomoConfiguration, provideMatomo } from '../core';
+import { MatomoConfiguration, provideMatomo } from 'ngx-matomo-client/core';
 import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
 import { withRouter } from './providers';
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MATOMO_CONFIGURATION, MatomoConfiguration } from 'ngx-matomo-client';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
@@ -7,6 +7,7 @@ import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, MatTabNav, MatTabLink, RouterLinkActive, MatTabNavPanel, RouterOutlet],
 })
 export class AppComponent {

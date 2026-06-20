@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 import { TrackFormsDirective } from './track-forms.directive';
@@ -7,6 +7,7 @@ import { TrackFormsDirective } from './track-forms.directive';
   template: ` <div #containerRef matomoTrackForms>
     <div #elRef></div>
   </div>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TrackFormsDirective],
 })
 class HostComponent {

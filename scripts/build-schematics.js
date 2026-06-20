@@ -64,6 +64,15 @@ function copyCollection() {
   fs.copyFileSync(source, target);
 }
 
+function copyPackageJson() {
+  const source = path.resolve(sourceDir, 'schematics/package.json');
+  const target = path.resolve(distDir, 'schematics/package.json');
+
+  if (fs.existsSync(source)) {
+    fs.copyFileSync(source, target);
+  }
+}
+
 /**
  *
  * @param {string} [subdir]
@@ -92,4 +101,5 @@ createTargetSchematicsDir();
 copySchemas();
 copyFiles();
 copyCollection();
+copyPackageJson();
 console.log(' Done.');

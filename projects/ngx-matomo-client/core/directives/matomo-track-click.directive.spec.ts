@@ -1,4 +1,10 @@
-import { Component, ElementRef, provideZoneChangeDetection, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  provideZoneChangeDetection,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { MatomoTrackClickDirective } from './matomo-track-click.directive';
@@ -12,6 +18,7 @@ import { MatomoTrackClickDirective } from './matomo-track-click.directive';
     [matomoClickName]="name"
     [matomoClickValue]="value"
   ></button>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatomoTrackClickDirective],
 })
 class HostComponent {

@@ -68,9 +68,10 @@ export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
 }
 
 @Injectable()
-export class NoopMatomoTracker<MATOMO = unknown, PREFIX extends string = ''>
-  implements InternalMatomoTrackerType
-{
+export class NoopMatomoTracker<
+  MATOMO = unknown,
+  PREFIX extends string = '',
+> implements InternalMatomoTrackerType {
   /** Asynchronously call provided method name on matomo tracker instance */
   async get<K extends keyof PrefixedType<MATOMO, PREFIX>>(_: K): Promise<never> {
     return Promise.reject('MatomoTracker is disabled');
