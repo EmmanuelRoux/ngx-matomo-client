@@ -3,18 +3,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
-    "types": ["jasmine"],
-    /*
-      Use paths from sources instead of compiled dist, in order to have correct code coverage information
-    */
-    "paths": {
-      "ngx-matomo-client": ["./src/public-api.ts"],
-      "ngx-matomo-client/core": ["./core/public-api.ts"],
-      "ngx-matomo-client/router": ["./router/public-api.ts"],
-      "ngx-matomo-client/testing": ["./testing/public-api.ts"],
-      "ngx-matomo-client/form-analytics": ["./form-analytics/public-api.ts"],
-      "ngx-matomo-client/*": ["./*"]
-    }
+    "types": ["jasmine"]
   },
   "files": ["test.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"]
