@@ -1,4 +1,4 @@
-import { ENVIRONMENT_INITIALIZER, ErrorHandler, inject } from '@angular/core';
+import { provideEnvironmentInitializer, ErrorHandler, inject } from '@angular/core';
 import {
   MatomoFeature as MatomoFeature,
   ɵcreateMatomoFeature as createMatomoFeature,
@@ -26,19 +26,15 @@ export function withFormAnalytics(config?: MatomoFormAnalyticsConfiguration): Ma
       provide: MATOMO_FORM_ANALYTICS_CONFIGURATION,
       useValue: config,
     },
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue() {
-        const errorHandler = inject(ErrorHandler);
+    provideEnvironmentInitializer(() => {
+      const errorHandler = inject(ErrorHandler);
 
-        // Do NOT wait here for initialization, because app startup should NOT be blocked until deferred config is resolved
-        // However, correctly propagate errors to error handler
-        Promise.resolve(inject(MatomoFormAnalyticsInitializer).initialize()).catch(error =>
-          errorHandler.handleError(error),
-        );
-      },
-    },
+      // Do NOT wait here for initialization, because app startup should NOT be blocked until deferred config is resolved
+      // However, correctly propagate errors to error handler
+      Promise.resolve(inject(MatomoFormAnalyticsInitializer).initialize()).catch(error =>
+        errorHandler.handleError(error),
+      );
+    }),
   ];
 
   return createMatomoFeature(FormAnalyticsMatomoFeatureKind.FormAnalytics, providers);
