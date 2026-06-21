@@ -3,7 +3,6 @@ import {
   booleanAttribute,
   Directive,
   ElementRef,
-  HostListener,
   inject,
   Input,
 } from '@angular/core';
@@ -11,8 +10,10 @@ import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 
 @Directive({
   selector: '[matomoTrackForm]',
-  standalone: true,
   exportAs: 'matomoTrackForm',
+  host: {
+    '(submit)': 'trackFormConversionOnSubmit()',
+  },
 })
 export class TrackFormDirective implements AfterViewInit {
   private readonly elementRef: ElementRef<Element> = inject(ElementRef);
@@ -63,7 +64,6 @@ export class TrackFormDirective implements AfterViewInit {
     this.tracker.trackFormConversion(this.elementRef);
   }
 
-  @HostListener('submit')
   trackFormConversionOnSubmit(): void {
     if (this.trackConversionOnSubmit) {
       this.trackConversion();

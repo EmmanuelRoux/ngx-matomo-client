@@ -24,7 +24,6 @@ function coerceEventNames(input: DOMEventInput): EventName[] | null | undefined 
 @Directive({
   selector: '[matomoTracker]',
   exportAs: 'matomo',
-  standalone: true,
 })
 export class MatomoTrackerDirective implements OnDestroy {
   private readonly tracker = inject(MatomoTracker);

@@ -1,10 +1,12 @@
-import { Directive, HostListener, Input, inject } from '@angular/core';
+import { Directive, Input, inject } from '@angular/core';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { requireNonNull } from '../utils/coercion';
 
 @Directive({
   selector: '[matomoClickCategory][matomoClickAction]',
-  standalone: true,
+  host: {
+    '(click)': 'onClick()',
+  },
 })
 export class MatomoTrackClickDirective {
   private readonly tracker = inject(MatomoTracker);
@@ -14,7 +16,6 @@ export class MatomoTrackClickDirective {
   @Input() matomoClickName?: string;
   @Input() matomoClickValue?: number;
 
-  @HostListener('click')
   onClick(): void {
     this.tracker.trackEvent(
       requireNonNull(this.matomoClickCategory, 'matomo category is required'),
