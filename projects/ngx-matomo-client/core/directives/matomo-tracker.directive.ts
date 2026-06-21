@@ -1,5 +1,6 @@
-import { Directive, ElementRef, Input, OnDestroy, inject } from '@angular/core';
-import { fromEvent, merge, Subscription } from 'rxjs';
+import { Directive, ElementRef, OnDestroy, inject, input } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { fromEvent, merge, switchMap, EMPTY } from 'rxjs';
 import { MatomoTracker } from '../tracker/matomo-tracker.service';
 import { requireNonNull } from '../utils/coercion';
 
@@ -29,56 +30,47 @@ export class MatomoTrackerDirective implements OnDestroy {
   private readonly tracker = inject(MatomoTracker);
   private readonly elementRef = inject(ElementRef);
 
-  private sub?: Subscription;
-
   /** Set the event category */
-  @Input() matomoCategory?: string;
+  readonly matomoCategory = input<string>();
   /** Set the event action */
-  @Input() matomoAction?: string;
+  readonly matomoAction = input<string>();
   /** Set the event name */
-  @Input() matomoName?: string;
+  readonly matomoName = input<string>();
   /** Set the event value */
-  @Input() matomoValue?: number;
+  readonly matomoValue = input<number>();
 
   /** Track a Matomo event whenever specified DOM event is triggered */
-  @Input()
-  set matomoTracker(input: DOMEventInput) {
-    const eventNames = coerceEventNames(input);
+  readonly matomoTracker = input<DOMEventInput>();
 
-    this.sub?.unsubscribe();
-
-    if (eventNames) {
-      const handlers = eventNames.map(eventName =>
-        fromEvent(this.elementRef.nativeElement, eventName),
-      );
-
-      this.sub = merge(...handlers).subscribe(() => this.trackEvent());
-    } else {
-      this.sub = undefined;
-    }
-  }
+  private sub = toObservable(this.matomoTracker)
+    .pipe(
+      switchMap(input => {
+        const eventNames = coerceEventNames(input);
+        if (!eventNames) return EMPTY;
+        return merge(
+          ...eventNames.map(eventName => fromEvent(this.elementRef.nativeElement, eventName)),
+        );
+      }),
+      takeUntilDestroyed(),
+    )
+    .subscribe(() => this.trackEvent());
 
   ngOnDestroy(): void {
-    this.sub?.unsubscribe();
+    this.sub.unsubscribe();
   }
 
-  /** Track an event using category, action, name and value set as @Input() */
+  /** Track an event using category, action, name and value set as input signals */
   trackEvent(): void;
-
-  /** Track an event using category, action and name set as @Input() and provided value */
-  trackEvent(value: number): void;
-
-  /** Track an event using category and action set as @Input() and provided name and value */
-  trackEvent(name: string, value?: number): void;
-
-  /** Track an event using provided category, action, name and value (any @Input() is used as a default value) */
-  trackEvent(args: TrackArgs): void;
+  /** Track an event using provided name (string), value (number), or both, with input signals as defaults */
+  trackEvent(nameOrValue?: string | number, value?: number): void;
+  /** Track an event using provided args (any input signal is used as a default value) */
+  trackEvent(args?: TrackArgs): void;
 
   trackEvent(arg1?: TrackArgs | string | number, arg2?: number): void {
-    let category = this.matomoCategory;
-    let action = this.matomoAction;
-    let name = this.matomoName;
-    let value = this.matomoValue;
+    let category = this.matomoCategory();
+    let action = this.matomoAction();
+    let name = this.matomoName();
+    let value = this.matomoValue();
 
     if (typeof arg1 === 'object') {
       category = arg1.category ?? category;

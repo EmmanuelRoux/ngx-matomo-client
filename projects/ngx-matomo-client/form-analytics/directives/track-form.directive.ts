@@ -2,9 +2,10 @@ import {
   AfterViewInit,
   booleanAttribute,
   Directive,
+  effect,
   ElementRef,
   inject,
-  Input,
+  input,
 } from '@angular/core';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 
@@ -21,29 +22,31 @@ export class TrackFormDirective implements AfterViewInit {
   private initialized = false;
 
   /** If true, will track a conversion after form submit */
-  @Input({ transform: booleanAttribute }) trackConversionOnSubmit = false;
-
-  @Input({ transform: booleanAttribute }) set matomoIgnore(ignore: boolean) {
-    if (ignore) {
-      this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
-    } else {
-      this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
-    }
-  }
-
-  @Input() set matomoTrackForm(name: string | null | undefined) {
-    if (name) {
-      this.elementRef.nativeElement.setAttribute('data-matomo-name', name);
-    } else {
-      this.elementRef.nativeElement.removeAttribute('data-matomo-name');
-    }
-
-    if (this.initialized) {
-      this.track();
-    }
-  }
+  readonly trackConversionOnSubmit = input(false, { transform: booleanAttribute });
+  readonly matomoIgnore = input<boolean>(undefined, { transform: booleanAttribute });
+  readonly matomoTrackForm = input<string | null>();
 
   constructor() {
+    effect(() => {
+      const ignore = this.matomoIgnore();
+      if (ignore) {
+        this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
+      } else {
+        this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
+      }
+    });
+    effect(() => {
+      const name = this.matomoTrackForm();
+      if (name) {
+        this.elementRef.nativeElement.setAttribute('data-matomo-name', name);
+      } else {
+        this.elementRef.nativeElement.removeAttribute('data-matomo-name');
+      }
+
+      if (this.initialized) {
+        this.track();
+      }
+    });
     this.elementRef.nativeElement.setAttribute('data-matomo-form', '');
   }
 
@@ -65,7 +68,7 @@ export class TrackFormDirective implements AfterViewInit {
   }
 
   trackFormConversionOnSubmit(): void {
-    if (this.trackConversionOnSubmit) {
+    if (this.trackConversionOnSubmit()) {
       this.trackConversion();
     }
   }

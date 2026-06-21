@@ -1,4 +1,4 @@
-import { booleanAttribute, Directive, ElementRef, inject, Input } from '@angular/core';
+import { booleanAttribute, Directive, ElementRef, inject, input, effect } from '@angular/core';
 import { throwFormNotFoundError } from './errors';
 import { TrackFormDirective } from './track-form.directive';
 
@@ -15,20 +15,24 @@ export class TrackFormSubmitDirective {
     throwFormNotFoundError('[matomoTrackFormSubmit]');
 
   /** If true, will track a conversion after form submit */
-  @Input({ transform: booleanAttribute }) trackConversion = false;
+  readonly trackConversion = input(false, { transform: booleanAttribute });
+  readonly matomoIgnore = input<boolean>();
 
-  @Input({ transform: booleanAttribute }) set matomoIgnore(ignore: boolean) {
-    if (ignore) {
-      this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
-    } else {
-      this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
-    }
+  constructor() {
+    effect(() => {
+      const ignore = this.matomoIgnore();
+      if (ignore) {
+        this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
+      } else {
+        this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
+      }
+    });
   }
 
   trackSubmit(): void {
     this.form.trackSubmit();
 
-    if (this.trackConversion) {
+    if (this.trackConversion()) {
       this.form.trackConversion();
     }
   }
