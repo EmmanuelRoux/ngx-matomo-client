@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
 import { Subject } from 'rxjs';
 import { NonEmptyReadonlyArray, RequireAtLeastOne } from '../utils/types';
 import { InternalMatomoTracker } from './internal-matomo-tracker.service';
@@ -104,7 +104,7 @@ export interface MatomoInstance {
   getIgnoreCampaignsForReferrers(): string[];
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class MatomoTracker {
   private readonly delegate: InternalMatomoTracker<MatomoInstance> = inject(
     InternalMatomoTracker<MatomoInstance>,

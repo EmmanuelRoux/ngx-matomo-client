@@ -1,4 +1,4 @@
-import { ApplicationInitStatus, inject, Injectable, Provider } from '@angular/core';
+import { ApplicationInitStatus, inject, Service, Provider } from '@angular/core';
 import {
   InternalMatomoTracker,
   InternalMatomoTrackerType,
@@ -15,7 +15,7 @@ export function provideTestingTracker(): Provider[] {
   ];
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class MatomoTestingTracker<
   MATOMO = unknown,
   PREFIX extends string = '',

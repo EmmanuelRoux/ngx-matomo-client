@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, inject } from '@angular/core';
+import { Service, InjectionToken, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd } from '@angular/router';
 import { Observable, of } from 'rxjs';
@@ -21,7 +21,7 @@ export interface PageTitleProvider {
   getCurrentPageTitle(event: NavigationEnd): Observable<string>;
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class DefaultPageTitleProvider implements PageTitleProvider {
   private readonly title = inject(Title);
 

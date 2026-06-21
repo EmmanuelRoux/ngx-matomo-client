@@ -1,4 +1,4 @@
-import { ElementRef, inject, Injectable } from '@angular/core';
+import { ElementRef, inject, Service } from '@angular/core';
 import { ɵInternalMatomoTracker as InternalMatomoTracker } from 'ngx-matomo-client/core';
 import { coerceElement } from './utils/coercion';
 
@@ -10,7 +10,7 @@ export interface MatomoFormAnalyticsInstance {
   setTrackingTimer(delayInMilliSeconds: number): void;
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class MatomoFormAnalytics {
   private readonly delegate: InternalMatomoTracker<MatomoFormAnalyticsInstance, 'FormAnalytics::'> =
     inject(InternalMatomoTracker<MatomoFormAnalyticsInstance>);

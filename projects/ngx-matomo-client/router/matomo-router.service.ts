@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { Service, PLATFORM_ID, inject } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { MatomoTracker, ɵrunOnce as runOnce } from 'ngx-matomo-client/core';
 import {
@@ -76,7 +76,7 @@ function getNavigationEndComparator(config: InternalRouterConfiguration): Naviga
   }
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class MatomoRouter {
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
