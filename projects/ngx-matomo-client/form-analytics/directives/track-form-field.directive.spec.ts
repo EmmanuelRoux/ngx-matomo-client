@@ -2,7 +2,7 @@ import {
   Component,
   ElementRef,
   provideZoneChangeDetection,
-  ViewChild,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -20,10 +20,9 @@ import { TrackFormDirective } from './track-form.directive';
   imports: [TrackFormDirective, TrackFormFieldDirective],
 })
 class HostComponent {
-  @ViewChild(TrackFormDirective, { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;
-  @ViewChild(TrackFormDirective) formDir!: TrackFormDirective;
-  @ViewChild(TrackFormFieldDirective) fieldDir!: TrackFormFieldDirective;
-  @ViewChild(TrackFormFieldDirective, { read: ElementRef }) fieldElRef!: ElementRef<HTMLElement>;
+  readonly formDir = viewChild.required(TrackFormDirective);
+  readonly fieldDir = viewChild(TrackFormFieldDirective);
+  readonly fieldElRef = viewChild.required(TrackFormFieldDirective, { read: ElementRef });
 
   showField = true;
   ignore: boolean | undefined;
@@ -75,14 +74,14 @@ describe('TrackFormFieldDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.fieldElRef.nativeElement.hasAttribute('data-matomo-ignore')).toBeTrue();
+    expect(component.fieldElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeTrue();
 
     component.ignore = false;
 
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.fieldElRef.nativeElement.hasAttribute('data-matomo-ignore')).toBeFalse();
+    expect(component.fieldElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeFalse();
   });
 
   it('should set data-matomo-name attribute', async () => {
@@ -91,7 +90,7 @@ describe('TrackFormFieldDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.fieldElRef.nativeElement.getAttribute('data-matomo-name')).toEqual(
+    expect(component.fieldElRef().nativeElement.getAttribute('data-matomo-name')).toEqual(
       'test-name',
     );
   });
@@ -100,17 +99,17 @@ describe('TrackFormFieldDirective', () => {
     component.fieldName = 'test-name';
     fixture.detectChanges();
     await fixture.whenStable();
-
-    spyOn(component.formDir, 'track');
+    const formDir = component.formDir();
+    spyOn(formDir, 'track');
 
     component.fieldName = 'another-test-name';
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.fieldElRef.nativeElement.getAttribute('data-matomo-name')).toEqual(
+    expect(component.fieldElRef().nativeElement.getAttribute('data-matomo-name')).toEqual(
       'another-test-name',
     );
-    expect(component.formDir.track).toHaveBeenCalledTimes(1);
+    expect(formDir.track).toHaveBeenCalledTimes(1);
   });
 
   it('should track form on init', async () => {
@@ -118,8 +117,9 @@ describe('TrackFormFieldDirective', () => {
     component.showField = false;
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.fieldDir).toBeUndefined();
-    spyOn(component.formDir, 'track');
+    expect(component.fieldDir()).toBeUndefined();
+    const formDir = component.formDir();
+    spyOn(formDir, 'track');
 
     // When
     component.showField = true;
@@ -127,6 +127,6 @@ describe('TrackFormFieldDirective', () => {
     await fixture.whenStable();
 
     // Then
-    expect(component.formDir.track).toHaveBeenCalledTimes(1);
+    expect(formDir.track).toHaveBeenCalledTimes(1);
   });
 });

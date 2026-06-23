@@ -2,7 +2,7 @@ import {
   Component,
   ElementRef,
   provideZoneChangeDetection,
-  ViewChild,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -24,10 +24,8 @@ import { TrackFormDirective } from './track-form.directive';
   imports: [TrackFormDirective, TrackFormSubmitDirective],
 })
 class HostComponent {
-  @ViewChild(TrackFormDirective, { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;
-  @ViewChild(TrackFormDirective) formDir!: TrackFormDirective;
-  @ViewChild(TrackFormSubmitDirective) submitDir!: TrackFormSubmitDirective;
-  @ViewChild(TrackFormSubmitDirective, { read: ElementRef }) submitElRef!: ElementRef<HTMLElement>;
+  readonly formDir = viewChild.required(TrackFormDirective);
+  readonly submitElRef = viewChild.required(TrackFormSubmitDirective, { read: ElementRef });
 
   ignore: boolean | undefined;
   trackConversion: boolean | undefined;
@@ -78,26 +76,27 @@ describe('TrackFormSubmitDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.submitElRef.nativeElement.hasAttribute('data-matomo-ignore')).toBeTrue();
+    expect(component.submitElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeTrue();
 
     component.ignore = false;
 
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.submitElRef.nativeElement.hasAttribute('data-matomo-ignore')).toBeFalse();
+    expect(component.submitElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeFalse();
   });
 
   it('should track submit', async () => {
-    spyOn(component.formDir, 'trackSubmit');
-    spyOn(component.formDir, 'trackConversion');
+    const formDir = component.formDir();
+    spyOn(formDir, 'trackSubmit');
+    spyOn(formDir, 'trackConversion');
 
-    component.submitElRef.nativeElement.click();
+    component.submitElRef().nativeElement.click();
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.formDir.trackSubmit).toHaveBeenCalledTimes(1);
-    expect(component.formDir.trackConversion).not.toHaveBeenCalled();
+    expect(formDir.trackSubmit).toHaveBeenCalledTimes(1);
+    expect(formDir.trackConversion).not.toHaveBeenCalled();
   });
 
   it('should track submit and conversion', async () => {
@@ -105,14 +104,15 @@ describe('TrackFormSubmitDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    spyOn(component.formDir, 'trackSubmit');
-    spyOn(component.formDir, 'trackConversion');
+    const formDir = component.formDir();
+    spyOn(formDir, 'trackSubmit');
+    spyOn(formDir, 'trackConversion');
 
-    component.submitElRef.nativeElement.click();
+    component.submitElRef().nativeElement.click();
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.formDir.trackSubmit).toHaveBeenCalledTimes(1);
-    expect(component.formDir.trackConversion).toHaveBeenCalledTimes(1);
+    expect(formDir.trackSubmit).toHaveBeenCalledTimes(1);
+    expect(formDir.trackConversion).toHaveBeenCalledTimes(1);
   });
 });

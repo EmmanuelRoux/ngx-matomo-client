@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 import { TrackFormsDirective } from './track-forms.directive';
@@ -11,9 +11,9 @@ import { TrackFormsDirective } from './track-forms.directive';
   imports: [TrackFormsDirective],
 })
 class HostComponent {
-  @ViewChild('containerRef', { read: ElementRef }) containerRef!: ElementRef<HTMLElement>;
-  @ViewChild('elRef', { read: ElementRef }) elRef!: ElementRef<HTMLElement>;
-  @ViewChild(TrackFormsDirective) dir!: TrackFormsDirective;
+  readonly containerRef = viewChild.required('containerRef', { read: ElementRef });
+  readonly elRef = viewChild.required('elRef', { read: ElementRef });
+  readonly dir = viewChild.required(TrackFormsDirective);
 }
 
 describe('TrackFormsDirective', () => {
@@ -45,18 +45,20 @@ describe('TrackFormsDirective', () => {
   it('should scan for forms on initialization', async () => {
     await fixture.whenStable();
 
-    expect(formAnalytics.scanForForms).toHaveBeenCalledOnceWith(component.containerRef);
+    expect(formAnalytics.scanForForms).toHaveBeenCalledOnceWith(component.containerRef());
   });
 
   it('should track form submit', async () => {
-    component.dir.trackSubmit(component.elRef);
+    const elRef = component.elRef();
+    component.dir().trackSubmit(elRef);
 
-    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledOnceWith(component.elRef);
+    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledOnceWith(elRef);
   });
 
-  it('should track form submit', async () => {
-    component.dir.trackConversion(component.elRef);
+  it('should track form conversion', async () => {
+    const elRef = component.elRef();
+    component.dir().trackConversion(elRef);
 
-    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnceWith(component.elRef);
+    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnceWith(elRef);
   });
 });
