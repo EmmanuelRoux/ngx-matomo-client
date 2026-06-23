@@ -1,3 +1,17 @@
+# [10.0.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v9.1.0...v10.0.0) (2026-06-23)
+
+
+### Features
+
+* add compatibility with Angular 22 ([6138949](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/61389499dbf7e3a86f0a6afb217e807383121692)), closes [#129](https://github.com/EmmanuelRoux/ngx-matomo-client/issues/129)
+* update Matomo directives and components to Signal inputs ([c71fd0c](https://github.com/EmmanuelRoux/ngx-matomo-client/commit/c71fd0c35cdaba951fa811c78604431bff4cde3b))
+
+
+### Breaking changes
+
+* Matomo directives and components now use Signal inputs: `MatomoTrackClickDirective`, `MatomoTrackerDirective`, `TrackFormFieldDirective`, `TrackFormSubmitDirective`, `TrackFormDirective` and `MatomoOptOutFormComponent`. This should not affect most applications. If necessary, please update your application and/or tests to account for this change.
+* Angular v22 is now required as peer dependency
+
 # [9.1.0](https://github.com/EmmanuelRoux/ngx-matomo-client/compare/v9.0.1...v9.1.0) (2026-05-06)
 
 
