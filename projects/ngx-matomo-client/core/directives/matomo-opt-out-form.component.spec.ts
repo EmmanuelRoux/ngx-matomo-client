@@ -4,7 +4,7 @@ import {
   provideZoneChangeDetection,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { By, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { provideMatomo } from '../providers';
 import { provideTestingTracker } from '../testing/testing-tracker';
@@ -218,18 +218,16 @@ describe('MatomoOptOutFormComponent', () => {
     );
   });
 
-  it('should throw an error when no server url is available', fakeAsync(() => {
+  it('should throw an error when no server url is available', async () => {
     const fixture = TestBed.createComponent(HostWithoutServerUrlComponent);
     const component = fixture.debugElement.query(By.directive(MatomoOptOutFormComponent))
       ?.componentInstance as MatomoOptOutFormComponent;
 
     expect(component.serverUrl()).toBeFalsy();
-    expect(() => {
-      fixture.detectChanges();
-      flush();
-      fixture.detectChanges();
-    }).toThrow();
-  }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(() => fixture.detectChanges()).toThrow();
+  });
 
   it('should not throw an error when no locale is available', () => {
     const fixture = TestBed.createComponent(HostWithoutLocaleComponent);
