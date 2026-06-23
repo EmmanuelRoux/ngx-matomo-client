@@ -47,11 +47,11 @@ describe('TrackFormFieldDirective', () => {
         provideZoneChangeDetection(),
         {
           provide: MatomoFormAnalytics,
-          useValue: jasmine.createSpyObj<MatomoFormAnalytics>('MatomoFormAnalytics', [
-            'trackForm',
-            'trackFormSubmit',
-            'trackFormConversion',
-          ]),
+          useValue: {
+            trackForm: vi.fn(),
+            trackFormSubmit: vi.fn(),
+            trackFormConversion: vi.fn(),
+          } as unknown as Mocked<MatomoFormAnalytics>,
         },
       ],
     }).compileComponents();
@@ -74,14 +74,14 @@ describe('TrackFormFieldDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.fieldElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeTrue();
+    expect(component.fieldElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBe(true);
 
     component.ignore = false;
 
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.fieldElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeFalse();
+    expect(component.fieldElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBe(false);
   });
 
   it('should set data-matomo-name attribute', async () => {
@@ -100,7 +100,7 @@ describe('TrackFormFieldDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     const formDir = component.formDir();
-    spyOn(formDir, 'track');
+    vi.spyOn(formDir, 'track').mockImplementation(() => undefined);
 
     component.fieldName = 'another-test-name';
     fixture.detectChanges();
@@ -119,7 +119,7 @@ describe('TrackFormFieldDirective', () => {
     await fixture.whenStable();
     expect(component.fieldDir()).toBeUndefined();
     const formDir = component.formDir();
-    spyOn(formDir, 'track');
+    vi.spyOn(formDir, 'track').mockImplementation(() => undefined);
 
     // When
     component.showField = true;

@@ -31,21 +31,19 @@ describe('MatomoRouter', () => {
         provideMatomo(config as MatomoConfiguration, withRouter(routerConfig)),
         {
           provide: Router,
-          useValue: jasmine.createSpyObj<Router>('Router', [], {
-            events: routerEvents,
-          }),
+          useValue: { events: routerEvents } as unknown as Router,
         },
         {
           provide: MATOMO_PAGE_TITLE_PROVIDER,
-          useValue: jasmine.createSpyObj<PageTitleProvider>('PageTitleProvider', {
-            getCurrentPageTitle: of('Custom page title'),
-          }),
+          useValue: {
+            getCurrentPageTitle: vi.fn().mockReturnValue(of('Custom page title')),
+          } as unknown as Mocked<PageTitleProvider>,
         },
         {
           provide: MATOMO_PAGE_URL_PROVIDER,
-          useValue: jasmine.createSpyObj<PageUrlProvider>('PageUrlProvider', {
-            getCurrentPageUrl: of('/custom-url'),
-          }),
+          useValue: {
+            getCurrentPageUrl: vi.fn().mockReturnValue(of('/custom-url')),
+          } as unknown as Mocked<PageUrlProvider>,
         },
         provideTestingTracker(),
         ...providers,
@@ -182,9 +180,9 @@ describe('MatomoRouter', () => {
   ): void {
     // Given
     const { tracker } = instantiate({ exclude: config }, { enableLinkTracking: true });
-    const urlProvider = TestBed.inject(MATOMO_PAGE_URL_PROVIDER) as jasmine.SpyObj<PageUrlProvider>;
+    const urlProvider = TestBed.inject(MATOMO_PAGE_URL_PROVIDER) as Mocked<PageUrlProvider>;
 
-    urlProvider.getCurrentPageUrl.and.callFake(event => of(event.urlAfterRedirects));
+    urlProvider.getCurrentPageUrl.mockImplementation(event => of(event.urlAfterRedirects));
 
     // When
     events.forEach(triggerEvent);
@@ -193,7 +191,7 @@ describe('MatomoRouter', () => {
     // Then
     expected.forEach(expectedUrl => {
       expect(tracker.callsAfterInit).toEqual(
-        jasmine.arrayContaining([['setCustomUrl', expectedUrl]]),
+        expect.arrayContaining([['setCustomUrl', expectedUrl]]),
       );
       // expect(tracker.setCustomUrl).toHaveBeenCalledWith(expectedUrl);
     });
@@ -201,7 +199,7 @@ describe('MatomoRouter', () => {
       .filter(url => !expected.includes(url))
       .forEach(excludedUrl => {
         expect(tracker.callsAfterInit).not.toEqual(
-          jasmine.arrayContaining([['setCustomUrl', excludedUrl]]),
+          expect.arrayContaining([['setCustomUrl', excludedUrl]]),
         );
         // expect(tracker.setCustomUrl).not.toHaveBeenCalledWith(excludedUrl);
       });
@@ -247,9 +245,7 @@ describe('MatomoRouter', () => {
 
   it('should track page view if in browser', fakeAsync(() => {
     // Given
-    const interceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor', [
-      'beforePageTrack',
-    ]);
+    const interceptor = { beforePageTrack: vi.fn() } as unknown as Mocked<MatomoRouterInterceptor>;
 
     const { tracker } = instantiate({}, {}, [
       { provide: PLATFORM_ID, useValue: ɵPLATFORM_BROWSER_ID },
@@ -261,15 +257,13 @@ describe('MatomoRouter', () => {
     tick(); // Tracking is asynchronous by default
 
     // Then
-    expect(tracker.callsAfterInit).toEqual(jasmine.arrayContaining([['trackPageView', undefined]]));
+    expect(tracker.callsAfterInit).toEqual(expect.arrayContaining([['trackPageView', undefined]]));
     expect(interceptor.beforePageTrack).toHaveBeenCalled();
   }));
 
   it('should not track page view if on server', fakeAsync(() => {
     // Given
-    const interceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor', [
-      'beforePageTrack',
-    ]);
+    const interceptor = { beforePageTrack: vi.fn() } as unknown as Mocked<MatomoRouterInterceptor>;
     const { tracker } = instantiate({}, {}, [
       { provide: PLATFORM_ID, useValue: ɵPLATFORM_SERVER_ID },
       { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor },
@@ -384,18 +378,16 @@ describe('MatomoRouter', () => {
 
   it('should call interceptors if any and wait for them to resolve', fakeAsync(() => {
     // Given
-    const interceptor1 = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor1', [
-      'beforePageTrack',
-    ]);
+    const interceptor1 = { beforePageTrack: vi.fn() } as unknown as Mocked<MatomoRouterInterceptor>;
     let interceptor2Resolve: () => void;
     const interceptor2Promise = new Promise<void>(resolve => (interceptor2Resolve = resolve));
-    const interceptor2 = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor2', {
-      beforePageTrack: interceptor2Promise,
-    });
+    const interceptor2 = {
+      beforePageTrack: vi.fn().mockReturnValue(interceptor2Promise),
+    } as unknown as Mocked<MatomoRouterInterceptor>;
     const interceptor3Subject = new Subject<void>();
-    const interceptor3 = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor3', {
-      beforePageTrack: interceptor3Subject,
-    });
+    const interceptor3 = {
+      beforePageTrack: vi.fn().mockReturnValue(interceptor3Subject),
+    } as unknown as Mocked<MatomoRouterInterceptor>;
     const { tracker } = instantiate({ delay: -1 }, { enableLinkTracking: false }, [
       { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor1 },
       { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: interceptor2 },
@@ -436,9 +428,7 @@ describe('MatomoRouter', () => {
 
   it('should throw an error when interceptors are not declared as multi provider', fakeAsync(() => {
     // Given
-    const interceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('interceptor', [
-      'beforePageTrack',
-    ]);
+    const interceptor = { beforePageTrack: vi.fn() } as unknown as Mocked<MatomoRouterInterceptor>;
     const errorMessage = invalidInterceptorsProviderError().message;
 
     // Then
@@ -476,18 +466,17 @@ describe('MatomoRouter', () => {
     const slowInterceptorPromise3 = new Promise<void>(
       resolve => (slowInterceptorResolve3 = resolve),
     );
-    const slowInterceptor = jasmine.createSpyObj<MatomoRouterInterceptor>('slowInterceptor', [
-      'beforePageTrack',
-    ]);
+    const slowInterceptor = {
+      beforePageTrack: vi.fn(),
+    } as unknown as Mocked<MatomoRouterInterceptor>;
     const { tracker } = instantiate({ delay: -1 }, { enableLinkTracking: false }, [
       { provide: MATOMO_ROUTER_INTERCEPTORS, multi: true, useValue: slowInterceptor },
     ]);
 
-    slowInterceptor.beforePageTrack.and.returnValues(
-      slowInterceptorPromise1,
-      slowInterceptorPromise2,
-      slowInterceptorPromise3,
-    );
+    slowInterceptor.beforePageTrack
+      .mockReturnValueOnce(slowInterceptorPromise1)
+      .mockReturnValueOnce(slowInterceptorPromise2)
+      .mockReturnValueOnce(slowInterceptorPromise3);
 
     // When
     triggerEvent('/page1');
@@ -548,12 +537,12 @@ describe('MatomoRouter', () => {
     // Given
     const { router } = instantiate({}, {});
 
-    spyOn(router, 'initialize');
+    vi.spyOn(router, 'initialize').mockImplementation(() => undefined);
 
     // When
     router.init();
 
     // Then
-    expect(router.initialize).toHaveBeenCalledOnceWith();
+    expect(router.initialize).toHaveBeenCalledOnce();
   });
 });

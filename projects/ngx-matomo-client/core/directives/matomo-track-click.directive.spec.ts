@@ -37,7 +37,7 @@ class HostComponent {
 describe('MatomoTrackClickDirective', () => {
   let component: HostComponent;
   let fixture: ComponentFixture<HostComponent>;
-  let tracker: jasmine.SpyObj<MatomoTracker>;
+  let tracker: Mocked<MatomoTracker>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -45,14 +45,14 @@ describe('MatomoTrackClickDirective', () => {
         provideZoneChangeDetection(),
         {
           provide: MatomoTracker,
-          useValue: jasmine.createSpyObj<MatomoTracker>('MatomoTracker', ['trackEvent']),
+          useValue: { trackEvent: vi.fn() } as unknown as Mocked<MatomoTracker>,
         },
       ],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    tracker = TestBed.inject(MatomoTracker) as jasmine.SpyObj<MatomoTracker>;
+    tracker = TestBed.inject(MatomoTracker) as Mocked<MatomoTracker>;
     fixture = TestBed.createComponent(HostComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -35,7 +35,7 @@ class HostComponent {
 describe('TrackFormDirective', () => {
   let component: HostComponent;
   let fixture: ComponentFixture<HostComponent>;
-  let formAnalytics: jasmine.SpyObj<MatomoFormAnalytics>;
+  let formAnalytics: Mocked<MatomoFormAnalytics>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -44,23 +44,23 @@ describe('TrackFormDirective', () => {
         provideZoneChangeDetection(),
         {
           provide: MatomoFormAnalytics,
-          useValue: jasmine.createSpyObj<MatomoFormAnalytics>('MatomoFormAnalytics', [
-            'trackForm',
-            'trackFormSubmit',
-            'trackFormConversion',
-          ]),
+          useValue: {
+            trackForm: vi.fn(),
+            trackFormSubmit: vi.fn(),
+            trackFormConversion: vi.fn(),
+          } as unknown as Mocked<MatomoFormAnalytics>,
         },
       ],
     }).compileComponents();
 
-    formAnalytics = TestBed.inject(MatomoFormAnalytics) as jasmine.SpyObj<MatomoFormAnalytics>;
+    formAnalytics = TestBed.inject(MatomoFormAnalytics) as Mocked<MatomoFormAnalytics>;
     fixture = TestBed.createComponent(HostComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should add data-matomo-form attribute', () => {
-    expect(component.containerRef().nativeElement.hasAttribute('data-matomo-form')).toBeTrue();
+    expect(component.containerRef().nativeElement.hasAttribute('data-matomo-form')).toBe(true);
   });
 
   it('should add data-matomo-ignore attribute', async () => {
@@ -69,14 +69,14 @@ describe('TrackFormDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.containerRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeTrue();
+    expect(component.containerRef().nativeElement.hasAttribute('data-matomo-ignore')).toBe(true);
 
     component.ignore = false;
 
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.containerRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeFalse();
+    expect(component.containerRef().nativeElement.hasAttribute('data-matomo-ignore')).toBe(false);
   });
 
   it('should set data-matomo-name attribute', async () => {
@@ -93,27 +93,31 @@ describe('TrackFormDirective', () => {
   it('should track form on init', async () => {
     await fixture.whenStable();
 
-    expect(formAnalytics.trackForm).toHaveBeenCalledOnceWith(component.containerRef());
+    expect(formAnalytics.trackForm).toHaveBeenCalledOnce();
+    expect(formAnalytics.trackForm).toHaveBeenCalledWith(component.containerRef());
   });
 
   it('should track form again manually', async () => {
-    formAnalytics.trackForm.calls.reset();
+    formAnalytics.trackForm.mockClear();
 
     component.dir().track();
 
-    expect(formAnalytics.trackForm).toHaveBeenCalledOnceWith(component.containerRef());
+    expect(formAnalytics.trackForm).toHaveBeenCalledOnce();
+    expect(formAnalytics.trackForm).toHaveBeenCalledWith(component.containerRef());
   });
 
   it('should track form submit', async () => {
     component.dir().trackSubmit();
 
-    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledOnceWith(component.containerRef());
+    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledOnce();
+    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledWith(component.containerRef());
   });
 
   it('should track form conversion', async () => {
     component.dir().trackConversion();
 
-    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnceWith(component.containerRef());
+    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnce();
+    expect(formAnalytics.trackFormConversion).toHaveBeenCalledWith(component.containerRef());
   });
 
   it('should track form conversion automatically', async () => {
@@ -123,6 +127,7 @@ describe('TrackFormDirective', () => {
 
     component.submitButtonRef().nativeElement.click();
 
-    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnceWith(component.containerRef());
+    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnce();
+    expect(formAnalytics.trackFormConversion).toHaveBeenCalledWith(component.containerRef());
   });
 });

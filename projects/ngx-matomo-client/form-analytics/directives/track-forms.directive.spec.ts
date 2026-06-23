@@ -19,7 +19,7 @@ class HostComponent {
 describe('TrackFormsDirective', () => {
   let component: HostComponent;
   let fixture: ComponentFixture<HostComponent>;
-  let formAnalytics: jasmine.SpyObj<MatomoFormAnalytics>;
+  let formAnalytics: Mocked<MatomoFormAnalytics>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -27,16 +27,16 @@ describe('TrackFormsDirective', () => {
       providers: [
         {
           provide: MatomoFormAnalytics,
-          useValue: jasmine.createSpyObj<MatomoFormAnalytics>('MatomoFormAnalytics', [
-            'scanForForms',
-            'trackFormSubmit',
-            'trackFormConversion',
-          ]),
+          useValue: {
+            scanForForms: vi.fn(),
+            trackFormSubmit: vi.fn(),
+            trackFormConversion: vi.fn(),
+          } as unknown as Mocked<MatomoFormAnalytics>,
         },
       ],
     }).compileComponents();
 
-    formAnalytics = TestBed.inject(MatomoFormAnalytics) as jasmine.SpyObj<MatomoFormAnalytics>;
+    formAnalytics = TestBed.inject(MatomoFormAnalytics) as Mocked<MatomoFormAnalytics>;
     fixture = TestBed.createComponent(HostComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -45,20 +45,23 @@ describe('TrackFormsDirective', () => {
   it('should scan for forms on initialization', async () => {
     await fixture.whenStable();
 
-    expect(formAnalytics.scanForForms).toHaveBeenCalledOnceWith(component.containerRef());
+    expect(formAnalytics.scanForForms).toHaveBeenCalledOnce();
+    expect(formAnalytics.scanForForms).toHaveBeenCalledWith(component.containerRef());
   });
 
   it('should track form submit', async () => {
     const elRef = component.elRef();
     component.dir().trackSubmit(elRef);
 
-    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledOnceWith(elRef);
+    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledOnce();
+    expect(formAnalytics.trackFormSubmit).toHaveBeenCalledWith(elRef);
   });
 
   it('should track form conversion', async () => {
     const elRef = component.elRef();
     component.dir().trackConversion(elRef);
 
-    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnceWith(elRef);
+    expect(formAnalytics.trackFormConversion).toHaveBeenCalledOnce();
+    expect(formAnalytics.trackFormConversion).toHaveBeenCalledWith(elRef);
   });
 });

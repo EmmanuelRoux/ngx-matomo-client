@@ -4,15 +4,15 @@ import { InternalMatomoTracker } from './internal-matomo-tracker.service';
 import { MatomoInstance, MatomoTracker } from './matomo-tracker.service';
 
 describe('MatomoTracker', () => {
-  let delegate: jasmine.SpyObj<InternalMatomoTracker<MatomoInstance>>;
+  let delegate: Mocked<InternalMatomoTracker<MatomoInstance>>;
   let tracker: MatomoTracker;
 
   beforeEach(() => {
-    delegate = jasmine.createSpyObj<InternalMatomoTracker<MatomoInstance>>([
-      'get',
-      'push',
-      'pushFn',
-    ]);
+    delegate = {
+      get: vi.fn(),
+      push: vi.fn(),
+      pushFn: vi.fn(),
+    } as unknown as Mocked<InternalMatomoTracker<MatomoInstance>>;
 
     TestBed.configureTestingModule({
       providers: [
@@ -32,13 +32,13 @@ describe('MatomoTracker', () => {
       // When
       when(tracker);
       // Then
-      const allArgs = delegate.push.calls.allArgs();
+      const allArgs = delegate.push.mock.calls;
 
       expect(allArgs.length).toEqual(expected.length);
 
       for (let callIndex = 0; callIndex < allArgs.length; callIndex++) {
         const callArgs = allArgs[callIndex];
-        expect(callArgs).toHaveSize(1);
+        expect(callArgs).toHaveLength(1);
 
         for (let argIndex = 0; argIndex < callArgs[0].length; argIndex++) {
           expect(callArgs[0][argIndex]).toEqual(expected[callIndex][argIndex]);
@@ -60,7 +60,7 @@ describe('MatomoTracker', () => {
     expected: E,
   ): Promise<void> {
     // Given
-    delegate.get.and.returnValue(Promise.resolve(expected) as Promise<any>);
+    delegate.get.mockReturnValue(Promise.resolve(expected) as Promise<any>);
 
     // When
     return (tracker[getter]() as Promise<any>).then(url => {
@@ -168,13 +168,11 @@ describe('MatomoTracker', () => {
     expectSimpleMethod('setCrossDomainLinkingTimeout', [42]),
   );
 
-  it('should get cross domain linking url parameter', done => {
-    expectGetter('getCrossDomainLinkingUrlParameter', 'foo=bar').then(done);
-  });
+  it('should get cross domain linking url parameter', () =>
+    expectGetter('getCrossDomainLinkingUrlParameter', 'foo=bar'));
 
-  it('should get ignore campaigns for referrers', done => {
-    expectGetter('getIgnoreCampaignsForReferrers', ['foo', 'bar']).then(done);
-  });
+  it('should get ignore campaigns for referrers', () =>
+    expectGetter('getIgnoreCampaignsForReferrers', ['foo', 'bar']));
 
   it(
     'should set ignore campaigns for referrers',
@@ -234,9 +232,8 @@ describe('MatomoTracker', () => {
     ),
   );
 
-  it('should get performance timings', done => {
-    expectGetter('getCustomPagePerformanceTiming', 'test').then(done);
-  });
+  it('should get performance timings', () =>
+    expectGetter('getCustomPagePerformanceTiming', 'test'));
 
   it('should append to tracking url', expectSimpleMethod('appendToTrackingUrl', ['?toAppend']));
 
@@ -254,9 +251,7 @@ describe('MatomoTracker', () => {
 
   it('should set page view id', expectSimpleMethod('setPageViewId', ['my-id']));
 
-  it('should get page view id', done => {
-    expectGetter('getPageViewId', 'fake-id').then(done);
-  });
+  it('should get page view id', () => expectGetter('getPageViewId', 'fake-id'));
 
   it(
     'should set custom data by key/value',
@@ -274,9 +269,7 @@ describe('MatomoTracker', () => {
 
   it('should overwrite custom data', expectSimpleMethod('setCustomData', [{ foo: 'bar' }]));
 
-  it('should get custom data', done => {
-    expectGetter('getCustomData', { foo: 'bar' }).then(done);
-  });
+  it('should get custom data', () => expectGetter('getCustomData', { foo: 'bar' }));
 
   it(
     'should set custom variable',
@@ -352,11 +345,8 @@ describe('MatomoTracker', () => {
 
   it('should clear ecommerce cart', expectSimpleMethod('clearEcommerceCart', []));
 
-  it('should get ecommerce items', done => {
-    expectGetter<unknown[], 'getEcommerceItems'>('getEcommerceItems', [
-      { productSKU: 'test' },
-    ]).then(done);
-  });
+  it('should get ecommerce items', () =>
+    expectGetter<unknown[], 'getEcommerceItems'>('getEcommerceItems', [{ productSKU: 'test' }]));
 
   it('should track ecommerce cart update', expectSimpleMethod('trackEcommerceCartUpdate', [999]));
 
@@ -370,21 +360,14 @@ describe('MatomoTracker', () => {
 
   it('should forget consent given', expectSimpleMethod('forgetConsentGiven', []));
 
-  it('should return whether has remembered consent', done => {
-    expectGetter('hasRememberedConsent', true).then(done);
-  });
+  it('should return whether has remembered consent', () =>
+    expectGetter('hasRememberedConsent', true));
 
-  it('should return whether has given consent', done => {
-    expectGetter('hasConsent', true).then(done);
-  });
+  it('should return whether has given consent', () => expectGetter('hasConsent', true));
 
-  it('should return remembered consent', done => {
-    expectGetter('getRememberedConsent', 99999).then(done);
-  });
+  it('should return remembered consent', () => expectGetter('getRememberedConsent', 99999));
 
-  it('should return whether consent is required', done => {
-    expectGetter('isConsentRequired', true).then(done);
-  });
+  it('should return whether consent is required', () => expectGetter('isConsentRequired', true));
 
   it('should require cookie consent', expectSimpleMethod('requireCookieConsent', []));
 
@@ -394,9 +377,8 @@ describe('MatomoTracker', () => {
 
   it('should forget cookie consent given', expectSimpleMethod('forgetCookieConsentGiven', []));
 
-  it('should return remembered cookie consent', done => {
-    expectGetter('getRememberedCookieConsent', 42).then(done);
-  });
+  it('should return remembered cookie consent', () =>
+    expectGetter('getRememberedCookieConsent', 42));
 
   it('should return whether cookies are enabled', () => expectGetter('areCookiesEnabled', true));
 
@@ -404,9 +386,7 @@ describe('MatomoTracker', () => {
 
   it('should forget user opt out', expectSimpleMethod('forgetUserOptOut', []));
 
-  it('should return whether user opted out', done => {
-    expectGetter('isUserOptedOut', true).then(done);
-  });
+  it('should return whether user opted out', () => expectGetter('isUserOptedOut', true));
 
   it('should disable cookies', expectSimpleMethod('disableCookies', []));
 
@@ -482,57 +462,35 @@ describe('MatomoTracker', () => {
     ),
   );
 
-  it('should get Matomo url', done => {
-    expectGetter('getMatomoUrl', 'http://fakeUrl').then(done);
-  });
+  it('should get Matomo url', () => expectGetter('getMatomoUrl', 'http://fakeUrl'));
 
-  it('should get Matomo url (deprecated)', done => {
-    expectGetter('getPiwikUrl', 'http://fakeUrl').then(done);
-  });
+  it('should get Matomo url (deprecated)', () => expectGetter('getPiwikUrl', 'http://fakeUrl'));
 
-  it('should get current url', done => {
-    expectGetter('getCurrentUrl', 'http://fakeUrl').then(done);
-  });
+  it('should get current url', () => expectGetter('getCurrentUrl', 'http://fakeUrl'));
 
-  it('should get link tracking timer', done => {
-    expectGetter('getLinkTrackingTimer', 42).then(done);
-  });
+  it('should get link tracking timer', () => expectGetter('getLinkTrackingTimer', 42));
 
-  it('should get visitor id', done => {
-    expectGetter('getVisitorId', 'foo').then(done);
-  });
+  it('should get visitor id', () => expectGetter('getVisitorId', 'foo'));
 
-  it('should get visitor info', done => {
-    expectGetter('getVisitorInfo', ['foo'] as unknown[]).then(done);
-  });
+  it('should get visitor info', () => expectGetter('getVisitorInfo', ['foo'] as unknown[]));
 
-  it('should get attribution info', done => {
-    expectGetter('getAttributionInfo', ['foo']).then(done);
-  });
+  it('should get attribution info', () => expectGetter('getAttributionInfo', ['foo']));
 
-  it('should get attribution campaign name', done => {
-    expectGetter('getAttributionCampaignName', 'test').then(done);
-  });
+  it('should get attribution campaign name', () =>
+    expectGetter('getAttributionCampaignName', 'test'));
 
-  it('should get attribution campaign keyword', done => {
-    expectGetter('getAttributionCampaignKeyword', 'test').then(done);
-  });
+  it('should get attribution campaign keyword', () =>
+    expectGetter('getAttributionCampaignKeyword', 'test'));
 
-  it('should get attribution referrer timestamp', done => {
-    expectGetter('getAttributionReferrerTimestamp', 'test').then(done);
-  });
+  it('should get attribution referrer timestamp', () =>
+    expectGetter('getAttributionReferrerTimestamp', 'test'));
 
-  it('should get attribution referrer url', done => {
-    expectGetter('getAttributionReferrerUrl', 'test').then(done);
-  });
+  it('should get attribution referrer url', () =>
+    expectGetter('getAttributionReferrerUrl', 'test'));
 
-  it('should get user id', done => {
-    expectGetter('getUserId', 'test').then(done);
-  });
+  it('should get user id', () => expectGetter('getUserId', 'test'));
 
-  it('should get has cookies', done => {
-    expectGetter('hasCookies', true).then(done);
-  });
+  it('should get has cookies', () => expectGetter('hasCookies', true));
 
   it('should get custom variable', async () => {
     // Given
@@ -542,7 +500,7 @@ describe('MatomoTracker', () => {
       },
     } as Partial<MatomoInstance> as MatomoInstance;
 
-    delegate.pushFn.and.callFake(fn => Promise.resolve(fn(mockInstance)));
+    delegate.pushFn.mockImplementation(fn => Promise.resolve(fn(mockInstance)));
 
     // When
     const result = await tracker.getCustomVariable(0, 'page');
@@ -558,7 +516,7 @@ describe('MatomoTracker', () => {
       },
     } as Partial<MatomoInstance> as MatomoInstance;
 
-    delegate.pushFn.and.callFake(fn => Promise.resolve(fn(mockInstance)));
+    delegate.pushFn.mockImplementation(fn => Promise.resolve(fn(mockInstance)));
 
     // When
     const result = await tracker.getCustomDimension(42);

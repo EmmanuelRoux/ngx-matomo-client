@@ -148,7 +148,7 @@ describe('MatomoOptOutFormComponent', () => {
     await fixture.whenStable();
 
     expect(iframe.styles).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         width: '100%',
         height: '100%',
         border: '1px solid red',
@@ -174,7 +174,7 @@ describe('MatomoOptOutFormComponent', () => {
     await fixture.whenStable();
 
     expect(iframe.attributes).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         src: 'http://localhost/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=blue&fontColor=red&fontSize=10px&fontFamily=Arial',
       }),
     );
@@ -207,7 +207,7 @@ describe('MatomoOptOutFormComponent', () => {
     await fixture.whenStable();
 
     expect(iframe.attributes).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         src:
           'https://my.custom.server.url.localhost:42/index.php?module=CoreAdminHome&action=optOut&language=fr' +
           `&backgroundColor=${encodeURIComponent(backgroundColor)}` +
