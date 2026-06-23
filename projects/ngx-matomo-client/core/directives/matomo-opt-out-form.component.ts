@@ -85,7 +85,7 @@ export class MatomoOptOutFormComponent {
    * <b>WARNING:</b> This component assumes the url you provide is safe to be used as an iframe
    * `src`. You have to make sure that this url is safe before using this component!
    */
-  readonly serverUrl = input<SafeResourceUrl | undefined>(undefined);
+  readonly serverUrl = input<SafeResourceUrl>();
 
   readonly iframeSrc = computed<SafeResourceUrl>(() => {
     const serverUrlOverride = this.serverUrl();
