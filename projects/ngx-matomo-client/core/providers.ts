@@ -1,5 +1,5 @@
 import {
-  ENVIRONMENT_INITIALIZER,
+  provideEnvironmentInitializer,
   EnvironmentProviders,
   inject,
   makeEnvironmentProviders,
@@ -41,13 +41,13 @@ export const enum CoreMatomoFeatureKind {
 
 export interface MatomoFeature {
   readonly kind: MatomoFeatureKind;
-  [PRIVATE_MATOMO_PROVIDERS]: Provider[];
+  [PRIVATE_MATOMO_PROVIDERS]: (Provider | EnvironmentProviders)[];
   [PRIVATE_MATOMO_CHECKS]?: (features: MatomoFeatureKind[]) => void;
 }
 
 export function createMatomoFeature(
   kind: MatomoFeatureKind,
-  providers: Provider[],
+  providers: (Provider | EnvironmentProviders)[],
   checks?: (features: MatomoFeatureKind[]) => void,
 ): MatomoFeature {
   return { kind, [PRIVATE_MATOMO_PROVIDERS]: providers, [PRIVATE_MATOMO_CHECKS]: checks };
@@ -90,7 +90,7 @@ export function provideMatomo(
   config: MatomoConfiguration | (() => MatomoConfiguration),
   ...features: MatomoFeature[]
 ): EnvironmentProviders {
-  const providers: Provider[] = [
+  const providers: (Provider | EnvironmentProviders)[] = [
     MatomoTracker,
     ScriptInjector,
     {
@@ -113,13 +113,7 @@ export function provideMatomo(
       provide: ASYNC_INTERNAL_MATOMO_CONFIGURATION,
       useFactory: () => inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION).configuration,
     },
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue() {
-        inject(MatomoInitializerService).initialize();
-      },
-    },
+    provideEnvironmentInitializer(() => inject(MatomoInitializerService).initialize()),
   ];
   const featuresKind: MatomoFeatureKind[] = [];
 
