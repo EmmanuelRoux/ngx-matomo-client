@@ -3,7 +3,6 @@ import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 
 @Directive({
   selector: '[matomoTrackForms]',
-  standalone: true,
   exportAs: 'matomoTrackForms',
 })
 export class TrackFormsDirective implements AfterViewInit {

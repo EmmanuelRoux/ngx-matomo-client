@@ -1,17 +1,12 @@
-import {
-  booleanAttribute,
-  Directive,
-  ElementRef,
-  HostListener,
-  inject,
-  Input,
-} from '@angular/core';
+import { booleanAttribute, Directive, ElementRef, inject, Input } from '@angular/core';
 import { throwFormNotFoundError } from './errors';
 import { TrackFormDirective } from './track-form.directive';
 
 @Directive({
   selector: '[matomoTrackFormSubmit]',
-  standalone: true,
+  host: {
+    '(click)': 'trackSubmit()',
+  },
 })
 export class TrackFormSubmitDirective {
   private readonly elementRef: ElementRef<Element> = inject(ElementRef);
@@ -30,7 +25,6 @@ export class TrackFormSubmitDirective {
     }
   }
 
-  @HostListener('click')
   trackSubmit(): void {
     this.form.trackSubmit();
 
