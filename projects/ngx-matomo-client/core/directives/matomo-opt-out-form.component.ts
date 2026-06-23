@@ -1,11 +1,11 @@
 import {
   Component,
-  Input,
+  input,
   LOCALE_ID,
-  OnChanges,
-  OnInit,
+  computed,
+  resource,
+  linkedSignal,
   SecurityContext,
-  SimpleChanges,
   inject,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -48,44 +48,35 @@ function missingServerUrlError(): Error {
   templateUrl: './matomo-opt-out-form.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
 })
-export class MatomoOptOutFormComponent implements OnInit, OnChanges {
+export class MatomoOptOutFormComponent {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly config = inject<Promise<InternalMatomoConfiguration>>(
     ASYNC_INTERNAL_MATOMO_CONFIGURATION,
   );
+  private readonly configResource = resource({ loader: () => this.config });
 
-  private _defaultServerUrl?: string;
-  private _defaultServerUrlInitialized = false;
-  private _border: string = DEFAULT_BORDER;
-  private _width: string = DEFAULT_WIDTH;
-  private _height: string = DEFAULT_HEIGHT;
-  private _iframeSrc: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
-  private _serverUrlOverride?: SafeResourceUrl;
-
+  private readonly defaultServerUrl = linkedSignal(() => {
+    const config = this.configResource.value();
+    if (config && isAutoConfigurationMode(config) && isExplicitTrackerConfiguration(config)) {
+      return getTrackersConfiguration(config)[0].trackerUrl;
+    }
+    return undefined;
+  });
+  readonly border = input(DEFAULT_BORDER, { transform: coerceCssSizeBinding });
+  readonly width = input(DEFAULT_WIDTH, { transform: coerceCssSizeBinding });
+  readonly height = input(DEFAULT_HEIGHT, { transform: coerceCssSizeBinding });
   /**
    * Set a custom locale for the opt-out form
    * <br>
    * Default is the current app locale available in LOCALE_ID token
    */
-  @Input() locale: string;
+  readonly locale = input<string>(inject(LOCALE_ID, { optional: true }) ?? '');
   /** Font color (note that Matomo currently only supports hexadecimal without leading hash notation) */
-  @Input() color: string = '';
+  readonly color = input<string>('');
   /** Background color (note that Matomo currently only supports hexadecimal without leading hash notation) */
-  @Input() backgroundColor: string = '';
-  @Input() fontSize: string = '';
-  @Input() fontFamily: string = '';
-
-  constructor() {
-    const locale = inject(LOCALE_ID, { optional: true }) ?? '';
-
-    // Set default locale
-    this.locale = locale;
-  }
-
-  get serverUrl(): SafeResourceUrl | undefined {
-    return this._serverUrlOverride;
-  }
-
+  readonly backgroundColor = input<string>('');
+  readonly fontSize = input<string>('');
+  readonly fontFamily = input<string>('');
   /**
    * Set a custom Matomo server url to be used for iframe generation
    * <br>
@@ -94,92 +85,37 @@ export class MatomoOptOutFormComponent implements OnInit, OnChanges {
    * <b>WARNING:</b> This component assumes the url you provide is safe to be used as an iframe
    * `src`. You have to make sure that this url is safe before using this component!
    */
-  @Input()
-  set serverUrl(value: SafeResourceUrl | undefined) {
-    this._serverUrlOverride = value;
-  }
+  readonly serverUrl = input<SafeResourceUrl>();
 
-  get iframeSrc(): SafeResourceUrl | undefined {
-    return this._iframeSrc;
-  }
+  readonly iframeSrc = computed<SafeResourceUrl>(() => {
+    const serverUrlOverride = this.serverUrl();
+    const defaultServerUrl = this.defaultServerUrl();
+    const initialized = this.configResource.hasValue();
 
-  get height(): string {
-    return this._height;
-  }
+    let serverUrl: string | null | undefined;
 
-  @Input()
-  set height(value: string) {
-    this._height = coerceCssSizeBinding(value);
-  }
-
-  get width(): string {
-    return this._width;
-  }
-
-  @Input()
-  set width(value: string) {
-    this._width = coerceCssSizeBinding(value);
-  }
-
-  get border(): string {
-    return this._border;
-  }
-
-  @Input()
-  set border(value: string) {
-    this._border = coerceCssSizeBinding(value);
-  }
-
-  ngOnInit() {
-    this.updateUrl();
-
-    this.config.then(config => {
-      if (isAutoConfigurationMode(config) && isExplicitTrackerConfiguration(config)) {
-        this._defaultServerUrl = getTrackersConfiguration(config)[0].trackerUrl;
-      }
-
-      this._defaultServerUrlInitialized = true;
-      this.updateUrl();
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (
-      'serverUrl' in changes ||
-      'locale' in changes ||
-      'color' in changes ||
-      'backgroundColor' in changes ||
-      'fontSize' in changes ||
-      'fontFamily' in changes
-    ) {
-      this.updateUrl();
-    }
-  }
-
-  private updateUrl(): void {
-    let serverUrl: string | null | undefined = this._defaultServerUrl;
-
-    if (this._serverUrlOverride) {
-      serverUrl = this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this._serverUrlOverride);
+    if (serverUrlOverride) {
+      serverUrl = this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, serverUrlOverride);
+    } else {
+      serverUrl = defaultServerUrl;
     }
 
     if (!serverUrl) {
-      if (this._defaultServerUrlInitialized) {
+      if (initialized) {
         throw missingServerUrlError();
-      } else {
-        return;
       }
+      return this.sanitizer.bypassSecurityTrustResourceUrl('');
     }
 
     const url = URL_PATTERN.replace('{SERVER}', serverUrl)
-      .replace('{LOCALE}', encodeURIComponent(this.locale))
-      .replace('{COLOR}', encodeURIComponent(this.color))
-      .replace('{BG_COLOR}', encodeURIComponent(this.backgroundColor))
-      .replace('{FONT_SIZE}', encodeURIComponent(this.fontSize))
-      .replace('{FONT_FAMILY}', encodeURIComponent(this.fontFamily));
+      .replace('{LOCALE}', encodeURIComponent(this.locale()))
+      .replace('{COLOR}', encodeURIComponent(this.color()))
+      .replace('{BG_COLOR}', encodeURIComponent(this.backgroundColor()))
+      .replace('{FONT_SIZE}', encodeURIComponent(this.fontSize()))
+      .replace('{FONT_FAMILY}', encodeURIComponent(this.fontFamily()));
 
-    this._iframeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  });
 
   static ngAcceptInputType_border: CssSizeInput;
   static ngAcceptInputType_width: CssSizeInput;

@@ -1,10 +1,10 @@
 import {
-  AfterViewInit,
+  afterRenderEffect,
   booleanAttribute,
   Directive,
   ElementRef,
   inject,
-  Input,
+  input,
 } from '@angular/core';
 import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
 
@@ -12,44 +12,26 @@ import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
   selector: '[matomoTrackForm]',
   exportAs: 'matomoTrackForm',
   host: {
+    'data-matomo-form': '',
+    '[attr.data-matomo-ignore]': 'matomoIgnore() ? "" : null',
+    '[attr.data-matomo-name]': 'matomoTrackForm() || null',
     '(submit)': 'trackFormConversionOnSubmit()',
   },
 })
-export class TrackFormDirective implements AfterViewInit {
+export class TrackFormDirective {
   private readonly elementRef: ElementRef<Element> = inject(ElementRef);
   private readonly tracker = inject(MatomoFormAnalytics);
-  private initialized = false;
 
   /** If true, will track a conversion after form submit */
-  @Input({ transform: booleanAttribute }) trackConversionOnSubmit = false;
-
-  @Input({ transform: booleanAttribute }) set matomoIgnore(ignore: boolean) {
-    if (ignore) {
-      this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
-    } else {
-      this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
-    }
-  }
-
-  @Input() set matomoTrackForm(name: string | null | undefined) {
-    if (name) {
-      this.elementRef.nativeElement.setAttribute('data-matomo-name', name);
-    } else {
-      this.elementRef.nativeElement.removeAttribute('data-matomo-name');
-    }
-
-    if (this.initialized) {
-      this.track();
-    }
-  }
+  readonly trackConversionOnSubmit = input(false, { transform: booleanAttribute });
+  readonly matomoIgnore = input<boolean>(undefined, { transform: booleanAttribute });
+  readonly matomoTrackForm = input<string | null>();
 
   constructor() {
-    this.elementRef.nativeElement.setAttribute('data-matomo-form', '');
-  }
-
-  ngAfterViewInit(): void {
-    this.track();
-    this.initialized = true;
+    afterRenderEffect(() => {
+      this.matomoTrackForm();
+      this.track();
+    });
   }
 
   track(): void {
@@ -65,7 +47,7 @@ export class TrackFormDirective implements AfterViewInit {
   }
 
   trackFormConversionOnSubmit(): void {
-    if (this.trackConversionOnSubmit) {
+    if (this.trackConversionOnSubmit()) {
       this.trackConversion();
     }
   }
