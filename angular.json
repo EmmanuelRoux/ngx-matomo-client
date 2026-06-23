@@ -96,6 +96,9 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "test": {
+              "polyfills": ["zone.js", "zone.js/testing", "zone.js/plugins/vitest-patch"]
             }
           }
         },
@@ -117,15 +120,11 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "projects/demo/src/test.ts",
-            "polyfills": ["projects/demo/src/polyfills.ts"],
+            "buildTarget": "demo:build:test",
             "tsConfig": "projects/demo/tsconfig.spec.json",
-            "karmaConfig": "projects/demo/karma.conf.js",
-            "assets": ["projects/demo/src/favicon.ico", "projects/demo/src/assets"],
-            "styles": ["projects/demo/src/styles.scss"],
-            "scripts": []
+            "runnerConfig": "projects/demo/vitest.config.ts"
           }
         },
         "lint": {
