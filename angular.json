@@ -22,13 +22,26 @@
             }
           }
         },
-        "test": {
-          "builder": "@angular/build:karma",
+        "build-test": {
+          "builder": "@angular/build:application",
           "options": {
-            "main": "projects/ngx-matomo-client/test.ts",
+            "browser": "projects/ngx-matomo-client/test.ts",
+            "outputPath": "dist/ngx-matomo-client-test",
+            "tsConfig": "projects/ngx-matomo-client/tsconfig.spec.json"
+          },
+          "configurations": {
+            "test": {
+              "polyfills": ["zone.js", "zone.js/testing", "zone.js/plugins/vitest-patch"]
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "ngx-matomo-client:build-test:test",
             "tsConfig": "projects/ngx-matomo-client/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-matomo-client/karma.conf.js",
-            "codeCoverageExclude": ["projects/ngx-matomo-client/core/testing/**"]
+            "runnerConfig": "projects/ngx-matomo-client/vitest.config.ts",
+            "coverageExclude": ["projects/ngx-matomo-client/core/testing/**"]
           }
         },
         "lint": {
