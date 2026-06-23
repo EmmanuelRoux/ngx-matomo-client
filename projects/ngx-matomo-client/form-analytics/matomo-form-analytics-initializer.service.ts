@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { inject, Service, OnDestroy, PLATFORM_ID } from '@angular/core';
 import {
   MatomoTracker,
   ɵappendTrailingSlash as appendTrailingSlash,
@@ -16,7 +16,7 @@ import { MatomoFormAnalytics } from './matomo-form-analytics.service';
 
 const DEFAULT_SCRIPT_SUFFIX = 'plugins/FormAnalytics/tracker.min.js';
 
-@Injectable()
+@Service({ autoProvided: false })
 export class MatomoFormAnalyticsInitializer implements OnDestroy {
   private readonly config = inject(INTERNAL_MATOMO_FORM_ANALYTICS_CONFIGURATION);
   private readonly coreConfig = inject(ASYNC_INTERNAL_MATOMO_CONFIGURATION);

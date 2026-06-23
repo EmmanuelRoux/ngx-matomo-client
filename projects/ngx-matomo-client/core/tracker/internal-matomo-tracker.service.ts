@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, NgZone, PLATFORM_ID } from '@angular/core';
+import { inject, Service, NgZone, PLATFORM_ID } from '@angular/core';
 import { initializeMatomoHolder, MatomoHolder } from '../holder';
 import { Getters, NonEmptyArray, PrefixedType } from '../utils/types';
 import { INTERNAL_MATOMO_CONFIGURATION } from './configuration';
@@ -30,7 +30,7 @@ export function createInternalMatomoTracker(): InternalMatomoTrackerType {
   return disabled || !isBrowser ? new NoopMatomoTracker() : new InternalMatomoTracker();
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
   private readonly ngZone = inject(NgZone);
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
@@ -67,7 +67,7 @@ export class InternalMatomoTracker<MATOMO, PREFIX extends string = ''> {
   }
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class NoopMatomoTracker<
   MATOMO = unknown,
   PREFIX extends string = '',

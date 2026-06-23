@@ -1,4 +1,4 @@
-import { inject, Injectable, InjectionToken } from '@angular/core';
+import { inject, Service, InjectionToken } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { MatomoECommerceView, MatomoTracker } from 'ngx-matomo-client/core';
 import { Observable } from 'rxjs';
@@ -56,7 +56,7 @@ export interface MatomoRouteData {
  *   },
  * ];
  *
- * @Injectable()
+ * @Service({ autoProvided: false })
  * export class MyCustomInterceptor extends MatomoRouteDataInterceptor {
  *   readonly dataKey = 'myCustomAnalyticsKey';
  * }
@@ -68,7 +68,7 @@ export interface MatomoRouteData {
  * @see MatomoRouteInterceptorBase
  * @see MatomoRouteData
  */
-@Injectable()
+@Service({ autoProvided: false })
 export class MatomoRouteDataInterceptor extends MatomoRouteInterceptorBase<
   MatomoRouteData | undefined
 > {

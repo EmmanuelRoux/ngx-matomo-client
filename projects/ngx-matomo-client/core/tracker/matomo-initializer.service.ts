@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Service, PLATFORM_ID } from '@angular/core';
 import { initializeMatomoHolder } from '../holder';
 import { runOnce } from '../utils/function';
 import { ScriptInjector } from '../utils/script-injector';
@@ -54,7 +54,7 @@ export class NoopMatomoInitializer implements PublicInterface<MatomoInitializerS
   }
 }
 
-@Injectable()
+@Service({ autoProvided: false })
 export class MatomoInitializerService {
   private readonly config = inject(INTERNAL_MATOMO_CONFIGURATION);
   private readonly deferredConfig = inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION);

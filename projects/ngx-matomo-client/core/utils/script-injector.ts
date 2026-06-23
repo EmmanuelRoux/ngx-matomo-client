@@ -1,8 +1,8 @@
-import { inject, Injectable, INJECTOR, runInInjectionContext, DOCUMENT } from '@angular/core';
+import { inject, Service, INJECTOR, runInInjectionContext, DOCUMENT } from '@angular/core';
 import { MATOMO_SCRIPT_FACTORY } from '../tracker/script-factory';
 import { requireNonNull } from './coercion';
 
-@Injectable()
+@Service({ autoProvided: false })
 export class ScriptInjector {
   private readonly scriptFactory = inject(MATOMO_SCRIPT_FACTORY);
   private readonly injector = inject(INJECTOR);
