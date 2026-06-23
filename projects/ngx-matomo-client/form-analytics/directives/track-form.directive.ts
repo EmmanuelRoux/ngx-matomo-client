@@ -1,8 +1,7 @@
 import {
-  AfterViewInit,
+  afterRenderEffect,
   booleanAttribute,
   Directive,
-  effect,
   ElementRef,
   inject,
   input,
@@ -13,13 +12,15 @@ import { MatomoFormAnalytics } from '../matomo-form-analytics.service';
   selector: '[matomoTrackForm]',
   exportAs: 'matomoTrackForm',
   host: {
+    'data-matomo-form': '',
+    '[attr.data-matomo-ignore]': 'matomoIgnore() ? "" : null',
+    '[attr.data-matomo-name]': 'matomoTrackForm() || null',
     '(submit)': 'trackFormConversionOnSubmit()',
   },
 })
-export class TrackFormDirective implements AfterViewInit {
+export class TrackFormDirective {
   private readonly elementRef: ElementRef<Element> = inject(ElementRef);
   private readonly tracker = inject(MatomoFormAnalytics);
-  private initialized = false;
 
   /** If true, will track a conversion after form submit */
   readonly trackConversionOnSubmit = input(false, { transform: booleanAttribute });
@@ -27,32 +28,10 @@ export class TrackFormDirective implements AfterViewInit {
   readonly matomoTrackForm = input<string | null>();
 
   constructor() {
-    effect(() => {
-      const ignore = this.matomoIgnore();
-      if (ignore) {
-        this.elementRef.nativeElement.setAttribute('data-matomo-ignore', '');
-      } else {
-        this.elementRef.nativeElement.removeAttribute('data-matomo-ignore');
-      }
+    afterRenderEffect(() => {
+      this.matomoTrackForm();
+      this.track();
     });
-    effect(() => {
-      const name = this.matomoTrackForm();
-      if (name) {
-        this.elementRef.nativeElement.setAttribute('data-matomo-name', name);
-      } else {
-        this.elementRef.nativeElement.removeAttribute('data-matomo-name');
-      }
-
-      if (this.initialized) {
-        this.track();
-      }
-    });
-    this.elementRef.nativeElement.setAttribute('data-matomo-form', '');
-  }
-
-  ngAfterViewInit(): void {
-    this.track();
-    this.initialized = true;
   }
 
   track(): void {
