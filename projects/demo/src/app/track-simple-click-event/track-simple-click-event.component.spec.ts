@@ -10,12 +10,7 @@ describe('TrackSimpleClickEventComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [TrackSimpleClickEventComponent],
-      providers: [
-        provideMatomoTesting({
-          trackerUrl: '',
-          siteId: '',
-        }),
-      ],
+      providers: [provideMatomoTesting()],
       schemas: [NO_ERRORS_SCHEMA],
     });
   });

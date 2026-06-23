@@ -8,12 +8,7 @@ describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, AppComponent],
-      providers: [
-        provideMatomoTesting({
-          trackerUrl: '',
-          siteId: '',
-        }),
-      ],
+      providers: [provideMatomoTesting()],
       schemas: [NO_ERRORS_SCHEMA],
     });
   });
