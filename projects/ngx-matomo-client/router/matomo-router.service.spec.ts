@@ -13,7 +13,7 @@ import { MatomoRouterConfiguration, NavigationEndComparator } from './configurat
 import { invalidInterceptorsProviderError } from './errors';
 import { MATOMO_ROUTER_INTERCEPTORS, MatomoRouterInterceptor } from './interceptor';
 import { MatomoRouter } from './matomo-router.service';
-import { MATOMO_PAGE_TITLE_PROVIDER, PageTitleProvider } from './page-title-providers';
+import { MATOMO_PAGE_TITLE_PROVIDER } from './page-title-providers';
 import { MATOMO_PAGE_URL_PROVIDER, PageUrlProvider } from './page-url-provider';
 import { withRouter } from './providers';
 
@@ -37,13 +37,13 @@ describe('MatomoRouter', () => {
           provide: MATOMO_PAGE_TITLE_PROVIDER,
           useValue: {
             getCurrentPageTitle: vi.fn().mockReturnValue(of('Custom page title')),
-          } as unknown as Mocked<PageTitleProvider>,
+          },
         },
         {
           provide: MATOMO_PAGE_URL_PROVIDER,
           useValue: {
             getCurrentPageUrl: vi.fn().mockReturnValue(of('/custom-url')),
-          } as unknown as Mocked<PageUrlProvider>,
+          },
         },
         provideTestingTracker(),
         ...providers,

@@ -111,7 +111,7 @@ describe('MatomoTrackerDirective', () => {
         provideZoneChangeDetection(),
         {
           provide: MatomoTracker,
-          useValue: { trackEvent: vi.fn() } as unknown as Mocked<MatomoTracker>,
+          useValue: { trackEvent: vi.fn() },
         },
       ],
     }).compileComponents();

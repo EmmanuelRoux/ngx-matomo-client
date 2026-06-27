@@ -48,7 +48,7 @@ describe('TrackFormDirective', () => {
             trackForm: vi.fn(),
             trackFormSubmit: vi.fn(),
             trackFormConversion: vi.fn(),
-          } as unknown as Mocked<MatomoFormAnalytics>,
+          },
         },
       ],
     }).compileComponents();
