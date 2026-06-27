@@ -10,12 +10,7 @@ describe('TrackPageViewWithoutRouterComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [TrackPageViewWithoutRouterComponent],
-      providers: [
-        provideMatomoTesting({
-          trackerUrl: '',
-          siteId: '',
-        }),
-      ],
+      providers: [provideMatomoTesting()],
       schemas: [NO_ERRORS_SCHEMA],
     });
   });

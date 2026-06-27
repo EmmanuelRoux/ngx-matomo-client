@@ -21,8 +21,8 @@ describe('FormAnalytics > providers', () => {
   it('should provide basic Matomo providers with FormAnalytics feature', async () => {
     await setUp([provideMatomo({ trackerUrl: 'my-tracker', siteId: 42 }, withFormAnalytics())]);
 
-    expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
-    expect(TestBed.inject(MatomoFormAnalytics)).toEqual(jasmine.any(MatomoFormAnalytics));
+    expect(TestBed.inject(MatomoTracker)).toEqual(expect.any(MatomoTracker));
+    expect(TestBed.inject(MatomoFormAnalytics)).toEqual(expect.any(MatomoFormAnalytics));
     expect(TestBed.inject(MATOMO_FORM_ANALYTICS_CONFIGURATION)).toBeUndefined();
     expect(TestBed.inject(INTERNAL_MATOMO_FORM_ANALYTICS_CONFIGURATION)).toEqual({
       autoScan: true,
@@ -45,8 +45,8 @@ describe('FormAnalytics > providers', () => {
       ),
     ]);
 
-    expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
-    expect(TestBed.inject(MatomoFormAnalytics)).toEqual(jasmine.any(MatomoFormAnalytics));
+    expect(TestBed.inject(MatomoTracker)).toEqual(expect.any(MatomoTracker));
+    expect(TestBed.inject(MatomoFormAnalytics)).toEqual(expect.any(MatomoFormAnalytics));
     expect(TestBed.inject(MATOMO_FORM_ANALYTICS_CONFIGURATION)).toEqual({
       autoScan: false,
       autoScanDelay: 0,

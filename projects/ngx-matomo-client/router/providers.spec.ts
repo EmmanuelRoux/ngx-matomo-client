@@ -42,8 +42,8 @@ describe('providers', () => {
       provideMatomo({ trackerUrl: 'my-tracker', siteId: 42 }, withRouter({ delay: 42 })),
     ]);
 
-    expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
-    expect(TestBed.inject(MatomoRouter)).toEqual(jasmine.any(MatomoRouter));
+    expect(TestBed.inject(MatomoTracker)).toEqual(expect.any(MatomoTracker));
+    expect(TestBed.inject(MatomoRouter)).toEqual(expect.any(MatomoRouter));
     expect(TestBed.inject(MATOMO_ROUTER_CONFIGURATION)).toEqual({ delay: 42 });
     expect(TestBed.inject(MATOMO_ROUTER_ENABLED)).toEqual(true);
   });
@@ -107,7 +107,7 @@ describe('providers', () => {
     ]);
 
     expect(TestBed.inject(MATOMO_ROUTER_INTERCEPTORS)).toEqual([
-      jasmine.any(MatomoRouteDataInterceptor),
+      expect.any(MatomoRouteDataInterceptor),
     ]);
     expect(TestBed.inject(MATOMO_ROUTE_DATA_KEY)).toEqual(DEFAULT_DATA_KEY);
   });
@@ -122,7 +122,7 @@ describe('providers', () => {
     ]);
 
     expect(TestBed.inject(MATOMO_ROUTER_INTERCEPTORS)).toEqual([
-      jasmine.any(MatomoRouteDataInterceptor),
+      expect.any(MatomoRouteDataInterceptor),
     ]);
     expect(TestBed.inject(MATOMO_ROUTE_DATA_KEY)).toEqual('myCustomKey');
   });
@@ -173,7 +173,7 @@ describe('providers', () => {
 
   it('should throw when using router features without withRouter()', () => {
     class MyInterceptor implements MatomoRouterInterceptor {
-      readonly beforePageTrack = jasmine.createSpy('beforePageTrack');
+      readonly beforePageTrack = vi.fn();
     }
 
     expect(() =>

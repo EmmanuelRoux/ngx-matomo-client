@@ -65,6 +65,7 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm install
+      - run: npx playwright install --with-deps chromium
       - run: npm run build:lib
       - run: npm run test:ci
       - uses: actions/upload-artifact@v7

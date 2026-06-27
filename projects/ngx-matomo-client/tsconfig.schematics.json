@@ -17,7 +17,7 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es6",
-    "types": ["jasmine", "node"]
+    "types": ["vitest/globals", "node"]
   },
   "include": ["schematics/**/*"],
   "exclude": ["schematics/*/files/**/*"]

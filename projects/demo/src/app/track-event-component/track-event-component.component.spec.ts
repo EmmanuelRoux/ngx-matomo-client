@@ -10,12 +10,7 @@ describe('TrackEventComponentComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [TrackEventComponentComponent],
-      providers: [
-        provideMatomoTesting({
-          trackerUrl: '',
-          siteId: '',
-        }),
-      ],
+      providers: [provideMatomoTesting()],
       schemas: [NO_ERRORS_SCHEMA],
     });
   });

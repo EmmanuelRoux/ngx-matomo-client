@@ -17,7 +17,7 @@ describe('providers', () => {
   }
 
   it('should provide basic Matomo providers with static configuration', async () => {
-    const fakeInitializer = jasmine.createSpyObj<MatomoInitializerService>(['initialize']);
+    const fakeInitializer = { initialize: vi.fn() };
     const config: MatomoConfiguration = { trackerUrl: 'my-tracker', siteId: 42 };
 
     await setUp([
@@ -28,13 +28,13 @@ describe('providers', () => {
       },
     ]);
 
-    expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
+    expect(TestBed.inject(MatomoTracker)).toEqual(expect.any(MatomoTracker));
     expect(TestBed.inject(MATOMO_CONFIGURATION)).toEqual(config);
     expect(fakeInitializer.initialize).toHaveBeenCalledTimes(1);
   });
 
   it('should provide basic Matomo providers with configuration factory', async () => {
-    const fakeInitializer = jasmine.createSpyObj<MatomoInitializerService>(['initialize']);
+    const fakeInitializer = { initialize: vi.fn() };
     const trackerUrl = 'my-tracker';
     const config: MatomoConfiguration = { trackerUrl, siteId: 42 };
     const trackerUrlToken = new InjectionToken<string>('trackerUrl');
@@ -51,21 +51,19 @@ describe('providers', () => {
       },
     ]);
 
-    expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
+    expect(TestBed.inject(MatomoTracker)).toEqual(expect.any(MatomoTracker));
     expect(TestBed.inject(MATOMO_CONFIGURATION)).toEqual(config);
     expect(fakeInitializer.initialize).toHaveBeenCalledTimes(1);
   });
 
   it('should provide basic Matomo providers with custom script factory', async () => {
-    const scriptFactory = jasmine
-      .createSpy('scriptFactory')
-      .and.callFake(createDefaultMatomoScriptElement);
+    const scriptFactory = vi.fn().mockImplementation(createDefaultMatomoScriptElement);
 
     await setUp([
       provideMatomo({ trackerUrl: 'my-tracker', siteId: 42 }, withScriptFactory(scriptFactory)),
     ]);
 
-    expect(TestBed.inject(MatomoTracker)).toEqual(jasmine.any(MatomoTracker));
+    expect(TestBed.inject(MatomoTracker)).toEqual(expect.any(MatomoTracker));
     expect(scriptFactory).toHaveBeenCalledTimes(1);
   });
 });
