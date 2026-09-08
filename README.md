@@ -350,6 +350,86 @@ Following properties are available:
 | `ecommerce.price`           | `number` |
 | `ecommerce.quantity`        | `number` |
 
+#### Using page url provider
+
+Sometimes you may need to customize the tracked page view URL. To achieve this you can define a custom page url provider to intercept the tracked url and return a transformed one using some custom logic.
+
+1. Create your custom provider:
+
+Provider can be either a `PageUrlProviderFn` function or a class implementing `PageUrlProvider` interface. The resolved URL is passed to `tracker.setCustomUrl(pageUrl)`.
+
+```typescript
+import { PageUrlProvider, PageUrlProviderFn } from 'ngx-matomo-client';
+
+/** A simple functional provider */
+export const myProviderFn: PageUrlProviderFn = (
+  event: NavigationEnd,
+): Observable<string> | Promise<string> => {
+  /* Custom transformation logic */
+  const url = 'custom-prefix/' + event.urlAfterRedirects;
+  return of(url);
+};
+
+/** A class provider must implement `PageUrlProvider` */
+@Injectable()
+export class MySimpleProvider implements PageUrlProvider {
+  getCurrentPageUrl(event: NavigationEnd): Observable<string> | Promise<string> {
+    /* Custom transformation logic */
+    const url = 'custom-prefix/' + event.urlAfterRedirects;
+    return of(url);
+  }
+}
+```
+
+2. And provide it to your application.
+
+> Note that `withPageUrlProvider()` requires `withRouter()` to be defined.
+
+```typescript
+import { withPageUrlProvider } from 'ngx-matomo-client';
+
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {
+        /* ... */
+      },
+      withRouter(),
+
+      // Add provider here:
+      withPageUrlProvider(provider),
+    ),
+  ],
+});
+```
+
+<details>
+  <summary>
+    See equivalent configuration with <code>@NgModule</code>
+  </summary>
+
+Unlike `interceptors`, the page url provider is not a `MatomoRouterModule.forRoot()` config option: it must be supplied as a standalone provider in the module's `providers` array.
+
+```typescript
+import { MatomoRouterModule, providePageUrlProvider } from 'ngx-matomo-client';
+
+@NgModule({
+  imports: [
+    MatomoModule.forRoot({
+      /* ... */
+    }),
+    MatomoRouterModule.forRoot(),
+  ],
+  providers: [
+    // Add provider here:
+    providePageUrlProvider(provider),
+  ],
+})
+export class AppModule {}
+```
+
+</details>
+
 #### Using custom interceptor
 
 If you need custom logic to extract data, define a custom interceptor implementation.
