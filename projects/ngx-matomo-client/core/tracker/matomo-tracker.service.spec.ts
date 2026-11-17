@@ -181,6 +181,15 @@ describe('MatomoTracker', () => {
     expectSimpleMethod('setIgnoreCampaignsForReferrers', [['foo', 'bar']]),
   );
 
+  it('should get ignore campaign attribution for sources', done => {
+    expectGetter('getIgnoreCampaignAttributionForSources', ['foo', 'bar']).then(done);
+  });
+
+  it(
+    'should set ignore campaign attribution for sources',
+    expectSimpleMethod('setIgnoreCampaignAttributionForSources', [['foo', 'bar']]),
+  );
+
   it('should set document title', expectSimpleMethod('setDocumentTitle', ['test']));
 
   it('should set domains', expectSimpleMethod('setDomains', [['domain1', 'domain2']]));

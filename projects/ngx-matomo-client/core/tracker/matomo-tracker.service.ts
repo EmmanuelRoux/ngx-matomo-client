@@ -102,6 +102,8 @@ export interface MatomoInstance {
   getExcludedReferrers(): string[];
 
   getIgnoreCampaignsForReferrers(): string[];
+
+  getIgnoreCampaignAttributionForSources(): string[];
 }
 
 @Service({ autoProvided: false })
@@ -364,6 +366,20 @@ export class MatomoTracker {
    */
   getIgnoreCampaignsForReferrers(): Promise<string[]> {
     return this.delegate.get('getIgnoreCampaignsForReferrers');
+  }
+
+  /**
+   * Set array of sources (referrers) for which campaign attribution should be ignored
+   */
+  setIgnoreCampaignAttributionForSources(sources: string | string[]): void {
+    this.delegate.push(['setIgnoreCampaignAttributionForSources', sources]);
+  }
+
+  /**
+   * Get array of sources (referrers) for which campaign attribution should be ignored
+   */
+  getIgnoreCampaignAttributionForSources(): Promise<string[]> {
+    return this.delegate.get('getIgnoreCampaignAttributionForSources');
   }
 
   /**
