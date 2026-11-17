@@ -22,6 +22,7 @@ import {
   createMatomoInitializer,
   MatomoInitializerService,
 } from './tracker/matomo-initializer.service';
+import { InternalMatomoLoadingStatus } from './tracker/loading-status';
 import { MatomoTracker } from './tracker/matomo-tracker.service';
 import { MATOMO_SCRIPT_FACTORY, MatomoScriptFactory } from './tracker/script-factory';
 import { ScriptInjector } from './utils/script-injector';
@@ -93,6 +94,7 @@ export function provideMatomo(
   const providers: (Provider | EnvironmentProviders)[] = [
     MatomoTracker,
     ScriptInjector,
+    InternalMatomoLoadingStatus,
     {
       provide: InternalMatomoTracker,
       useFactory: createInternalMatomoTracker,

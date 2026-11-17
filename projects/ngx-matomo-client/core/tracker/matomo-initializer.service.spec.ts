@@ -14,7 +14,9 @@ import { MatomoFeature, provideMatomo, withScriptFactory } from '../providers';
 import { MatomoTestingTracker, provideTestingTracker } from '../testing/testing-tracker';
 import { MATOMO_ROUTER_ENABLED, MatomoConfiguration, MatomoConsentMode } from './configuration';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
+import { MatomoLoadingStatus } from './loading-status';
 import { MatomoInitializerService } from './matomo-initializer.service';
+import { MatomoTracker } from './matomo-tracker.service';
 import { createDefaultMatomoScriptElement } from './script-factory';
 
 declare let window: MatomoHolder;
@@ -32,6 +34,7 @@ describe('MatomoInitializerService', () => {
     tracker: MatomoTestingTracker;
     service: MatomoInitializerService;
     injectedScript: Signal<HTMLScriptElement | undefined>;
+    loadingStatus: Signal<MatomoLoadingStatus>;
   }> {
     const injectedScript = new BehaviorSubject<HTMLScriptElement | undefined>(undefined);
 
@@ -58,6 +61,7 @@ describe('MatomoInitializerService', () => {
       service: TestBed.inject(MatomoInitializerService),
       tracker: TestBed.inject(MatomoTestingTracker),
       injectedScript: TestBed.inject(injectedScriptSpyToken),
+      loadingStatus: TestBed.inject(MatomoTracker).loadingStatus,
     };
   }
 
@@ -99,7 +103,11 @@ describe('MatomoInitializerService', () => {
     expect(script).toBeUndefined();
   }
 
-  beforeEach(() => delete (window as Partial<MatomoHolder>)._paq);
+  beforeEach(() => {
+    delete (window as Partial<MatomoHolder>)._paq;
+    delete (window as Partial<MatomoHolder>).Matomo;
+    delete (window as Partial<MatomoHolder>).Piwik;
+  });
 
   it('should register _paq global once', async () => {
     expect(window._paq).toBeUndefined();
@@ -578,5 +586,123 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expect(() => service.initialize()).toThrowError(ALREADY_INITIALIZED_ERROR);
+  });
+  describe('loading status', () => {
+    const autoConfig: MatomoConfiguration = {
+      siteId: 'fakeSiteId',
+      trackerUrl: 'http://fakeTrackerUrl',
+    };
+
+    it('should be loading once script is injected', async () => {
+      // Given
+      const { loadingStatus } = await setUp(autoConfig);
+
+      // Then
+      expect(loadingStatus()).toEqual('loading');
+    });
+
+    it('should be loaded when script is successfully loaded', async () => {
+      // Given
+      const { injectedScript, loadingStatus } = await setUp(autoConfig);
+
+      // When
+      window.Matomo = {};
+      injectedScript()?.dispatchEvent(new Event('load'));
+
+      // Then
+      expect(loadingStatus()).toEqual('loaded');
+    });
+
+    it('should be loaded when script is successfully loaded with legacy global', async () => {
+      // Given
+      const { injectedScript, loadingStatus } = await setUp(autoConfig);
+
+      // When
+      window.Piwik = {};
+      injectedScript()?.dispatchEvent(new Event('load'));
+
+      // Then
+      expect(loadingStatus()).toEqual('loaded');
+    });
+
+    it('should be failed when script loads but Matomo is not defined', async () => {
+      // Given
+      const { injectedScript, loadingStatus } = await setUp(autoConfig);
+
+      // When
+      injectedScript()?.dispatchEvent(new Event('load'));
+
+      // Then
+      expect(loadingStatus()).toEqual('failed');
+    });
+
+    it('should be failed when script fails to load (e.g. blocked)', async () => {
+      // Given
+      const { injectedScript, loadingStatus } = await setUp(autoConfig);
+
+      // When
+      injectedScript()?.dispatchEvent(new Event('error'));
+
+      // Then
+      expect(loadingStatus()).toEqual('failed');
+    });
+
+    it('should be failed when script fails to load with embedded tracker configuration', async () => {
+      // Given
+      const { injectedScript, loadingStatus } = await setUp({ scriptUrl: 'http://fakeScriptUrl' });
+
+      // When
+      injectedScript()?.dispatchEvent(new Event('error'));
+
+      // Then
+      expect(loadingStatus()).toEqual('failed');
+    });
+
+    it('should be idle in manual mode', async () => {
+      // Given
+      const { loadingStatus } = await setUp({ mode: 'manual' });
+
+      // Then
+      expect(loadingStatus()).toEqual('idle');
+    });
+
+    it('should be idle until deferred configuration is provided', async () => {
+      // Given
+      const { service, injectedScript, loadingStatus } = await setUp({ mode: 'deferred' });
+
+      // Then
+      expect(loadingStatus()).toEqual('idle');
+
+      // When
+      service.initializeTracker({ siteId: 'fakeSiteId', trackerUrl: 'http://fakeTrackerUrl' });
+
+      // Then
+      expect(loadingStatus()).toEqual('loading');
+
+      // When
+      window.Matomo = {};
+      injectedScript()?.dispatchEvent(new Event('load'));
+
+      // Then
+      expect(loadingStatus()).toEqual('loaded');
+    });
+
+    it('should be disabled when tracking is disabled', async () => {
+      // Given
+      const { loadingStatus } = await setUp({ ...autoConfig, disabled: true });
+
+      // Then
+      expect(loadingStatus()).toEqual('disabled');
+    });
+
+    it('should be disabled when platform is not browser', async () => {
+      // Given
+      const { loadingStatus } = await setUp(autoConfig, [
+        { provide: PLATFORM_ID, useValue: 'server' },
+      ]);
+
+      // Then
+      expect(loadingStatus()).toEqual('disabled');
+    });
   });
 });

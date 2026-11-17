@@ -32,6 +32,7 @@ export {
   MatomoInstance,
 } from './tracker/matomo-tracker.service';
 export { MatomoInitializerService } from './tracker/matomo-initializer.service';
+export { MatomoLoadingStatus } from './tracker/loading-status';
 export {
   MatomoConfiguration,
   MATOMO_CONFIGURATION,

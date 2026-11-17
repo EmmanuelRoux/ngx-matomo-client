@@ -83,6 +83,7 @@ easily migrate.**
   * [Can I use `ngx-matomo-client` with Server-side rendering (SSR) / Angular Universal?](#can-i-use-ngx-matomo-client-with-server-side-rendering-ssr--angular-universal)
   * [Can I use `ngx-matomo-client` with Tag Manager?](#can-i-use-ngx-matomo-client-with-tag-manager)
   * [How to define configuration asynchronously? (HTTP fetch...)](#how-to-define-configuration-asynchronously-http-fetch)
+  * [How to check if Matomo has been successfully loaded? (ad-blockers...)](#how-to-check-if-matomo-has-been-successfully-loaded-ad-blockers)
   * [How can I test my components which uses `MatomoTracker` or other Matomo features?](#how-can-i-test-my-components-which-uses-matomotracker-or-other-matomo-features)
   * [Can I use `ngx-matomo-client` in a zoneless Angular application?](#can-i-use-ngx-matomo-client-in-a-zoneless-angular-application)
   * [My app freezes during route changes — how can I fix it?](#my-app-freezes-during-route-changes--how-can-i-fix-it)
@@ -1110,6 +1111,44 @@ _Side note: only the **trackers** configuration can be deferred, not all configu
 This is required because some properties require to be set **before** any other action is tracked. For
 example: `requireConsent` must be set before any other tracking call, `trackAppInitialLoad` should be set before
 any navigation occurs._
+
+### How to check if Matomo has been successfully loaded? (ad-blockers...)
+
+Matomo's script may fail to load, for example when it is blocked by an ad-blocker or a browser extension (such as uBlock Origin).
+
+`MatomoTracker` exposes a `loadingStatus` signal, allowing to know whether Matomo's script has been successfully loaded:
+
+```ts
+import { Component, computed, inject } from '@angular/core';
+import { MatomoTracker } from 'ngx-matomo-client';
+
+@Component({
+  template: `
+    @if (matomoBlocked()) {
+      <p>Analytics are blocked by your browser.</p>
+    }
+  `,
+})
+export class MyComponent {
+  private readonly tracker = inject(MatomoTracker);
+
+  readonly matomoBlocked = computed(() => this.tracker.loadingStatus() === 'failed');
+}
+```
+
+Possible values are:
+
+| Status       | Description                                                                                                                                                                                                                       |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'idle'`     | Script has not been injected (yet): initialization mode is `'manual'` (in which case the script is included by yourself and its status is not tracked), or mode is `'deferred'` and `initializeTracker()` has not been called yet |
+| `'loading'`  | Script has been injected and is currently loading                                                                                                                                                                                 |
+| `'loaded'`   | Script has been successfully loaded and Matomo is initialized                                                                                                                                                                     |
+| `'failed'`   | Script failed to load (blocked by an ad-blocker or a browser extension, network error...): tracking calls will not be sent                                                                                                        |
+| `'disabled'` | Tracking is disabled, either from configuration (`disabled: true`) or because the application is not running in a browser (SSR)                                                                                                   |
+
+If you prefer an `Observable`, simply use `toObservable(tracker.loadingStatus)` from `@angular/core/rxjs-interop`.
+
+When testing with `provideMatomoTesting()`, status is `'loaded'` by default and can be changed using `MatomoTestingTracker.setLoadingStatus()` (e.g. `setLoadingStatus('failed')` to simulate a blocked script).
 
 ### How can I test my components which uses `MatomoTracker` or other Matomo features?
 
