@@ -1,7 +1,8 @@
-import { DestroyRef, inject, Service } from '@angular/core';
+import { DestroyRef, inject, Service, Signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { NonEmptyReadonlyArray, RequireAtLeastOne } from '../utils/types';
 import { InternalMatomoTracker } from './internal-matomo-tracker.service';
+import { InternalMatomoLoadingStatus, MatomoLoadingStatus } from './loading-status';
 
 export interface MatomoECommerceItem {
   productSKU: string;
@@ -115,6 +116,21 @@ export class MatomoTracker {
   private readonly _pageViewTracked = new Subject<void>();
 
   readonly pageViewTracked = this._pageViewTracked.asObservable();
+
+  /**
+   * Loading status of Matomo's script.
+   *
+   * Useful to detect whether Matomo has been successfully loaded, or failed to load (for example, when the script is
+   * blocked by an ad-blocker).
+   *
+   * Note: when initialization mode is `'manual'`, the script is not injected by this library and the status will stay
+   * `'idle'`.
+   *
+   * @see MatomoLoadingStatus
+   */
+  readonly loadingStatus: Signal<MatomoLoadingStatus> = inject(
+    InternalMatomoLoadingStatus,
+  ).status.asReadonly();
 
   constructor() {
     inject(DestroyRef).onDestroy(() => this._pageViewTracked.complete());

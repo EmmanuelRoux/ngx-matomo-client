@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Service, PLATFORM_ID } from '@angular/core';
-import { initializeMatomoHolder } from '../holder';
+import { inject, PLATFORM_ID, Service } from '@angular/core';
+import { initializeMatomoHolder, isMatomoScriptExecuted } from '../holder';
 import { runOnce } from '../utils/function';
 import { ScriptInjector } from '../utils/script-injector';
 import { PublicInterface } from '../utils/types';
@@ -16,6 +16,7 @@ import {
   isExplicitTrackerConfiguration,
   MatomoTrackerConfiguration,
 } from './configuration';
+import { InternalMatomoLoadingStatus } from './loading-status';
 import { ALREADY_INITIALIZED_ERROR, ALREADY_INJECTED_ERROR } from './errors';
 import { MatomoTracker } from './matomo-tracker.service';
 
@@ -60,6 +61,7 @@ export class MatomoInitializerService {
   private readonly deferredConfig = inject(DEFERRED_INTERNAL_MATOMO_CONFIGURATION);
   private readonly tracker = inject(MatomoTracker);
   private readonly scriptInjector = inject(ScriptInjector);
+  private readonly loadingStatus = inject(InternalMatomoLoadingStatus).status;
 
   constructor() {
     initializeMatomoHolder();
@@ -96,7 +98,7 @@ export class MatomoInitializerService {
 
         this.registerMainTracker(mainTracker);
         this.registerAdditionalTrackers(additionalTrackers);
-        this.scriptInjector.injectDOMScript(scriptUrl);
+        this.injectScript(scriptUrl);
       } else if (isEmbeddedTrackerConfiguration(config)) {
         const { scriptUrl, trackers: additionalTrackers } = {
           trackers: [],
@@ -104,13 +106,25 @@ export class MatomoInitializerService {
         };
 
         this.registerAdditionalTrackers(additionalTrackers);
-        this.scriptInjector.injectDOMScript(scriptUrl);
+        this.injectScript(scriptUrl);
       }
 
       this.deferredConfig.markReady(config as InternalMatomoConfiguration);
     },
     ALREADY_INJECTED_ERROR,
   );
+
+  private injectScript(scriptUrl: string): void {
+    this.loadingStatus.set('loading');
+
+    const script = this.scriptInjector.injectDOMScript(scriptUrl);
+
+    script.addEventListener('load', () =>
+      // Script may have been replaced by an empty or fake script (some ad-blockers do that)
+      this.loadingStatus.set(isMatomoScriptExecuted() ? 'loaded' : 'failed'),
+    );
+    script.addEventListener('error', () => this.loadingStatus.set('failed'));
+  }
 
   private registerMainTracker(mainTracker: MatomoTrackerConfiguration): void {
     const mainTrackerUrl = buildTrackerUrl(mainTracker.trackerUrl, mainTracker.trackerUrlSuffix);

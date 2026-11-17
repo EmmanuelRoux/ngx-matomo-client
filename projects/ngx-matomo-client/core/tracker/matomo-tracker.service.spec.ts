@@ -1,13 +1,17 @@
+import { signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Getters, Methods } from '../utils/types';
 import { InternalMatomoTracker } from './internal-matomo-tracker.service';
+import { InternalMatomoLoadingStatus, MatomoLoadingStatus } from './loading-status';
 import { MatomoInstance, MatomoTracker } from './matomo-tracker.service';
 
 describe('MatomoTracker', () => {
   let delegate: jasmine.SpyObj<InternalMatomoTracker<MatomoInstance>>;
   let tracker: MatomoTracker;
+  let loadingStatus: WritableSignal<MatomoLoadingStatus>;
 
   beforeEach(() => {
+    loadingStatus = signal<MatomoLoadingStatus>('idle');
     delegate = jasmine.createSpyObj<InternalMatomoTracker<MatomoInstance>>([
       'get',
       'push',
@@ -20,6 +24,10 @@ describe('MatomoTracker', () => {
         {
           provide: InternalMatomoTracker,
           useValue: delegate,
+        },
+        {
+          provide: InternalMatomoLoadingStatus,
+          useValue: { status: loadingStatus },
         },
       ],
     });
@@ -68,6 +76,16 @@ describe('MatomoTracker', () => {
       expect(url).toEqual(expected);
     });
   }
+
+  it('should expose loading status', () => {
+    expect(tracker.loadingStatus()).toEqual('idle');
+
+    loadingStatus.set('loaded');
+    expect(tracker.loadingStatus()).toEqual('loaded');
+
+    loadingStatus.set('failed');
+    expect(tracker.loadingStatus()).toEqual('failed');
+  });
 
   it('should track page view', expectSimpleMethod('trackPageView', []));
 

@@ -8,7 +8,7 @@ export class ScriptInjector {
   private readonly injector = inject(INJECTOR);
   private readonly document = inject(DOCUMENT);
 
-  injectDOMScript(scriptUrl: string): void {
+  injectDOMScript(scriptUrl: string): HTMLScriptElement {
     const scriptElement = runInInjectionContext(this.injector, () =>
       this.scriptFactory(scriptUrl, this.document),
     );
@@ -19,5 +19,7 @@ export class ScriptInjector {
     const parent = requireNonNull(selfScript.parentNode, "no script's parent node found");
 
     parent.insertBefore(scriptElement, selfScript);
+
+    return scriptElement;
   }
 }
