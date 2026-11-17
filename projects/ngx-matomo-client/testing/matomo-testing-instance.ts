@@ -127,4 +127,8 @@ export class MatomoTestingInstance implements MatomoInstance {
   getIgnoreCampaignsForReferrers(): string[] {
     return [];
   }
+
+  getIgnoreCampaignAttributionForSources(): string[] {
+    return [];
+  }
 }
