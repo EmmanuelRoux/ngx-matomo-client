@@ -21,6 +21,7 @@
       "ngx-matomo-client/router": ["./dist/ngx-matomo-client/router"],
       "ngx-matomo-client/testing": ["./dist/ngx-matomo-client/testing"],
       "ngx-matomo-client/form-analytics": ["./dist/ngx-matomo-client/form-analytics"],
+      "ngx-matomo-client/ab-testing": ["./dist/ngx-matomo-client/ab-testing"],
       "ngx-matomo-client/*": ["./dist/ngx-matomo-client/*"]
     },
     "useDefineForClassFields": false

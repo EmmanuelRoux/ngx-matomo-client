@@ -71,6 +71,7 @@ easily migrate.**
   * [Tracker API](#tracker-api)
 - [Plugins](#plugins)
   * [Form analytics](#form-analytics)
+  * [A/B testing](#ab-testing)
 - [Migration from `@ngx-matomo/tracker` and `@ngx-matomo/router` (version <= 4)](#migration-from-ngx-matomotracker-and-ngx-matomorouter-version--4)
 - [Configuration reference](#configuration-reference)
 - [FAQ](#faq)
@@ -795,6 +796,106 @@ To automatically track a form submit when an element is clicked (for example a n
 You can also inject `MatomoFormAnalytics` service in your components and use low-level api directly.
 
 See official guide at https://developer.matomo.org/guides/form-analytics.
+
+### A/B testing
+
+**A/B testing support is currently experimental. [Please report any bugs](https://github.com/EmmanuelRoux/ngx-matomo-client/issues), and pull requests are highly appreciated!**
+
+#### Configuration
+
+A/B testing plugin is supported out-of-the-box. Add `withAbTesting()` feature to `provideMatomo()`:
+
+```ts
+import { withAbTesting } from 'ngx-matomo-client/ab-testing';
+
+await bootstrapApplication(RootComponent, {
+  providers: [
+    provideMatomo(
+      {}, // Your base configuration
+      withAbTesting(), // Add this feature
+    ),
+  ],
+});
+```
+
+By default, Matomo includes the A/B testing tracker code into the main `matomo.js` script. If that is not the case on
+your Matomo instance, you can load the plugin script with `loadScript` option:
+
+```ts
+withAbTesting({
+  loadScript: true, // load from {trackerUrl}/plugins/AbTesting/tracker.min.js
+  // or: loadScript: 'https://example.matomo.cloud/plugins/AbTesting/tracker.min.js',
+});
+```
+
+<details>
+  <summary>See equivalent configuration with <code>@NgModule</code></summary>
+
+```ts
+import { MatomoAbTestingModule } from 'ngx-matomo-client/ab-testing';
+
+@NgModule({
+  imports: [
+    NgxMatomoModule.forRoot({
+      /* ... */
+    }),
+    MatomoAbTestingModule, // or MatomoAbTestingModule.forRoot({ loadScript: true })
+  ],
+})
+export class AppModule {}
+```
+
+</details>
+
+#### Usage
+
+Inject `MatomoAbTesting` service and create your experiment (typically in the component which should display the
+variations):
+
+```ts
+import { Component, inject, signal } from '@angular/core';
+import { MatomoAbTesting } from 'ngx-matomo-client/ab-testing';
+
+@Component({
+  selector: 'app-subscribe-button',
+  template: `<button [style.color]="color()">Subscribe</button>`,
+})
+export class SubscribeButtonComponent {
+  private readonly abTesting = inject(MatomoAbTesting);
+
+  readonly color = signal('black');
+
+  constructor() {
+    this.abTesting.create({
+      name: 'buttonColor', // you can also use the experiment ID to hide its name
+      percentage: 100,
+      includedTargets: [{ attribute: 'url', type: 'any', value: '', inverted: '0' }],
+      excludedTargets: [],
+      variations: [
+        {
+          name: 'original',
+          activate: () => {
+            // Nothing to do for original variation
+          },
+        },
+        {
+          name: 'blue', // you can also use the variation ID to hide its name
+          activate: () => this.color.set('blue'),
+        },
+      ],
+    });
+  }
+}
+```
+
+If the variation is chosen elsewhere (for example server-side, or after a redirect in a split URL test), you can
+manually track that the visitor entered a variation:
+
+```ts
+inject(MatomoAbTesting).enter('buttonColor', 'blue');
+```
+
+See official guide at https://developer.matomo.org/guides/ab-tests.
 
 ## Migration from `@ngx-matomo/tracker` and `@ngx-matomo/router` (version <= 4)
 
