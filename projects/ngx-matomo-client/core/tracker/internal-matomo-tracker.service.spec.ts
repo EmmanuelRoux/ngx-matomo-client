@@ -22,8 +22,8 @@ interface FakeMatomoInstance {
 }
 
 describe('InternalMatomoTracker', () => {
-  function createMockZone(): jasmine.SpyObj<NgZone> {
-    return jasmine.createSpyObj<NgZone>(['runOutsideAngular']);
+  function createMockZone(): Mocked<NgZone> {
+    return { runOutsideAngular: vi.fn() } as unknown as Mocked<NgZone>;
   }
 
   function createTracker(
@@ -105,11 +105,14 @@ describe('InternalMatomoTracker', () => {
       },
     };
 
-    expect(stack).toEqual([[jasmine.any(Function)]]);
-    await expectAsync(result).toBePending();
+    expect(stack).toEqual([[expect.any(Function)]]);
+    const PENDING_SENTINEL = Symbol('pending');
+    await expect(Promise.race([result, Promise.resolve(PENDING_SENTINEL)])).resolves.toBe(
+      PENDING_SENTINEL,
+    );
 
     (stack[0][0] as (this: FakeMatomoInstance) => number).call(fakeInstance);
-    await expectAsync(result).toBeResolvedTo(42);
+    await expect(result).resolves.toEqual(42);
   });
 
   it('should get from matomo instance', async () => {
@@ -122,11 +125,14 @@ describe('InternalMatomoTracker', () => {
       },
     };
 
-    expect(stack).toEqual([[jasmine.any(Function)]]);
-    await expectAsync(result).toBePending();
+    expect(stack).toEqual([[expect.any(Function)]]);
+    const PENDING_SENTINEL2 = Symbol('pending');
+    await expect(Promise.race([result, Promise.resolve(PENDING_SENTINEL2)])).resolves.toBe(
+      PENDING_SENTINEL2,
+    );
 
     (stack[0][0] as (this: FakeMatomoInstance) => number).call(fakeInstance);
-    await expectAsync(result).toBeResolvedTo(42);
+    await expect(result).resolves.toEqual(42);
   });
 
   it('should run commands outside Angular Zone', () => {
@@ -135,7 +141,7 @@ describe('InternalMatomoTracker', () => {
     const tracker = createTracker({ runOutsideAngularZone: true }, PLATFORM_BROWSER_ID, zone);
     let runOutside = false;
 
-    zone.runOutsideAngular.and.callFake(fn => {
+    zone.runOutsideAngular.mockImplementation(fn => {
       runOutside = true;
       return fn();
     });
@@ -144,7 +150,7 @@ describe('InternalMatomoTracker', () => {
     tracker.push(['func_outside']);
 
     // Then
-    expect(runOutside).toBeTrue();
+    expect(runOutside).toBe(true);
     expect(window._paq).toEqual([['func_outside']]);
   });
 
@@ -163,8 +169,8 @@ describe('InternalMatomoTracker', () => {
     const tracker = createTracker({ disabled: true });
 
     // Then
-    await expectAsync(tracker.get('getX')).toBeRejected();
-    await expectAsync(tracker.pushFn(matomo => matomo.getX())).toBeRejected();
+    await expect(tracker.get('getX')).rejects.toThrow();
+    await expect(tracker.pushFn(matomo => matomo.getX())).rejects.toThrow();
   });
 
   it('should ignore calls when platform is not browser', () => {
@@ -182,7 +188,7 @@ describe('InternalMatomoTracker', () => {
     const tracker = createTracker({ disabled: false }, PLATFORM_SERVER_ID);
 
     // Then
-    await expectAsync(tracker.get('getX')).toBeRejected();
-    await expectAsync(tracker.pushFn(matomo => matomo.getX())).toBeRejected();
+    await expect(tracker.get('getX')).rejects.toThrow();
+    await expect(tracker.pushFn(matomo => matomo.getX())).rejects.toThrow();
   });
 });

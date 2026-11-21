@@ -49,11 +49,11 @@ describe('TrackFormSubmitDirective', () => {
         provideZoneChangeDetection(),
         {
           provide: MatomoFormAnalytics,
-          useValue: jasmine.createSpyObj<MatomoFormAnalytics>('MatomoFormAnalytics', [
-            'trackForm',
-            'trackFormSubmit',
-            'trackFormConversion',
-          ]),
+          useValue: {
+            trackForm: vi.fn(),
+            trackFormSubmit: vi.fn(),
+            trackFormConversion: vi.fn(),
+          },
         },
       ],
     }).compileComponents();
@@ -76,20 +76,20 @@ describe('TrackFormSubmitDirective', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.submitElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeTrue();
+    expect(component.submitElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBe(true);
 
     component.ignore = false;
 
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.submitElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBeFalse();
+    expect(component.submitElRef().nativeElement.hasAttribute('data-matomo-ignore')).toBe(false);
   });
 
   it('should track submit', async () => {
     const formDir = component.formDir();
-    spyOn(formDir, 'trackSubmit');
-    spyOn(formDir, 'trackConversion');
+    vi.spyOn(formDir, 'trackSubmit').mockImplementation(() => undefined);
+    vi.spyOn(formDir, 'trackConversion').mockImplementation(() => undefined);
 
     component.submitElRef().nativeElement.click();
     fixture.detectChanges();
@@ -105,8 +105,8 @@ describe('TrackFormSubmitDirective', () => {
     await fixture.whenStable();
 
     const formDir = component.formDir();
-    spyOn(formDir, 'trackSubmit');
-    spyOn(formDir, 'trackConversion');
+    vi.spyOn(formDir, 'trackSubmit').mockImplementation(() => undefined);
+    vi.spyOn(formDir, 'trackConversion').mockImplementation(() => undefined);
 
     component.submitElRef().nativeElement.click();
     fixture.detectChanges();

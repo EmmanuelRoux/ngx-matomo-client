@@ -66,23 +66,22 @@ describe('MatomoFormAnalyticsInitializer', () => {
   }
 
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
-    const mockContainer = jasmine.createSpyObj<HTMLElement>('FakeContainer', ['insertBefore']);
-    const mockExistingScript = jasmine.createSpyObj<HTMLScriptElement>('FakeExistingScript', [], {
+    const mockContainer = { insertBefore: vi.fn() } as unknown as HTMLElement;
+    const mockExistingScript = {
       parentNode: mockContainer,
       parentElement: mockContainer,
-    });
+    } as unknown as HTMLScriptElement;
 
-    mockContainer.insertBefore.and.callFake(script => {
+    vi.mocked(mockContainer.insertBefore).mockImplementation(script => {
       cb(script as unknown as HTMLScriptElement);
       return script;
     });
 
-    const getElementsByTagNameSpy = jasmine.isSpy(window.document.getElementsByTagName)
-      ? (window.document.getElementsByTagName as jasmine.Spy<Document['getElementsByTagName']>)
-      : spyOn(window.document, 'getElementsByTagName');
-
+    if (!vi.isMockFunction(window.document.getElementsByTagName)) {
+      vi.spyOn(window.document, 'getElementsByTagName');
+    }
     // Not a perfect spy, as the actual returned value is an Array, not an HTMLCollection
-    getElementsByTagNameSpy.and.returnValue([
+    vi.mocked(window.document.getElementsByTagName).mockReturnValue([
       mockExistingScript,
     ] as unknown as HTMLCollectionOf<Element>);
   }
@@ -92,8 +91,8 @@ describe('MatomoFormAnalyticsInitializer', () => {
 
     expect(script).toBeTruthy();
     expect(script?.type).toEqual('text/javascript');
-    expect(script?.async).toBeTrue();
-    expect(script?.defer).toBeTrue();
+    expect(script?.async).toBe(true);
+    expect(script?.defer).toBe(true);
     expect(script?.src?.toLowerCase()).toMatch(expectedUrl.toLowerCase()); // script url may be lowercased by browser
   }
 
@@ -158,7 +157,7 @@ describe('MatomoFormAnalyticsInitializer', () => {
     );
 
     // Then
-    await expectAsync(caughtError).toBeResolvedTo(
+    await expect(caughtError).resolves.toEqual(
       new Error(
         'Cannot resolve default matomo FormAnalytics plugin script url. ' +
           'Please explicitly provide `loadScript` configuration property instead of `true`',

@@ -66,7 +66,7 @@ describe('PageUrlProvider', () => {
     );
     const locationStrategy = TestBed.inject(LocationStrategy);
 
-    spyOn(locationStrategy, 'getBaseHref').and.returnValue('/test');
+    vi.spyOn(locationStrategy, 'getBaseHref').mockReturnValue('/test');
 
     // When
     from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(
@@ -82,7 +82,7 @@ describe('PageUrlProvider', () => {
     const provider = instantiate({ prependBaseHref: false }, '/test/');
     const locationStrategy = TestBed.inject(LocationStrategy);
 
-    spyOn(locationStrategy, 'getBaseHref').and.returnValue('/test');
+    vi.spyOn(locationStrategy, 'getBaseHref').mockReturnValue('/test');
 
     // When
     from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(
@@ -104,7 +104,7 @@ describe('PageUrlProvider', () => {
     const locationStrategy = TestBed.inject(LocationStrategy);
 
     // @ts-expect-error Bug in angular in which sometimes a null value is returned despite typing
-    spyOn(locationStrategy, 'getBaseHref').and.returnValue(null);
+    vi.spyOn(locationStrategy, 'getBaseHref').mockReturnValue(null);
 
     // When
     from(provider.getCurrentPageUrl(new NavigationEnd(0, '/my-page', '/my-page'))).subscribe(

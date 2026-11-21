@@ -64,7 +64,7 @@ describe('MatomoFormAnalytics', () => {
     expected: E,
   ): Promise<void> {
     // Given
-    spyOn(tracker, 'get').and.returnValue(Promise.resolve(expected) as Promise<any>);
+    vi.spyOn(tracker, 'get').mockReturnValue(Promise.resolve(expected) as Promise<any>);
 
     // When
     return (formAnalytics[getter]() as Promise<any>).then(url => {

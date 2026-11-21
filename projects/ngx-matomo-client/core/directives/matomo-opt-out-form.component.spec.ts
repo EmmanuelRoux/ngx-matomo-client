@@ -4,7 +4,7 @@ import {
   provideZoneChangeDetection,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { By, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { provideMatomo } from '../providers';
 import { provideTestingTracker } from '../testing/testing-tracker';
@@ -148,7 +148,7 @@ describe('MatomoOptOutFormComponent', () => {
     await fixture.whenStable();
 
     expect(iframe.styles).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         width: '100%',
         height: '100%',
         border: '1px solid red',
@@ -174,7 +174,7 @@ describe('MatomoOptOutFormComponent', () => {
     await fixture.whenStable();
 
     expect(iframe.attributes).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         src: 'http://localhost/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=blue&fontColor=red&fontSize=10px&fontFamily=Arial',
       }),
     );
@@ -207,7 +207,7 @@ describe('MatomoOptOutFormComponent', () => {
     await fixture.whenStable();
 
     expect(iframe.attributes).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         src:
           'https://my.custom.server.url.localhost:42/index.php?module=CoreAdminHome&action=optOut&language=fr' +
           `&backgroundColor=${encodeURIComponent(backgroundColor)}` +
@@ -218,18 +218,16 @@ describe('MatomoOptOutFormComponent', () => {
     );
   });
 
-  it('should throw an error when no server url is available', fakeAsync(() => {
+  it('should throw an error when no server url is available', async () => {
     const fixture = TestBed.createComponent(HostWithoutServerUrlComponent);
     const component = fixture.debugElement.query(By.directive(MatomoOptOutFormComponent))
       ?.componentInstance as MatomoOptOutFormComponent;
 
     expect(component.serverUrl()).toBeFalsy();
-    expect(() => {
-      fixture.detectChanges();
-      flush();
-      fixture.detectChanges();
-    }).toThrow();
-  }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(() => fixture.detectChanges()).toThrow();
+  });
 
   it('should not throw an error when no locale is available', () => {
     const fixture = TestBed.createComponent(HostWithoutLocaleComponent);

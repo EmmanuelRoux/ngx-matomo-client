@@ -62,23 +62,22 @@ describe('MatomoInitializerService', () => {
   }
 
   function setUpScriptInjection(cb: (injectedScript: HTMLScriptElement) => void): void {
-    const mockContainer = jasmine.createSpyObj<HTMLElement>('FakeContainer', ['insertBefore']);
-    const mockExistingScript = jasmine.createSpyObj<HTMLScriptElement>('FakeExistingScript', [], {
+    const mockContainer = { insertBefore: vi.fn() } as unknown as HTMLElement;
+    const mockExistingScript = {
       parentNode: mockContainer,
       parentElement: mockContainer,
-    });
+    } as unknown as HTMLScriptElement;
 
-    mockContainer.insertBefore.and.callFake(script => {
+    vi.mocked(mockContainer.insertBefore).mockImplementation(script => {
       cb(script as unknown as HTMLScriptElement);
       return script;
     });
 
-    const getElementsByTagNameSpy = jasmine.isSpy(window.document.getElementsByTagName)
-      ? (window.document.getElementsByTagName as jasmine.Spy<Document['getElementsByTagName']>)
-      : spyOn(window.document, 'getElementsByTagName');
-
+    if (!vi.isMockFunction(window.document.getElementsByTagName)) {
+      vi.spyOn(window.document, 'getElementsByTagName');
+    }
     // Not a perfect spy, as the actual returned value is an Array, not an HTMLCollection
-    getElementsByTagNameSpy.and.returnValue([
+    vi.mocked(window.document.getElementsByTagName).mockReturnValue([
       mockExistingScript,
     ] as unknown as HTMLCollectionOf<Element>);
   }
@@ -88,8 +87,8 @@ describe('MatomoInitializerService', () => {
 
     expect(script).toBeTruthy();
     expect(script?.type).toEqual('text/javascript');
-    expect(script?.async).toBeTrue();
-    expect(script?.defer).toBeTrue();
+    expect(script?.async).toBe(true);
+    expect(script?.defer).toBe(true);
     expect(script?.src?.toLowerCase()).toMatch(expectedUrl.toLowerCase()); // script url may be lowercased by browser
   }
 
@@ -139,7 +138,7 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['trackPageView'])]),
+      expect.arrayContaining([expect.arrayContaining(['trackPageView'])]),
     );
   });
 
@@ -168,7 +167,7 @@ describe('MatomoInitializerService', () => {
 
     // Then
     expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['trackPageView'])]),
+      expect.arrayContaining([expect.arrayContaining(['trackPageView'])]),
     );
   });
 
@@ -290,10 +289,10 @@ describe('MatomoInitializerService', () => {
       // Note: 'requireConsent' should be called BEFORE 'trackPageView'
       expect(tracker.calls).toEqual([['trackPageView', undefined]]);
       expect(tracker.calls).not.toEqual(
-        jasmine.objectContaining([jasmine.arrayContaining(['requireConsent'])]),
+        expect.objectContaining([expect.arrayContaining(['requireConsent'])]),
       );
       expect(tracker.calls).not.toEqual(
-        jasmine.objectContaining([jasmine.arrayContaining(['requireCookieConsent'])]),
+        expect.objectContaining([expect.arrayContaining(['requireCookieConsent'])]),
       );
     });
   });
@@ -367,10 +366,10 @@ describe('MatomoInitializerService', () => {
     // Then
     expectInjectedScript('http://myCustomScript.js');
     expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['setTrackerUrl'])]),
+      expect.arrayContaining([expect.arrayContaining(['setTrackerUrl'])]),
     );
     expect(tracker.calls).not.toEqual(
-      jasmine.arrayContaining([jasmine.arrayContaining(['setSiteId'])]),
+      expect.arrayContaining([expect.arrayContaining(['setSiteId'])]),
     );
   });
 
@@ -482,7 +481,7 @@ describe('MatomoInitializerService', () => {
     );
 
     // Then
-    expect(injectedScript()?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
+    expect(injectedScript()?.src).toMatch(/^(.+:\/\/[^/]+)?\/fake\/script\/url$/);
     expect(injectedScript()?.dataset.cookieconsent).toEqual('statistics');
   });
 
@@ -507,7 +506,7 @@ describe('MatomoInitializerService', () => {
     );
 
     // Then
-    expect(injectedScript()?.src).toMatch('^(.+://[^/]+)?/fake/script/url$');
+    expect(injectedScript()?.src).toMatch(/^(.+:\/\/[^/]+)?\/fake\/script\/url$/);
     expect(injectedScript()?.dataset.cookieconsent).toEqual('statistics');
   });
 
@@ -545,13 +544,13 @@ describe('MatomoInitializerService', () => {
       siteId: '',
     });
 
-    spyOn(service, 'initialize');
+    vi.spyOn(service, 'initialize').mockImplementation(() => undefined);
 
     // When
     service.init();
 
     // Then
-    expect(service.initialize).toHaveBeenCalledOnceWith();
+    expect(service.initialize).toHaveBeenCalledOnce();
   });
 
   it('should throw an error when initialized trackers more than once', async () => {

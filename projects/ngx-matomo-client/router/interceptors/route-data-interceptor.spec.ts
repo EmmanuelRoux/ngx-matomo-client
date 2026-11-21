@@ -23,15 +23,18 @@ function createRouteSnapshot(
 }
 
 describe('RouteDataInterceptor', () => {
-  let tracker: jasmine.SpyObj<MatomoTracker>;
-  let router: jasmine.SpyObj<Router>;
+  let tracker: Mocked<MatomoTracker>;
+  let router: Mocked<Router>;
   let routerState: Partial<RouterState>;
   let interceptor: MatomoRouteDataInterceptor;
 
   beforeEach(() => {
     routerState = {};
-    router = jasmine.createSpyObj<Router>([], { routerState: routerState as RouterState });
-    tracker = jasmine.createSpyObj<MatomoTracker>(['setDocumentTitle', 'setEcommerceView']);
+    router = { routerState: routerState as RouterState } as unknown as Mocked<Router>;
+    tracker = {
+      setDocumentTitle: vi.fn(),
+      setEcommerceView: vi.fn(),
+    } as unknown as Mocked<MatomoTracker>;
 
     TestBed.configureTestingModule({
       providers: [
@@ -56,7 +59,8 @@ describe('RouteDataInterceptor', () => {
     routerState.snapshot = { root } as RouterStateSnapshot;
     interceptor.beforePageTrack(new NavigationEnd(0, '/', '/'));
     // Then
-    expect(tracker.setDocumentTitle).toHaveBeenCalledOnceWith('My Root Page Title');
+    expect(tracker.setDocumentTitle).toHaveBeenCalledOnce();
+    expect(tracker.setDocumentTitle).toHaveBeenCalledWith('My Root Page Title');
     expect(tracker.setEcommerceView).not.toHaveBeenCalled();
   });
 
@@ -73,7 +77,8 @@ describe('RouteDataInterceptor', () => {
     routerState.snapshot = { root } as RouterStateSnapshot;
     interceptor.beforePageTrack(new NavigationEnd(0, '/', '/'));
     // Then
-    expect(tracker.setDocumentTitle).toHaveBeenCalledOnceWith('My Child Page Title');
+    expect(tracker.setDocumentTitle).toHaveBeenCalledOnce();
+    expect(tracker.setDocumentTitle).toHaveBeenCalledWith('My Child Page Title');
     expect(tracker.setEcommerceView).not.toHaveBeenCalled();
   });
 
@@ -88,7 +93,8 @@ describe('RouteDataInterceptor', () => {
     routerState.snapshot = { root } as RouterStateSnapshot;
     interceptor.beforePageTrack(new NavigationEnd(0, '/', '/'));
     // Then
-    expect(tracker.setEcommerceView).toHaveBeenCalledOnceWith(ecommerce);
+    expect(tracker.setEcommerceView).toHaveBeenCalledOnce();
+    expect(tracker.setEcommerceView).toHaveBeenCalledWith(ecommerce);
     expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
   });
 
@@ -104,7 +110,8 @@ describe('RouteDataInterceptor', () => {
     routerState.snapshot = { root } as RouterStateSnapshot;
     interceptor.beforePageTrack(new NavigationEnd(0, '/', '/'));
     // Then
-    expect(tracker.setEcommerceView).toHaveBeenCalledOnceWith(ecommerce);
+    expect(tracker.setEcommerceView).toHaveBeenCalledOnce();
+    expect(tracker.setEcommerceView).toHaveBeenCalledWith(ecommerce);
     expect(tracker.setDocumentTitle).not.toHaveBeenCalled();
   });
 
